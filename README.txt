@@ -1,10 +1,10 @@
-= mini/{test,spec,mock}
+= minitest/{unit,spec,mock}
 
 * http://rubyforge.org/projects/bfts
 
 == DESCRIPTION:
 
-mini/test is a completely minimial drop-in replacement for ruby's
+minitest/unit is a small and fast replacement for ruby's huge and slow
 test/unit. This is meant to be clean and easy to use both as a regular
 test writer and for language implementors that need a minimal set of
 methods to bootstrap a working unit test suite.
@@ -13,15 +13,14 @@ mini/spec is a functionally complete spec engine.
 
 mini/mock, by Steven Baker, is a beautifully tiny mock object framework.
 
+(This package was called miniunit once upon a time)
+
 == FEATURES/PROBLEMS:
 
-* Contains mini/test - a simple and clean test system (301 lines!).
-* Contains mini/spec - a simple and clean spec system (52 lines!).
-* Contains mini/mock - a simple and clean mock system (35 lines!).
-* Fully test/unit compatible assertions.
-* Allows test/unit to be required, firing up an autorunner.
+* Contains minitest/unit - a simple and clean test system (301 lines!).
+* Contains minitest/spec - a simple and clean spec system (52 lines!).
+* Contains minitest/mock - a simple and clean mock system (35 lines!).
 * Incredibly small and fast runner, but no bells and whistles.
-* Incompatible at the runner level.
 
 == REQUIREMENTS:
 
@@ -29,7 +28,7 @@ mini/mock, by Steven Baker, is a beautifully tiny mock object framework.
 
 == INSTALL:
 
-+ sudo gem install miniunit
++ sudo gem install minitest
 
 == LICENSE:
 
