@@ -1,5 +1,5 @@
 require 'stringio'
-require 'mini/test'
+require 'minitest/unit'
 
 Mini::Test.autorun
 

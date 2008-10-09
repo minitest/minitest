@@ -1,4 +1,4 @@
-require 'mini/mock'
+require 'minitest/mock'
 
 Mini::Test.autorun
 

@@ -1,6 +1,6 @@
 class MockExpectationError < StandardError; end
 
-require 'mini/test'
+require 'minitest/unit'
 
 class Mini::Mock
   def initialize

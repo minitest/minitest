@@ -4,9 +4,9 @@ $TESTING_MINIUNIT = true
 
 require 'rubygems'
 require 'hoe'
-require './lib/mini/test.rb'
+require './lib/minitest/unit.rb'
 
-Hoe.new('miniunit', Mini::Test::VERSION) do |miniunit|
+Hoe.new('minitest', MiniTest::Unit::VERSION) do |miniunit|
   miniunit.rubyforge_name = "bfts"
 
   miniunit.developer('Ryan Davis', 'ryand-ruby@zenspider.com')
