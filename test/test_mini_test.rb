@@ -1,21 +1,21 @@
 require 'stringio'
 require 'minitest/unit'
 
-Mini::Test.autorun
+MiniTest::Unit.autorun
 
-class TestMiniTest < Mini::Test::TestCase
+class TestMiniTest < MiniTest::Unit::TestCase
 
   def setup
     srand 42
-    Mini::Test::TestCase.reset
-    @tu = Mini::Test.new
+    MiniTest::Unit::TestCase.reset
+    @tu = MiniTest::Unit.new
     @output = StringIO.new("")
-    Mini::Test.output = @output
+    MiniTest::Unit.output = @output
     assert_equal [0, 0], @tu.run_test_suites
   end
 
   def teardown
-    Mini::Test.output = $stdout
+    MiniTest::Unit.output = $stdout
     Object.send :remove_const, :ATestCase if defined? ATestCase
   end
 
@@ -42,7 +42,7 @@ class TestMiniTest < Mini::Test::TestCase
           "test/test_autotest.rb:62:in `test_add_exception'"]
     ex = util_expand_bt ex
 
-    fu = Mini::filter_backtrace(bt)
+    fu = MiniTest::filter_backtrace(bt)
 
     assert_equal ex, fu
   end
@@ -60,7 +60,7 @@ class TestMiniTest < Mini::Test::TestCase
           BT_MIDDLE +
           ["./lib/mini/test.rb:29"])
     ex = bt.clone
-    fu = Mini::filter_backtrace(bt)
+    fu = MiniTest::filter_backtrace(bt)
     assert_equal ex, fu
   end
 
@@ -73,12 +73,12 @@ class TestMiniTest < Mini::Test::TestCase
     bt = util_expand_bt bt
 
     ex = ["-e:1"]
-    fu = Mini::filter_backtrace(bt)
+    fu = MiniTest::filter_backtrace(bt)
     assert_equal ex, fu
   end
 
   def test_class_puke_with_assertion_failed
-    exception = Mini::Assertion.new "Oh no!"
+    exception = MiniTest::Assertion.new "Oh no!"
     exception.set_backtrace ["unhappy"]
     assert_equal 'F', @tu.puke('SomeClass', 'method_name', exception)
     assert_equal 1, @tu.failures
@@ -87,8 +87,8 @@ class TestMiniTest < Mini::Test::TestCase
 
   def test_class_puke_with_failure_and_flunk_in_backtrace
     exception = begin
-                  Mini::Test::TestCase.new('fake tc').flunk
-                rescue Mini::Assertion => failure
+                  MiniTest::Unit::TestCase.new('fake tc').flunk
+                rescue MiniTest::Assertion => failure
                   failure
                 end
     assert_equal 'F', @tu.puke('SomeClass', 'method_name', exception)
@@ -103,7 +103,7 @@ class TestMiniTest < Mini::Test::TestCase
   end
 
   def test_class_run_test_suites
-    tc = Class.new(Mini::Test::TestCase) do
+    tc = Class.new(MiniTest::Unit::TestCase) do
       def test_something
         assert true
       end
@@ -115,7 +115,7 @@ class TestMiniTest < Mini::Test::TestCase
   end
 
   def test_run_failing # TODO: add error test
-    tc = Class.new(Mini::Test::TestCase) do
+    tc = Class.new(MiniTest::Unit::TestCase) do
       def test_something
         assert true
       end
@@ -144,7 +144,7 @@ Failed assertion, no message given.
   end
 
   def test_run_error
-    tc = Class.new(Mini::Test::TestCase) do
+    tc = Class.new(MiniTest::Unit::TestCase) do
       def test_something
         assert true
       end
@@ -174,7 +174,7 @@ RuntimeError: unhandled exception
   end
 
   def test_run_error_teardown
-    tc = Class.new(Mini::Test::TestCase) do
+    tc = Class.new(MiniTest::Unit::TestCase) do
       def test_something
         assert true
       end
@@ -204,7 +204,7 @@ RuntimeError: unhandled exception
   end
 
   def test_run_skip
-    tc = Class.new(Mini::Test::TestCase) do
+    tc = Class.new(MiniTest::Unit::TestCase) do
       def test_something
         assert true
       end
@@ -247,7 +247,7 @@ Finished in 0.00
   end
 
   def test_run_failing_filtered
-    tc = Class.new(Mini::Test::TestCase) do
+    tc = Class.new(MiniTest::Unit::TestCase) do
       def test_something
         assert true
       end
@@ -265,7 +265,7 @@ Finished in 0.00
   end
 
   def test_run_passing
-    tc = Class.new(Mini::Test::TestCase) do
+    tc = Class.new(MiniTest::Unit::TestCase) do
       def test_something
         assert true
       end
@@ -279,11 +279,11 @@ Finished in 0.00
   end
 end
 
-class TestMiniTestTestCase < Mini::Test::TestCase
+class TestMiniTestTestCase < MiniTest::Unit::TestCase
   def setup
-    Mini::Test::TestCase.reset
+    MiniTest::Unit::TestCase.reset
 
-    @tc = Mini::Test::TestCase.new 'fake tc'
+    @tc = MiniTest::Unit::TestCase.new 'fake tc'
     @zomg = "zomg ponies!"
     @assertion_count = 1
   end
@@ -297,24 +297,24 @@ class TestMiniTestTestCase < Mini::Test::TestCase
   def test_class_inherited
     @assertion_count = 0
 
-    Object.const_set(:ATestCase, Class.new(Mini::Test::TestCase))
+    Object.const_set(:ATestCase, Class.new(MiniTest::Unit::TestCase))
 
-    assert_equal [ATestCase], Mini::Test::TestCase.test_suites
+    assert_equal [ATestCase], MiniTest::Unit::TestCase.test_suites
   end
 
   def test_class_test_suites
     @assertion_count = 0
 
-    Object.const_set(:ATestCase, Class.new(Mini::Test::TestCase))
+    Object.const_set(:ATestCase, Class.new(MiniTest::Unit::TestCase))
 
-    assert_equal 1, Mini::Test::TestCase.test_suites.size
-    assert_equal [ATestCase], Mini::Test::TestCase.test_suites
+    assert_equal 1, MiniTest::Unit::TestCase.test_suites.size
+    assert_equal [ATestCase], MiniTest::Unit::TestCase.test_suites
   end
 
   def test_class_asserts_match_refutes
     @assertion_count = 0
 
-    methods = Mini::Assertions.public_instance_methods
+    methods = MiniTest::Assertions.public_instance_methods
     methods.map! { |m| m.to_s } if Symbol === methods.first
 
     ignores = %w(assert_block assert_no_match assert_not_equal assert_not_nil
@@ -422,7 +422,7 @@ class TestMiniTestTestCase < Mini::Test::TestCase
   def test_assert_includes_triggered
     @assertion_count = 4
 
-    e = @tc.assert_raises Mini::Assertion do
+    e = @tc.assert_raises MiniTest::Assertion do
       @tc.assert_includes [true], false
     end
 
@@ -493,7 +493,7 @@ class TestMiniTestTestCase < Mini::Test::TestCase
   def test_assert_raises_triggered_different
     @assertion_count = 2
 
-    e = assert_raises Mini::Assertion do
+    e = assert_raises MiniTest::Assertion do
       @tc.assert_raises RuntimeError do
         raise SyntaxError, "icky"
       end
@@ -511,13 +511,13 @@ Expected [RuntimeError] to include SyntaxError."
   end
 
   def test_assert_raises_triggered_none
-    e = assert_raises Mini::Assertion do
-      @tc.assert_raises Mini::Assertion do
+    e = assert_raises MiniTest::Assertion do
+      @tc.assert_raises MiniTest::Assertion do
         # do nothing
       end
     end
 
-    expected = "Mini::Assertion expected but nothing was raised."
+    expected = "MiniTest::Assertion expected but nothing was raised."
 
     assert_equal expected, e.message
   end
@@ -627,7 +627,7 @@ Expected [RuntimeError] to include SyntaxError."
   def test_test_methods_sorted
     @assertion_count = 0
 
-    sample_test_case = Class.new(Mini::Test::TestCase)
+    sample_test_case = Class.new(MiniTest::Unit::TestCase)
 
     class << sample_test_case
       def test_order; :sorted end
@@ -646,7 +646,7 @@ Expected [RuntimeError] to include SyntaxError."
   def test_test_methods_random
     @assertion_count = 0
 
-    sample_test_case = Class.new(Mini::Test::TestCase)
+    sample_test_case = Class.new(MiniTest::Unit::TestCase)
 
     class << sample_test_case
       def test_order; :random end
@@ -729,7 +729,7 @@ Expected [RuntimeError] to include SyntaxError."
   def test_refute_includes_triggered
     @assertion_count = 4
 
-    e = @tc.assert_raises Mini::Assertion do
+    e = @tc.assert_raises MiniTest::Assertion do
       @tc.refute_includes [true], true
     end
 
@@ -811,12 +811,12 @@ Expected [RuntimeError] to include SyntaxError."
   def test_skip
     @assertion_count = 0
 
-    util_assert_triggered "haha!", Mini::Skip do
+    util_assert_triggered "haha!", MiniTest::Skip do
       @tc.skip "haha!"
     end
   end
 
-  def util_assert_triggered expected, klass = Mini::Assertion
+  def util_assert_triggered expected, klass = MiniTest::Assertion
     e = assert_raises(klass) do
       yield
     end
@@ -825,27 +825,5 @@ Expected [RuntimeError] to include SyntaxError."
     msg.gsub!(/\(0x[0-9a-f]+\)/, '(0xXXX)')
 
     assert_equal expected, msg
-  end
-
-  if ENV['DEPRECATED'] then
-    require 'test/unit/assertions'
-    def test_assert_nothing_raised
-      @tc.assert_nothing_raised do
-        # do nothing
-      end
-    end
-
-    def test_assert_nothing_raised_triggered
-      expected = 'Exception raised:
-Class: <RuntimeError>
-Message: <"oops!">
----Backtrace---'
-
-      util_assert_triggered expected do
-        @tc.assert_nothing_raised do
-          raise "oops!"
-        end
-      end
-    end
   end
 end

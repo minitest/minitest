@@ -1,8 +1,8 @@
-require 'mini/spec'
+require 'minitest/spec'
 
-Mini::Test.autorun
+MiniTest::Unit.autorun
 
-describe Mini::Spec do
+describe MiniTest::Spec do
   before do
     @assertion_count = 5
   end
@@ -45,17 +45,17 @@ describe Mini::Spec do
 
   it "needs to verify equality" do
     (6 * 7).must_equal(42).must_equal true
-    proc { (6 * 9).must_equal(42) }.must_raise Mini::Assertion
+    proc { (6 * 9).must_equal(42) }.must_raise MiniTest::Assertion
   end
 
   it "needs to verify floats within a delta" do
     (6.0 * 7).must_be_close_to(42.0).must_equal true
-    proc { 42.002.must_be_close_to 42.0 }.must_raise Mini::Assertion
+    proc { 42.002.must_be_close_to 42.0 }.must_raise MiniTest::Assertion
   end
 
   it "needs to verify types of objects" do
     (6 * 7).must_be_instance_of(Fixnum).must_equal true
-    proc { (6 * 7).must_be_instance_of String }.must_raise Mini::Assertion
+    proc { (6 * 7).must_be_instance_of String }.must_raise MiniTest::Assertion
   end
 
   it "needs to verify kinds of objects" do
@@ -63,87 +63,87 @@ describe Mini::Spec do
 
     (6 * 7).must_be_kind_of(Fixnum).must_equal true
     (6 * 7).must_be_kind_of(Numeric).must_equal true
-    proc { (6 * 7).must_be_kind_of String }.must_raise Mini::Assertion
+    proc { (6 * 7).must_be_kind_of String }.must_raise MiniTest::Assertion
   end
 
   it "needs to verify regexp matches" do
     @assertion_count = 7
     "blah".must_match(/\w+/).must_equal true
-    proc { "blah".must_match(/\d+/) }.must_raise Mini::Assertion
+    proc { "blah".must_match(/\d+/) }.must_raise MiniTest::Assertion
   end
 
   it "needs to verify nil" do
     nil.must_be_nil.must_equal true
-    proc { 42.must_be_nil }.must_raise Mini::Assertion
+    proc { 42.must_be_nil }.must_raise MiniTest::Assertion
   end
 
   it "needs to verify using any operator" do
     41.must_be(:<, 42).must_equal true
-    proc { 42.must_be(:<, 41) }.must_raise Mini::Assertion
+    proc { 42.must_be(:<, 41) }.must_raise MiniTest::Assertion
   end
 
   it "needs to catch an expected exception" do
     @assertion_count = 4
 
     proc { raise "blah" }.must_raise RuntimeError
-    proc { raise Mini::Assertion }.must_raise Mini::Assertion
+    proc { raise MiniTest::Assertion }.must_raise MiniTest::Assertion
   end
 
   it "needs to catch an unexpected exception" do
     @assertion_count = 4
 
     proc {
-      proc { raise Mini::Assertion }.must_raise(RuntimeError)
-    }.must_raise Mini::Assertion
+      proc { raise MiniTest::Assertion }.must_raise(RuntimeError)
+    }.must_raise MiniTest::Assertion
   end
 
   it "needs raise if an expected exception is not raised" do
     @assertion_count = 3
 
-    proc { proc { 42 }.must_raise(RuntimeError) }.must_raise Mini::Assertion
+    proc { proc { 42 }.must_raise(RuntimeError) }.must_raise MiniTest::Assertion
   end
 
-  it "needs to be able to catch a Mini::Assertion exception" do
+  it "needs to be able to catch a MiniTest::Assertion exception" do
     @assertion_count = 3
 
-    proc { 1.wont_equal 1 }.must_raise Mini::Assertion
+    proc { 1.wont_equal 1 }.must_raise MiniTest::Assertion
   end
 
   it "needs to verify using respond_to" do
     42.must_respond_to(:+).must_equal true
-    proc { 42.must_respond_to(:clear) }.must_raise Mini::Assertion
+    proc { 42.must_respond_to(:clear) }.must_raise MiniTest::Assertion
   end
 
   it "needs to verify identity" do
     1.must_be_same_as(1).must_equal true
-    proc { 1.must_be_same_as 2 }.must_raise Mini::Assertion
+    proc { 1.must_be_same_as 2 }.must_raise MiniTest::Assertion
   end
 
   it "needs to verify throw" do
     @assertion_count = 8
 
     proc { throw :blah }.must_throw(:blah).must_equal true
-    proc { proc { }.must_throw(:blah) }.must_raise Mini::Assertion
-    proc { proc { throw :xxx }.must_throw(:blah) }.must_raise Mini::Assertion
+    proc { proc { }.must_throw(:blah) }.must_raise MiniTest::Assertion
+    proc { proc { throw :xxx }.must_throw(:blah) }.must_raise MiniTest::Assertion
   end
 
   it "needs to verify inequality" do
     42.wont_equal(6 * 9).must_equal false
-    proc { 1.wont_equal 1 }.must_raise Mini::Assertion
+    proc { 1.wont_equal 1 }.must_raise MiniTest::Assertion
   end
 
   it "needs to verify mismatch" do
     "blah".wont_match(/\d+/).must_equal false
-    proc { "blah".wont_match(/\w+/) }.must_raise Mini::Assertion
+    proc { "blah".wont_match(/\w+/) }.must_raise MiniTest::Assertion
   end
 
   it "needs to verify non-nil" do
     42.wont_be_nil.must_equal false
-    proc { nil.wont_be_nil }.must_raise Mini::Assertion
+    proc { nil.wont_be_nil }.must_raise MiniTest::Assertion
   end
 
   it "needs to verify non-identity" do
     1.wont_be_same_as(2).must_equal false
-    proc { 1.wont_be_same_as 1 }.must_raise Mini::Assertion
+    proc { 1.wont_be_same_as 1 }.must_raise MiniTest::Assertion
   end
 end

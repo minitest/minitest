@@ -1,10 +1,11 @@
 require 'minitest/mock'
+require 'minitest/unit'
 
-Mini::Test.autorun
+MiniTest::Unit.autorun
 
-class TestMiniMock < Mini::Test::TestCase
+class TestMiniMock < MiniTest::Unit::TestCase
   def setup
-    @mock = Mini::Mock.new.expect(:foo, nil)
+    @mock = MiniTest::Mock.new.expect(:foo, nil)
     @mock.expect(:meaning_of_life, 42)
   end
 
