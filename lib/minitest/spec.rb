@@ -1,10 +1,10 @@
 #!/usr/bin/ruby -w
 
-require 'mini/test'
+require 'minitest/unit'
 
 class Module
   def infect_with_assertions pos_prefix, neg_prefix, skip_re, map = {}
-    Mini::Assertions.public_instance_methods(false).each do |meth|
+    MiniTest::Assertions.public_instance_methods(false).each do |meth|
       meth = meth.to_s
 
       new_name = case meth
@@ -22,9 +22,9 @@ class Module
       # warn "%-22p -> %p %p" % [meth, new_name, regexp]
       self.class_eval <<-EOM
         def #{new_name} *args, &block
-          return Mini::Spec.current.#{meth}(*args, &self)     if Proc === self
-          return Mini::Spec.current.#{meth}(args.first, self) if args.size == 1
-          return Mini::Spec.current.#{meth}(self, *args)
+          return MiniTest::Spec.current.#{meth}(*args, &self)     if Proc === self
+          return MiniTest::Spec.current.#{meth}(args.first, self) if args.size == 1
+          return MiniTest::Spec.current.#{meth}(self, *args)
         end
       EOM
     end
@@ -49,14 +49,14 @@ end
 
 module Kernel
   def describe desc, &block
-    cls = Class.new(Mini::Spec)
+    cls = Class.new(MiniTest::Spec)
     Object.const_set desc.to_s.split(/\W+/).map { |s| s.capitalize }.join, cls
 
     cls.class_eval(&block)
   end
 end
 
-class Mini::Spec < Mini::Test::TestCase
+class MiniTest::Spec < MiniTest::Unit::TestCase
   def self.current
     @@current_spec
   end

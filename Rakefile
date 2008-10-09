@@ -12,6 +12,16 @@ Hoe.new('minitest', MiniTest::Unit::VERSION) do |miniunit|
   miniunit.developer('Ryan Davis', 'ryand-ruby@zenspider.com')
 end
 
+class Hoe # TODO: fix - I shouldn't need this
+  def run_tests(multi=false) # :nodoc:
+    tests = test_globs.map { |g| Dir.glob(g) }.flatten
+    tests.map! {|f| %Q(require "#{f}")}
+    cmd = "#{RUBY_FLAGS} -e '#{tests.join("; ")}' #{FILTER}"
+
+    send :ruby, cmd
+  end
+end
+
 begin
   require 'rcov/rcovtask'
   Rcov::RcovTask.new do |t|

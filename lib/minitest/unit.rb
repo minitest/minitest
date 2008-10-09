@@ -4,7 +4,7 @@
 #
 # TODO: refute -> debunk, prove/rebut, show/deny... lots of possibilities
 
-module Mini
+module MiniTest
   class Assertion < Exception; end
   class Skip < Assertion; end
 
@@ -57,7 +57,7 @@ module Mini
       self._assertions += 1
       unless test then
         msg = msg.call if Proc === msg
-        raise Mini::Assertion, msg
+        raise MiniTest::Assertion, msg
       end
       true
     end
@@ -198,7 +198,7 @@ module Mini
     end
 
     def exception_details e, msg
-      "#{msg}\nClass: <#{e.class}>\nMessage: <#{e.message.inspect}>\n---Backtrace---\n#{Mini::filter_backtrace(e.backtrace).join("\n")}\n---------------"
+      "#{msg}\nClass: <#{e.class}>\nMessage: <#{e.message.inspect}>\n---Backtrace---\n#{MiniTest::filter_backtrace(e.backtrace).join("\n")}\n---------------"
     end
 
     def flunk msg = nil
@@ -299,11 +299,11 @@ module Mini
 
     def skip msg = nil
       msg ||= "Skipped, no message given"
-      raise Mini::Skip, msg
+      raise MiniTest::Skip, msg
     end
   end
 
-  class Test
+  class Unit
     VERSION = "1.3.0"
 
     attr_accessor :report, :failures, :errors, :skips
@@ -314,7 +314,7 @@ module Mini
 
     def self.autorun
       at_exit {
-        exit_code = Mini::Test.new.run(ARGV)
+        exit_code = MiniTest::Unit.new.run(ARGV)
         exit false if exit_code && exit_code != 0
       } unless @@installed_at_exit
       @@installed_at_exit = true
@@ -332,15 +332,15 @@ module Mini
 
     def puke klass, meth, e
       e = case e
-          when Mini::Skip then
+          when MiniTest::Skip then
             @skips += 1
             "Skipped:\n#{meth}(#{klass}) [#{location e}]:\n#{e.message}\n"
-          when Mini::Assertion then
+          when MiniTest::Assertion then
             @failures += 1
             "Failure:\n#{meth}(#{klass}) [#{location e}]:\n#{e.message}\n"
           else
             @errors += 1
-            bt = Mini::filter_backtrace(e.backtrace).join("\n    ")
+            bt = MiniTest::filter_backtrace(e.backtrace).join("\n    ")
             "Error:\n#{meth}(#{klass}):\n#{e.class}: #{e.message}\n    #{bt}\n"
           end
       @report << e
@@ -476,7 +476,7 @@ module Mini
         @passed
       end
 
-      include Mini::Assertions
+      include MiniTest::Assertions
     end # class TestCase
   end # class Test
 end # module Mini

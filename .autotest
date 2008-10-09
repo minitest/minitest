@@ -1,5 +1,7 @@
 # -*- ruby -*-
 
+require 'autotest/restart'
+
 Autotest.add_hook :initialize do |at|
   at.extra_class_map["MiniSpec"]             = "test/test_mini_spec.rb"
   at.extra_class_map["TestMiniTestTestCase"] = "test/test_mini_test.rb"
