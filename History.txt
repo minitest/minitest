@@ -1,0 +1,83 @@
+=== 1.2.1 / 2008-06-10
+
+* 7 minor enhancements:
+
+  * Added deprecations everywhere in test/unit.
+  * Added test_order to TestCase. :random on mini, :sorted on test/unit (for now).
+  * Big cleanup in test/unit for rails. Thanks Jeremy Kemper!
+  * Minor readability cleanup.
+  * Pushed setup/run/teardown down to testcase allowing specialized testcases.
+  * Removed pp. Tests run 2x faster. :/
+  * Renamed deprecation methods and moved to test/unit/deprecate.rb.
+
+=== 1.2.0 / 2008-06-09
+
+* 2 major enhancements:
+
+  * Added Mini::Spec.
+  * Added Mini::Mock. Thanks Steven Baker!!
+
+* 23 minor enhancements:
+
+  * Added bin/use_miniunit to make it easy to test out miniunit.
+  * Added -n filtering, thanks to Phil Hagelberg!
+  * Added args argument to #run, takes ARGV from at_exit.
+  * Added test name output if $DEBUG.
+  * Added a refute (was deny) for every assert.
+  * Added capture_io and a bunch of nice assertions from zentest.
+  * Added deprecation mechanism for assert_no/not methods to test/unit/assertions.
+  * Added pp output when available.
+  * Added tests for all assertions. Pretty much maxed out coverage.
+  * Added tests to verify consistency and good naming.
+  * Aliased and deprecated all ugly assertions.
+  * Cleaned out test/unit. Moved autorun there.
+  * Code cleanup to make extensions easier. Thanks Chad!
+  * Got spec args reversed in all but a couple assertions. Much more readable.
+  * Improved error messages across the board. Adds your message to the default.
+  * Moved into Mini namespace, renamed to Mini::Test and Mini::Spec.
+  * Pulled the assertions into their own module...
+  * Removed as much code as I could while still maintaining full functionality.
+    * Moved filter_backtrace into MiniTest.
+    * Removed MiniTest::Unit::run. Unnecessary.
+    * Removed location_of_failure. Unnecessary.
+    * Rewrote test/unit's filter_backtrace. Flog from 37.0 to 18.1
+  * Removed assert_send. Google says it is never used.
+  * Renamed MiniTest::Unit.autotest to #run.
+  * Renamed deny to refute.
+  * Rewrote some ugly/confusing default assertion messages.
+  * assert_in_delta now defaults to 0.001 precision. Makes specs prettier.
+
+* 9 bug fixes:
+
+  * Fixed assert_raises to raise outside of the inner-begin/rescue.
+  * Fixed for ruby 1.9 and rubinius.
+  * No longer exits 0 if exception in code PRE-test run causes early exit.
+  * Removed implementors method list from mini/test.rb - too stale.
+  * assert_nothing_raised takes a class as an arg. wtf? STUPID
+  * ".EF" output is now unbuffered.
+  * Bunch of changes to get working with rails... UGH.
+    * Added stupid hacks to deal with rails not requiring their dependencies.
+    * Now bitch loudly if someone defines one of my classes instead of requiring.
+  * Fixed infect method to work better on 1.9.
+  * Fixed all shadowed variable warnings in 1.9.
+
+=== 1.1.0 / 2007-11-08
+
+* 4 major enhancements:
+
+  * Finished writing all missing assertions.
+  * Output matches original test/unit.
+  * Documented every method needed by language implementor.
+  * Fully switched over to self-testing setup.
+
+* 2 minor enhancements:
+
+  * Added deny (assert ! test), our favorite extension to test/unit.
+  * Added .autotest and fairly complete unit tests. (thanks Chad for help here)
+
+=== 1.0.0 / 2006-10-30
+
+* 1 major enhancement
+
+  * Birthday!
+
