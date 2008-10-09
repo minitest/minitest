@@ -1,3 +1,34 @@
+=== 1.3.0 / 2008-10-09
+
+* 2 major enhancements:
+
+  * renamed to minitest and pulled out test/unit compatibility.
+  * mini/test.rb is now minitest/unit.rb, everything else maps directly.
+
+* 12 minor enhancements:
+
+  * assert_match now checks that act can call =~ and converts exp to a
+    regexp only if needed.
+  * Added assert_send... seems useless to me tho.
+  * message now forces to string... ruby-core likes to pass classes and arrays :(
+  * Added -v handling and switched to @verbose from $DEBUG.
+  * Verbose output now includes test class name and adds a sortable running time!
+  * Switched message generation into procs for message deferment.
+  * Added skip and renamed fail to flunk.
+  * Improved output failure messages for assert_instance_of, assert_kind_of
+  * Improved output for assert_respond_to, assert_same.
+  * at_exit now exits false instead of errors+failures.
+  * Made the tests happier and more readable imhfo.
+  * Switched index(s) == 0 to rindex(s, 0) on nobu's suggestion. Faster.
+
+* 5 bug fixes:
+
+  * 1.9: Added encoding normalization in mu_pp.
+  * 1.9: Fixed backtrace filtering (BTs are expanded now)
+  * Added back exception_details to assert_raises. DOH.
+  * Fixed shadowed variable in mock.rb
+  * Fixed stupid muscle memory message bug in assert_send.
+
 === 1.2.1 / 2008-06-10
 
 * 7 minor enhancements:
