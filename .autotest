@@ -10,6 +10,6 @@ Autotest.add_hook :initialize do |at|
   at.add_exception 'coverage'
 end
 
-require 'autotest/rcov'
-Autotest::RCov.command = 'rcov_info'
+# require 'autotest/rcov'
+# Autotest::RCov.command = 'rcov_info'
 
