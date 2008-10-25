@@ -510,7 +510,10 @@ Message: <\"icky\">
 FILE:LINE:in `test_assert_raises_triggered_different'
 ---------------"
 
-    assert_equal expected, e.message.gsub(/[\w\/\.]+:\d+/, 'FILE:LINE')
+    actual = e.message.gsub(/[\w\/\.]+:\d+/, 'FILE:LINE')
+    actual.gsub!(/block \(\d+ levels\) in /, '') if RUBY_VERSION =~ /^1\.9/
+
+    assert_equal expected, actual
   end
 
   def test_assert_raises_triggered_none
@@ -539,7 +542,10 @@ Message: <\"E\">
 FILE:LINE:in `test_assert_raises_triggered_subclass'
 ---------------"
 
-    assert_equal expected, e.message.gsub(/[\w\/\.]+:\d+/, 'FILE:LINE')
+    actual = e.message.gsub(/[\w\/\.]+:\d+/, 'FILE:LINE')
+    actual.gsub!(/block \(\d+ levels\) in /, '') if RUBY_VERSION =~ /^1\.9/
+
+    assert_equal expected, actual
   end
 
   def test_assert_respond_to
