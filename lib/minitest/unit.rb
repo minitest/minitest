@@ -192,13 +192,13 @@ module MiniTest
      captured_stdout, captured_stderr = StringIO.new, StringIO.new
      $stdout, $stderr                 = captured_stdout, captured_stderr
 
-      yield
+     yield
 
-      return captured_stdout.string, captured_stderr.string
-    ensure
-      $stdout = orig_stdout
-      $stderr = orig_stderr
-    end
+     return captured_stdout.string, captured_stderr.string
+   ensure
+     $stdout = orig_stdout
+     $stderr = orig_stderr
+   end
 
     def exception_details e, msg
       "#{msg}\nClass: <#{e.class}>\nMessage: <#{e.message.inspect}>\n---Backtrace---\n#{MiniTest::filter_backtrace(e.backtrace).join("\n")}\n---------------"
