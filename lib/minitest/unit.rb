@@ -112,7 +112,7 @@ module MiniTest
     def assert_match exp, act, msg = nil
       msg = message(msg) { "Expected #{mu_pp(act)} to match #{mu_pp(exp)}" }
       assert_respond_to act, :"=~"
-      (exp = /#{exp}/) if String === exp && String === act
+      (exp = /#{Regexp.escape(exp)}/) if String === exp && String === act
       assert act =~ exp, msg
     end
 
@@ -185,20 +185,20 @@ module MiniTest
       assert caught, message(msg) { default }
     end
 
-   def capture_io
-     require 'stringio'
+    def capture_io
+      require 'stringio'
 
-     orig_stdout, orig_stderr         = $stdout, $stderr
-     captured_stdout, captured_stderr = StringIO.new, StringIO.new
-     $stdout, $stderr                 = captured_stdout, captured_stderr
+      orig_stdout, orig_stderr         = $stdout, $stderr
+      captured_stdout, captured_stderr = StringIO.new, StringIO.new
+      $stdout, $stderr                 = captured_stdout, captured_stderr
 
-     yield
+      yield
 
-     return captured_stdout.string, captured_stderr.string
-   ensure
-     $stdout = orig_stdout
-     $stderr = orig_stderr
-   end
+      return captured_stdout.string, captured_stderr.string
+    ensure
+      $stdout = orig_stdout
+      $stderr = orig_stderr
+    end
 
     def exception_details e, msg
       "#{msg}\nClass: <#{e.class}>\nMessage: <#{e.message.inspect}>\n---Backtrace---\n#{MiniTest::filter_backtrace(e.backtrace).join("\n")}\n---------------"
@@ -307,7 +307,7 @@ module MiniTest
   end
 
   class Unit
-    VERSION = "1.3.1"
+    VERSION = "1.3.2"
 
     attr_accessor :report, :failures, :errors, :skips
     attr_accessor :test_count, :assertion_count
@@ -315,16 +315,13 @@ module MiniTest
     @@installed_at_exit ||= false
     @@out = $stdout
 
-    def self.disable_autorun
-      @@installed_at_exit = true
-    end
-
     def self.autorun
       at_exit {
+        return if $! # don't run if there was an exception
         exit_code = MiniTest::Unit.new.run(ARGV)
         exit false if exit_code && exit_code != 0
       } unless @@installed_at_exit
-      disable_autorun
+      @@installed_at_exit = true
     end
 
     def self.output= stream
