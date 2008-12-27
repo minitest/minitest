@@ -1,24 +1,22 @@
-=== 1.3.2 / 2008-12-13
+=== 1.3.1 / 2008-12-27
 
 * 1 minor enhancement:
 
   * Added miniunit/autorun.rb as replacement for test/unit.rb's autorun.
 
-* 3 bug fixes:
+* 11 bug fixes:
 
   * Fixed indentation of capture_io for ruby 1.9 warning.
   * assert_match escapes if passed string for pattern.
   * Removed disable_autorun method, added autorun.rb instead.
-
-=== 1.3.1 / 2008-10-25
-
-* 4 bug fixes:
-
   * Fixed assert_in_delta (should be >=, not >).
   * Fixed assert_raises to match Modules.
   * Fixed capture_io to not dup IOs.
   * Fixed skip's backtrace.
-
+  * Made describe private. For some reason I thought that an attribute of Kernel.
+  * instance_of? is different from ===, use instance_of.
+  * Got arg order wrong in *_match in tests, message wrong as a result.
+  * location now deals bitter with custom assertions and load paths. (Yuki)
 
 === 1.3.0 / 2008-10-09
 

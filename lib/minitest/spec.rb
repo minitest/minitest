@@ -54,6 +54,7 @@ module Kernel
 
     cls.class_eval(&block)
   end
+  private :describe
 end
 
 class MiniTest::Spec < MiniTest::Unit::TestCase
