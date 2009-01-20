@@ -1,17 +1,21 @@
-=== 1.3.1 / 2008-12-27
+=== 1.3.1 / 2009-01-20
 
 * 1 minor enhancement:
 
   * Added miniunit/autorun.rb as replacement for test/unit.rb's autorun.
 
-* 12 bug fixes:
+* 16 bug fixes:
 
+  * 1.9 test fixes.
+  * Bug fixes from nobu and akira for really odd scenarios. They run ruby funny.
   * Fixed (assert|refute)_match's argument order.
+  * Fixed LocalJumpError in autorun if exception thrown before at_exit.
   * Fixed assert_in_delta (should be >=, not >).
   * Fixed assert_raises to match Modules.
   * Fixed capture_io to not dup IOs.
   * Fixed indentation of capture_io for ruby 1.9 warning.
   * Fixed location to deal better with custom assertions and load paths. (Yuki)
+  * Fixed order of (must|wont)_include in MiniTest::Spec.
   * Fixed skip's backtrace.
   * Got arg order wrong in *_match in tests, message wrong as a result.
   * Made describe private. For some reason I thought that an attribute of Kernel.
