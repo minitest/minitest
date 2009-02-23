@@ -84,31 +84,23 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
     end
   end
 
-  def self.before(type = :each, &block)
-    raise "unsupported before type: #{type}" unless type == :each
+  def self.define_inheritable_method name, &block
+    super_method = self.superclass.instance_method name
 
-    sklass = self.superclass
-
-    define_method :setup do
-      # regular super() warns
-      super_setup = sklass.instance_method :setup
-      super_setup.bind(self).call if super_setup
+    define_method name do
+      super_method.bind(self).call if super_method # regular super() warns
       instance_eval(&block)
     end
   end
 
+  def self.before(type = :each, &block)
+    raise "unsupported before type: #{type}" unless type == :each
+    define_inheritable_method :setup, &block
+  end
+
   def self.after(type = :each, &block)
     raise "unsupported after type: #{type}" unless type == :each
-
-    sklass = self.superclass
-
-    define_method :teardown do
-      # regular super() warns
-      super_teardown = sklass.instance_method :teardown
-      super_teardown.bind(self).call if super_teardown
-      super()
-      instance_eval(&block)
-    end
+    define_inheritable_method :teardown, &block
   end
 
   def self.it desc, &block
