@@ -22,6 +22,10 @@ mini/mock, by Steven Baker, is a beautifully tiny mock object framework.
 * Contains minitest/mock - a simple and clean mock system (35 lines!).
 * Incredibly small and fast runner, but no bells and whistles.
 
+== RATIONALE:
+
+See design_rationale.rb to see how specs and tests work in minitest.
+
 == REQUIREMENTS:
 
 + Ruby 1.8, maybe even 1.6 or lower. No magic is involved.
