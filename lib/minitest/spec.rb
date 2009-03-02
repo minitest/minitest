@@ -50,9 +50,8 @@ end
 module Kernel
   def describe desc, &block
     stack = MiniTest::Spec.describe_stack
-    cls = Class.new(stack.last)
-    klass_name = desc.to_s.split(/\W+/).map { |s| s.capitalize }.join + "Spec"
-    Object.const_set klass_name, cls
+    name  = desc.to_s.split(/\W+/).map { |s| s.capitalize }.join + "Spec"
+    cls   = Object.class_eval "class #{name} < #{stack.last}; end; #{name}"
 
     cls.nuke_test_methods!
 
