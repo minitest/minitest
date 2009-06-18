@@ -431,6 +431,9 @@ module MiniTest
     class TestCase
       attr_reader :__name__
 
+      PASSTHROUGH_EXCEPTIONS = [NoMemoryError, SignalException, Interrupt,
+        SystemExit]
+
       def run runner
         trap 'INFO' do
           warn '%s#%s %.2fs' % [self.class, self.__name__,
@@ -444,12 +447,16 @@ module MiniTest
           self.setup
           self.__send__ self.__name__
           @passed = true
+        rescue *PASSTHROUGH_EXCEPTIONS
+          raise
         rescue Exception => e
           @passed = false
           result = runner.puke(self.class, self.__name__, e)
         ensure
           begin
             self.teardown
+          rescue *PASSTHROUGH_EXCEPTIONS
+            raise
           rescue Exception => e
             result = runner.puke(self.class, self.__name__, e)
           end
