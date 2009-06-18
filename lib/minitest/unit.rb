@@ -398,6 +398,8 @@ module MiniTest
       status
 
       return failures + errors if @test_count > 0 # or return nil...
+    rescue Interrupt
+      abort 'Interrupted'
     end
 
     def status io = @@out
