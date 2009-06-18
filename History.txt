@@ -1,13 +1,18 @@
-=== 1.3.2 / ??
+=== 1.4.0 / 2009-06-18
 
-* 1 minor enhancement:
+* 5 minor enhancement:
 
+  * Added clarification doco.
+  * Added specs and mocks to autorun.
+  * Changed spec test class creation to be non-destructive.
+  * Updated rakefile for new hoe capabilities.
   * describes are nestable (via subclass). before/after/def inherits, specs don't.
 
-* 2 bug fixes:
+* 3 bug fixes:
 
   * Fixed location on must/wont.
   * Switched to __name__ to avoid common ivar name.
+  * Fixed indentation in test file (1.9).
 
 === 1.3.1 / 2009-01-20
 
