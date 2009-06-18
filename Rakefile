@@ -4,46 +4,13 @@ $TESTING_MINIUNIT = true
 
 require 'rubygems'
 require 'hoe'
-require './lib/minitest/unit.rb'
 
-Hoe.new('minitest', MiniTest::Unit::VERSION) do |miniunit|
-  miniunit.rubyforge_name = "bfts"
+Hoe.plugin :seattlerb
 
-  miniunit.developer('Ryan Davis', 'ryand-ruby@zenspider.com')
-end
+Hoe.spec 'minitest' do
+  developer 'Ryan Davis', 'ryand-ruby@zenspider.com'
 
-class Hoe # TODO: fix - I shouldn't need this
-  def run_tests(multi=false) # :nodoc:
-    tests = test_globs.map { |g| Dir.glob(g) }.flatten
-    tests.map! {|f| %Q(require "#{f}")}
-    cmd = "#{RUBY_FLAGS} -e '#{tests.join("; ")}' #{FILTER}"
-
-    send :ruby, cmd
-  end
-end
-
-begin
-  require 'rcov/rcovtask'
-  Rcov::RcovTask.new do |t|
-    t.verbose = true
-    t.rcov_opts << "--include-file lib/test"
-    t.rcov_opts << "--no-color"
-  end
-
-  task :rcov_info do
-    pattern = ENV['PATTERN'] || "test/test_*.rb"
-    ruby "-Ilib -S rcov --text-report --include-file lib/test --save coverage.info #{pattern}"
-  end
-
-  task :rcov_overlay do
-    rcov, eol = Marshal.load(File.read("coverage.info")).last[ENV["FILE"]], 1
-    puts rcov[:lines].zip(rcov[:coverage]).map { |line, coverage|
-      bol, eol = eol, eol + line.length
-      [bol, eol, "#ffcccc"] unless coverage
-    }.compact.inspect
-  end
-rescue LoadError
-  # skip
+  self.rubyforge_name = "bfts"
 end
 
 def loc dir
