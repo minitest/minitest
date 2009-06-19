@@ -514,3 +514,15 @@ module MiniTest
     end # class TestCase
   end # class Test
 end # module Mini
+
+if $DEBUG then
+  # this helps me ferret out porting issues
+  module Test; end
+  module Test::Unit; end
+  class Test::Unit::TestCase
+    def self.inherited x
+      raise "You're running minitest and test/unit in the same process: #{x}"
+    end
+  end
+end
+
