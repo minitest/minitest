@@ -1,3 +1,17 @@
+=== 1.4.1 / 2009-06-23
+
+* 1 major enhancement:
+
+  * Handle ^C and other fatal exceptions by failing
+
+* 1 minor enhancement:
+
+  * Added something to catch mixed use of test/unit and minitest if $DEBUG
+
+* 1 bug fix:
+
+  * Added SIGINFO handler for finding slow tests without verbose
+
 === 1.4.0 / 2009-06-18
 
 * 5 minor enhancement:
