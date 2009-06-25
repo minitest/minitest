@@ -436,12 +436,14 @@ module MiniTest
       PASSTHROUGH_EXCEPTIONS = [NoMemoryError, SignalException, Interrupt,
         SystemExit]
 
+      SUPPORTS_INFO_SIGNAL = Signal.list['INFO']
+
       def run runner
         trap 'INFO' do
           warn '%s#%s %.2fs' % [self.class, self.__name__,
             (Time.now - runner.start_time)]
           runner.status $stderr
-        end
+        end if SUPPORTS_INFO_SIGNAL
 
         result = '.'
         begin
@@ -462,7 +464,7 @@ module MiniTest
           rescue Exception => e
             result = runner.puke(self.class, self.__name__, e)
           end
-          trap 'INFO', 'DEFAULT'
+          trap 'INFO', 'DEFAULT' if SUPPORTS_INFO_SIGNAL
         end
         result
       end
