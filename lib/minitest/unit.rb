@@ -313,7 +313,7 @@ module MiniTest
   end
 
   class Unit
-    VERSION = "1.4.1"
+    VERSION = "1.4.2"
 
     attr_accessor :report, :failures, :errors, :skips
     attr_accessor :test_count, :assertion_count

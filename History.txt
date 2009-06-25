@@ -1,3 +1,9 @@
+=== 1.4.2 / 2009-06-25
+
+* 1 bug fix:
+
+  * Fixed info handler for systems that don't have siginfo.
+
 === 1.4.1 / 2009-06-23
 
 * 1 major enhancement:
