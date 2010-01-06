@@ -1,3 +1,18 @@
+=== 1.5.0 / 2010-01-06
+
+* 4 minor enhancements:
+
+  * Added ability to specify what assertions should have their args flipped.
+  * Don't flip arguments on *include and *respond_to assertions.
+  * Refactored Module.infect_an_assertion from Module.infect_with_assertions.
+  * before/after :all now bitches and acts like :each
+
+* 3 bug fixes:
+
+  * Nested describes now map to nested test classes to avoid namespace collision.
+  * Using undef_method instead of remove_method to clean out inherited specs.
+  * assert_raises was ignoring passed in message.
+
 === 1.4.2 / 2009-06-25
 
 * 1 bug fix:
