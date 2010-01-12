@@ -697,14 +697,14 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   def test_assert_same_triggered
     @assertion_count = 2
 
-    util_assert_triggered 'Expected 2 (0xXXX) to be the same as 1 (0xXXX).' do
+    util_assert_triggered 'Expected 2 (oid=N) to be the same as 1 (oid=N).' do
       @tc.assert_same 1, 2
     end
 
     s1 = "blah"
     s2 = "blah"
 
-    util_assert_triggered 'Expected "blah" (0xXXX) to be the same as "blah" (0xXXX).' do
+    util_assert_triggered 'Expected "blah" (oid=N) to be the same as "blah" (oid=N).' do
       @tc.assert_same s1, s2
     end
   end
@@ -1006,7 +1006,7 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
     end
 
     msg = e.message.sub(/(---Backtrace---).*/m, '\1')
-    msg.gsub!(/\(0x[0-9a-f]+\)/, '(0xXXX)')
+    msg.gsub!(/\(oid=[-0-9]+\)/, '(oid=N)')
 
     assert_equal expected, msg
   end

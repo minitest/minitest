@@ -159,7 +159,7 @@ module MiniTest
     def assert_same exp, act, msg = nil
       msg = message(msg) {
         data = [mu_pp(act), act.object_id, mu_pp(exp), exp.object_id]
-        "Expected %s (0x%x) to be the same as %s (0x%x)" % data
+        "Expected %s (oid=%d) to be the same as %s (oid=%d)" % data
       }
       assert exp.equal?(act), msg
     end
