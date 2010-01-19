@@ -1,11 +1,16 @@
 ##
-#
 # Totally minimal drop-in replacement for test-unit
-#
-# TODO: refute -> debunk, prove/rebut, show/deny... lots of possibilities
 
 module MiniTest
+
+  ##
+  # Assertion base class
+
   class Assertion < Exception; end
+
+  ##
+  # Assertion raised when skipping a test
+
   class Skip < Assertion; end
 
   file = if RUBY_VERSION =~ /^1\.9/ then  # bt's expanded, but __FILE__ isn't :(
@@ -37,7 +42,16 @@ module MiniTest
     new_bt
   end
 
+  ##
+  # MiniTest Assertions.  All assertion methods accept a +msg+ which is
+  # printed if the assertion fails.
+
   module Assertions
+
+    ##
+    # mu_pp gives a human-readable version of +obj+.  By default #inspect is
+    # called.  You can override this to use #pretty_print if you want.
+
     def mu_pp(obj)
       s = obj.inspect
       s = s.force_encoding(Encoding.default_external) if defined? Encoding
@@ -52,6 +66,9 @@ module MiniTest
       @_assertions ||= 0
     end
 
+    ##
+    # Fails unless +test+ is a true value.
+
     def assert test, msg = nil
       msg ||= "Failed assertion, no message given."
       self._assertions += 1
@@ -62,10 +79,16 @@ module MiniTest
       true
     end
 
+    ##
+    # Fails unless the block returns a true value.
+
     def assert_block msg = nil
       msg = message(msg) { "Expected block to return true value" }
       assert yield, msg
     end
+
+    ##
+    # Fails unless +obj+ is empty.
 
     def assert_empty obj, msg = nil
       msg = message(msg) { "Expected #{obj.inspect} to be empty" }
@@ -73,10 +96,21 @@ module MiniTest
       assert obj.empty?, msg
     end
 
+    ##
+    # Fails unless <tt>exp == act</tt>.
+    #
+    # For floats use assert_in_delta
+
     def assert_equal exp, act, msg = nil
       msg = message(msg) { "Expected #{mu_pp(exp)}, not #{mu_pp(act)}" }
       assert(exp == act, msg)
     end
+
+    ##
+    # For comparing Floats.  Fails unless +exp+ and +act+ are within +delta+
+    # of each other.
+    #
+    #   assert_in_delta Math::PI, (22.0 / 7.0), 0.01
 
     def assert_in_delta exp, act, delta = 0.001, msg = nil
       n = (exp - act).abs
@@ -84,9 +118,16 @@ module MiniTest
       assert delta >= n, msg
     end
 
+    ##
+    # For comparing Floats.  Fails unless +exp+ and +act+ have a relative
+    # error less than +epsilon+.
+
     def assert_in_epsilon a, b, epsilon = 0.001, msg = nil
       assert_in_delta a, b, [a, b].min * epsilon, msg
     end
+
+    ##
+    # Fails unless +collection+ includes +obj+.
 
     def assert_includes collection, obj, msg = nil
       msg = message(msg) {
@@ -96,6 +137,9 @@ module MiniTest
       assert collection.include?(obj), msg
     end
 
+    ##
+    # Fails unless +obj+ is an instace of +cls+.
+
     def assert_instance_of cls, obj, msg = nil
       msg = message(msg) {
         "Expected #{mu_pp(obj)} to be an instance of #{cls}, not #{obj.class}"
@@ -104,12 +148,18 @@ module MiniTest
       assert obj.instance_of?(cls), msg
     end
 
+    ##
+    # Fails unless +obj+ is a kind of +cls+.
+
     def assert_kind_of cls, obj, msg = nil # TODO: merge with instance_of
       msg = message(msg) {
         "Expected #{mu_pp(obj)} to be a kind of #{cls}, not #{obj.class}" }
 
       assert obj.kind_of?(cls), msg
     end
+
+    ##
+    # Fails unless +exp+ is <tt>=~</tt> +act+.
 
     def assert_match exp, act, msg = nil
       msg = message(msg) { "Expected #{mu_pp(exp)} to match #{mu_pp(act)}" }
@@ -118,15 +168,26 @@ module MiniTest
       assert exp =~ act, msg
     end
 
+    ##
+    # Fails unless +obj+ is nil
+
     def assert_nil obj, msg = nil
       msg = message(msg) { "Expected #{mu_pp(obj)} to be nil" }
       assert obj.nil?, msg
     end
 
+    ##
+    # For testing equality operators and so-forth.
+    #
+    #   assert_operator 5, :<=, 4
+
     def assert_operator o1, op, o2, msg = nil
       msg = message(msg) { "Expected #{mu_pp(o1)} to be #{op} #{mu_pp(o2)}" }
       assert o1.__send__(op, o2), msg
     end
+
+    ##
+    # Fails unless the block raises one of +exp+
 
     def assert_raises *exp
       msg = String === exp.last ? exp.pop : nil
@@ -149,12 +210,18 @@ module MiniTest
         should_raise
     end
 
+    ##
+    # Fails unless +obj+ responds to +meth+.
+
     def assert_respond_to obj, meth, msg = nil
       msg = message(msg) {
           "Expected #{mu_pp(obj)} (#{obj.class}) to respond to ##{meth}"
         }
       assert obj.respond_to?(meth), msg
     end
+
+    ##
+    # Fails unless +exp+ and +act+ are #equal?
 
     def assert_same exp, act, msg = nil
       msg = message(msg) {
@@ -164,12 +231,20 @@ module MiniTest
       assert exp.equal?(act), msg
     end
 
+    ##
+    # +send_ary+ is a receiver, message and arguments.
+    #
+    # Fails unless the call returns a true value
+
     def assert_send send_ary, m = nil
       recv, msg, *args = send_ary
       m = message(m) {
         "Expected #{mu_pp(recv)}.#{msg}(*#{mu_pp(args)}) to return true" }
       assert recv.__send__(msg, *args), m
     end
+
+    ##
+    # Fails unless the block throws +sym+
 
     def assert_throws sym, msg = nil
       default = "Expected #{mu_pp(sym)} to have been thrown"
@@ -188,6 +263,15 @@ module MiniTest
       assert caught, message(msg) { default }
     end
 
+    ##
+    # Captures $stdout and $stderr into strings:
+    #
+    #   out, err = capture_io do
+    #     warn "You did a bad thing"
+    #   end
+    #
+    #   assert_match %r%bad%, err
+
     def capture_io
       require 'stringio'
 
@@ -203,14 +287,23 @@ module MiniTest
       $stderr = orig_stderr
     end
 
+    ##
+    # Returns details for exception +e+
+
     def exception_details e, msg
       "#{msg}\nClass: <#{e.class}>\nMessage: <#{e.message.inspect}>\n---Backtrace---\n#{MiniTest::filter_backtrace(e.backtrace).join("\n")}\n---------------"
     end
+
+    ##
+    # Fails with +msg+
 
     def flunk msg = nil
       msg ||= "Epic Fail!"
       assert false, msg
     end
+
+    ##
+    # Returns a proc that will output +msg+ along with the default message.
 
     def message msg = nil, &default
       proc {
@@ -225,15 +318,23 @@ module MiniTest
       }
     end
 
+    ##
     # used for counting assertions
+
     def pass msg = nil
       assert true
     end
+
+    ##
+    # Fails if +test+ is a true value
 
     def refute test, msg = nil
       msg ||= "Failed refutation, no message given"
       not assert(! test, msg)
     end
+
+    ##
+    # Fails if +obj+ is empty.
 
     def refute_empty obj, msg = nil
       msg = message(msg) { "Expected #{obj.inspect} to not be empty" }
@@ -241,12 +342,22 @@ module MiniTest
       refute obj.empty?, msg
     end
 
+    ##
+    # Fails if <tt>exp == act</tt>.
+    #
+    # For floats use refute_in_delta.
+
     def refute_equal exp, act, msg = nil
       msg = message(msg) {
         "Expected #{mu_pp(act)} to not be equal to #{mu_pp(exp)}"
       }
       refute exp == act, msg
     end
+
+    ##
+    # For comparing Floats.  Fails if +exp+ is within +delta+ of +act+
+    #
+    #   refute_in_delta Math::PI, (22.0 / 7.0)
 
     def refute_in_delta exp, act, delta = 0.001, msg = nil
       n = (exp - act).abs
@@ -256,9 +367,16 @@ module MiniTest
       refute delta > n, msg
     end
 
+    ##
+    # For comparing Floats.  Fails if +exp+ and +act+ have a relative error
+    # less than +epsilon+.
+
     def refute_in_epsilon a, b, epsilon = 0.001, msg = nil
       refute_in_delta a, b, a * epsilon, msg
     end
+
+    ##
+    # Fails if +collection+ includes +obj+
 
     def refute_includes collection, obj, msg = nil
       msg = message(msg) {
@@ -268,6 +386,9 @@ module MiniTest
       refute collection.include?(obj), msg
     end
 
+    ##
+    # Fails if +obj+ is an instance of +cls+
+
     def refute_instance_of cls, obj, msg = nil
       msg = message(msg) {
         "Expected #{mu_pp(obj)} to not be an instance of #{cls}"
@@ -275,10 +396,16 @@ module MiniTest
       refute obj.instance_of?(cls), msg
     end
 
+    ##
+    # Fails if +obj+ is a kind of +cls+
+
     def refute_kind_of cls, obj, msg = nil # TODO: merge with instance_of
       msg = message(msg) { "Expected #{mu_pp(obj)} to not be a kind of #{cls}" }
       refute obj.kind_of?(cls), msg
     end
+
+    ##
+    # Fails if +exp+ <tt>=~</tt> +act+
 
     def refute_match exp, act, msg = nil
       msg = message(msg) { "Expected #{mu_pp(exp)} to not match #{mu_pp(act)}" }
@@ -328,6 +455,9 @@ module MiniTest
     @@installed_at_exit ||= false
     @@out = $stdout
 
+    ##
+    # Registers MiniTest::Unit to run tests at process exit
+
     def self.autorun
       at_exit {
         next if $! # don't run if there was an exception
@@ -336,6 +466,10 @@ module MiniTest
       } unless @@installed_at_exit
       @@installed_at_exit = true
     end
+
+    ##
+    # Sets MiniTest::Unit to write output to +stream+.  $stdout is the default
+    # output
 
     def self.output= stream
       @@out = stream
@@ -349,6 +483,10 @@ module MiniTest
       end
       last_before_assertion.sub(/:in .*$/, '')
     end
+
+    ##
+    # Writes status for failed test +meth+ in +klass+ which finished with
+    # exception +e+
 
     def puke klass, meth, e
       e = case e
@@ -408,10 +546,16 @@ module MiniTest
       abort 'Interrupted'
     end
 
+    ##
+    # Writes status to +io+
+
     def status io = @@out
       format = "%d tests, %d assertions, %d failures, %d errors, %d skips"
       io.puts format % [test_count, assertion_count, failures, errors, skips]
     end
+
+    ##
+    # Runs test suites matching +filter+
 
     def run_test_suites filter = /./
       @test_count, @assertion_count = 0, 0
@@ -436,13 +580,23 @@ module MiniTest
       [@test_count, @assertion_count]
     end
 
+    ##
+    # Subclass TestCase to create your own tests.  Typically you'll want a
+    # TestCase subclass per implementation class.
+
     class TestCase
       attr_reader :__name__
+
+      ##
+      # These exception cause minitest to exit
 
       PASSTHROUGH_EXCEPTIONS = [NoMemoryError, SignalException, Interrupt,
         SystemExit]
 
       SUPPORTS_INFO_SIGNAL = Signal.list['INFO']
+
+      ##
+      # Runs the tests reporting the status to +runner+
 
       def run runner
         trap 'INFO' do
