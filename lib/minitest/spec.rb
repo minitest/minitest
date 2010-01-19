@@ -125,4 +125,121 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   def self.it desc, &block
     define_method "test_#{desc.gsub(/\W+/, '_').downcase}", &block
   end
+
+  ##
+  # :method: must_be
+  # See MiniTest::Assertions#assert
+
+  ##
+  # :method: must_be_close_to
+  # See MiniTest::Assertions#assert_in_delta
+
+  ##
+  # :method: must_be_empty
+  # See MiniTest::Assertions#assert_empty
+
+  ##
+  # :method: must_be_instance_of
+  # See MiniTest::Assertions#assert_instance_of
+
+  ##
+  # :method: must_be_kind_of
+  # See MiniTest::Assertions#assert_kind_of
+
+  ##
+  # :method: must_be_nil
+  # See MiniTest::Assertions#assert_nil
+
+  ##
+  # :method: must_be_same_as
+  # See MiniTest::Assertions#assert_same
+
+  ##
+  # :method: must_be_within_delta
+  # See MiniTest::Assertions#assert_in_delta
+
+  ##
+  # :method: must_be_within_epsilon
+  # See MiniTest::Assertions#assert_in_epsilon
+
+  ##
+  # :method: must_equal
+  # See MiniTest::Assertions#assert_equal
+
+  ##
+  # :method: must_include
+  # See MiniTest::Assertions#assert_includes
+
+  ##
+  # :method: must_match
+  # See MiniTest::Assertions#assert_match
+
+  ##
+  # :method: must_raise
+  # See MiniTest::Assertions#assert_raises
+
+  ##
+  # :method: must_respond_to
+  # See MiniTest::Assertions#assert_respond_to
+
+  ##
+  # :method: must_send
+  # See MiniTest::Assertions#assert_send
+
+  ##
+  # :method: must_throw
+  # See MiniTest::Assertions#assert_throw
+
+  ##
+  # :method: wont_be
+  # See MiniTest::Assertions#refute
+
+  ##
+  # :method: wont_be_close_to
+  # See MiniTest::Assertions#refute_in_delta
+
+  ##
+  # :method: wont_be_empty
+  # See MiniTest::Assertions#refute_empty
+
+  ##
+  # :method: wont_be_instance_of
+  # See MiniTest::Assertions#refute_instance_of
+
+  ##
+  # :method: wont_be_kind_of
+  # See MiniTest::Assertions#refute_kind_of
+
+  ##
+  # :method: wont_be_nil
+  # See MiniTest::Assertions#refute_nil
+
+  ##
+  # :method: wont_be_same_as
+  # See MiniTest::Assertions#refute_same
+
+  ##
+  # :method: wont_be_within_delta
+  # See MiniTest::Assertions#refute_in_delta
+
+  ##
+  # :method: wont_be_within_epsilon
+  # See MiniTest::Assertions#refute_in_epsilon
+
+  ##
+  # :method: wont_equal
+  # See MiniTest::Assertions#refute_equal
+
+  ##
+  # :method: wont_include
+  # See MiniTest::Assertions#refute_includes
+
+  ##
+  # :method: wont_match
+  # See MiniTest::Assertions#refute_match
+
+  ##
+  # :method: wont_respond_to
+  # See MiniTest::Assertions#refute_respond_to
+
 end
