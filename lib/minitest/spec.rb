@@ -123,6 +123,7 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   end
 
   def self.it desc, &block
+    block ||= proc { skip "(no tests defined)" }
     define_method "test_#{desc.gsub(/\W+/, '_').downcase}", &block
   end
 
