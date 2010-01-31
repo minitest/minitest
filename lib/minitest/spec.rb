@@ -58,6 +58,14 @@ class Object
 end
 
 module Kernel
+  ##
+  # Describe a series of expectations for a given target +desc+.
+  #
+  # TODO: find good tutorial url.
+  #
+  # Defines a test class subclassing from either
+  # MiniTest::Unit::TestCase or from the surrounding describe's class.
+
   def describe desc, &block
     stack = MiniTest::Spec.describe_stack
     name  = desc.to_s.split(/\W+/).map { |s| s.capitalize }.join + "Spec"
@@ -74,28 +82,36 @@ module Kernel
   private :describe
 end
 
+class Module
+  def classes type = Object # :nodoc:
+    constants.map { |n| const_get n }.find_all { |c|
+      c.class == Class and type > c
+    } - [self]
+  end
+end
+
 class MiniTest::Spec < MiniTest::Unit::TestCase
   @@describe_stack = [MiniTest::Spec]
-  def self.describe_stack
+  def self.describe_stack # :nodoc:
     @@describe_stack
   end
 
-  def self.current
+  def self.current # :nodoc:
     @@current_spec
   end
 
-  def initialize name
+  def initialize name # :nodoc:
     super
     @@current_spec = self
   end
 
-  def self.nuke_test_methods!
+  def self.nuke_test_methods! # :nodoc:
     self.public_instance_methods.grep(/^test_/).each do |name|
       self.send :undef_method, name
     end
   end
 
-  def self.define_inheritable_method name, &block
+  def self.define_inheritable_method name, &block # :nodoc:
     super_method = self.superclass.instance_method name
 
     define_method name do
@@ -104,27 +120,47 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
     end
   end
 
-  def self.before(type = :each, &block)
-    if type == :all
-      warn "change before :all to before :each"
-      type = :each
-    end
+  ##
+  # Define a 'before' action. Inherits the way normal methods should.
+  #
+  # NOTE: +type+ is ignored and is only there to make porting easier.
+  #
+  # Equivalent to MiniTest::Unit::TestCase#setup.
+
+  def self.before type = :each, &block
     raise "unsupported before type: #{type}" unless type == :each
     define_inheritable_method :setup, &block
   end
 
-  def self.after(type = :each, &block)
-    if type == :all # REFACTOR
-      warn "change before :all to before :each"
-      type = :each
-    end
+  ##
+  # Define an 'after' action. Inherits the way normal methods should.
+  #
+  # NOTE: +type+ is ignored and is only there to make porting easier.
+  #
+  # Equivalent to MiniTest::Unit::TestCase#teardown.
+
+  def self.after type = :each, &block
     raise "unsupported after type: #{type}" unless type == :each
     define_inheritable_method :teardown, &block
   end
 
+  ##
+  # Define an expectation with name +desc+. Name gets morphed to a
+  # proper test method name. For some freakish reason, people who
+  # write specs don't like class inheritence, so this goes way out of
+  # its way to make sure that expectations aren't inherited.
+  #
+  # Hint: If you _do_ want inheritence, use minitest/unit. You can mix
+  # and match between assertions and expectations as much as you want.
+
   def self.it desc, &block
     block ||= proc { skip "(no tests defined)" }
-    define_method "test_#{desc.gsub(/\W+/, '_').downcase}", &block
+    name = "test_#{desc.gsub(/\W+/, '_').downcase}"
+    define_method name, &block
+
+    classes(MiniTest::Spec).each do |mod|
+      mod.send :undef_method, name
+    end
   end
 
   ##
@@ -242,5 +278,4 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   ##
   # :method: wont_respond_to
   # See MiniTest::Assertions#refute_respond_to
-
 end

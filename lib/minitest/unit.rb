@@ -1,5 +1,5 @@
 ##
-# Totally minimal drop-in replacement for test-unit
+# Minimal (mostly drop-in) replacement for test-unit.
 
 module MiniTest
 
@@ -26,9 +26,9 @@ module MiniTest
          end
 
   # './lib' in project dir, or '/usr/local/blahblah' if installed
-  MINI_DIR = File.dirname(File.dirname(file))
+  MINI_DIR = File.dirname(File.dirname(file)) # :nodoc:
 
-  def self.filter_backtrace bt
+  def self.filter_backtrace bt # :nodoc:
     return ["No backtrace"] unless bt
 
     new_bt = []
@@ -52,17 +52,17 @@ module MiniTest
     # mu_pp gives a human-readable version of +obj+.  By default #inspect is
     # called.  You can override this to use #pretty_print if you want.
 
-    def mu_pp(obj)
+    def mu_pp obj
       s = obj.inspect
       s = s.force_encoding(Encoding.default_external) if defined? Encoding
       s
     end
 
-    def _assertions= n
+    def _assertions= n # :nodoc:
       @_assertions = n
     end
 
-    def _assertions
+    def _assertions # :nodoc:
       @_assertions ||= 0
     end
 
@@ -164,7 +164,7 @@ module MiniTest
     def assert_match exp, act, msg = nil
       msg = message(msg) { "Expected #{mu_pp(exp)} to match #{mu_pp(act)}" }
       assert_respond_to act, :"=~"
-      exp = /#{Regexp.escape(exp)}/ if String === exp && String === act
+      exp = /#{Regexp.escape exp}/ if String === exp && String === act
       assert exp =~ act, msg
     end
 
@@ -410,14 +410,23 @@ module MiniTest
     def refute_match exp, act, msg = nil
       msg = message(msg) { "Expected #{mu_pp(exp)} to not match #{mu_pp(act)}" }
       assert_respond_to act, :"=~"
-      exp = /#{Regexp.escape(exp)}/ if String === exp && String === act
+      exp = (/#{Regexp.escape exp}/) if String === exp and String === act
       refute exp =~ act, msg
     end
+
+    ##
+    # Fails if +obj+ is nil.
 
     def refute_nil obj, msg = nil
       msg = message(msg) { "Expected #{mu_pp(obj)} to not be nil" }
       refute obj.nil?, msg
     end
+
+    ##
+    # Fails if +o1+ is not +op+ +o2+ nil. eg:
+    #
+    #   refute_operator 1, :>, 2 #=> pass
+    #   refute_operator 1, :<, 2 #=> fail
 
     def refute_operator o1, op, o2, msg = nil
       msg = message(msg) {
@@ -426,18 +435,29 @@ module MiniTest
       refute o1.__send__(op, o2), msg
     end
 
+    ##
+    # Fails if +obj+ responds to the message +meth+.
+
     def refute_respond_to obj, meth, msg = nil
       msg = message(msg) { "Expected #{mu_pp(obj)} to not respond to #{meth}" }
 
       refute obj.respond_to?(meth), msg
     end
 
+    ##
+    # Fails if +exp+ is the same (by object identity) as +act+.
+
     def refute_same exp, act, msg = nil
       msg = message(msg) {
-        "Expected #{mu_pp(act)} to not be the same as #{mu_pp(exp)}"
+        data = [mu_pp(act), act.object_id, mu_pp(exp), exp.object_id]
+        "Expected %s (oid=%d) to not be the same as %s (oid=%d)" % data
       }
       refute exp.equal?(act), msg
     end
+
+    ##
+    # Skips the current test. Gets listed at the end of the run but
+    # doesn't cause a failure exit code.
 
     def skip msg = nil, bt = caller
       msg ||= "Skipped, no message given"
@@ -446,11 +466,11 @@ module MiniTest
   end
 
   class Unit
-    VERSION = "1.5.0"
+    VERSION = "1.5.0" # :nodoc:
 
-    attr_accessor :report, :failures, :errors, :skips
-    attr_accessor :test_count, :assertion_count
-    attr_accessor :start_time
+    attr_accessor :report, :failures, :errors, :skips # :nodoc:
+    attr_accessor :test_count, :assertion_count       # :nodoc:
+    attr_accessor :start_time                         # :nodoc:
 
     @@installed_at_exit ||= false
     @@out = $stdout
@@ -475,7 +495,7 @@ module MiniTest
       @@out = stream
     end
 
-    def location e
+    def location e # :nodoc:
       last_before_assertion = ""
       e.backtrace.reverse_each do |s|
         break if s =~ /in .(assert|refute|flunk|pass|fail|raise|must|wont)/
@@ -505,7 +525,7 @@ module MiniTest
       e[0, 1]
     end
 
-    def initialize
+    def initialize # :nodoc:
       @report = []
       @errors = @failures = @skips = 0
       @verbose = false
@@ -585,15 +605,12 @@ module MiniTest
     # TestCase subclass per implementation class.
 
     class TestCase
-      attr_reader :__name__
+      attr_reader :__name__ # :nodoc:
 
-      ##
-      # These exception cause minitest to exit
+      PASSTHROUGH_EXCEPTIONS = [NoMemoryError, SignalException,
+                                Interrupt, SystemExit] # :nodoc:
 
-      PASSTHROUGH_EXCEPTIONS = [NoMemoryError, SignalException, Interrupt,
-        SystemExit]
-
-      SUPPORTS_INFO_SIGNAL = Signal.list['INFO']
+      SUPPORTS_INFO_SIGNAL = Signal.list['INFO'] # :nodoc:
 
       ##
       # Runs the tests reporting the status to +runner+
@@ -629,48 +646,64 @@ module MiniTest
         result
       end
 
-      def initialize name
+      def initialize name # :nodoc:
         @__name__ = name
         @passed = nil
       end
 
-      def self.reset
+      def self.reset # :nodoc:
         @@test_suites = {}
       end
 
       reset
 
-      def self.inherited klass
+      def self.inherited klass # :nodoc:
         @@test_suites[klass] = true
       end
+
+      ##
+      # Defines test order and is subclassable. Defaults to :random
+      # but can be overridden to return :alpha if your tests are order
+      # dependent (read: weak).
 
       def self.test_order
         :random
       end
 
-      def self.test_suites
+      def self.test_suites # :nodoc:
         @@test_suites.keys.sort_by { |ts| ts.name }
       end
 
-      def self.test_methods
-        methods = public_instance_methods(true).grep(/^test/).map { |m|
-          m.to_s
-        }.sort
+      def self.test_methods # :nodoc:
+        methods = public_instance_methods(true).grep(/^test/).map { |m| m.to_s }
 
-        if self.test_order == :random then
+        case self.test_order
+        when :random then
           max = methods.size
-          methods = methods.sort_by { rand(max) }
+          methods.sort_by { rand(max) }
+        when :alpha, :sorted then
+          methods.sort
+        else
+          raise "Unknown test_order: #{self.test_order.inspect}"
         end
-
-        methods
       end
 
-      def setup; end
-      def teardown; end
+      ##
+      # Returns true if the test passed.
 
       def passed?
         @passed
       end
+
+      ##
+      # Runs before every test. Use this to refactor test initialization.
+
+      def setup; end
+
+      ##
+      # Runs after every test. Use this to refactor test cleanup.
+
+      def teardown; end
 
       include MiniTest::Assertions
     end # class TestCase
@@ -678,12 +711,14 @@ module MiniTest
 end # module MiniTest
 
 if $DEBUG then
-  # this helps me ferret out porting issues
-  module Test; end
-  module Test::Unit; end
-  class Test::Unit::TestCase
-    def self.inherited x
-      raise "You're running minitest and test/unit in the same process: #{x}"
+  module Test                # :nodoc:
+    module Unit              # :nodoc:
+      class TestCase         # :nodoc:
+        def self.inherited x # :nodoc:
+          # this helps me ferret out porting issues
+          raise "Using minitest and test/unit in the same process: #{x}"
+        end
+      end
     end
   end
 end
