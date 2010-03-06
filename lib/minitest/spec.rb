@@ -159,7 +159,7 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
     define_method name, &block
 
     classes(MiniTest::Spec).each do |mod|
-      mod.send :undef_method, name
+      mod.send :undef_method, name if mod.respond_to? name
     end
   end
 

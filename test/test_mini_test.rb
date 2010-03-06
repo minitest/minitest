@@ -201,7 +201,7 @@ class TestMiniTest < MiniTest::Unit::TestCase
 
     Object.const_set(:ATestCase, tc)
 
-    @tu.run
+    @tu.run %w[-s 42]
 
     expected = "Loaded suite blah
 Started
@@ -213,6 +213,8 @@ test_failure(ATestCase) [FILE:LINE]:
 Failed assertion, no message given.
 
 2 tests, 2 assertions, 1 failures, 0 errors, 0 skips
+
+Test run options: --seed 42
 "
     util_assert_report expected
   end
@@ -230,7 +232,7 @@ Failed assertion, no message given.
 
     Object.const_set(:ATestCase, tc)
 
-    @tu.run
+    @tu.run %w[-s 42]
 
     expected = "Loaded suite blah
 Started
@@ -243,6 +245,8 @@ RuntimeError: unhandled exception
     FILE:LINE:in `test_error'
 
 2 tests, 1 assertions, 0 failures, 1 errors, 0 skips
+
+Test run options: --seed 42
 "
     util_assert_report expected
   end
@@ -260,7 +264,7 @@ RuntimeError: unhandled exception
 
     Object.const_set(:ATestCase, tc)
 
-    @tu.run
+    @tu.run %w[-s 42]
 
     expected = "Loaded suite blah
 Started
@@ -273,6 +277,8 @@ RuntimeError: unhandled exception
     FILE:LINE:in `teardown'
 
 1 tests, 1 assertions, 0 failures, 1 errors, 0 skips
+
+Test run options: --seed 42
 "
     util_assert_report expected
   end
@@ -290,7 +296,7 @@ RuntimeError: unhandled exception
 
     Object.const_set(:ATestCase, tc)
 
-    @tu.run
+    @tu.run %w[-s 42]
 
     expected = "Loaded suite blah
 Started
@@ -302,6 +308,8 @@ test_skip(ATestCase) [FILE:LINE]:
 not yet
 
 2 tests, 1 assertions, 0 failures, 0 errors, 1 skips
+
+Test run options: --seed 42
 "
     util_assert_report expected
   end
@@ -313,6 +321,8 @@ Started
 Finished in 0.00
 
 1 tests, 1 assertions, 0 failures, 0 errors, 0 skips
+
+Test run options: --seed 42
 "
     output = @output.string.sub(/Finished in .*/, "Finished in 0.00")
     output.sub!(/Loaded suite .*/, 'Loaded suite blah')
@@ -334,9 +344,18 @@ Finished in 0.00
 
     Object.const_set(:ATestCase, tc)
 
-    @tu.run(%w(-n /something/))
+    @tu.run %w[-n /something/ -s 42]
 
-    util_assert_report
+    expected = "Loaded suite blah
+Started
+.
+Finished in 0.00
+
+1 tests, 1 assertions, 0 failures, 0 errors, 0 skips
+
+Test run options: --seed 42 --name \"/something/\"
+"
+    util_assert_report expected
   end
 
   def test_run_passing
@@ -348,7 +367,7 @@ Finished in 0.00
 
     Object.const_set(:ATestCase, tc)
 
-    @tu.run
+    @tu.run %w[-s 42]
 
     util_assert_report
   end
@@ -780,16 +799,11 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   def test_test_methods_sorted
     @assertion_count = 0
 
-    sample_test_case = Class.new(MiniTest::Unit::TestCase)
-
-    class << sample_test_case
-      def test_order; :sorted end
-    end
-
-    sample_test_case.instance_eval do
-      define_method :test_test3 do assert "does not matter" end
-      define_method :test_test2 do assert "does not matter" end
-      define_method :test_test1 do assert "does not matter" end
+    sample_test_case = Class.new(MiniTest::Unit::TestCase) do
+      def self.test_order; :sorted end
+      def test_test3; assert "does not matter" end
+      def test_test2; assert "does not matter" end
+      def test_test1; assert "does not matter" end
     end
 
     expected = %w(test_test1 test_test2 test_test3)
@@ -799,27 +813,15 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   def test_test_methods_random
     @assertion_count = 0
 
-    sample_test_case = Class.new(MiniTest::Unit::TestCase)
-
-    class << sample_test_case
-      def test_order; :random end
-    end
-
-    sample_test_case.instance_eval do
-      define_method :test_test1 do assert "does not matter" end
-      define_method :test_test2 do assert "does not matter" end
-      define_method :test_test3 do assert "does not matter" end
+    sample_test_case = Class.new(MiniTest::Unit::TestCase) do
+      def test_test1; assert "does not matter" end
+      def test_test2; assert "does not matter" end
+      def test_test3; assert "does not matter" end
     end
 
     srand 42
-    expected = %w(test_test1 test_test2 test_test3)
-    max = expected.size
-    expected = expected.sort_by { rand(max) }
-
-    srand 42
-    result = sample_test_case.test_methods
-
-    assert_equal expected, result
+    expected = %w(test_test2 test_test1 test_test3)
+    assert_equal expected, sample_test_case.test_methods
   end
 
   def test_refute
