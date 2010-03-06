@@ -1,3 +1,5 @@
+require 'optparse'
+
 ##
 # Minimal (mostly drop-in) replacement for test-unit.
 
