@@ -531,19 +531,54 @@ module MiniTest
       @verbose = false
     end
 
+    def process_args args = []
+      options = {}
+
+      OptionParser.new do |opts|
+        opts.banner  = 'minitest options:'
+        opts.version = MiniTest::Unit::VERSION
+
+        opts.on '-h', '--help', 'Display this help.' do
+          puts opts
+          exit
+        end
+
+        opts.on '-s', '--seed SEED', Integer, "Sets random seed" do |m|
+          options[:seed] = m.to_i
+        end
+
+        opts.on '-v', '--verbose', "Verbose. Show progress processing files." do
+          options[:verbose] = true
+        end
+
+        opts.on '-n', '--name PATTERN', "Filter test names on pattern." do |a|
+          options[:filter] = a
+        end
+
+        opts.parse args
+      end
+
+      options
+    end
+
     ##
     # Top level driver, controls all output and filtering.
 
     def run args = []
-      @verbose = args.delete('-v')
+      options = process_args args
 
-      filter = if args.first =~ /^(-n|--name)$/ then
-                 args.shift
-                 arg = args.shift
-                 arg =~ /\/(.*)\// ? Regexp.new($1) : arg
-               else
-                 /./ # anything - ^test_ already filtered by #tests
-               end
+      @verbose = options[:verbose]
+
+      filter = options[:filter] || '/./'
+      filter = Regexp.new $1 if filter and filter =~ /\/(.*)\//
+
+      seed = options[:seed]
+      unless seed then
+        srand
+        seed = srand % 0xFFFF
+      end
+
+      srand seed
 
       @@out.puts "Loaded suite #{$0.sub(/\.rb$/, '')}\nStarted"
 
@@ -560,6 +595,14 @@ module MiniTest
       @@out.puts
 
       status
+
+      @@out.puts
+
+      help = ["--seed", seed]
+      help.push "--verbose" if @verbose
+      help.push("--name", options[:filter].inspect) if options[:filter]
+
+      @@out.puts "Test run options: #{help.join(" ")}"
 
       return failures + errors if @test_count > 0 # or return nil...
     rescue Interrupt
@@ -680,7 +723,7 @@ module MiniTest
         case self.test_order
         when :random then
           max = methods.size
-          methods.sort_by { rand(max) }
+          methods.sort.sort_by { rand(max) }
         when :alpha, :sorted then
           methods.sort
         else
