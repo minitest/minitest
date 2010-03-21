@@ -155,7 +155,12 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
 
   def self.it desc, &block
     block ||= proc { skip "(no tests defined)" }
-    name = "test_#{desc.gsub(/\W+/, '_').downcase}"
+
+    @specs ||= 0
+    @specs += 1
+
+    name = "test_%04d_%s" % [ @specs, desc.gsub(/\W+/, '_').downcase ]
+
     define_method name, &block
 
     classes(MiniTest::Spec).each do |mod|
