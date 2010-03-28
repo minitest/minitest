@@ -1,3 +1,23 @@
+=== 1.6.0 / 2010-03-27
+
+* 10 minor enhancements:
+
+  * Added --seed argument so you can reproduce a random order for debugging.
+  * Added documentation for assertions
+  * Added more rdoc and tons of :nodoc:
+  * Added output to give you all the options you need to reproduce that run.
+  * Added proper argument parsing to minitest.
+  * Added unique serial # to spec names so order can be preserved (needs tests). (phrogz)
+  * Empty 'it' fails with default msg. (phrogz)
+  * Remove previous method on expect to remove 1.9 warnings
+  * Spec#it is now order-proof wrt subclasses/nested describes.
+  * assert_same error message now reports in decimal, eg: oid=123. (mattkent)
+
+* 2 bug fixes:
+
+  * Fixed message on refute_same to be consistent with assert_same.
+  * Fixed method randomization to be stable for testing.
+
 === 1.5.0 / 2010-01-06
 
 * 4 minor enhancements:
