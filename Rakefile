@@ -11,6 +11,7 @@ Hoe.spec 'minitest' do
   developer 'Ryan Davis', 'ryand-ruby@zenspider.com'
 
   self.rubyforge_name = "bfts"
+  self.testlib = :minitest
 end
 
 def loc dir
