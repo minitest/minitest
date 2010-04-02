@@ -26,6 +26,97 @@ mini/mock, by Steven Baker, is a beautifully tiny mock object framework.
 
 See design_rationale.rb to see how specs and tests work in minitest.
 
+== SYNOPSIS:
+
+Given that you'd like to test the following class:
+
+    class Meme
+      def i_can_has_cheezburger?
+        "OHAI!"
+      end
+
+      def does_it_blend?
+        "YES!"
+      end
+    end
+
+
+=== Unit tests
+
+    require 'minitest/unit'
+    MiniTest::Unit.autorun
+
+    class TestMeme < MiniTest::Unit::TestCase
+      def setup
+        @meme = Meme.new
+      end
+
+      def test_that_kitty_can_eat
+        assert_equal "OHAI!", @meme.i_can_has_cheezburger?
+      end
+
+      def test_that_it_doesnt_not_blend
+        refute_match /^no/i, @meme.does_it_blend?
+      end
+    end
+
+=== Specs
+
+    require 'minitest/spec'
+    MiniTest::Unit.autorun
+
+    describe Meme do
+      before do
+        @meme = Meme.new
+      end
+
+      describe "when asked about cheeseburgers" do
+        it "should respond positively" do
+          @meme.i_can_has_cheezburger?.must_equal "OHAI!"
+        end
+      end
+
+      describe "when asked about blending possibilities" do
+        it "won't say no" do
+          @meme.does_it_blend?.wont_match /^no/i
+        end
+      end
+    end
+
+=== Mocks
+
+    class MemeAsker
+      def initialize(meme)
+        @meme = meme
+      end
+
+      def ask(question)
+        method = question.tr(" ","_") + "?"
+        @meme.send(method)
+      end
+    end
+
+    require 'minitest/spec'
+    require 'minitest/mock'
+    MiniTest::Unit.autorun
+
+    describe MemeAsker do
+      before do
+        @meme = MiniTest::Mock.new
+        @meme_asker = MemeAsker.new @meme
+      end
+
+      describe "#ask" do
+        describe "when passed an unpunctuated question" do
+          it "should invoke the appropriate predicate method on the meme" do
+            @meme.expect :does_it_blend?, :return_value
+            @meme_asker.ask "does it blend"
+            @meme.verify
+          end
+        end
+      end
+    end
+
 == REQUIREMENTS:
 
 + Ruby 1.8, maybe even 1.6 or lower. No magic is involved.
