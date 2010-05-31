@@ -164,3 +164,26 @@ describe MiniTest::Spec do
     proc { [1, 2, 3].wont_include 2 }.must_raise MiniTest::Assertion
   end
 end
+
+class TestMeta < MiniTest::Unit::TestCase
+  def test_structure
+    x = y = nil
+    x = describe "top-level thingy" do
+      before {}
+      after  {}
+
+      it "top-level-it" do end
+
+      y = describe "inner thingy" do
+        before {}
+        it "inner-it" do end
+      end
+    end
+
+    top_methods = %w(setup teardown test_0001_top_level_it)
+    inner_methods = %w(setup test_0001_inner_it)
+
+    assert_equal top_methods, x.instance_methods(false).sort
+    assert_equal inner_methods, y.instance_methods(false).sort
+  end
+end
