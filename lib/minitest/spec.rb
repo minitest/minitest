@@ -78,6 +78,7 @@ module Kernel
     stack.push cls
     cls.class_eval(&block)
     stack.pop
+    cls
   end
   private :describe
 end
