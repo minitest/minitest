@@ -49,7 +49,7 @@ Object.infect_with_assertions(:must, :wont,
                               /_in_/                          => '_be_within_',
                               /_operator/                     => '_be',
                               /_includes/                     => '_include',
-                              /(must|wont)_(.*_of|nil|empty)/ => '\1_be_\2',
+                       /(must|wont)_(.*_of|nil|silent|empty)/ => '\1_be_\2',
                               /must_raises/                   => 'must_raise')
 
 class Object
@@ -198,6 +198,10 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   # See MiniTest::Assertions#assert_same
 
   ##
+  # :method: must_be_silent
+  # See MiniTest::Assertions#assert_silent
+
+  ##
   # :method: must_be_within_delta
   # See MiniTest::Assertions#assert_in_delta
 
@@ -216,6 +220,10 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   ##
   # :method: must_match
   # See MiniTest::Assertions#assert_match
+
+  ##
+  # :method: must_output
+  # See MiniTest::Assertions#assert_output
 
   ##
   # :method: must_raise
@@ -260,6 +268,10 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   ##
   # :method: wont_be_same_as
   # See MiniTest::Assertions#refute_same
+
+  ##
+  # :method: wont_be_within_delta
+  # See MiniTest::Assertions#refute_in_delta
 
   ##
   # :method: wont_be_within_delta
