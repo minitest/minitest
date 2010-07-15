@@ -203,7 +203,9 @@ class TestMiniTest < MiniTest::Unit::TestCase
 
     @tu.run %w[-s 42]
 
-    expected = "Loaded suite blah
+    expected = "Test run options: --seed 42
+
+Loaded suite blah
 Started
 F.
 Finished in 0.00
@@ -234,7 +236,9 @@ Test run options: --seed 42
 
     @tu.run %w[-s 42]
 
-    expected = "Loaded suite blah
+    expected = "Test run options: --seed 42
+
+Loaded suite blah
 Started
 E.
 Finished in 0.00
@@ -266,7 +270,9 @@ Test run options: --seed 42
 
     @tu.run %w[-s 42]
 
-    expected = "Loaded suite blah
+    expected = "Test run options: --seed 42
+
+Loaded suite blah
 Started
 E
 Finished in 0.00
@@ -298,7 +304,9 @@ Test run options: --seed 42
 
     @tu.run %w[-s 42]
 
-    expected = "Loaded suite blah
+    expected = "Test run options: --seed 42
+
+Loaded suite blah
 Started
 S.
 Finished in 0.00
@@ -315,7 +323,9 @@ Test run options: --seed 42
   end
 
   def util_assert_report expected = nil
-    expected ||= "Loaded suite blah
+    expected ||= "Test run options: --seed 42
+
+Loaded suite blah
 Started
 .
 Finished in 0.00
@@ -346,7 +356,9 @@ Test run options: --seed 42
 
     @tu.run %w[-n /something/ -s 42]
 
-    expected = "Loaded suite blah
+    expected = "Test run options: --seed 42 --name \"/something/\"
+
+Loaded suite blah
 Started
 .
 Finished in 0.00
@@ -411,9 +423,11 @@ class TestMiniTestTestCase < MiniTest::Unit::TestCase
     methods = MiniTest::Assertions.public_instance_methods
     methods.map! { |m| m.to_s } if Symbol === methods.first
 
-    ignores = %w(assert_block assert_no_match assert_not_equal assert_not_nil
-                 assert_not_same assert_nothing_thrown assert_raise
-                 assert_nothing_raised assert_raises assert_throws assert_send)
+    ignores = %w(assert_block assert_no_match assert_not_equal
+                 assert_not_nil assert_not_same assert_nothing_raised
+                 assert_nothing_thrown assert_output assert_raise
+                 assert_raises assert_send assert_silent assert_throws)
+
     asserts = methods.grep(/^assert/).sort - ignores
     refutes = methods.grep(/^refute/).sort - ignores
 
@@ -597,6 +611,60 @@ class TestMiniTestTestCase < MiniTest::Unit::TestCase
     end
   end
 
+  def test_assert_output_both
+    @assertion_count = 2
+
+    @tc.assert_output "yay", "blah" do
+      print "yay"
+      $stderr.print "blah"
+    end
+  end
+
+  def test_assert_output_err
+    @tc.assert_output nil, "blah" do
+      $stderr.print "blah"
+    end
+  end
+
+  def test_assert_output_neither
+    @assertion_count = 0
+
+    @tc.assert_output do
+      # do nothing
+    end
+  end
+
+  def test_assert_output_out
+    @tc.assert_output "blah" do
+      print "blah"
+    end
+  end
+
+  def test_assert_output_triggered_both
+    util_assert_triggered "In stdout.\nExpected \"yay\", not \"boo\"." do
+      @tc.assert_output "yay", "blah" do
+        print "boo"
+        $stderr.print "blah blah"
+      end
+    end
+  end
+
+  def test_assert_output_triggered_err
+    util_assert_triggered "In stderr.\nExpected \"blah\", not \"blah blah\"." do
+      @tc.assert_output nil, "blah" do
+        $stderr.print "blah blah"
+      end
+    end
+  end
+
+  def test_assert_output_triggered_out
+    util_assert_triggered "In stdout.\nExpected \"blah\", not \"blah blah\"." do
+      @tc.assert_output "blah" do
+        print "blah blah"
+      end
+    end
+  end
+
   def test_assert_raises
     @tc.assert_raises RuntimeError do
       raise "blah"
@@ -735,6 +803,32 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   def test_assert_send_bad
     util_assert_triggered "Expected 1.>(*[2]) to return true." do
       @tc.assert_send [1, :>, 2]
+    end
+  end
+
+  def test_assert_silent
+    @assertion_count = 2
+
+    @tc.assert_silent do
+      # do nothing
+    end
+  end
+
+  def test_assert_silent_triggered_err
+    @assertion_count = 2
+
+    util_assert_triggered "In stderr.\nExpected \"\", not \"blah blah\"." do
+      @tc.assert_silent do
+        $stderr.print "blah blah"
+      end
+    end
+  end
+
+  def test_assert_silent_triggered_out
+    util_assert_triggered "In stdout.\nExpected \"\", not \"blah blah\"." do
+      @tc.assert_silent do
+        print "blah blah"
+      end
     end
   end
 
