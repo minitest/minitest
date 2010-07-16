@@ -1,3 +1,13 @@
+=== 1.7.0 / 2010-07-15
+
+* 5 minor enhancements:
+
+  * Added assert_output (mapped to must_output).
+  * Added assert_silent (mapped to must_be_silent).
+  * Added examples to readme (Mike Dalessio)
+  * Added options output at the top of the run, for fatal run debugging (tenderlove)
+  * Spec's describe method returns created class
+
 === 1.6.0 / 2010-03-27
 
 * 10 minor enhancements:
