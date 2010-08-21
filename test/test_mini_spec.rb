@@ -44,7 +44,7 @@ describe MiniTest::Spec do
     bad = %w[not raise throw send output be_silent]
 
     expected_wonts = expected_musts.map { |m| m.sub(/^must/, 'wont') }
-    expected_wonts.reject! { |m| m =~ /wont_#{Regexp.union bad}/ }
+    expected_wonts.reject! { |m| m =~ /wont_#{Regexp.union(*bad)}/ }
 
     musts.must_equal expected_musts
     wonts.must_equal expected_wonts
@@ -213,7 +213,7 @@ class TestMeta < MiniTest::Unit::TestCase
     top_methods = %w(setup teardown test_0001_top_level_it)
     inner_methods = %w(setup test_0001_inner_it)
 
-    assert_equal top_methods, x.instance_methods(false).sort.map { |o| o.to_s }
-    assert_equal inner_methods, y.instance_methods(false).sort.map{|o| o.to_s }
+    assert_equal top_methods, x.instance_methods(false).sort.map   {|o| o.to_s }
+    assert_equal inner_methods, y.instance_methods(false).sort.map {|o| o.to_s }
   end
 end
