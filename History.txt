@@ -1,3 +1,9 @@
+=== 1.7.1 / 2010-09-01
+
+* 1 bug fix:
+
+  * 1.9.2 fixes for spec tests
+
 === 1.7.0 / 2010-07-15
 
 * 5 minor enhancements:
