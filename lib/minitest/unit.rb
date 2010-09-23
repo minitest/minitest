@@ -439,7 +439,6 @@ module MiniTest
 
     def refute_match exp, act, msg = nil
       msg = message(msg) { "Expected #{mu_pp(exp)} to not match #{mu_pp(act)}" }
-      assert_respond_to act, :"=~"
       exp = (/#{Regexp.escape exp}/) if String === exp and String === act
       refute exp =~ act, msg
     end
