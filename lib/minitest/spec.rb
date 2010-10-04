@@ -166,6 +166,20 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
       mod.send :undef_method, name if mod.respond_to? name
     end
   end
+  
+  ##
+  # Define a block which can be used to store reusable test input 
+  # instead of using instance variables. Identical to Rspec's let.
+  #
+  # NOTE: let block methods ARE inherited, but effectively they
+  # can't be overwritten since the block value is memoized.
+  def self.let name, &block
+    define_method name do
+      @assignments ||= {}
+      @assignments[name] ||= instance_eval(&block)
+    end
+  end
+  
 end
 
 Object.infect_with_assertions(:must, :wont,

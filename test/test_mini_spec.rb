@@ -202,18 +202,70 @@ class TestMeta < MiniTest::Unit::TestCase
       before {}
       after  {}
 
+      let :top_level_let do end
       it "top-level-it" do end
 
       y = describe "inner thingy" do
         before {}
+        let :inner_let do end
         it "inner-it" do end
       end
     end
 
-    top_methods = %w(setup teardown test_0001_top_level_it)
-    inner_methods = %w(setup test_0001_inner_it)
+    top_methods = %w(setup teardown test_0001_top_level_it top_level_let )
+    inner_methods = %w(inner_let setup test_0001_inner_it)
 
     assert_equal top_methods, x.instance_methods(false).sort.map   {|o| o.to_s }
     assert_equal inner_methods, y.instance_methods(false).sort.map {|o| o.to_s }
+    
+    refute_includes y.instance_methods(true).sort.map {|o| o.to_s }, "test_0001_top_level_it"
+    assert_includes y.instance_methods(true).sort.map {|o| o.to_s }, "top_level_let"
   end
 end
+
+describe 'MiniTest::Spec.let' do
+
+  describe "lunch" do
+    let(:sample_input) { "ham & cheese" } 
+    
+    before do 
+      @outer_sample_input = sample_input
+    end
+    
+    it 'needs to respond to sample_input' do
+      self.must_respond_to :sample_input
+    end
+    
+    it 'needs to return value of block' do
+      sample_input.must_equal "ham & cheese"
+    end
+    
+    describe "side order" do
+      let(:another_sample) { "lentil soup" }
+      
+      it 'needs to respond to sample_input' do
+        self.must_respond_to :sample_input
+      end
+
+      it 'needs to respond to another_sample' do
+        self.must_respond_to :another_sample
+      end
+      
+      it 'needs to return value of sample_input block' do
+        sample_input.must_equal "ham & cheese"
+      end
+      
+      it 'needs to return value of another_sample block' do
+        another_sample.must_equal "lentil soup"
+      end
+      
+      it 'needs to return same instance for sample_input as outer spec class' do
+        sample_input.must_be_same_as @outer_sample_input
+      end
+      
+    end
+  end
+end
+
+
+
