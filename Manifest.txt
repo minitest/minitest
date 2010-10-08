@@ -10,4 +10,4 @@ lib/minitest/spec.rb
 lib/minitest/unit.rb
 test/test_mini_mock.rb
 test/test_mini_spec.rb
-test/test_mini_test.rb
+test/test_mini_unit.rb
