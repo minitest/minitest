@@ -630,9 +630,11 @@ module MiniTest
 
       start = Time.now
       run_test_suites filter
+      t = Time.now - start
 
       @@out.puts
-      @@out.puts "Finished in #{'%.6f' % (Time.now - start)} seconds."
+      @@out.puts "Finished in %.6f seconds, %.4f tests/s, %.4f assertions/s." %
+        [t, test_count / t, assertion_count / t]
 
       @report.each_with_index do |msg, i|
         @@out.puts "\n%3d) %s" % [i + 1, msg]
@@ -669,12 +671,12 @@ module MiniTest
         suite.test_methods.grep(filter).each do |test|
           inst = suite.new test
           inst._assertions = 0
-          @@out.print "#{suite}##{test}: " if @verbose
+          @@out.print "#{suite}##{test} = " if @verbose
 
           @start_time = Time.now
           result = inst.run(self)
 
-          @@out.print "%.2f s: " % (Time.now - @start_time) if @verbose
+          @@out.print "%.2f s = " % (Time.now - @start_time) if @verbose
           @@out.print result
           @@out.puts if @verbose
           @test_count += 1
