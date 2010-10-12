@@ -44,7 +44,7 @@ class MiniTest::Unit
       return m, b, rr
     end
 
-    def assert_performance validation
+    def assert_performance validation, &block
       range = self.class.bench_range
 
       print "#{__name__}:\t"
@@ -54,7 +54,7 @@ class MiniTest::Unit
       range.each do |x|
         GC.start
         t0 = Time.now
-        yield x
+        instance_exec(x, &block)
         t = Time.now - t0
 
         print "\t%9.6f" % t
