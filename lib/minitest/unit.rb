@@ -619,7 +619,8 @@ module MiniTest
 
     def self.plugins
       @@plugins ||= (["run_all_tests"] +
-                     public_instance_methods(false).grep(/^run_/)).uniq
+                     public_instance_methods(false).
+                     grep(/^run_/).map { |s| s.to_s }).uniq
     end
 
     ##
