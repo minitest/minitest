@@ -12,11 +12,11 @@ class TestMiniUnit < MiniTest::Unit::TestCase
   basedir = Pathname.new(File.expand_path(MiniTest::MINI_DIR)) + 'mini'
   basedir = basedir.relative_path_from(pwd).to_s
   MINITEST_BASE_DIR = basedir[/\A\./] ? basedir : "./#{basedir}"
-  BT_MIDDLE = ["#{MINITEST_BASE_DIR}/test.rb:165:in `run_test_suites'",
+  BT_MIDDLE = ["#{MINITEST_BASE_DIR}/test.rb:165:in `drive_tests'",
                "#{MINITEST_BASE_DIR}/test.rb:161:in `each'",
-               "#{MINITEST_BASE_DIR}/test.rb:161:in `run_test_suites'",
+               "#{MINITEST_BASE_DIR}/test.rb:161:in `drive_tests'",
                "#{MINITEST_BASE_DIR}/test.rb:158:in `each'",
-               "#{MINITEST_BASE_DIR}/test.rb:158:in `run_test_suites'",
+               "#{MINITEST_BASE_DIR}/test.rb:158:in `drive_tests'",
                "#{MINITEST_BASE_DIR}/test.rb:139:in `run'",
                "#{MINITEST_BASE_DIR}/test.rb:106:in `run'"]
 
@@ -45,7 +45,7 @@ Test run options: --seed 42
     @tu = MiniTest::Unit.new
     @output = StringIO.new("")
     MiniTest::Unit.output = @output
-    assert_equal [0, 0], @tu.run_test_suites
+    assert_equal [0, 0], @tu.drive_tests
   end
 
   def teardown
@@ -145,7 +145,7 @@ Test run options: --seed 42
     assert_match(/^Exception.*Oh no again!/m, @tu.report.first)
   end
 
-  def test_class_run_test_suites
+  def test_class_drive_tests
     tc = Class.new(MiniTest::Unit::TestCase) do
       def test_something
         assert true
@@ -154,7 +154,7 @@ Test run options: --seed 42
 
     Object.const_set(:ATestCase, tc)
 
-    assert_equal [1, 1], @tu.run_test_suites
+    assert_equal [1, 1], @tu.drive_tests
   end
 
   def test_filter_backtrace
@@ -212,7 +212,7 @@ Test run options: --seed 42
 
     Object.const_set(:ATestCase, tc)
 
-    @tu.run %w[-s 42]
+    @tu.run %w[--seed 42]
 
     expected = "Test run options: --seed 42
 
@@ -246,7 +246,7 @@ Test run options: --seed 42
 
     Object.const_set(:ATestCase, tc)
 
-    @tu.run %w[-s 42]
+    @tu.run %w[--seed 42]
 
     expected = "Test run options: --seed 42
 
@@ -280,7 +280,7 @@ Test run options: --seed 42
 
     Object.const_set(:ATestCase, tc)
 
-    @tu.run %w[-s 42]
+    @tu.run %w[--seed 42]
 
     expected = "Test run options: --seed 42
 
@@ -313,9 +313,9 @@ Test run options: --seed 42
 
     Object.const_set(:ATestCase, tc)
 
-    @tu.run %w[-n /something/ -s 42]
+    @tu.run %w[--name /some|thing/ --seed 42]
 
-    expected = "Test run options: --seed 42 --name \"/something/\"
+    expected = "Test run options: --name \"/some|thing/\" --seed 42
 
 Loaded suite blah
 Started
@@ -324,7 +324,7 @@ Finished in 0.00
 
 1 tests, 1 assertions, 0 failures, 0 errors, 0 skips
 
-Test run options: --seed 42 --name \"/something/\"
+Test run options: --name \"/some|thing/\" --seed 42
 "
     assert_report expected
   end
@@ -338,7 +338,7 @@ Test run options: --seed 42 --name \"/something/\"
 
     Object.const_set(:ATestCase, tc)
 
-    @tu.run %w[-s 42]
+    @tu.run %w[--seed 42]
 
     assert_report
   end
@@ -356,7 +356,7 @@ Test run options: --seed 42 --name \"/something/\"
 
     Object.const_set(:ATestCase, tc)
 
-    @tu.run %w[-s 42]
+    @tu.run %w[--seed 42]
 
     expected = "Test run options: --seed 42
 
