@@ -511,6 +511,9 @@ module MiniTest
     attr_accessor :report, :failures, :errors, :skips # :nodoc:
     attr_accessor :test_count, :assertion_count       # :nodoc:
     attr_accessor :start_time                         # :nodoc:
+    attr_accessor :options                            # :nodoc:
+    attr_accessor :help                               # :nodoc:
+    attr_accessor :verbose                            # :nodoc:
 
     @@installed_at_exit ||= false
     @@out = $stdout
@@ -573,6 +576,7 @@ module MiniTest
 
     def process_args args = []
       options = {}
+      orig_args = args.dup
 
       OptionParser.new do |opts|
         opts.banner  = 'minitest options:'
@@ -595,48 +599,62 @@ module MiniTest
           options[:filter] = a
         end
 
-        opts.parse args
+        opts.parse! args
+        orig_args -= args
       end
 
+      unless options[:seed] then
+        srand
+        options[:seed] = srand % 0xFFFF
+        orig_args << "--seed" << options[:seed].to_s
+      end
+
+      srand options[:seed]
+
+      self.verbose = options[:verbose]
+      @help = orig_args.map { |s| s =~ /[\s|&<>$()]/ ? s.inspect : s }.join " "
+
       options
+    end
+
+    def self.plugins
+      @@plugins ||= (["run_all_tests"] +
+                     public_instance_methods(false).grep(/^run_/)).uniq
     end
 
     ##
     # Top level driver, controls all output and filtering.
 
     def run args = []
-      options = process_args args
+      self.options = process_args args
 
-      @verbose = options[:verbose]
-
-      filter = options[:filter] || '/./'
-      filter = Regexp.new $1 if filter and filter =~ /\/(.*)\//
-
-      seed = options[:seed]
-      unless seed then
-        srand
-        seed = srand % 0xFFFF
+      self.class.plugins.each do |plugin|
+        send plugin
+        break unless report.empty?
       end
 
-      srand seed
+      return failures + errors if @test_count > 0 # or return nil...
+    rescue Interrupt
+      abort 'Interrupted'
+    end
 
-      help = ["--seed", seed]
-      help.push "--verbose" if @verbose
-      help.push("--name", options[:filter].inspect) if options[:filter]
+    def run_all_tests
+      filter = options[:filter] || '/./'
+      filter = Regexp.new $1 if filter =~ /\/(.*)\//
 
-      @@out.puts "Test run options: #{help.join(" ")}"
+      @@out.puts "Test run options: #{help}"
       @@out.puts
       @@out.puts "Loaded suite #{$0.sub(/\.rb$/, '')}\nStarted"
 
       start = Time.now
-      run_test_suites filter
+      drive_tests filter
       t = Time.now - start
 
       @@out.puts
       @@out.puts "Finished in %.6f seconds, %.4f tests/s, %.4f assertions/s." %
         [t, test_count / t, assertion_count / t]
 
-      @report.each_with_index do |msg, i|
+      report.each_with_index do |msg, i|
         @@out.puts "\n%3d) %s" % [i + 1, msg]
       end
 
@@ -645,12 +663,7 @@ module MiniTest
       status
 
       @@out.puts
-
-      @@out.puts "Test run options: #{help.join(" ")}"
-
-      return failures + errors if @test_count > 0 # or return nil...
-    rescue Interrupt
-      abort 'Interrupted'
+      @@out.puts "Test run options: #{help}"
     end
 
     ##
@@ -662,9 +675,12 @@ module MiniTest
     end
 
     ##
-    # Runs test suites matching +filter+
+    # Runs test suites matching +filter+.
+    #
+    # Not the best name in the world, but I need it to not start with
+    # run_ for the plugin system.
 
-    def run_test_suites filter = /./
+    def drive_tests filter = /./
       @test_count, @assertion_count = 0, 0
       old_sync, @@out.sync = @@out.sync, true if @@out.respond_to? :sync=
       TestCase.test_suites.each do |suite|
@@ -809,4 +825,3 @@ if $DEBUG then
     end
   end
 end
-
