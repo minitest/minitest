@@ -7,7 +7,7 @@ MiniTest::Unit.autorun
 module M; end
 class E < StandardError; include M; end
 
-class TestMiniUnit < MiniTest::Unit::TestCase
+class TestMiniTestUnit < MiniTest::Unit::TestCase
   pwd = Pathname.new(File.expand_path(Dir.pwd))
   basedir = Pathname.new(File.expand_path(MiniTest::MINI_DIR)) + 'mini'
   basedir = basedir.relative_path_from(pwd).to_s
@@ -385,7 +385,7 @@ Test run options: --seed 42
   end
 end
 
-class TestMiniUnitTestCase < MiniTest::Unit::TestCase
+class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   def setup
     MiniTest::Unit::TestCase.reset
 
