@@ -26,6 +26,7 @@ class MiniTest::Unit
       (min..max).map { |m| base ** m }.to_a
     end
 
+    # http://en.wikipedia.org/wiki/Coefficient_of_determination
     def fit_error xys
       y_bar  = sigma(xys) { |x, y| y } / xys.size.to_f
       ss_tot = sigma(xys) { |x, y| (y - y_bar) ** 2 }
