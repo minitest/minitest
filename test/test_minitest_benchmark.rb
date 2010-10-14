@@ -6,24 +6,19 @@ require 'minitest/benchmark'
 # http://www.wolframalpha.com/examples/RegressionAnalysis.html
 
 class TestMiniTestBenchmark < MiniTest::Unit::TestCase
-  def test_fit_linear_clean
-    # y = m * x + b where m = 2.2, b = 3.1
-    x = (1..5).to_a
-    y = x.map { |n| 2.2 * n + 3.1 }
-
-    m, b, rr = fit_linear(x, y)
-    assert_in_delta 2.2, m
-    assert_in_delta 3.1, b
-    assert_operator rr, :>, 0.9999999
+  def test_fit_exponential_clean
+    util_fit_exponential :fit_exponential
   end
 
-  def test_fit_linear_noisy
-    x = [ 60,  61,  62,  63,  65]
-    y = [3.1, 3.6, 3.8, 4.0, 4.1]
-    m, b, rr = fit_linear(x, y)
-    assert_in_delta  0.188, m
-    assert_in_delta(-7.964, b)
-    assert_operator rr, :>, 0.8
+  def test_fit_exponential_noisy
+    t = [1.0, 1.9, 2.6, 3.4, 5.0]
+    p = [12, 10, 8.2, 6.9, 5.9]
+
+    a, b, rr = fit_exponential(t, p)
+
+    assert_operator rr, :>, 0.95
+    assert_in_delta 13.812, a
+    assert_in_delta(-0.182, b)
   end
 
   def test_fit_exponential_weighted_clean
@@ -43,19 +38,24 @@ class TestMiniTestBenchmark < MiniTest::Unit::TestCase
     assert_in_delta(-0.198208, b, 0.01)
   end
 
-  def test_fit_exponential_clean
-    util_fit_exponential :fit_exponential
+  def test_fit_linear_clean
+    # y = m * x + b where m = 2.2, b = 3.1
+    x = (1..5).to_a
+    y = x.map { |n| 2.2 * n + 3.1 }
+
+    m, b, rr = fit_linear(x, y)
+    assert_in_delta 2.2, m
+    assert_in_delta 3.1, b
+    assert_operator rr, :>, 0.9999999
   end
 
-  def test_fit_exponential_noisy
-    t = [1.0, 1.9, 2.6, 3.4, 5.0]
-    p = [12, 10, 8.2, 6.9, 5.9]
-
-    a, b, rr = fit_exponential(t, p)
-
-    assert_operator rr, :>, 0.95
-    assert_in_delta 13.812, a
-    assert_in_delta(-0.182, b)
+  def test_fit_linear_noisy
+    x = [ 60,  61,  62,  63,  65]
+    y = [3.1, 3.6, 3.8, 4.0, 4.1]
+    m, b, rr = fit_linear(x, y)
+    assert_in_delta  0.188, m
+    assert_in_delta(-7.964, b)
+    assert_operator rr, :>, 0.8
   end
 
   def test_fit_power_clean
