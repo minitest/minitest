@@ -86,6 +86,7 @@ class TestMiniTestBenchmark < MiniTest::Unit::TestCase
     assert_in_delta 2.621, a
     assert_in_delta 1.456, b
     # assert_in_delta 0.93553, rr
+    # FIX: this error alg is wrong according to url above
     assert_operator rr, :>, 0.9
   end
 end
