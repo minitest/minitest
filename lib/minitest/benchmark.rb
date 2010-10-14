@@ -26,6 +26,14 @@ class MiniTest::Unit
       (min..max).map { |m| base ** m }.to_a
     end
 
+    def fit_error xys
+      y_bar  = sigma(xys) { |x, y| y } / xys.size.to_f
+      ss_tot = sigma(xys) { |x, y| (y - y_bar) ** 2 }
+      ss_err = sigma(xys) { |x, y| (yield(x) - y)**2 }
+
+      1 - (ss_err / ss_tot)
+    end
+
     def fit_linear xs, ys
       n   = xs.size
       xys = xs.zip(ys)
@@ -40,13 +48,7 @@ class MiniTest::Unit
       m = ((n * sxy) - (sx * sy)) / ((n * sxx) - (sx ** 2))
       b = (sy - (m * sx)) / n
 
-      # calculate error
-      y_bar = sy / n.to_f
-      ss_tot = sigma(xys) { |x, y| (y - y_bar) ** 2 }
-      ss_err = sigma(xys) { |x, y| ((m*x+b) - y)**2 }
-      rr = 1 - (ss_err / ss_tot)
-
-      return m, b, rr
+      return m, b, fit_error(xys) { |x| m * x + b }
     end
 
     ##
@@ -68,13 +70,7 @@ class MiniTest::Unit
       d = sy * sx2y - sxy**2
       a, b = (sx2y * sylny - sxy * sxylny) / d, (sy * sxylny - sxy * sylny) / d
 
-      # calculate error
-      y_bar = sy / n.to_f
-      ss_tot = sigma(xys) { |x, y| (y - y_bar) ** 2 }
-      ss_err = sigma(xys) { |x, y| (Math.exp(a + b * x) - y)**2 }
-      rr = 1 - (ss_err / ss_tot)
-
-      return Math.exp(a), b, rr
+      return Math.exp(a), b, fit_error(xys) { |x| Math.exp(a + b * x) }
     end
 
     ##
@@ -96,12 +92,7 @@ class MiniTest::Unit
       a = (slny * sx2 - sx * sxlny) / d
       b = (n * sxlny - sx * slny)   / d
 
-      y_bar = sy / n.to_f
-      ss_tot = sigma(xys) { |x, y| (y - y_bar) ** 2 }
-      ss_err = sigma(xys) { |x, y| (Math.exp(a + b * x) - y)**2 }
-      rr = 1 - (ss_err / ss_tot)
-
-      return Math.exp(a), b, rr
+      return Math.exp(a), b, fit_error(xys) { |x| Math.exp(a + b * x) }
     end
 
     def fit_power xs, ys
@@ -117,13 +108,7 @@ class MiniTest::Unit
       a = (slny - b * slnx) / n
       sy    = sigma ys
 
-      # FIX: this fit is wrong according to http://www.engr.uidaho.edu/thompson/courses/ME330/lecture/least_squares.html
-      y_bar = sy / n.to_f
-      ss_tot = sigma(xys) { |x, y| (y - y_bar) ** 2 }
-      ss_err = sigma(xys) { |x, y| ((Math.exp(a) * (x ** b)) - y)**2 }
-      rr = 1 - (ss_err / ss_tot)
-
-      return Math.exp(a), b, rr
+      return Math.exp(a), b, fit_error(xys) { |x| (Math.exp(a) * (x ** b)) }
     end
 
     def assert_performance validation, &block
