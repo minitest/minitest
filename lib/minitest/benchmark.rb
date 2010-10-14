@@ -104,6 +104,28 @@ class MiniTest::Unit
       return Math.exp(a), b, rr
     end
 
+    def fit_power xs, ys
+      # y = A x ** B, where B = b and A = e ** a
+
+      n = xs.size
+      xys = xs.zip(ys)
+      slnxlny = sigma(xys) { |x, y| Math.log(x) * Math.log(y) }
+      slnx = sigma(xs) { |x| Math.log(x) }
+      slny = sigma(ys) { |y| Math.log(y) }
+      slnx2 = sigma(xs) { |x| Math.log(x) ** 2 }
+      b = (n * slnxlny - slnx * slny) / (n * slnx2 - slnx ** 2);
+      a = (slny - b * slnx) / n
+      sy    = sigma ys
+
+      # FIX: this fit is wrong according to http://www.engr.uidaho.edu/thompson/courses/ME330/lecture/least_squares.html
+      y_bar = sy / n.to_f
+      ss_tot = sigma(xys) { |x, y| (y - y_bar) ** 2 }
+      ss_err = sigma(xys) { |x, y| ((Math.exp(a) * (x ** b)) - y)**2 }
+      rr = 1 - (ss_err / ss_tot)
+
+      return Math.exp(a), b, rr
+    end
+
     def assert_performance validation, &block
       range = self.class.bench_range
 
