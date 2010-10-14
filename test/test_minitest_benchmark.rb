@@ -1,7 +1,7 @@
 require 'minitest/autorun'
 require 'minitest/benchmark'
 
-class TestMiniBenchmark < MiniTest::Unit::TestCase
+class TestMiniTestBenchmark < MiniTest::Unit::TestCase
   def test_fit_linear
     x = [ 60,  61,  62,  63,  65]
     y = [3.1, 3.6, 3.8, 4.0, 4.1]
