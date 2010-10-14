@@ -6,6 +6,29 @@ require 'minitest/benchmark'
 # http://www.wolframalpha.com/examples/RegressionAnalysis.html
 
 class TestMiniTestBenchmark < MiniTest::Unit::TestCase
+  def test_cls_bench_exp
+    assert_equal [2, 4, 8, 16, 32], self.class.bench_exp(2, 32, 2)
+  end
+
+  def test_cls_bench_linear
+    assert_equal [2, 4, 6, 8, 10], self.class.bench_linear(2, 10, 2)
+  end
+
+  def test_cls_bench_methods
+    assert_equal [], self.class.bench_methods
+
+    c = Class.new(MiniTest::Unit::TestCase) do
+      def bench_blah
+      end
+    end
+
+    assert_equal ["bench_blah"], c.bench_methods
+  end
+
+  def test_cls_bench_range
+    assert_equal [1, 10, 100, 1_000, 10_000], self.class.bench_range
+  end
+
   def test_fit_exponential_clean
     x = [1.0, 2.0, 3.0, 4.0, 5.0]
     y = x.map { |n| 1.1 * Math.exp(2.1 * n) }
