@@ -3,26 +3,65 @@ require 'minitest/spec'
 
 class MiniTest::Unit
   class TestCase
+    ##
+    # Returns a set of ranges stepped exponentially from +min+ to
+    # +max+ by powers of +base+. Eg:
+    #
+    #   bench_linear(2, 16, 2) # => [2, 4, 8, 16]
+
     def self.bench_exp min, max, base = 10
       min = (Math.log10(min) / Math.log10(base)).to_i
       max = (Math.log10(max) / Math.log10(base)).to_i
       (min..max).map { |m| base ** m }.to_a
     end
 
+    ##
+    # Returns a set of ranges stepped linearly from +min+ to +max+ by
+    # +step+. Eg:
+    #
+    #   bench_linear(20, 40, 10) # => [20, 30, 40]
 
     def self.bench_linear min, max, step = 10
       (min..max).step(step).to_a
     end
 
+    ##
+    # Returns the benchmark methods for that class.
+
     def self.bench_methods # :nodoc:
       public_instance_methods(true).grep(/^bench_/).map { |m| m.to_s }.sort
     end
+
+    ##
+    # Specifies the ranges used for benchmarking for that class.
+    # Defaults to exponential growth from 1 to 10k by powers of 10.
+    # Override if you need different ranges for your benchmarks.
+    #
+    # See also: ::bench_exp and ::bench_linear.
 
     def self.bench_range
       bench_exp 1, 10_000
     end
 
-    def assert_performance validation, &block
+    ##
+    # Runs the given +work+, gathering the times of each run. Range
+    # and times are then passed to a given +validation+ proc. Outputs
+    # the benchmark name and times in tab-separated format, making it
+    # easy to paste into a spreadsheet for graphing or further
+    # analysis.
+    #
+    # Ranges are specified by ::bench_range.
+    #
+    # Eg:
+    #
+    #   def bench_algorithm
+    #     validation = proc { |x, y| ... }
+    #     assert_performance validation do |x|
+    #       @obj.algorithm
+    #     end
+    #   end
+
+    def assert_performance validation, &work
       range = self.class.bench_range
 
       print "#{__name__}:\t"
@@ -32,7 +71,7 @@ class MiniTest::Unit
       range.each do |x|
         GC.start
         t0 = Time.now
-        instance_exec(x, &block)
+        instance_exec(x, &work)
         t = Time.now - t0
 
         print "\t%9.6f" % t
@@ -43,6 +82,23 @@ class MiniTest::Unit
       validation[range, times]
     end
 
+    ##
+    # Runs the given +work+ and asserts that the times gathered fit to
+    # match a constant rate (eg, linear slope == 0) within a given error
+    # +threshold+.
+    #
+    # Fit is calculated by #fit_constant.
+    #
+    # Ranges are specified by ::bench_range.
+    #
+    # Eg:
+    #
+    #   def bench_algorithm
+    #     assert_performance_constant 0.9999 do |x|
+    #       @obj.algorithm
+    #     end
+    #   end
+
     def assert_performance_constant threshold = 0.99, &work
       validation = proc do |range, times|
         m, b, rr = fit_linear range, times
@@ -52,32 +108,70 @@ class MiniTest::Unit
       assert_performance validation, &work
     end
 
+    ##
+    # Runs the given +work+ and asserts that the times gathered fit to
+    # match a exponential curve within a given error +threshold+.
+    #
+    # Fit is calculated by #fit_exponential.
+    #
+    # Ranges are specified by ::bench_range.
+    #
+    # Eg:
+    #
+    #   def bench_algorithm
+    #     assert_performance_exponential 0.9999 do |x|
+    #       @obj.algorithm
+    #     end
+    #   end
+
     def assert_performance_exponential threshold = 0.99, &work
-      validation = proc do |range, times|
-        m, b, rr = fit_exponential range, times
-        assert_operator rr, :>=, threshold
-      end
-
-      assert_performance validation, &work
+      assert_performance validation_for_fit(:exponential, threshold), &work
     end
 
-    def assert_performance_linear threshold = 0.9, &work
-      validation = proc do |range, times|
-        m, b, rr = fit_linear range, times
-        assert_operator rr, :>=, threshold
-      end
+    ##
+    # Runs the given +work+ and asserts that the times gathered fit to
+    # match a straight line within a given error +threshold+.
+    #
+    # Fit is calculated by #fit_linear.
+    #
+    # Ranges are specified by ::bench_range.
+    #
+    # Eg:
+    #
+    #   def bench_algorithm
+    #     assert_performance_linear 0.9999 do |x|
+    #       @obj.algorithm
+    #     end
+    #   end
 
-      assert_performance validation, &work
+    def assert_performance_linear threshold = 0.99, &work
+      assert_performance validation_for_fit(:linear, threshold), &work
     end
+
+    ##
+    # Runs the given +work+ and asserts that the times gathered curve
+    # fit to match a power curve within a given error +threshold+.
+    #
+    # Fit is calculated by #fit_power.
+    #
+    # Ranges are specified by ::bench_range.
+    #
+    # Eg:
+    #
+    #   def bench_algorithm
+    #     assert_performance_power 0.9999 do |x|
+    #       @obj.algorithm
+    #     end
+    #   end
 
     def assert_performance_power threshold = 0.99, &work
-      validation = proc do |range, times|
-        m, b, rr = fit_power range, times
-        assert_operator rr, :>=, threshold
-      end
-
-      assert_performance validation, &work
+      assert_performance validation_for_fit(:power, threshold), &work
     end
+
+    ##
+    # Takes an array of x/y pairs and calculates the general R^2 value.
+    #
+    # See: http://en.wikipedia.org/wiki/Coefficient_of_determination
 
     def fit_error xys
       y_bar  = sigma(xys) { |x, y| y } / xys.size.to_f
@@ -86,6 +180,13 @@ class MiniTest::Unit
 
       1 - (ss_err / ss_tot)
     end
+
+    ##
+    # To fit a functional form: y = ae^(bx), without weighting.
+    #
+    # Takes x and y values and returns [a, b, r^2].
+    #
+    # See: http://mathworld.wolfram.com/LeastSquaresFittingExponential.html
 
     def fit_exponential xs, ys
       n     = xs.size
@@ -96,7 +197,6 @@ class MiniTest::Unit
       sx    = sigma xs
       sy    = sigma ys
 
-      # A = Exp(a), B = b
       d = n * sx2 - sx ** 2
       a = (slny * sx2 - sx * sxlny) / d
       b = (n * sxlny - sx * slny)   / d
@@ -104,8 +204,14 @@ class MiniTest::Unit
       return Math.exp(a), b, fit_error(xys) { |x| Math.exp(a + b * x) }
     end
 
+    ##
+    # To fit a functional form: y = ae^(bx), with weighting.
+    #
+    # Takes x and y values and returns [a, b, r^2].
+    #
+    # See: http://mathworld.wolfram.com/LeastSquaresFittingExponential.html
+
     def fit_exponential_weighted xs, ys
-      # ys     = ys.map { |y| Math.log(y) }
       n      = xs.size
       sy     = sigma ys
       xys    = xs.zip(ys)
@@ -122,9 +228,11 @@ class MiniTest::Unit
     end
 
     ##
-    # To fit a functional form: y = Ae^(Bx), without weighting.
+    # Fits the functional form: ax + b.
     #
-    # See: http://mathworld.wolfram.com/LeastSquaresFittingExponential.html
+    # Takes x and y values and returns [a, b, r^2].
+    #
+    # See: http://mathworld.wolfram.com/LeastSquaresFitting.html
 
     def fit_linear xs, ys
       n   = xs.size
@@ -144,13 +252,13 @@ class MiniTest::Unit
     end
 
     ##
-    # To fit a functional form: y = Ae^(Bx), with weighting.
+    # To fit a functional form: y = ax^b.
     #
-    # See: http://mathworld.wolfram.com/LeastSquaresFittingExponential.html
+    # Takes x and y values and returns [a, b, r^2].
+    #
+    # See: http://mathworld.wolfram.com/LeastSquaresFittingPowerLaw.html
 
     def fit_power xs, ys
-      # y = A x ** B, where B = b and A = e ** a
-
       n = xs.size
       xys = xs.zip(ys)
       slnxlny = sigma(xys) { |x, y| Math.log(x) * Math.log(y) }
@@ -164,9 +272,27 @@ class MiniTest::Unit
       return Math.exp(a), b, fit_error(xys) { |x| (Math.exp(a) * (x ** b)) }
     end
 
+    ##
+    # Enumerates over +enum+ mapping +block+ if given, returning the
+    # sum of the result. Eg:
+    #
+    #   sigma([1, 2, 3])                # => 1 + 2 + 3 => 7
+    #   sigma([1, 2, 3]) { |n| n ** 2 } # => 1 + 4 + 9 => 14
+
     def sigma enum, &block
       enum = enum.map(&block) if block
       enum.inject { |sum, n| sum + n }
+    end
+
+    ##
+    # Returns a proc that calls the specified fit method and asserts
+    # that the error is within a tolerable threshold.
+
+    def validation_for_fit msg, threshold
+      proc do |range, times|
+        a, b, rr = send "fit_#{msg}", range, times
+        assert_operator rr, :>=, threshold
+      end
     end
   end
 
