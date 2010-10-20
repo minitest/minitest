@@ -243,8 +243,8 @@ module MiniTest
 
     def assert_respond_to obj, meth, msg = nil
       msg = message(msg) {
-          "Expected #{mu_pp(obj)} (#{obj.class}) to respond to ##{meth}"
-        }
+        "Expected #{mu_pp(obj)} (#{obj.class}) to respond to ##{meth}"
+      }
       assert obj.respond_to?(meth), msg
     end
 
@@ -618,7 +618,7 @@ module MiniTest
     end
 
     def self.plugins
-      @@plugins ||= (["run_all_tests"] +
+      @@plugins ||= (["run_tests"] +
                      public_instance_methods(false).
                      grep(/^run_/).map { |s| s.to_s }).uniq
     end
@@ -628,6 +628,8 @@ module MiniTest
 
     def run args = []
       self.options = process_args args
+
+      @@out.puts "Run options: #{help}"
 
       self.class.plugins.each do |plugin|
         send plugin
@@ -639,20 +641,21 @@ module MiniTest
       abort 'Interrupted'
     end
 
-    def run_all_tests
+    def run_tests
       filter = options[:filter] || '/./'
       filter = Regexp.new $1 if filter =~ /\/(.*)\//
 
-      @@out.puts "Test run options: #{help}"
       @@out.puts
-      @@out.puts "Loaded suite #{$0.sub(/\.rb$/, '')}\nStarted"
+      @@out.puts "# Running tests:"
+      @@out.puts
 
       start = Time.now
       drive_tests filter
       t = Time.now - start
 
       @@out.puts
-      @@out.puts "Finished in %.6f seconds, %.4f tests/s, %.4f assertions/s." %
+      @@out.puts
+      @@out.puts "Finished tests in %.6fs, %.4f tests/s, %.4f assertions/s." %
         [t, test_count / t, assertion_count / t]
 
       report.each_with_index do |msg, i|
@@ -662,9 +665,6 @@ module MiniTest
       @@out.puts
 
       status
-
-      @@out.puts
-      @@out.puts "Test run options: #{help}"
     end
 
     ##

@@ -276,16 +276,30 @@ class MiniTest::Unit
   attr_accessor :runner
 
   def run_benchmarks
-    TestCase.test_suites.each do |suite|
-      next if suite.bench_methods.empty?
+    # REFACTOR: this should use the test runner
+    t0 = Time.now
 
+    count = 0
+
+    benchmarks = TestCase.test_suites.reject { |s| s.bench_methods.empty? }
+
+    return if benchmarks.empty?
+
+    puts
+    puts "# Running benchmarks:"
+    puts
+
+    benchmarks.each do |suite|
       $stdout.sync = true
       range = suite.bench_range
+
+      puts "#{suite}\t#{range.join("\t")}"
 
       suite.bench_methods.each do |benchmark|
         self.runner = suite.new benchmark
         runner.send :setup
 
+        count += 1
         GC.start
         # GC.disable
         runner.send benchmark
@@ -293,7 +307,13 @@ class MiniTest::Unit
 
         runner.send :teardown
       end
+
+      puts
     end
+
+    puts "Finished benchmarks in %.2fs." % (Time.now - t0)
+    puts
+    puts "#{count} benchmarks, 0 failures"
   end
 end
 
