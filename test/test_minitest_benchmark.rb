@@ -40,24 +40,8 @@ class TestMiniTestBenchmark < MiniTest::Unit::TestCase
     x = [1.0, 1.9, 2.6, 3.4, 5.0]
     y = [12, 10, 8.2, 6.9, 5.9]
 
-    assert_fit :exponential, x, y, 0.95, 13.812, -0.182
-  end
-
-  def test_fit_exponential_weighted_clean
-    x = [1.0, 2.0, 3.0, 4.0, 5.0]
-    y = x.map { |n| 1.1 * Math.exp(2.1 * n) }
-
-    assert_fit :exponential_weighted, x, y, 1.0, 1.1, 2.1
-  end
-
-  def test_fit_exponential_weighted_noisy
-    # from: http://reference.wolfram.com/mathematica/ref/FindFit.html
-    # http://www.wolframalpha.com/input/?i=exponential+fit+%7B1.0%2C+12%7D%2C+%7B1.9%2C+10%7D%2C+%7B2.6%2C+8.2%7D%2C+%7B3.4%2C+6.9%7D%2C+%7B5.0%2C+5.9%7D
-    x = [1.0, 1.9, 2.6, 3.4, 5.0]
-    y = [12, 10, 8.2, 6.9, 5.9]
-
-    assert_fit :exponential_weighted, x, y, 0.95, 14.099, -0.1889
-    # FIX: a, b = 14.3889, -0.198208 according to above url
+    # verified with Numbers and R
+    assert_fit :exponential, x, y, 0.95, 13.81148, -0.1820
   end
 
   def test_fit_linear_clean
@@ -65,14 +49,15 @@ class TestMiniTestBenchmark < MiniTest::Unit::TestCase
     x = (1..5).to_a
     y = x.map { |n| 2.2 * n + 3.1 }
 
-    assert_fit :linear, x, y, 1.0, 2.2, 3.1
+    assert_fit :linear, x, y, 1.0, 3.1, 2.2
   end
 
   def test_fit_linear_noisy
     x = [ 60,  61,  62,  63,  65]
     y = [3.1, 3.6, 3.8, 4.0, 4.1]
 
-    assert_fit :linear, x, y, 0.83, 0.188, -7.964
+    # verified in numbers and R
+    assert_fit :linear, x, y, 0.8315, -7.9635, 0.1878
   end
 
   def test_fit_power_clean
@@ -90,8 +75,16 @@ class TestMiniTestBenchmark < MiniTest::Unit::TestCase
     x = [10, 12, 15, 17, 20, 22, 25, 27, 30, 32, 35]
     y = [95, 105, 125, 141, 173, 200, 253, 298, 385, 459, 602]
 
-    assert_fit :power, x, y, 0.9, 2.621, 1.456
-    # FIX: fit should be 0.93553, url above says my alg is wrong
+    # verified in numbers
+    assert_fit :power, x, y, 0.90, 2.6217, 1.4556
+
+    # income to % of households below income amount
+    # http://library.wolfram.com/infocenter/Conferences/6461/PowerLaws.nb
+    x = [15000, 25000, 35000, 50000, 75000, 100000]
+    y = [0.154, 0.283, 0.402, 0.55, 0.733, 0.843]
+
+    # verified in numbers
+    assert_fit :power, x, y, 0.96, 3.119e-5, 0.8959
   end
 
   def assert_fit msg, x, y, fit, exp_a, exp_b
