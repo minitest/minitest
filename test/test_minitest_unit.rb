@@ -21,18 +21,17 @@ class TestMiniTestUnit < MiniTest::Unit::TestCase
                "#{MINITEST_BASE_DIR}/test.rb:106:in `run'"]
 
   def assert_report expected = nil
-    expected ||= "Test run options: --seed 42
+    expected ||= "Run options: --seed 42
 
-Loaded suite blah
-Started
+# Running tests:
+
 .
-Finished in 0.00
+
+Finished tests in 0.00
 
 1 tests, 1 assertions, 0 failures, 0 errors, 0 skips
-
-Test run options: --seed 42
 "
-    output = @output.string.sub(/Finished in .*/, "Finished in 0.00")
+    output = @output.string.sub(/Finished tests in .*/, "Finished tests in 0.00")
     output.sub!(/Loaded suite .*/, 'Loaded suite blah')
     output.sub!(/^(\s+)(?:#{Regexp.union(__FILE__, File.expand_path(__FILE__))}):\d+:/o, '\1FILE:LINE:')
     output.sub!(/\[(?:#{Regexp.union(__FILE__, File.expand_path(__FILE__))}):\d+\]/o, '[FILE:LINE]')
@@ -214,12 +213,13 @@ Test run options: --seed 42
 
     @tu.run %w[--seed 42]
 
-    expected = "Test run options: --seed 42
+    expected = "Run options: --seed 42
 
-Loaded suite blah
-Started
+# Running tests:
+
 E.
-Finished in 0.00
+
+Finished tests in 0.00
 
   1) Error:
 test_error(ATestCase):
@@ -227,8 +227,6 @@ RuntimeError: unhandled exception
     FILE:LINE:in `test_error'
 
 2 tests, 1 assertions, 0 failures, 1 errors, 0 skips
-
-Test run options: --seed 42
 "
     assert_report expected
   end
@@ -248,12 +246,13 @@ Test run options: --seed 42
 
     @tu.run %w[--seed 42]
 
-    expected = "Test run options: --seed 42
+    expected = "Run options: --seed 42
 
-Loaded suite blah
-Started
+# Running tests:
+
 E
-Finished in 0.00
+
+Finished tests in 0.00
 
   1) Error:
 test_something(ATestCase):
@@ -261,8 +260,6 @@ RuntimeError: unhandled exception
     FILE:LINE:in `teardown'
 
 1 tests, 1 assertions, 0 failures, 1 errors, 0 skips
-
-Test run options: --seed 42
 "
     assert_report expected
   end
@@ -282,20 +279,19 @@ Test run options: --seed 42
 
     @tu.run %w[--seed 42]
 
-    expected = "Test run options: --seed 42
+    expected = "Run options: --seed 42
 
-Loaded suite blah
-Started
+# Running tests:
+
 F.
-Finished in 0.00
+
+Finished tests in 0.00
 
   1) Failure:
 test_failure(ATestCase) [FILE:LINE]:
 Failed assertion, no message given.
 
 2 tests, 2 assertions, 1 failures, 0 errors, 0 skips
-
-Test run options: --seed 42
 "
     assert_report expected
   end
@@ -315,16 +311,15 @@ Test run options: --seed 42
 
     @tu.run %w[--name /some|thing/ --seed 42]
 
-    expected = "Test run options: --name \"/some|thing/\" --seed 42
+    expected = "Run options: --name \"/some|thing/\" --seed 42
 
-Loaded suite blah
-Started
+# Running tests:
+
 .
-Finished in 0.00
+
+Finished tests in 0.00
 
 1 tests, 1 assertions, 0 failures, 0 errors, 0 skips
-
-Test run options: --name \"/some|thing/\" --seed 42
 "
     assert_report expected
   end
@@ -358,20 +353,19 @@ Test run options: --name \"/some|thing/\" --seed 42
 
     @tu.run %w[--seed 42]
 
-    expected = "Test run options: --seed 42
+    expected = "Run options: --seed 42
 
-Loaded suite blah
-Started
+# Running tests:
+
 S.
-Finished in 0.00
+
+Finished tests in 0.00
 
   1) Skipped:
 test_skip(ATestCase) [FILE:LINE]:
 not yet
 
 2 tests, 1 assertions, 0 failures, 0 errors, 1 skips
-
-Test run options: --seed 42
 "
     assert_report expected
   end
