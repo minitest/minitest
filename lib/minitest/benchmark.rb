@@ -65,7 +65,7 @@ class MiniTest::Unit
     def assert_performance validation, &work
       range = self.class.bench_range
 
-      print "#{__name__}:\t"
+      print "#{__name__}"
 
       times = []
 
@@ -102,8 +102,9 @@ class MiniTest::Unit
 
     def assert_performance_constant threshold = 0.99, &work
       validation = proc do |range, times|
-        m, b, rr = fit_linear range, times
-        assert_in_delta 0, m, 1 - threshold
+        a, b, rr = fit_linear range, times
+        assert_in_delta 0, b, 1 - threshold
+        [a, b, rr]
       end
 
       assert_performance validation, &work
@@ -267,6 +268,7 @@ class MiniTest::Unit
       proc do |range, times|
         a, b, rr = send "fit_#{msg}", range, times
         assert_operator rr, :>=, threshold
+        [a, b, rr]
       end
     end
   end
