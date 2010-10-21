@@ -9,17 +9,22 @@ test/unit. This is meant to be clean and easy to use both as a regular
 test writer and for language implementors that need a minimal set of
 methods to bootstrap a working unit test suite.
 
-mini/spec is a functionally complete spec engine.
+minitest/spec is a functionally complete spec engine.
 
-mini/mock, by Steven Baker, is a beautifully tiny mock object framework.
+minitest/benchmark is an awesome way to assert the performance of your
+algorithms in a repeatable manner.
+
+minitest/mock, by Steven Baker, is a beautifully tiny mock object framework.
 
 (This package was called miniunit once upon a time)
 
 == FEATURES/PROBLEMS:
 
-* Contains minitest/unit - a simple and clean test system (301 lines!).
-* Contains minitest/spec - a simple and clean spec system (52 lines!).
-* Contains minitest/mock - a simple and clean mock system (35 lines!).
+* minitest/autorun - the easy and explicit way to run all your tests.
+* minitest/unit - a simple and clean test system
+* minitest/spec - a simple and clean spec system
+* minitest/mock - a simple and clean mock system
+* minitest/benchmark - a simple and clean way to assert your performance.
 * Incredibly small and fast runner, but no bells and whistles.
 
 == RATIONALE:
@@ -30,100 +35,143 @@ See design_rationale.rb to see how specs and tests work in minitest.
 
 Given that you'd like to test the following class:
 
-    class Meme
-      def i_can_has_cheezburger?
-        "OHAI!"
-      end
-
-      def does_it_blend?
-        "YES!"
-      end
+  class Meme
+    def i_can_has_cheezburger?
+      "OHAI!"
     end
 
+    def does_it_blend?
+      "YES!"
+    end
+  end
 
 === Unit tests
 
-    require 'minitest/unit'
-    MiniTest::Unit.autorun
+  require 'minitest/unit'
+  MiniTest::Unit.autorun
 
-    class TestMeme < MiniTest::Unit::TestCase
-      def setup
-        @meme = Meme.new
-      end
-
-      def test_that_kitty_can_eat
-        assert_equal "OHAI!", @meme.i_can_has_cheezburger?
-      end
-
-      def test_that_it_doesnt_not_blend
-        refute_match /^no/i, @meme.does_it_blend?
-      end
+  class TestMeme < MiniTest::Unit::TestCase
+    def setup
+      @meme = Meme.new
     end
+
+    def test_that_kitty_can_eat
+      assert_equal "OHAI!", @meme.i_can_has_cheezburger?
+    end
+
+    def test_that_it_doesnt_not_blend
+      refute_match /^no/i, @meme.does_it_blend?
+    end
+  end
 
 === Specs
 
-    require 'minitest/spec'
-    MiniTest::Unit.autorun
+  require 'minitest/spec'
+  MiniTest::Unit.autorun
 
-    describe Meme do
-      before do
-        @meme = Meme.new
+  describe Meme do
+    before do
+      @meme = Meme.new
+    end
+
+    describe "when asked about cheeseburgers" do
+      it "should respond positively" do
+        @meme.i_can_has_cheezburger?.must_equal "OHAI!"
       end
+    end
 
-      describe "when asked about cheeseburgers" do
-        it "should respond positively" do
-          @meme.i_can_has_cheezburger?.must_equal "OHAI!"
-        end
+    describe "when asked about blending possibilities" do
+      it "won't say no" do
+        @meme.does_it_blend?.wont_match /^no/i
       end
+    end
+  end
 
-      describe "when asked about blending possibilities" do
-        it "won't say no" do
-          @meme.does_it_blend?.wont_match /^no/i
+=== Benchmarks
+
+Add benchmarks to your regular unit tests. If the unit tests fail, the
+benchmarks won't run.
+
+  # optionally run benchmarks, good for CI-only work!
+  require 'minitest/benchmark' if ENV["BENCH"]
+
+  class TestMeme < MiniTest::Unit::TestCase
+    # defaults run to 1..10_000 by powers of 10
+    def bench_my_algorithm
+      assert_performance_linear 0.9999 do |n|
+        100.times do
+          @obj.my_algorithm(n)
         end
       end
     end
+  end
+
+Or add them to your specs. If you make benchmarks optional, you'll
+need to wrap your benchmarks in a conditional since the methods won't
+be defined.
+
+  describe Meme do
+    if ENV["BENCH"] then
+      bench_performance_linear "my_algorithm", 0.9999 do |n|
+        100.times do
+          @obj.my_algorithm(n)
+        end
+      end
+    end
+  end
+
+outputs something like:
+
+  # Running benchmarks:
+
+  TestBlah	100	1000	10000
+  bench_my_algorithm	 0.006167	 0.079279	 0.786993
+  bench_other_algorithm	 0.061679	 0.792797	 7.869932
+
+Output is tab-delimited to make it easy to paste into a spreadsheet.
 
 === Mocks
 
-    class MemeAsker
-      def initialize(meme)
-        @meme = meme
-      end
-
-      def ask(question)
-        method = question.tr(" ","_") + "?"
-        @meme.send(method)
-      end
+  class MemeAsker
+    def initialize(meme)
+      @meme = meme
     end
 
-    require 'minitest/spec'
-    require 'minitest/mock'
-    MiniTest::Unit.autorun
+    def ask(question)
+      method = question.tr(" ","_") + "?"
+      @meme.send(method)
+    end
+  end
 
-    describe MemeAsker do
-      before do
-        @meme = MiniTest::Mock.new
-        @meme_asker = MemeAsker.new @meme
-      end
+  require 'minitest/autorun'
 
-      describe "#ask" do
-        describe "when passed an unpunctuated question" do
-          it "should invoke the appropriate predicate method on the meme" do
-            @meme.expect :does_it_blend?, :return_value
-            @meme_asker.ask "does it blend"
-            @meme.verify
-          end
+  describe MemeAsker do
+    before do
+      @meme = MiniTest::Mock.new
+      @meme_asker = MemeAsker.new @meme
+    end
+
+    describe "#ask" do
+      describe "when passed an unpunctuated question" do
+        it "should invoke the appropriate predicate method on the meme" do
+          @meme.expect :does_it_blend?, :return_value
+          @meme_asker.ask "does it blend"
+          @meme.verify
         end
       end
     end
+  end
 
 == REQUIREMENTS:
 
-+ Ruby 1.8, maybe even 1.6 or lower. No magic is involved.
+* Ruby 1.8, maybe even 1.6 or lower. No magic is involved.
 
 == INSTALL:
 
-+ sudo gem install minitest
+On 1.9, you already have it. To get newer candy you can still install
+the gem, but you'll need to activate the gem explicitly to use it.
+
+  sudo gem install minitest
 
 == LICENSE:
 
