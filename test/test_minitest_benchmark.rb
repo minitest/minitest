@@ -14,15 +14,15 @@ class TestMiniTestBenchmark < MiniTest::Unit::TestCase
     assert_equal [2, 4, 6, 8, 10], self.class.bench_linear(2, 10, 2)
   end
 
-  def test_cls_bench_methods
-    assert_equal [], self.class.bench_methods
+  def test_cls_benchmark_methods
+    assert_equal [], self.class.benchmark_methods
 
     c = Class.new(MiniTest::Unit::TestCase) do
       def bench_blah
       end
     end
 
-    assert_equal ["bench_blah"], c.bench_methods
+    assert_equal ["bench_blah"], c.benchmark_methods
   end
 
   def test_cls_bench_range
