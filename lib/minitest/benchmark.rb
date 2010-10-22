@@ -2,6 +2,20 @@ require 'minitest/unit'
 require 'minitest/spec'
 
 class MiniTest::Unit
+  attr_accessor :runner
+
+  def run_benchmarks
+    _run_anything :benchmarks
+  end
+
+  def drive_benchmarks filter = /./
+    _drive_anything :benchmark, filter
+  end
+
+  def benchmark_suite_header suite
+    "#{suite}\t#{suite.bench_range.join("\t")}"
+  end
+
   class TestCase
     ##
     # Returns a set of ranges stepped exponentially from +min+ to
@@ -29,8 +43,12 @@ class MiniTest::Unit
     ##
     # Returns the benchmark methods for that class.
 
-    def self.bench_methods # :nodoc:
+    def self.benchmark_methods # :nodoc:
       public_instance_methods(true).grep(/^bench_/).map { |m| m.to_s }.sort
+    end
+
+    def self.benchmark_suites
+      TestCase.test_suites.reject { |s| s.benchmark_methods.empty? }
     end
 
     ##
@@ -65,7 +83,7 @@ class MiniTest::Unit
     def assert_performance validation, &work
       range = self.class.bench_range
 
-      print "#{__name__}"
+      io.print "#{__name__}"
 
       times = []
 
@@ -75,10 +93,10 @@ class MiniTest::Unit
         instance_exec(x, &work)
         t = Time.now - t0
 
-        print "\t%9.6f" % t
+        io.print "\t%9.6f" % t
         times << t
       end
-      puts
+      io.puts
 
       validation[range, times]
     end
@@ -272,49 +290,6 @@ class MiniTest::Unit
       end
     end
   end
-
-  attr_accessor :runner
-
-  def run_benchmarks
-    # REFACTOR: this should use the test runner
-    t0 = Time.now
-
-    count = 0
-
-    benchmarks = TestCase.test_suites.reject { |s| s.bench_methods.empty? }
-
-    return if benchmarks.empty?
-
-    puts
-    puts "# Running benchmarks:"
-    puts
-
-    benchmarks.each do |suite|
-      $stdout.sync = true
-      range = suite.bench_range
-
-      puts "#{suite}\t#{range.join("\t")}"
-
-      suite.bench_methods.each do |benchmark|
-        self.runner = suite.new benchmark
-        runner.send :setup
-
-        count += 1
-        GC.start
-        # GC.disable
-        runner.send benchmark
-        # GC.enable
-
-        runner.send :teardown
-      end
-
-      puts
-    end
-
-    puts "Finished benchmarks in %.2fs." % (Time.now - t0)
-    puts
-    puts "#{count} benchmarks, 0 failures"
-  end
 end
 
 class MiniTest::Spec
@@ -336,6 +311,12 @@ class MiniTest::Spec
   def self.bench_performance_constant name, threshold = 0.99, &work
     bench name do
       assert_performance_constant threshold, &work
+    end
+  end
+
+  def self.bench_performance_exponential name, threshold = 0.99, &work
+    bench name do
+      assert_performance_exponential threshold, &work
     end
   end
 end

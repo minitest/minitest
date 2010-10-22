@@ -531,11 +531,79 @@ module MiniTest
     end
 
     ##
+    # Returns the stream to use for output.
+
+    def self.out
+      @@out
+    end
+
+    ##
     # Sets MiniTest::Unit to write output to +stream+.  $stdout is the default
     # output
 
     def self.output= stream
       @@out = stream
+    end
+
+    def self.plugins
+      @@plugins ||= (["run_tests"] +
+                     public_instance_methods(false).
+                     grep(/^run_/).map { |s| s.to_s }).uniq
+    end
+
+    def _drive_anything type, filter = /./
+      @test_count, @assertion_count = 0, 0
+      sync = @@out.respond_to? :"sync=" # stupid emacs
+      old_sync, @@out.sync = @@out.sync, true if sync
+
+      TestCase.send("#{type}_suites").each do |suite|
+        header = "#{type}_suite_header"
+        @@out.puts send(header, suite) if respond_to? header
+        suite.send("#{type}_methods").grep(filter).each do |method|
+          inst = suite.new method
+          inst._assertions = 0
+          @@out.print "#{suite}##{method} = " if @verbose
+
+          @start_time = Time.now
+          result = inst.run(self)
+
+          @@out.print "%.2f s = " % (Time.now - @start_time) if @verbose
+          @@out.print result
+          @@out.puts if @verbose
+          @test_count += 1
+          @assertion_count += inst._assertions
+        end
+      end
+
+      @@out.sync = old_sync if sync
+
+      [@test_count, @assertion_count]
+    end
+
+    def _run_anything type
+      filter = options[:filter] || '/./'
+      filter = Regexp.new $1 if filter =~ /\/(.*)\//
+
+      @@out.puts
+      @@out.puts "# Running #{type}:"
+      @@out.puts
+
+      start = Time.now
+      send "drive_#{type}", filter
+      t = Time.now - start
+
+      @@out.puts
+      @@out.puts
+      @@out.puts "Finished #{type} in %.6fs, %.4f tests/s, %.4f assertions/s." %
+        [t, test_count / t, assertion_count / t]
+
+      report.each_with_index do |msg, i|
+        @@out.puts "\n%3d) %s" % [i + 1, msg]
+      end
+
+      @@out.puts
+
+      status
     end
 
     def location e # :nodoc:
@@ -617,12 +685,6 @@ module MiniTest
       options
     end
 
-    def self.plugins
-      @@plugins ||= (["run_tests"] +
-                     public_instance_methods(false).
-                     grep(/^run_/).map { |s| s.to_s }).uniq
-    end
-
     ##
     # Top level driver, controls all output and filtering.
 
@@ -642,29 +704,7 @@ module MiniTest
     end
 
     def run_tests
-      filter = options[:filter] || '/./'
-      filter = Regexp.new $1 if filter =~ /\/(.*)\//
-
-      @@out.puts
-      @@out.puts "# Running tests:"
-      @@out.puts
-
-      start = Time.now
-      drive_tests filter
-      t = Time.now - start
-
-      @@out.puts
-      @@out.puts
-      @@out.puts "Finished tests in %.6fs, %.4f tests/s, %.4f assertions/s." %
-        [t, test_count / t, assertion_count / t]
-
-      report.each_with_index do |msg, i|
-        @@out.puts "\n%3d) %s" % [i + 1, msg]
-      end
-
-      @@out.puts
-
-      status
+      _run_anything :tests
     end
 
     ##
@@ -682,26 +722,7 @@ module MiniTest
     # run_ for the plugin system.
 
     def drive_tests filter = /./
-      @test_count, @assertion_count = 0, 0
-      old_sync, @@out.sync = @@out.sync, true if @@out.respond_to? :sync=
-      TestCase.test_suites.each do |suite|
-        suite.test_methods.grep(filter).each do |test|
-          inst = suite.new test
-          inst._assertions = 0
-          @@out.print "#{suite}##{test} = " if @verbose
-
-          @start_time = Time.now
-          result = inst.run(self)
-
-          @@out.print "%.2f s = " % (Time.now - @start_time) if @verbose
-          @@out.print result
-          @@out.puts if @verbose
-          @test_count += 1
-          @assertion_count += inst._assertions
-        end
-      end
-      @@out.sync = old_sync if @@out.respond_to? :sync=
-      [@test_count, @assertion_count]
+      _drive_anything :test, filter
     end
 
     ##
@@ -726,11 +747,12 @@ module MiniTest
           runner.status $stderr
         end if SUPPORTS_INFO_SIGNAL
 
-        result = '.'
+        result = ""
         begin
           @passed = nil
           self.setup
           self.__send__ self.__name__
+          result = "." unless io?
           @passed = true
         rescue *PASSTHROUGH_EXCEPTIONS
           raise
@@ -752,7 +774,17 @@ module MiniTest
 
       def initialize name # :nodoc:
         @__name__ = name
+        @__io__ = nil
         @passed = nil
+      end
+
+      def io
+        @__io__ = true
+        MiniTest::Unit.out
+      end
+
+      def io?
+        @__io__
       end
 
       def self.reset # :nodoc:
