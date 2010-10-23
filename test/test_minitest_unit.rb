@@ -12,11 +12,8 @@ class TestMiniTestUnit < MiniTest::Unit::TestCase
   basedir = Pathname.new(File.expand_path(MiniTest::MINI_DIR)) + 'mini'
   basedir = basedir.relative_path_from(pwd).to_s
   MINITEST_BASE_DIR = basedir[/\A\./] ? basedir : "./#{basedir}"
-  BT_MIDDLE = ["#{MINITEST_BASE_DIR}/test.rb:165:in `drive_tests'",
-               "#{MINITEST_BASE_DIR}/test.rb:161:in `each'",
-               "#{MINITEST_BASE_DIR}/test.rb:161:in `drive_tests'",
+  BT_MIDDLE = ["#{MINITEST_BASE_DIR}/test.rb:161:in `each'",
                "#{MINITEST_BASE_DIR}/test.rb:158:in `each'",
-               "#{MINITEST_BASE_DIR}/test.rb:158:in `drive_tests'",
                "#{MINITEST_BASE_DIR}/test.rb:139:in `run'",
                "#{MINITEST_BASE_DIR}/test.rb:106:in `run'"]
 
@@ -44,7 +41,6 @@ Finished tests in 0.00
     @tu = MiniTest::Unit.new
     @output = StringIO.new("")
     MiniTest::Unit.output = @output
-    assert_equal [0, 0], @tu.drive_tests
   end
 
   def teardown
@@ -142,18 +138,6 @@ Finished tests in 0.00
     assert_equal 'E', @tu.puke('SomeClass', 'method_name', exception)
     assert_equal 1, @tu.errors
     assert_match(/^Exception.*Oh no again!/m, @tu.report.first)
-  end
-
-  def test_class_drive_tests
-    tc = Class.new(MiniTest::Unit::TestCase) do
-      def test_something
-        assert true
-      end
-    end
-
-    Object.const_set(:ATestCase, tc)
-
-    assert_equal [1, 1], @tu.drive_tests
   end
 
   def test_filter_backtrace
