@@ -5,15 +5,11 @@ class MiniTest::Unit
   attr_accessor :runner
 
   def run_benchmarks
-    _run_anything :benchmarks
-  end
-
-  def drive_benchmarks filter = /./
-    _drive_anything :benchmark, filter
+    _run_anything :benchmark
   end
 
   def benchmark_suite_header suite
-    "#{suite}\t#{suite.bench_range.join("\t")}"
+    "\n#{suite}\t#{suite.bench_range.join("\t")}"
   end
 
   class TestCase
