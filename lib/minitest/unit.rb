@@ -551,6 +551,14 @@ module MiniTest
                      grep(/^run_/).map { |s| s.to_s }).uniq
     end
 
+    def puts *a
+      @@out.puts(*a)
+    end
+
+    def print *a
+      @@out.print(*a)
+    end
+
     def _run_anything type
       suites = TestCase.send("#{type}_suites")
       return if suites.empty?
@@ -560,9 +568,9 @@ module MiniTest
 
       start = Time.now
 
-      @@out.puts
-      @@out.puts "# Running #{type}s:"
-      @@out.puts
+      puts
+      puts "# Running #{type}s:"
+      puts
 
       @test_count, @assertion_count = 0, 0
       sync = @@out.respond_to? :"sync=" # stupid emacs
@@ -570,19 +578,21 @@ module MiniTest
 
       suites.each do |suite|
         header = "#{type}_suite_header"
-        @@out.puts send(header, suite) if respond_to? header
+        puts send(header, suite) if respond_to? header
 
         suite.send("#{type}_methods").grep(filter).each do |method|
           inst = suite.new method
           inst._assertions = 0
-          @@out.print "#{suite}##{method} = " if @verbose
+
+          print "#{suite}##{method} = " if @verbose
 
           @start_time = Time.now
           result = inst.run(self)
 
-          @@out.print "%.2f s = " % (Time.now - @start_time) if @verbose
-          @@out.print result
-          @@out.puts if @verbose
+          print "%.2f s = " % (Time.now - @start_time) if @verbose
+          print result
+          puts if @verbose
+
           @test_count += 1
           @assertion_count += inst._assertions
         end
@@ -592,16 +602,16 @@ module MiniTest
 
       t = Time.now - start
 
-      @@out.puts
-      @@out.puts
-      @@out.puts "Finished #{type} in %.6fs, %.4f tests/s, %.4f assertions/s." %
+      puts
+      puts
+      puts "Finished #{type}s in %.6fs, %.4f tests/s, %.4f assertions/s." %
         [t, test_count / t, assertion_count / t]
 
       report.each_with_index do |msg, i|
-        @@out.puts "\n%3d) %s" % [i + 1, msg]
+        puts "\n%3d) %s" % [i + 1, msg]
       end
 
-      @@out.puts
+      puts
 
       status
     end
@@ -691,7 +701,7 @@ module MiniTest
     def run args = []
       self.options = process_args args
 
-      @@out.puts "Run options: #{help}"
+      puts "Run options: #{help}"
 
       self.class.plugins.each do |plugin|
         send plugin
