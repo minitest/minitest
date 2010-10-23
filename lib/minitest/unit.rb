@@ -551,14 +551,27 @@ module MiniTest
                      grep(/^run_/).map { |s| s.to_s }).uniq
     end
 
-    def _drive_anything type, filter = /./
+    def _run_anything type
+      suites = TestCase.send("#{type}_suites")
+      return if suites.empty?
+
+      filter = options[:filter] || '/./'
+      filter = Regexp.new $1 if filter =~ /\/(.*)\//
+
+      start = Time.now
+
+      @@out.puts
+      @@out.puts "# Running #{type}s:"
+      @@out.puts
+
       @test_count, @assertion_count = 0, 0
       sync = @@out.respond_to? :"sync=" # stupid emacs
       old_sync, @@out.sync = @@out.sync, true if sync
 
-      TestCase.send("#{type}_suites").each do |suite|
+      suites.each do |suite|
         header = "#{type}_suite_header"
         @@out.puts send(header, suite) if respond_to? header
+
         suite.send("#{type}_methods").grep(filter).each do |method|
           inst = suite.new method
           inst._assertions = 0
@@ -577,19 +590,6 @@ module MiniTest
 
       @@out.sync = old_sync if sync
 
-      [@test_count, @assertion_count]
-    end
-
-    def _run_anything type
-      filter = options[:filter] || '/./'
-      filter = Regexp.new $1 if filter =~ /\/(.*)\//
-
-      @@out.puts
-      @@out.puts "# Running #{type}:"
-      @@out.puts
-
-      start = Time.now
-      send "drive_#{type}", filter
       t = Time.now - start
 
       @@out.puts
@@ -703,8 +703,11 @@ module MiniTest
       abort 'Interrupted'
     end
 
+    ##
+    # Runs test suites matching +filter+.
+
     def run_tests
-      _run_anything :tests
+      _run_anything :test
     end
 
     ##
@@ -713,16 +716,6 @@ module MiniTest
     def status io = @@out
       format = "%d tests, %d assertions, %d failures, %d errors, %d skips"
       io.puts format % [test_count, assertion_count, failures, errors, skips]
-    end
-
-    ##
-    # Runs test suites matching +filter+.
-    #
-    # Not the best name in the world, but I need it to not start with
-    # run_ for the plugin system.
-
-    def drive_tests filter = /./
-      _drive_anything :test, filter
     end
 
     ##
