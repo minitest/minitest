@@ -4,8 +4,8 @@ require 'minitest/unit'
 
 MiniTest::Unit.autorun
 
-module M; end
-class E < StandardError; include M; end
+module MyModule; end
+class AnError < StandardError; include MyModule; end
 
 class TestMiniTestUnit < MiniTest::Unit::TestCase
   pwd = Pathname.new(File.expand_path(Dir.pwd))
@@ -520,9 +520,9 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
 
     pattern = Object.new
     def pattern.=~(other) false end
-    def pattern.inspect; "<<Object>>" end
+    def pattern.inspect; "[Object]" end
 
-    util_assert_triggered 'Expected <<Object>> to match 5.' do
+    util_assert_triggered 'Expected [Object] to match 5.' do
       @tc.assert_match pattern, 5
     end
   end
@@ -635,8 +635,8 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_assert_raises_module
-    @tc.assert_raises M do
-      raise E
+    @tc.assert_raises MyModule do
+      raise AnError
     end
   end
 
@@ -708,13 +708,13 @@ FILE:LINE:in `test_assert_raises_triggered_different_msg'
   def test_assert_raises_triggered_subclass
     e = assert_raises MiniTest::Assertion do
       @tc.assert_raises StandardError do
-        raise E
+        raise AnError
       end
     end
 
     expected = "[StandardError] exception expected, not
-Class: <E>
-Message: <\"E\">
+Class: <AnError>
+Message: <\"AnError\">
 ---Backtrace---
 FILE:LINE:in `test_assert_raises_triggered_subclass'
 ---------------"
