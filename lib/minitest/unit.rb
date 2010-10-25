@@ -21,7 +21,8 @@ module MiniTest
            require 'pathname'
            pwd = Pathname.new Dir.pwd
            pn = Pathname.new File.expand_path(__FILE__)
-           pn = File.join(".", pn.relative_path_from(pwd)) unless pn.relative?
+           relpath = pn.relative_path_from(pwd) rescue pn
+           pn = File.join(".", relpath) unless pn.relative?
            pn.to_s
          else                             # assume both are expanded
            __FILE__
