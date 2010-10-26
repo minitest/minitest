@@ -21,10 +21,10 @@ minitest/mock, by Steven Baker, is a beautifully tiny mock object framework.
 == FEATURES/PROBLEMS:
 
 * minitest/autorun - the easy and explicit way to run all your tests.
-* minitest/unit - a simple and clean test system
-* minitest/spec - a simple and clean spec system
-* minitest/mock - a simple and clean mock system
-* minitest/benchmark - a simple and clean way to assert your performance.
+* minitest/unit - a very fast, simple, and clean test system.
+* minitest/spec - a very fast, simple, and clean spec system.
+* minitest/mock - a simple and clean mock system.
+* minitest/benchmark - an awesome way to assert your algorithm's performance.
 * Incredibly small and fast runner, but no bells and whistles.
 
 == RATIONALE:
@@ -75,7 +75,7 @@ Given that you'd like to test the following class:
     end
 
     describe "when asked about cheeseburgers" do
-      it "should respond positively" do
+      it "must respond positively" do
         @meme.i_can_has_cheezburger?.must_equal "OHAI!"
       end
     end
@@ -168,10 +168,16 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
 
 == INSTALL:
 
-On 1.9, you already have it. To get newer candy you can still install
-the gem, but you'll need to activate the gem explicitly to use it.
-
   sudo gem install minitest
+
+On 1.9, you already have it. To get newer candy you can still install
+the gem, but you'll need to activate the gem explicitly to use it:
+
+  require 'rubygems'
+  gem 'minitest' # ensures you're using the gem, and not the built in MT
+  require 'minitest/autorun'
+  
+  # ... usual testing stuffs ...
 
 == LICENSE:
 
