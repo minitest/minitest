@@ -577,27 +577,10 @@ module MiniTest
       sync = @@out.respond_to? :"sync=" # stupid emacs
       old_sync, @@out.sync = @@out.sync, true if sync
 
-      suites.each do |suite|
-        header = "#{type}_suite_header"
-        puts send(header, suite) if respond_to? header
+      results = suites.map { |suite| _run_suite(suite, type, filter) }
 
-        suite.send("#{type}_methods").grep(filter).each do |method|
-          inst = suite.new method
-          inst._assertions = 0
-
-          print "#{suite}##{method} = " if @verbose
-
-          @start_time = Time.now
-          result = inst.run(self)
-
-          print "%.2f s = " % (Time.now - @start_time) if @verbose
-          print result
-          puts if @verbose
-
-          @test_count += 1
-          @assertion_count += inst._assertions
-        end
-      end
+      @test_count      = results.inject(0) { |sum, (tc, ac)| sum + tc }
+      @assertion_count = results.inject(0) { |sum, (tc, ac)| sum + ac }
 
       @@out.sync = old_sync if sync
 
@@ -615,6 +598,28 @@ module MiniTest
       puts
 
       status
+    end
+
+    def _run_suite(suite, type, filter)
+      header = "#{type}_suite_header"
+      puts send(header, suite) if respond_to? header
+
+      assertions = suite.send("#{type}_methods").grep(filter).map { |method|
+        inst = suite.new method
+        inst._assertions = 0
+
+        start_time = Time.now
+        result = inst.run(self)
+        time = Time.now - start_time
+
+        print "#{suite}##{method} = %.2f s = " % time if @verbose
+        print result
+        puts if @verbose
+
+        inst._assertions
+      }
+
+      return assertions.size, assertions.inject(0) { |sum, n| sum + n }
     end
 
     def location e # :nodoc:
@@ -811,7 +816,7 @@ module MiniTest
       end
 
       def self.test_suites # :nodoc:
-        @@test_suites.keys.sort_by { |ts| ts.name }
+        @@test_suites.keys.sort_by { |ts| ts.name.to_s }
       end
 
       def self.test_methods # :nodoc:
