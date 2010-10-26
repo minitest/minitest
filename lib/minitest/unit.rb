@@ -515,6 +515,7 @@ module MiniTest
     attr_accessor :options                            # :nodoc:
     attr_accessor :help                               # :nodoc:
     attr_accessor :verbose                            # :nodoc:
+    attr_accessor :parallel                           # :nodoc:
 
     @@installed_at_exit ||= false
     @@out = $stdout
@@ -577,27 +578,25 @@ module MiniTest
       sync = @@out.respond_to? :"sync=" # stupid emacs
       old_sync, @@out.sync = @@out.sync, true if sync
 
-      suites.each do |suite|
-        header = "#{type}_suite_header"
-        puts send(header, suite) if respond_to? header
-
-        suite.send("#{type}_methods").grep(filter).each do |method|
-          inst = suite.new method
-          inst._assertions = 0
-
-          print "#{suite}##{method} = " if @verbose
-
-          @start_time = Time.now
-          result = inst.run(self)
-
-          print "%.2f s = " % (Time.now - @start_time) if @verbose
-          print result
-          puts if @verbose
-
-          @test_count += 1
-          @assertion_count += inst._assertions
+      if @parallel
+        begin
+          require 'rubygems'
+          require 'parallel'
+        rescue LoadError => ex
+          puts "You must install the 'parallel' gem to run minitest in parallel\n\n"
+          raise ex 
+        end
+        statistics = Parallel.map(suites, :in_processes => @parallel) do |suite|
+          _run_suite(suite, type, filter)
+        end
+      else
+        statistics = suites.map do |suite|
+          _run_suite(suite, type, filter)
         end
       end
+
+      @test_count = statistics.inject(0){|memo, x| memo + x.size}
+      @assertion_count = statistics.flatten.inject(0){|memo, x| memo + x}
 
       @@out.sync = old_sync if sync
 
@@ -615,6 +614,26 @@ module MiniTest
       puts
 
       status
+    end
+
+    def _run_suite(suite, type, filter)
+      header = "#{type}_suite_header"
+      puts send(header, suite) if respond_to? header
+
+      suite.send("#{type}_methods").grep(filter).map do |method|
+        inst = suite.new method
+        inst._assertions = 0
+
+        start_time = Time.now
+        result = inst.run(self)
+
+        print "#{suite}##{method} = %.2f s = " % (Time.now - start_time) if @verbose
+        print result
+        puts if @verbose
+
+        @test_count += 1
+        @assertion_count += inst._assertions
+      end
     end
 
     def location e # :nodoc:
@@ -651,6 +670,7 @@ module MiniTest
       @report = []
       @errors = @failures = @skips = 0
       @verbose = false
+      @parallel = false
     end
 
     def process_args args = []
@@ -678,6 +698,10 @@ module MiniTest
           options[:filter] = a
         end
 
+        opts.on '-p', '--parallel PROCESSORS', "Run tests across multiple processors" do |p|
+          options[:parallel] = p
+        end
+
         opts.parse! args
         orig_args -= args
       end
@@ -691,6 +715,8 @@ module MiniTest
       srand options[:seed]
 
       self.verbose = options[:verbose]
+      self.parallel = options[:parallel].to_i if options[:parallel]
+      self.parallel = 1 if self.parallel and self.parallel < 1
       @help = orig_args.map { |s| s =~ /[\s|&<>$()]/ ? s.inspect : s }.join " "
 
       options
