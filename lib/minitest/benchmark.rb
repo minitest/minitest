@@ -17,7 +17,7 @@ class MiniTest::Unit
     # Returns a set of ranges stepped exponentially from +min+ to
     # +max+ by powers of +base+. Eg:
     #
-    #   bench_linear(2, 16, 2) # => [2, 4, 8, 16]
+    #   bench_exp(2, 16, 2) # => [2, 4, 8, 16]
 
     def self.bench_exp min, max, base = 10
       min = (Math.log10(min) / Math.log10(base)).to_i
@@ -34,6 +34,8 @@ class MiniTest::Unit
 
     def self.bench_linear min, max, step = 10
       (min..max).step(step).to_a
+    rescue LocalJumpError # 1.8.6
+      r = []; (min..max).step(step) { |n| r << n }; r
     end
 
     ##
