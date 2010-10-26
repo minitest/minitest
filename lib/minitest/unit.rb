@@ -22,7 +22,7 @@ module MiniTest
            pwd = Pathname.new Dir.pwd
            pn = Pathname.new File.expand_path(__FILE__)
            relpath = pn.relative_path_from(pwd) rescue pn
-           pn = File.join(".", relpath) unless pn.relative?
+           pn = File.join ".", relpath unless pn.relative?
            pn.to_s
          else                             # assume both are expanded
            __FILE__
@@ -36,11 +36,11 @@ module MiniTest
 
     new_bt = []
     bt.each do |line|
-      break if line.rindex(MINI_DIR, 0)
+      break if line.rindex MINI_DIR, 0
       new_bt << line
     end
 
-    new_bt = bt.reject { |line| line.rindex(MINI_DIR, 0) } if new_bt.empty?
+    new_bt = bt.reject { |line| line.rindex MINI_DIR, 0 } if new_bt.empty?
     new_bt = bt.dup if new_bt.empty?
     new_bt
   end
@@ -57,7 +57,7 @@ module MiniTest
 
     def mu_pp obj
       s = obj.inspect
-      s = s.force_encoding(Encoding.default_external) if defined? Encoding
+      s = s.force_encoding Encoding.default_external if defined? Encoding
       s
     end
 
@@ -525,7 +525,7 @@ module MiniTest
     def self.autorun
       at_exit {
         next if $! # don't run if there was an exception
-        exit_code = MiniTest::Unit.new.run(ARGV)
+        exit_code = MiniTest::Unit.new.run ARGV
         exit false if exit_code && exit_code != 0
       } unless @@installed_at_exit
       @@installed_at_exit = true
@@ -561,7 +561,7 @@ module MiniTest
     end
 
     def _run_anything type
-      suites = TestCase.send("#{type}_suites")
+      suites = TestCase.send "#{type}_suites"
       return if suites.empty?
 
       filter = options[:filter] || '/./'
@@ -577,7 +577,7 @@ module MiniTest
       sync = @@out.respond_to? :"sync=" # stupid emacs
       old_sync, @@out.sync = @@out.sync, true if sync
 
-      results = suites.map { |suite| _run_suite(suite, type, filter) }
+      results = suites.map { |suite| _run_suite suite, type, filter }
 
       @test_count      = results.inject(0) { |sum, (tc, ac)| sum + tc }
       @assertion_count = results.inject(0) { |sum, (tc, ac)| sum + ac }
@@ -600,7 +600,7 @@ module MiniTest
       status
     end
 
-    def _run_suite(suite, type, filter)
+    def _run_suite suite, type, filter
       header = "#{type}_suite_header"
       puts send(header, suite) if respond_to? header
 
@@ -609,7 +609,7 @@ module MiniTest
         inst._assertions = 0
 
         start_time = Time.now
-        result = inst.run(self)
+        result = inst.run self
         time = Time.now - start_time
 
         print "#{suite}##{method} = %.2f s = " % time if @verbose
@@ -645,7 +645,7 @@ module MiniTest
             "Failure:\n#{meth}(#{klass}) [#{location e}]:\n#{e.message}\n"
           else
             @errors += 1
-            bt = MiniTest::filter_backtrace(e.backtrace).join("\n    ")
+            bt = MiniTest::filter_backtrace(e.backtrace).join "\n    "
             "Error:\n#{meth}(#{klass}):\n#{e.class}: #{e.message}\n    #{bt}\n"
           end
       @report << e
@@ -750,9 +750,9 @@ module MiniTest
       # Runs the tests reporting the status to +runner+
 
       def run runner
-        trap 'INFO' do
-          warn '%s#%s %.2fs' % [self.class, self.__name__,
-            (Time.now - runner.start_time)]
+        trap "INFO" do
+          time = Time.now - runner.start_time
+          warn "%s#%s %.2fs" % [self.class, self.__name__, time]
           runner.status $stderr
         end if SUPPORTS_INFO_SIGNAL
 
@@ -767,14 +767,14 @@ module MiniTest
           raise
         rescue Exception => e
           @passed = false
-          result = runner.puke(self.class, self.__name__, e)
+          result = runner.puke self.class, self.__name__, e
         ensure
           begin
             self.teardown
           rescue *PASSTHROUGH_EXCEPTIONS
             raise
           rescue Exception => e
-            result = runner.puke(self.class, self.__name__, e)
+            result = runner.puke self.class, self.__name__, e
           end
           trap 'INFO', 'DEFAULT' if SUPPORTS_INFO_SIGNAL
         end
@@ -825,7 +825,7 @@ module MiniTest
         case self.test_order
         when :random then
           max = methods.size
-          methods.sort.sort_by { rand(max) }
+          methods.sort.sort_by { rand max }
         when :alpha, :sorted then
           methods.sort
         else
