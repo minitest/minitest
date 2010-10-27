@@ -564,9 +564,6 @@ module MiniTest
       suites = TestCase.send "#{type}_suites"
       return if suites.empty?
 
-      filter = options[:filter] || '/./'
-      filter = Regexp.new $1 if filter =~ /\/(.*)\//
-
       start = Time.now
 
       puts
@@ -577,7 +574,7 @@ module MiniTest
       sync = @@out.respond_to? :"sync=" # stupid emacs
       old_sync, @@out.sync = @@out.sync, true if sync
 
-      results = suites.map { |suite| _run_suite suite, type, filter }
+      results = suites.map { |suite| _run_suite suite, type }
 
       @test_count      = results.inject(0) { |sum, (tc, ac)| sum + tc }
       @assertion_count = results.inject(0) { |sum, (tc, ac)| sum + ac }
@@ -600,9 +597,12 @@ module MiniTest
       status
     end
 
-    def _run_suite suite, type, filter
+    def _run_suite suite, type
       header = "#{type}_suite_header"
       puts send(header, suite) if respond_to? header
+
+      filter = options[:filter] || '/./'
+      filter = Regexp.new $1 if filter =~ /\/(.*)\//
 
       assertions = suite.send("#{type}_methods").grep(filter).map { |method|
         inst = suite.new method
