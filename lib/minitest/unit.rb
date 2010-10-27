@@ -520,6 +520,16 @@ module MiniTest
     @@out = $stdout
 
     ##
+    # A simple hook allowing you to run a block of code after the
+    # tests are done. Eg:
+    #
+    #   MiniTest::Unit.after_tests { p $debugging_info }
+
+    def self.after_tests
+      at_exit { at_exit { yield } }
+    end
+
+    ##
     # Registers MiniTest::Unit to run tests at process exit
 
     def self.autorun
@@ -546,17 +556,20 @@ module MiniTest
       @@out = stream
     end
 
+    ##
+    # Return all plugins' run methods (methods that start with "run_").
+
     def self.plugins
       @@plugins ||= (["run_tests"] +
                      public_instance_methods(false).
                      grep(/^run_/).map { |s| s.to_s }).uniq
     end
 
-    def puts *a
+    def puts *a  # :nodoc:
       @@out.puts(*a)
     end
 
-    def print *a
+    def print *a # :nodoc:
       @@out.print(*a)
     end
 
@@ -574,7 +587,7 @@ module MiniTest
       sync = @@out.respond_to? :"sync=" # stupid emacs
       old_sync, @@out.sync = @@out.sync, true if sync
 
-      results = suites.map { |suite| _run_suite suite, type }
+      results = _run_suites suites, type
 
       @test_count      = results.inject(0) { |sum, (tc, ac)| sum + tc }
       @assertion_count = results.inject(0) { |sum, (tc, ac)| sum + ac }
@@ -595,6 +608,10 @@ module MiniTest
       puts
 
       status
+    end
+
+    def _run_suites suites, type
+      suites.map { |suite| _run_suite suite, type }
     end
 
     def _run_suite suite, type
