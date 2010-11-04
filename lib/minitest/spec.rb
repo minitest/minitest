@@ -63,8 +63,10 @@ module Kernel
     name  = [stack.last, desc].compact.join("::")
     cls   = Class.new(stack.last || MiniTest::Spec)
 
+    # :stopdoc:
     # omg this sucks
     (class << cls; self; end).send(:define_method, :to_s) { name }
+    # :startdoc:
 
     cls.nuke_test_methods!
 
