@@ -995,9 +995,9 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
 
     pattern = Object.new
     def pattern.=~(other) true end
-    def pattern.inspect; "<<Object>>" end
+    def pattern.inspect; "[Object]" end
 
-    util_assert_triggered 'Expected <<Object>> to not match 5.' do
+    util_assert_triggered 'Expected [Object] to not match 5.' do
       @tc.refute_match pattern, 5
     end
   end
