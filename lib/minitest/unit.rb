@@ -86,15 +86,14 @@ module MiniTest
     # Fails unless the block returns a true value.
 
     def assert_block msg = nil
-      msg = message(msg) { "Expected block to return true value" }
-      assert yield, msg
+      assert yield, "Expected block to return true value"
     end
 
     ##
     # Fails unless +obj+ is empty.
 
     def assert_empty obj, msg = nil
-      msg = message(msg) { "Expected #{obj.inspect} to be empty" }
+      msg = message(msg) { "Expected #{mu_pp(obj)} to be empty" }
       assert_respond_to obj, :empty?
       assert obj.empty?, msg
     end
@@ -544,8 +543,18 @@ module MiniTest
     ##
     # Returns the stream to use for output.
 
-    def self.out
+    def self.output
       @@out
+    end
+
+    ##
+    # Returns the stream to use for output.
+    #
+    # DEPRECATED: use ::output instead.
+
+    def self.out
+      warn "::out deprecated, use ::output instead." if $VERBOSE
+      output
     end
 
     ##
@@ -565,12 +574,16 @@ module MiniTest
                      grep(/^run_/).map { |s| s.to_s }).uniq
     end
 
+    def output
+      self.class.output
+    end
+
     def puts *a  # :nodoc:
-      @@out.puts(*a)
+      output.puts(*a)
     end
 
     def print *a # :nodoc:
-      @@out.print(*a)
+      output.print(*a)
     end
 
     def _run_anything type
@@ -584,15 +597,15 @@ module MiniTest
       puts
 
       @test_count, @assertion_count = 0, 0
-      sync = @@out.respond_to? :"sync=" # stupid emacs
-      old_sync, @@out.sync = @@out.sync, true if sync
+      sync = output.respond_to? :"sync=" # stupid emacs
+      old_sync, output.sync = output.sync, true if sync
 
       results = _run_suites suites, type
 
       @test_count      = results.inject(0) { |sum, (tc, ac)| sum + tc }
       @assertion_count = results.inject(0) { |sum, (tc, ac)| sum + ac }
 
-      @@out.sync = old_sync if sync
+      output.sync = old_sync if sync
 
       t = Time.now - start
 
@@ -746,7 +759,7 @@ module MiniTest
     ##
     # Writes status to +io+
 
-    def status io = @@out
+    def status io = self.output
       format = "%d tests, %d assertions, %d failures, %d errors, %d skips"
       io.puts format % [test_count, assertion_count, failures, errors, skips]
     end
