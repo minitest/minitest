@@ -5,9 +5,12 @@ README.txt
 Rakefile
 design_rationale.rb
 lib/minitest/autorun.rb
+lib/minitest/benchmark.rb
 lib/minitest/mock.rb
+lib/minitest/pride.rb
 lib/minitest/spec.rb
 lib/minitest/unit.rb
-test/test_mini_mock.rb
-test/test_mini_spec.rb
-test/test_mini_unit.rb
+test/test_minitest_benchmark.rb
+test/test_minitest_mock.rb
+test/test_minitest_spec.rb
+test/test_minitest_unit.rb
