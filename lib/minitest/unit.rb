@@ -767,8 +767,10 @@ module MiniTest
     end
 
     ##
-    # Subclass TestCase to create your own tests.  Typically you'll want a
+    # Subclass TestCase to create your own tests. Typically you'll want a
     # TestCase subclass per implementation class.
+    #
+    # See MiniTest::Assertions
 
     class TestCase
       attr_reader :__name__ # :nodoc:
