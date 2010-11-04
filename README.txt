@@ -1,22 +1,35 @@
-= minitest/{unit,spec,mock}
+= minitest/*
 
 * http://rubyforge.org/projects/bfts
 
 == DESCRIPTION:
 
-minitest/unit is a small and fast replacement for ruby's huge and slow
-test/unit. This is meant to be clean and easy to use both as a regular
-test writer and for language implementors that need a minimal set of
-methods to bootstrap a working unit test suite.
+minitest provides a complete suite of testing facilities supporting
+TDD, BDD, mocking, and benchmarking.
 
-minitest/spec is a functionally complete spec engine.
+minitest/unit is a small and incredibly fast unit testing framework.
+It provides a rich set of assertions to make your tests clean and
+readable.
+
+minitest/spec is a functionally complete spec engine. It hooks onto
+minitest/unit and seamlessly bridges test assertions over to spec
+expectations.
 
 minitest/benchmark is an awesome way to assert the performance of your
-algorithms in a repeatable manner.
+algorithms in a repeatable manner. Now you can assert that your newb
+co-worker doesn't replace your linear algorithm with an exponential
+one!
 
-minitest/mock, by Steven Baker, is a beautifully tiny mock object framework.
+minitest/mock by Steven Baker, is a beautifully tiny mock object
+framework.
 
-(This package was called miniunit once upon a time)
+minitest/pride shows pride in testing and adds coloring to your test
+output.
+
+minitest/unit is meant to have a clean implementation for language
+implementors that need a minimal set of methods to bootstrap a working
+test suite. For example, there is no magic involved for test-case
+discovery.
 
 == FEATURES/PROBLEMS:
 
@@ -25,6 +38,7 @@ minitest/mock, by Steven Baker, is a beautifully tiny mock object framework.
 * minitest/spec - a very fast, simple, and clean spec system.
 * minitest/mock - a simple and clean mock system.
 * minitest/benchmark - an awesome way to assert your algorithm's performance.
+* minitest/pride - show your pride in testing!
 * Incredibly small and fast runner, but no bells and whistles.
 
 == RATIONALE:
@@ -96,11 +110,11 @@ benchmarks won't run.
   require 'minitest/benchmark' if ENV["BENCH"]
 
   class TestMeme < MiniTest::Unit::TestCase
-    # defaults run to 1..10_000 by powers of 10
+    # Override self.bench_range or default range is [1, 10, 100, 1_000, 10_000]
     def bench_my_algorithm
-      assert_performance_linear 0.9999 do |n|
-        100.times do
-          @obj.my_algorithm(n)
+      assert_performance_linear 0.9999 do |n| # n is a range value
+        n.times do
+          @obj.my_algorithm
         end
       end
     end
