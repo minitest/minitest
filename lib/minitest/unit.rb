@@ -86,7 +86,7 @@ module MiniTest
     # Fails unless the block returns a true value.
 
     def assert_block msg = nil
-      assert yield, "Expected block to return true value"
+      assert yield, "Expected block to return true value."
     end
 
     ##
