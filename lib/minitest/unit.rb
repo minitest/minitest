@@ -823,7 +823,7 @@ module MiniTest
 
       def io
         @__io__ = true
-        MiniTest::Unit.out
+        MiniTest::Unit.output
       end
 
       def io?
