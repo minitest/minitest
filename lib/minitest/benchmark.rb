@@ -39,11 +39,15 @@ class MiniTest::Unit
     end
 
     ##
-    # Returns the benchmark methods for that class.
+    # Returns the benchmark methods (methods that start with bench_)
+    # for that class.
 
     def self.benchmark_methods # :nodoc:
       public_instance_methods(true).grep(/^bench_/).map { |m| m.to_s }.sort
     end
+
+    ##
+    # Returns all test suites that have benchmark methods.
 
     def self.benchmark_suites
       TestCase.test_suites.reject { |s| s.benchmark_methods.empty? }
