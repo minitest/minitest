@@ -1,3 +1,30 @@
+=== 2.0.0 / 2010-11-11
+
+* 3 major enhancements:
+
+  * Added minitest/benchmark! Assert your performance! YAY!
+  * Refactored runner to allow for more extensibility. See minitest/benchmark.
+  * This makes the runner backwards incompatible in some ways!
+
+* 9 minor enhancements:
+
+  * Added MiniTest::Unit.after_tests { ... }
+  * Improved output by adding test rates and a more sortable verbose format
+  * Improved readme based on feedback from others
+  * Added io method to TestCase. If used, it'll supplant '.EF' output.
+  * Refactored IO in MiniTest::Unit.
+  * Refactored _run_anything to _run_suite to make it easier to wrap (ngauthier)
+  * Spec class names are now the unmunged descriptions (btakita)
+  * YAY for not having redundant rdoc/readmes!
+  * Help output is now generated from the flags you passed straight up.
+
+* 4 bug fixes:
+
+  * Fixed scoping issue on minitest/mock (srbaker/prosperity)
+  * Fixed some of the assertion default messages
+  * Fixes autorun when on windows with ruby install on different drive (larsch)
+  * Fixed rdoc output bug in spec.rb
+
 === 1.7.2 / 2010-09-23
 
 * 3 bug fixes:
