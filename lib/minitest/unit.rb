@@ -37,13 +37,19 @@ module MiniTest
     return ["No backtrace"] unless bt
 
     new_bt = []
-    bt.each do |line|
-      break if line.rindex MINI_DIR, 0
-      new_bt << line
+
+    unless $DEBUG then
+      bt.each do |line|
+        break if line.rindex MINI_DIR, 0
+        new_bt << line
+      end
+
+      new_bt = bt.reject { |line| line.rindex MINI_DIR, 0 } if new_bt.empty?
+      new_bt = bt.dup if new_bt.empty?
+    else
+      new_bt = bt.dup
     end
 
-    new_bt = bt.reject { |line| line.rindex MINI_DIR, 0 } if new_bt.empty?
-    new_bt = bt.dup if new_bt.empty?
     new_bt
   end
 
@@ -513,9 +519,13 @@ module MiniTest
     attr_accessor :report, :failures, :errors, :skips # :nodoc:
     attr_accessor :test_count, :assertion_count       # :nodoc:
     attr_accessor :start_time                         # :nodoc:
-    attr_accessor :options                            # :nodoc:
     attr_accessor :help                               # :nodoc:
     attr_accessor :verbose                            # :nodoc:
+    attr_writer   :options                            # :nodoc:
+
+    def options
+      @options ||= {}
+    end
 
     @@installed_at_exit ||= false
     @@out = $stdout
