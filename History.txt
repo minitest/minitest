@@ -1,3 +1,16 @@
+=== 2.0.1 / 2010-12-15
+
+* 4 minor enhancements:
+
+  * Do not filter backtrace if $DEBUG
+  * Exit autorun via nested at_exit handler, in case other libs call exit
+  * Make options accesor lazy.
+  * Split printing of test name and its time. (nurse)
+
+* 1 bug fix:
+
+  * Fix bug when ^T is hit before runner start
+
 === 2.0.0 / 2010-11-11
 
 * 3 major enhancements:
