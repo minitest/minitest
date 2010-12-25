@@ -1,3 +1,13 @@
+=== 2.0.2 / 2010-12-24
+
+* 1 minor enhancement:
+
+  * Completed doco on minitest/benchmark for specs.
+
+* 1 bug fix:
+
+  * Benchmarks in specs that didn't call bench_range would die. (zzak).
+
 === 2.0.1 / 2010-12-15
 
 * 4 minor enhancements:
