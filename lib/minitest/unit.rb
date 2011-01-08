@@ -81,9 +81,9 @@ module MiniTest
     # Fails unless +test+ is a true value.
 
     def assert test, msg = nil
-      msg ||= "Failed assertion, no message given."
       self._assertions += 1
       unless test then
+        msg ||= "Failed assertion, no message given."
         msg = msg.call if Proc === msg
         raise MiniTest::Assertion, msg
       end
@@ -218,8 +218,8 @@ module MiniTest
     # Fails unless the block raises one of +exp+
 
     def assert_raises *exp
-      msg = String === exp.last ? exp.pop : nil
-      msg = msg.to_s + "\n" if msg
+      msg = "#{exp.pop}\n" if String === exp.last
+      
       should_raise = false
       begin
         yield
@@ -345,8 +345,7 @@ module MiniTest
     ##
     # Fails with +msg+
 
-    def flunk msg = nil
-      msg ||= "Epic Fail!"
+    def flunk msg = "Epic Fail!"
       assert false, msg
     end
 
@@ -354,16 +353,10 @@ module MiniTest
     # Returns a proc that will output +msg+ along with the default message.
 
     def message msg = nil, &default
-      proc {
-        if msg then
-          msg = msg.to_s unless String === msg
-          msg += '.' unless msg.empty?
-          msg += "\n#{default.call}."
-          msg.strip
-        else
-          "#{default.call}."
-        end
-      }
+      proc do
+        custom_message = "#{msg}.\n" if msg && !msg.empty?
+        "#{custom_message}#{default.call}."
+      end
     end
 
     ##
