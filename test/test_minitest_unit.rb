@@ -873,6 +873,12 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
       @tc.flunk
     end
   end
+  
+  def test_flunk_nil
+    util_assert_triggered 'Epic Fail!' do
+      @tc.flunk nil
+    end
+  end
 
   def test_flunk_message
     util_assert_triggered @zomg do
@@ -886,6 +892,12 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
     assert_equal "blah2.",         @tc.message { "blah2" }.call
     assert_equal "blah2.",         @tc.message("") { "blah2" }.call
     assert_equal "blah1.\nblah2.", @tc.message("blah1") { "blah2" }.call
+    
+    mock = Object.new
+    def mock.to_s; "blah1"; end
+    
+    assert_equal "blah1.\nblah2.", @tc.message(mock) { "blah2" }.call
+    assert_equal "blah1.\nblah2.", @tc.message(:blah1) { "blah2" }.call
   end
 
   def test_pass

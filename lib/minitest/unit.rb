@@ -345,7 +345,8 @@ module MiniTest
     ##
     # Fails with +msg+
 
-    def flunk msg = "Epic Fail!"
+    def flunk msg = nil
+      msg ||= "Epic Fail!"
       assert false, msg
     end
 
@@ -354,7 +355,8 @@ module MiniTest
 
     def message msg = nil, &default
       proc do
-        custom_message = "#{msg}.\n" if msg && !msg.empty?
+        msg = msg.to_s unless String === msg
+        custom_message = "#{msg}.\n" unless msg.empty?
         "#{custom_message}#{default.call}."
       end
     end
