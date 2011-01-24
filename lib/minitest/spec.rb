@@ -61,7 +61,8 @@ module Kernel
   def describe desc, &block
     stack = MiniTest::Spec.describe_stack
     name  = [stack.last, desc].compact.join("::")
-    cls   = Class.new(stack.last || MiniTest::Spec)
+    sclas = stack.last || (self.is_a?(Class) && self < MiniTest::Spec ? self : MiniTest::Spec)
+    cls   = Class.new(sclas)
 
     # :stopdoc:
     # omg this sucks

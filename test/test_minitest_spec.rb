@@ -227,3 +227,18 @@ class TestMeta < MiniTest::Unit::TestCase
     assert_equal inner_methods, z.instance_methods(false).sort.map {|o| o.to_s }
   end
 end
+
+class TestScopeBase < MiniTest::Spec
+  def base_helper? ; true ; end
+end
+
+class TestScopeSub < TestScopeBase
+  it "needs scope to base class" do
+    assert_respond_to self, :base_helper?
+  end
+  describe "another scope" do
+    it "still needs scope to base class" do
+      assert_respond_to self, :base_helper?
+    end
+  end
+end
