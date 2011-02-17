@@ -410,6 +410,14 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     end
   end
 
+  def test_assert_block_triggered_with_message
+    util_assert_triggered "Custom Message.\nExpected block to return true value." do
+      @tc.assert_block 'Custom Message' do
+        false
+      end
+    end
+  end
+
   def test_assert_empty
     @assertion_count = 2
 
