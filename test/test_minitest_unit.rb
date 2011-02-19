@@ -403,8 +403,8 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_assert_block_triggered
-    util_assert_triggered 'Expected block to return true value.' do
-      @tc.assert_block do
+    util_assert_triggered "blah.\nExpected block to return true value." do
+      @tc.assert_block "blah" do
         false
       end
     end
