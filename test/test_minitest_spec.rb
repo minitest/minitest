@@ -226,4 +226,18 @@ class TestMeta < MiniTest::Unit::TestCase
     assert_equal inner_methods, y.instance_methods(false).sort.map {|o| o.to_s }
     assert_equal inner_methods, z.instance_methods(false).sort.map {|o| o.to_s }
   end
+
+  def test_structure_subclasses
+    z = nil
+    x = Class.new MiniTest::Spec do
+      def xyz; end
+    end
+    y = Class.new x do
+      z = describe("inner") {}
+    end
+
+    assert_respond_to x.new(nil), "xyz"
+    assert_respond_to y.new(nil), "xyz"
+    assert_respond_to z.new(nil), "xyz"
+  end
 end

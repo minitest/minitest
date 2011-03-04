@@ -55,13 +55,31 @@ module Kernel
   #
   # TODO: find good tutorial url.
   #
-  # Defines a test class subclassing from either
-  # MiniTest::Unit::TestCase or from the surrounding describe's class.
+  # Defines a test class subclassing from either MiniTest::Spec or
+  # from the surrounding describe's class. The surrounding class may
+  # subclass MiniTest::Spec manually in order to easily share code:
+  #
+  #     class MySpec < MiniTest::Spec
+  #       # ... shared code ...
+  #     end
+  #
+  #     class TestStuff < MySpec
+  #       it "does stuff" do
+  #         # shared code available here
+  #       end
+  #       describe "inner stuff" do
+  #         it "still does stuff" do
+  #           # ...and here
+  #         end
+  #       end
+  #     end
 
-  def describe desc, &block
+  def describe desc, &block # :doc:
     stack = MiniTest::Spec.describe_stack
     name  = [stack.last, desc].compact.join("::")
-    cls   = Class.new(stack.last || MiniTest::Spec)
+    sclas = stack.last
+    sclas ||= (Class === self && self < MiniTest::Spec ? self : MiniTest::Spec)
+    cls   = Class.new sclas
 
     # :stopdoc:
     # omg this sucks
