@@ -309,6 +309,9 @@ Finished tests in 0.00
   end
 
   def test_run_passing_line
+    # --line requires 1.9 or above
+    return unless Class.respond_to? :public_instance_method
+
     test_line = __LINE__ + 2
     tc = Class.new(MiniTest::Unit::TestCase) do
       def test_something

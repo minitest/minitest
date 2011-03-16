@@ -737,7 +737,11 @@ module MiniTest
         end
 
         opts.on '-l', '--line PATTERN', "Run only the test at the given line." do |a|
-          options[:line_number] = a.to_i
+          if Class.respond_to? :public_instance_method
+            options[:line_number] = a.to_i
+          else
+            STDERR.puts "WARNING: ignoring --line, Ruby version is too old"
+          end
         end
 
         opts.parse! args
