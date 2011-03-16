@@ -42,7 +42,7 @@ class MiniTest::Unit
     # Returns the benchmark methods (methods that start with bench_)
     # for that class.
 
-    def self.benchmark_methods # :nodoc:
+    def self.benchmark_methods line_number = nil # :nodoc:
       public_instance_methods(true).grep(/^bench_/).map { |m| m.to_s }.sort
     end
 

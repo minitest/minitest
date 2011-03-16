@@ -308,6 +308,35 @@ Finished tests in 0.00
     assert_report expected
   end
 
+  def test_run_passing_line
+    test_line = __LINE__ + 2
+    tc = Class.new(MiniTest::Unit::TestCase) do
+      def test_something
+        assert true
+      end
+
+      def test_failure
+        assert false
+      end
+    end
+
+    Object.const_set(:ATestCase, tc)
+
+    @tu.run ["--line=#{test_line}", "--seed=42"]
+
+    expected = "Run options: --line=#{test_line} --seed=42
+
+# Running tests:
+
+.
+
+Finished tests in 0.00
+
+1 tests, 1 assertions, 0 failures, 0 errors, 0 skips
+"
+    assert_report expected
+  end
+
   def test_run_passing
     tc = Class.new(MiniTest::Unit::TestCase) do
       def test_something

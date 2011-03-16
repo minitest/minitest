@@ -655,7 +655,7 @@ module MiniTest
       filter = options[:filter] || '/./'
       filter = Regexp.new $1 if filter =~ /\/(.*)\//
 
-      assertions = suite.send("#{type}_methods").grep(filter).map { |method|
+      assertions = suite.send("#{type}_methods", options[:line_number]).grep(filter).map { |method|
         inst = suite.new method
         inst._assertions = 0
 
@@ -734,6 +734,10 @@ module MiniTest
 
         opts.on '-n', '--name PATTERN', "Filter test names on pattern." do |a|
           options[:filter] = a
+        end
+
+        opts.on '-l', '--line PATTERN', "Run only the test at the given line." do |a|
+          options[:line_number] = a.to_i
         end
 
         opts.parse! args
@@ -874,8 +878,13 @@ module MiniTest
         @@test_suites.keys.sort_by { |ts| ts.name.to_s }
       end
 
-      def self.test_methods # :nodoc:
+      def self.test_methods line_number = nil # :nodoc:
         methods = public_instance_methods(true).grep(/^test/).map { |m| m.to_s }
+        if line_number && !methods.empty?
+          lines = methods.map { |m| [public_instance_method(m).source_location[1], m] }
+          line = lines.sort.reverse.find { |l| l[0] <= line_number } || lines[0]
+          methods = [ line[1] ]
+        end
 
         case self.test_order
         when :random then
