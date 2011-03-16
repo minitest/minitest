@@ -280,7 +280,7 @@ Failed assertion, no message given.
     assert_report expected
   end
 
-  def test_run_failing_filtered
+  def test_run_passing_filtered
     tc = Class.new(MiniTest::Unit::TestCase) do
       def test_something
         assert true
