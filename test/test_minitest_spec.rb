@@ -198,18 +198,22 @@ end
 class TestMeta < MiniTest::Unit::TestCase
   def test_structure
     x = y = z = nil
+    before_list = []
+    after_list  = []
     x = describe "top-level thingy" do
-      before {}
-      after  {}
+      before { before_list << 1 }
+      after  { after_list  << 1 }
 
       it "top-level-it" do end
 
       y = describe "inner thingy" do
-        before {}
+        before { before_list << 2 }
+        after  { after_list  << 2 }
         it "inner-it" do end
 
         z = describe "very inner thingy" do
-          before {}
+          before { before_list << 3 }
+          after  { after_list  << 3 }
           it "inner-it" do end
         end
       end
@@ -220,11 +224,22 @@ class TestMeta < MiniTest::Unit::TestCase
     assert_equal "top-level thingy::inner thingy::very inner thingy", z.to_s
 
     top_methods = %w(setup teardown test_0001_top_level_it)
-    inner_methods = %w(setup test_0001_inner_it)
+    inner_methods = %w(setup teardown test_0001_inner_it)
 
     assert_equal top_methods,   x.instance_methods(false).sort.map {|o| o.to_s }
     assert_equal inner_methods, y.instance_methods(false).sort.map {|o| o.to_s }
     assert_equal inner_methods, z.instance_methods(false).sort.map {|o| o.to_s }
+
+    File.open('/dev/null', 'w') do |file|
+      MiniTest::Unit.output = file
+      z.new(nil).run(MiniTest::Unit.new)
+    end
+
+    assert_equal [1, 2, 3], before_list
+    assert_equal [3, 2, 1], after_list
+
+    ensure
+      MiniTest::Unit.output = $stdout
   end
 
   def test_structure_subclasses
