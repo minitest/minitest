@@ -81,6 +81,8 @@ module Kernel
     sclas ||= (Class === self && self < MiniTest::Spec ? self : MiniTest::Spec)
     cls   = Class.new sclas
 
+    sclas.children << cls unless cls == MiniTest::Spec
+
     # :stopdoc:
     # omg this sucks
     (class << cls; self; end).send(:define_method, :to_s) { name }
@@ -94,14 +96,6 @@ module Kernel
     cls
   end
   private :describe
-end
-
-class Module
-  def classes type = Object # :nodoc:
-    constants.map { |n| const_get n }.find_all { |c|
-      c.class == Class and type > c
-    } - [self]
-  end
 end
 
 ##
@@ -120,6 +114,10 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
     @@current_spec
   end
 
+  def self.children
+    @children ||= []
+  end
+
   def initialize name # :nodoc:
     super
     @@current_spec = self
@@ -130,6 +128,10 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
       self.send :undef_method, name
     end
   end
+
+  ##
+  # Spec users want setup/teardown to be inherited and NOTHING ELSE.
+  # It is almost like method reuse is lost on them.
 
   def self.define_inheritable_method name, &block # :nodoc:
     super_method = self.superclass.instance_method name
@@ -183,8 +185,8 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
 
     define_method name, &block
 
-    classes(MiniTest::Spec).each do |mod|
-      mod.send :undef_method, name if mod.respond_to? name
+    self.children.each do |mod|
+      mod.send :undef_method, name if mod.public_method_defined? name
     end
   end
 end

@@ -227,6 +227,40 @@ class TestMeta < MiniTest::Unit::TestCase
     assert_equal inner_methods, z.instance_methods(false).sort.map {|o| o.to_s }
   end
 
+  def test_children
+    MiniTest::Spec.children.clear
+
+    x = y = z = nil
+    x = describe "top-level thingy" do
+      y = describe "first thingy" do end
+
+      it "top-level-it" do end
+
+      z = describe "second thingy" do end
+    end
+
+    assert_equal [x], MiniTest::Spec.children
+    assert_equal [y, z], x.children
+    assert_equal [], y.children
+    assert_equal [], z.children
+  end
+
+  def test_describe_first_structure
+    x = y = z = nil
+    x = describe "top-level thingy" do
+      y = describe "first thingy" do end
+
+      it "top-level-it" do end
+
+      z = describe "second thingy" do end
+    end
+
+    assert_equal ['test_0001_top_level_it'],
+      x.instance_methods.grep(/^test/).map {|o| o.to_s}
+    assert_equal [], y.instance_methods.grep(/^test/)
+    assert_equal [], z.instance_methods.grep(/^test/)
+  end
+
   def test_structure_subclasses
     z = nil
     x = Class.new MiniTest::Spec do
