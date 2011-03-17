@@ -1,4 +1,5 @@
 require 'minitest/spec'
+require 'stringio'
 
 MiniTest::Unit.autorun
 
@@ -230,16 +231,15 @@ class TestMeta < MiniTest::Unit::TestCase
     assert_equal inner_methods, y.instance_methods(false).sort.map {|o| o.to_s }
     assert_equal inner_methods, z.instance_methods(false).sort.map {|o| o.to_s }
 
-    File.open('/dev/null', 'w') do |file|
-      MiniTest::Unit.output = file
-      z.new(nil).run(MiniTest::Unit.new)
-    end
+    orig_stdout           = MiniTest::Unit.output
+    MiniTest::Unit.output = StringIO.new
+    z.new(nil).run(MiniTest::Unit.new)
 
     assert_equal [1, 2, 3], before_list
     assert_equal [3, 2, 1], after_list
 
     ensure
-      MiniTest::Unit.output = $stdout
+      MiniTest::Unit.output = orig_stdout
   end
 
   def test_structure_subclasses
