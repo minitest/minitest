@@ -219,6 +219,10 @@ class TestMeta < MiniTest::Unit::TestCase
     assert_equal "top-level thingy::inner thingy", y.to_s
     assert_equal "top-level thingy::inner thingy::very inner thingy", z.to_s
 
+    assert_equal "top-level thingy", x.desc
+    assert_equal "inner thingy", y.desc
+    assert_equal "very inner thingy", z.desc
+
     top_methods = %w(setup teardown test_0001_top_level_it)
     inner_methods = %w(setup test_0001_inner_it)
 

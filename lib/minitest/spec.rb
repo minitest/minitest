@@ -77,8 +77,11 @@ module Kernel
   def describe desc, &block # :doc:
     stack = MiniTest::Spec.describe_stack
     name  = [stack.last, desc].compact.join("::")
-    sclas = stack.last
-    sclas ||= (Class === self && self < MiniTest::Spec ? self : MiniTest::Spec)
+    sclas = stack.last || if Class === self && self < MiniTest::Spec then
+                            self
+                          else
+                            MiniTest::Spec.spec_type desc
+                          end
     cls   = Class.new sclas
 
     sclas.children << cls unless cls == MiniTest::Spec
@@ -86,6 +89,7 @@ module Kernel
     # :stopdoc:
     # omg this sucks
     (class << cls; self; end).send(:define_method, :to_s) { name }
+    (class << cls; self; end).send(:define_method, :desc) { desc }
     # :startdoc:
 
     cls.nuke_test_methods!
@@ -103,8 +107,35 @@ end
 #
 # For a list of expectations, see Object.
 
-
 class MiniTest::Spec < MiniTest::Unit::TestCase
+  ##
+  # Contains pairs of matchers and Spec classes to be used to
+  # calculate the superclass of a top-level describe. This allows for
+  # automatically customizable spec types.
+  #
+  # See: register_spec_type and spec_type
+
+  TYPES = [[//, MiniTest::Spec]]
+
+  ##
+  # Register a new type of spec that matches the spec's description. Eg:
+  #
+  #     register_spec_plugin(/Controller$/, MiniTest::Spec::Rails)
+
+  def self.register_spec_type matcher, klass
+    TYPES.unshift [matcher, klass]
+  end
+
+  ##
+  # Figure out the spec class to use based on a spec's description. Eg:
+  #
+  #     spec_type("BlahController") # => MiniTest::Spec::Rails
+
+  def self.spec_type desc
+    desc = desc.to_s
+    TYPES.find { |re, klass| re === desc }.last
+  end
+
   @@describe_stack = []
   def self.describe_stack # :nodoc:
     @@describe_stack
