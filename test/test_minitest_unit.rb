@@ -935,8 +935,9 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   def test_message
     @assertion_count = 0
 
-    assert_equal "blah2.",         @tc.message { "blah2" }.call
-    assert_equal "blah2.",         @tc.message("") { "blah2" }.call
+    assert_equal "blah2.",         @tc.message          { "blah2" }.call
+    assert_equal "blah2.",         @tc.message("")      { "blah2" }.call
+    assert_equal "blah1.\nblah2.", @tc.message(:blah1)  { "blah2" }.call
     assert_equal "blah1.\nblah2.", @tc.message("blah1") { "blah2" }.call
   end
 
