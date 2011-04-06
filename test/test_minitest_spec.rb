@@ -197,6 +197,11 @@ describe MiniTest::Spec do
 end
 
 class TestMeta < MiniTest::Unit::TestCase
+  def test_setup
+    srand 42
+    MiniTest::Unit::TestCase.reset
+  end
+
   def util_structure
     x = y = z = nil
     before_list = []
@@ -245,9 +250,9 @@ class TestMeta < MiniTest::Unit::TestCase
   def test_setup_teardown_behavior
     x, y, z, before_list, after_list = util_structure
 
-    capture_io do
-      z.new(nil).run(MiniTest::Unit.new)
-    end
+    tc = z.new(nil)
+    tc.setup
+    tc.teardown
 
     assert_equal [1, 2, 3], before_list
     assert_equal [3, 2, 1], after_list

@@ -587,6 +587,23 @@ module MiniTest
     end
 
     ##
+    # Tells MiniTest::Unit to delegate to +runner+, an instance of a
+    # MiniTest::Unit subclass, when MiniTest::Unit#run is called.
+
+    def self.runner= runner
+      @@runner = runner
+    end
+
+    ##
+    # Returns the MiniTest::Unit subclass instance that will be used
+    # to run the tests. A MiniTest::Unit instance is the default
+    # runner.
+
+    def self.runner
+      @@runner ||= self.new
+    end
+
+    ##
     # Return all plugins' run methods (methods that start with "run_").
 
     def self.plugins
@@ -755,9 +772,16 @@ module MiniTest
     end
 
     ##
-    # Top level driver, controls all output and filtering.
-
+    # Begins the full test run. Delegates to +runner+'s #_run method.
+    
     def run args = []
+      self.class.runner._run(args)
+    end
+    
+    ##
+    # Top level driver, controls all output and filtering. 
+
+    def _run args = []
       self.options = process_args args
 
       puts "Run options: #{help}"
