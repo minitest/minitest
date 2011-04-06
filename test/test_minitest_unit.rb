@@ -45,6 +45,7 @@ Finished tests in 0.00
 
   def teardown
     MiniTest::Unit.output = $stdout
+    MiniTest::Unit.runner = nil
     Object.send :remove_const, :ATestCase if defined? ATestCase
   end
 
@@ -248,7 +249,7 @@ RuntimeError: unhandled exception
     assert_report expected
   end
 
-  def test_run_failing # TODO: add error test
+  def test_run_failing
     tc = Class.new(MiniTest::Unit::TestCase) do
       def test_something
         assert true
@@ -350,6 +351,57 @@ test_skip(ATestCase) [FILE:LINE]:
 not yet
 
 2 tests, 1 assertions, 0 failures, 0 errors, 1 skips
+"
+    assert_report expected
+  end
+
+  def test_default_runner_is_minitest_unit
+    assert_instance_of MiniTest::Unit, MiniTest::Unit.runner
+  end
+
+  def test_run_with_other_runner
+
+    runner = Class.new(MiniTest::Unit) do
+      # Run once before each suite
+      def _run_suite(suite, type)
+        begin
+          suite.before_suite
+          super(suite, type)
+        end
+      end
+    end
+
+    tc = Class.new(MiniTest::Unit::TestCase) do
+
+      def self.before_suite
+        MiniTest::Unit.output.puts "Running #{self.name} tests"
+        @@foo = 1
+      end
+
+      def test_something
+        assert_equal 1, @@foo
+      end
+
+      def test_something_else
+        assert_equal 1, @@foo
+      end
+    end
+
+    Object.const_set(:ATestCase, tc)
+    MiniTest::Unit.runner = runner.new
+    @tu.run %w[--seed 42]
+
+    # We should only see 'running ATestCase tests' once
+    expected = "Run options: --seed 42
+
+# Running tests:
+
+Running ATestCase tests
+..
+
+Finished tests in 0.00
+
+2 tests, 2 assertions, 0 failures, 0 errors, 0 skips
 "
     assert_report expected
   end

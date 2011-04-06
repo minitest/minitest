@@ -174,6 +174,58 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
     end
   end
 
+=== Customizable Test Runner Types:
+
+MiniTest::Unit.runner=(runner) provides an easy way of creating custom
+test runners for specialized needs. Justin Weiss provides the
+following real-world example to create an alternative to regular
+fixture loading:
+
+  class MiniTestWithHooks::Unit < MiniTest::Unit
+    def before_suites
+    end
+
+    def after_suites
+    end
+
+    def _run_suites(suites, type)
+      begin
+        before_suites
+        super(suites, type)
+      ensure
+        after_suites
+      end
+    end
+
+    def _run_suite(suite, type)
+      begin
+        suite.before_suite
+        super(suite, type)
+      ensure
+        suite.after_suite
+      end
+    end
+  end
+
+  module MiniTestWithTransactions
+    class Unit < MiniTestWithHooks::Unit
+      include TestSetupHelper
+
+      def before_suites
+        super
+        setup_nested_transactions
+        # load any data we want available for all tests
+      end
+
+      def after_suites
+        teardown_nested_transactions
+        super
+      end
+    end
+  end
+
+  MiniTest::Unit.runner = MiniTestWithTransactions::Unit.new
+
 == REQUIREMENTS:
 
 * Ruby 1.8, maybe even 1.6 or lower. No magic is involved.
