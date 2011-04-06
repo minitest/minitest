@@ -165,11 +165,17 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   # It is almost like method reuse is lost on them.
 
   def self.define_inheritable_method name, &block # :nodoc:
+    # regular super() warns
     super_method = self.superclass.instance_method name
 
+    teardown     = name.to_s == "teardown"
+    super_before = super_method && ! teardown
+    super_after  = super_method && teardown
+
     define_method name do
-      super_method.bind(self).call if super_method # regular super() warns
+      super_method.bind(self).call if super_before
       instance_eval(&block)
+      super_method.bind(self).call if super_after
     end
   end
 
