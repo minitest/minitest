@@ -54,7 +54,7 @@ Given that you'd like to test the following class:
       "OHAI!"
     end
 
-    def does_it_blend?
+    def will_it_blend?
       "YES!"
     end
   end
@@ -72,8 +72,8 @@ Given that you'd like to test the following class:
       assert_equal "OHAI!", @meme.i_can_has_cheezburger?
     end
 
-    def test_that_it_doesnt_not_blend
-      refute_match /^no/i, @meme.does_it_blend?
+    def test_that_it_will_not_blend
+      refute_match /^no/i, @meme.will_it_blend?
     end
   end
 
@@ -94,7 +94,7 @@ Given that you'd like to test the following class:
 
     describe "when asked about blending possibilities" do
       it "won't say no" do
-        @meme.does_it_blend?.wont_match /^no/i
+        @meme.will_it_blend?.wont_match /^no/i
       end
     end
   end
@@ -166,8 +166,8 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
     describe "#ask" do
       describe "when passed an unpunctuated question" do
         it "should invoke the appropriate predicate method on the meme" do
-          @meme.expect :does_it_blend?, :return_value
-          @meme_asker.ask "does it blend"
+          @meme.expect :will_it_blend?, :return_value
+          @meme_asker.ask "will it blend"
           @meme.verify
         end
       end
