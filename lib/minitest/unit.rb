@@ -175,7 +175,7 @@ module MiniTest
     def assert_match exp, act, msg = nil
       msg = message(msg) { "Expected #{mu_pp(exp)} to match #{mu_pp(act)}" }
       assert_respond_to act, :"=~"
-      exp = /#{Regexp.escape exp}/ if String === exp && String === act
+      exp = Regexp.new Regexp.escape exp if String === exp and String === act
       assert exp =~ act, msg
     end
 
@@ -219,8 +219,8 @@ module MiniTest
     # Fails unless the block raises one of +exp+
 
     def assert_raises *exp
-      msg = String === exp.last ? exp.pop : nil
-      msg = msg.to_s + "\n" if msg
+      msg = "#{exp.pop}\n" if String === exp.last
+
       should_raise = false
       begin
         yield
@@ -340,7 +340,14 @@ module MiniTest
     # Returns details for exception +e+
 
     def exception_details e, msg
-      "#{msg}\nClass: <#{e.class}>\nMessage: <#{e.message.inspect}>\n---Backtrace---\n#{MiniTest::filter_backtrace(e.backtrace).join("\n")}\n---------------"
+      [
+       "#{msg}",
+       "Class: <#{e.class}>",
+       "Message: <#{e.message.inspect}>",
+       "---Backtrace---",
+       "#{MiniTest::filter_backtrace(e.backtrace).join("\n")}",
+       "---------------",
+      ].join "\n"
     end
 
     ##
@@ -356,14 +363,8 @@ module MiniTest
 
     def message msg = nil, &default
       proc {
-        if msg then
-          msg = msg.to_s unless String === msg
-          msg += '.' unless msg.empty?
-          msg += "\n#{default.call}."
-          msg.strip
-        else
-          "#{default.call}."
-        end
+        custom_message = "#{msg}.\n" unless msg.nil? or msg.to_s.empty?
+        "#{custom_message}#{default.call}."
       }
     end
 
@@ -773,13 +774,13 @@ module MiniTest
 
     ##
     # Begins the full test run. Delegates to +runner+'s #_run method.
-    
+
     def run args = []
       self.class.runner._run(args)
     end
-    
+
     ##
-    # Top level driver, controls all output and filtering. 
+    # Top level driver, controls all output and filtering.
 
     def _run args = []
       self.options = process_args args
