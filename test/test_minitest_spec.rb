@@ -248,7 +248,7 @@ class TestMeta < MiniTest::Unit::TestCase
   end
 
   def test_setup_teardown_behavior
-    x, y, z, before_list, after_list = util_structure
+    _, _, z, before_list, after_list = util_structure
 
     tc = z.new(nil)
     tc.setup
