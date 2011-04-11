@@ -1,3 +1,19 @@
+=== 2.1.0 / 2011-04-11
+
+* 5 minor enhancements:
+
+  * Added MiniTest::Spec.register_spec_type(matcher, klass) and spec_type(desc)
+  * Added ability for specs to share code via subclassing of Spec. (metaskills)
+  * Clarified (or tried to) bench_performance_linear's use of threshold.
+  * MiniTest::Unit.runner=(runner) provides an easy way of creating custom test runners for specialized needs. (justinweiss)
+  * Reverse order of inheritance in teardowns of specs. (deepfryed)
+
+* 3 bug fixes:
+
+  * FINALLY fixed problems of inheriting specs in describe/it/describe scenario. (MGPalmer)
+  * Fixed a new warning in 1.9.3.
+  * Fixed assert_block's message handling. (nobu)
+
 === 2.0.2 / 2010-12-24
 
 * 1 minor enhancement:

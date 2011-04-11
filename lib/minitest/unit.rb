@@ -516,7 +516,7 @@ module MiniTest
   end
 
   class Unit
-    VERSION = "2.0.2" # :nodoc:
+    VERSION = "2.1.0" # :nodoc:
 
     attr_accessor :report, :failures, :errors, :skips # :nodoc:
     attr_accessor :test_count, :assertion_count       # :nodoc:
