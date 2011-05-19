@@ -15,8 +15,9 @@ module MiniTest
     end
 
     ##
-    # Expect that method +name+ is called, optionally with +args+, and
-    # returns +retval+.
+    # Expect that method +name+ is called, optionally with +args+, and returns
+    # +retval+. +args+ is compared to actual_calls args using case equality,
+    # allowing for less specific expectations.
     #
     #   @mock.expect(:meaning_of_life, 42)
     #   @mock.meaning_of_life # => 42
@@ -48,7 +49,9 @@ module MiniTest
       raise NoMethodError unless @expected_calls.has_key?(sym)
       raise ArgumentError unless @expected_calls[sym][:args].size == args.size
       retval = @expected_calls[sym][:retval]
-      @actual_calls[sym] << { :retval => retval, :args => args }
+      args_case = @expected_calls[sym][:args].
+        each_with_index.map{|a, i| a if a === args[i]}
+      @actual_calls[sym] << { :retval => retval, :args => args_case }
       retval
     end
 
