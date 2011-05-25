@@ -480,9 +480,110 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     @tc.assert_equal 1, 1
   end
 
-  def test_assert_equal_different
-    util_assert_triggered "Expected 1, not 2." do
+  def test_assert_equal_different_diff_deactivated
+    without_diff do
+      util_assert_triggered util_msg("haha" * 10, "blah" * 10) do
+        o1 = "haha" * 10
+        o2 = "blah" * 10
+
+        @tc.assert_equal o1, o2
+      end
+    end
+  end
+
+  def test_assert_equal_different_hex
+    s = Struct.new :name
+
+    o1 = s.new "a"
+    o2 = s.new "b"
+    msg = "--- expected
+           +++ actual
+           @@ -1 +1 @@
+           -#{o1.inspect.sub(/0x\w+/, "0xXXXXXX")}
+           +#{o2.inspect.sub(/0x\w+/, "0xXXXXXX")}
+           .".gsub(/^ +/, "")
+
+    util_assert_triggered msg do
+      @tc.assert_equal o1, o2
+    end
+  end
+
+  def test_assert_equal_different_hex_invisible
+    o1 = Object.new
+    o2 = Object.new
+
+    msg = "No visible difference.
+           You should look at your implementation of Object#==.
+           #<Object:0xXXXXXX>.".gsub(/^ +/, "")
+
+    util_assert_triggered msg do
+      @tc.assert_equal o1, o2
+    end
+  end
+
+  def test_assert_equal_different_long
+    msg = "--- expected
+           +++ actual
+           @@ -1 +1 @@
+           -\"hahahahahahahahahahahahahahahahahahahaha\"
+           +\"blahblahblahblahblahblahblahblahblahblah\"
+           .".gsub(/^ +/, "")
+
+    util_assert_triggered msg do
+      o1 = "haha" * 10
+      o2 = "blah" * 10
+
+      @tc.assert_equal o1, o2
+    end
+  end
+
+  def test_assert_equal_different_long_invisible
+    msg = "No visible difference.
+           You should look at your implementation of String#==.
+           \"blahblahblahblahblahblahblahblahblahblah\".".gsub(/^ +/, "")
+
+    util_assert_triggered msg do
+      o1 = "blah" * 10
+      o2 = "blah" * 10
+      def o1.== o
+        false
+      end
+      @tc.assert_equal o1, o2
+    end
+  end
+
+  def test_assert_equal_different_long_msg
+    msg = "message.
+           --- expected
+           +++ actual
+           @@ -1 +1 @@
+           -\"hahahahahahahahahahahahahahahahahahahaha\"
+           +\"blahblahblahblahblahblahblahblahblahblah\"
+           .".gsub(/^ +/, "")
+
+    util_assert_triggered msg do
+      o1 = "haha" * 10
+      o2 = "blah" * 10
+      @tc.assert_equal o1, o2, "message"
+    end
+  end
+
+  def test_assert_equal_different_short
+    util_assert_triggered util_msg(1, 2) do
       @tc.assert_equal 1, 2
+    end
+  end
+
+  def test_assert_equal_different_short_msg
+    util_assert_triggered util_msg(1, 2, "message") do
+      @tc.assert_equal 1, 2, "message"
+    end
+  end
+
+  def test_assert_equal_different_short_multiline
+    msg = "--- expected\n+++ actual\n@@ -1,2 +1,2 @@\n \"a\n-b\"\n+c\"\n."
+    util_assert_triggered msg do
+      @tc.assert_equal "a\nb", "a\nc"
     end
   end
 
@@ -636,7 +737,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_assert_output_triggered_both
-    util_assert_triggered "In stdout.\nExpected \"yay\", not \"boo\"." do
+    util_assert_triggered util_msg("yay", "boo", "In stdout") do
       @tc.assert_output "yay", "blah" do
         print "boo"
         $stderr.print "blah blah"
@@ -645,7 +746,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_assert_output_triggered_err
-    util_assert_triggered "In stderr.\nExpected \"blah\", not \"blah blah\"." do
+    util_assert_triggered util_msg("blah", "blah blah", "In stderr") do
       @tc.assert_output nil, "blah" do
         $stderr.print "blah blah"
       end
@@ -653,7 +754,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_assert_output_triggered_out
-    util_assert_triggered "In stdout.\nExpected \"blah\", not \"blah blah\"." do
+    util_assert_triggered util_msg("blah", "blah blah", "In stdout") do
       @tc.assert_output "blah" do
         print "blah blah"
       end
@@ -832,7 +933,7 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   def test_assert_silent_triggered_err
     @assertion_count = 2
 
-    util_assert_triggered "In stderr.\nExpected \"\", not \"blah blah\"." do
+    util_assert_triggered util_msg("", "blah blah", "In stderr") do
       @tc.assert_silent do
         $stderr.print "blah blah"
       end
@@ -840,7 +941,7 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   end
 
   def test_assert_silent_triggered_out
-    util_assert_triggered "In stdout.\nExpected \"\", not \"blah blah\"." do
+    util_assert_triggered util_msg("", "blah blah", "In stdout") do
       @tc.assert_silent do
         print "blah blah"
       end
@@ -1147,5 +1248,20 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
     msg.gsub!(/\(oid=[-0-9]+\)/, '(oid=N)')
 
     assert_equal expected, msg
+  end
+
+  def util_msg exp, act, msg = nil
+    s = "Expected: #{exp.inspect}\n  Actual: #{act.inspect}."
+    s = "#{msg}.\n#{s}" if msg
+    s
+  end
+
+  def without_diff
+    old_diff = MiniTest::Assertions.diff
+    MiniTest::Assertions.diff = nil
+
+    yield
+  ensure
+    MiniTest::Assertions.diff = old_diff
   end
 end
