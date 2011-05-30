@@ -492,15 +492,18 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_assert_equal_different_hex
-    s = Struct.new :name
+    c = Class.new do
+      attr_accessor :name
+      def initialize s; self.name = s; end
+    end
 
-    o1 = s.new "a"
-    o2 = s.new "b"
+    o1 = c.new "a"
+    o2 = c.new "b"
     msg = "--- expected
            +++ actual
            @@ -1 +1 @@
-           -#{o1.inspect.sub(/0x\w+/, "0xXXXXXX")}
-           +#{o2.inspect.sub(/0x\w+/, "0xXXXXXX")}
+           -#<#<Class:0xXXXXXX>:0xXXXXXX @name=\"a\">
+           +#<#<Class:0xXXXXXX>:0xXXXXXX @name=\"b\">
            .".gsub(/^ +/, "")
 
     util_assert_triggered msg do
