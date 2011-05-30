@@ -4,6 +4,7 @@ Manifest.txt
 README.txt
 Rakefile
 design_rationale.rb
+lib/hoe/minitest.rb
 lib/minitest/autorun.rb
 lib/minitest/benchmark.rb
 lib/minitest/mock.rb
