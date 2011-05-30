@@ -493,8 +493,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
 
   def test_assert_equal_different_hex
     c = Class.new do
-      attr_accessor :name
-      def initialize s; self.name = s; end
+      def initialize s; @name = s; end
     end
 
     o1 = c.new "a"
