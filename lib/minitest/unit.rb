@@ -806,6 +806,7 @@ module MiniTest
       e = case e
           when MiniTest::Skip then
             @skips += 1
+            return "S" unless @verbose
             "Skipped:\n#{meth}(#{klass}) [#{location e}]:\n#{e.message}\n"
           when MiniTest::Assertion then
             @failures += 1
