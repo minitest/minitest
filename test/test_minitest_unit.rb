@@ -346,6 +346,36 @@ S.
 
 Finished tests in 0.00
 
+2 tests, 1 assertions, 0 failures, 0 errors, 1 skips
+"
+    assert_report expected
+  end
+
+  def test_run_skip_verbose
+    tc = Class.new(MiniTest::Unit::TestCase) do
+      def test_something
+        assert true
+      end
+
+      def test_skip
+        skip "not yet"
+      end
+    end
+
+    Object.const_set(:ATestCase, tc)
+
+    @tu.run %w[--seed 42 --verbose]
+
+    expected = "Run options: --seed 42 --verbose
+
+# Running tests:
+
+ATestCase#test_skip = 0.00 s = S
+ATestCase#test_something = 0.00 s = .
+
+
+Finished tests in 0.00
+
   1) Skipped:
 test_skip(ATestCase) [FILE:LINE]:
 not yet
