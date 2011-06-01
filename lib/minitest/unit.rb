@@ -1,4 +1,5 @@
 require 'optparse'
+require 'rbconfig'
 
 ##
 # Minimal (mostly drop-in) replacement for test-unit.
