@@ -1,3 +1,10 @@
+=== 2.2.2 / 2011-06-01
+
+* 2 bug fixes:
+
+  * Got rid of the trailing period in message for assert_equal. (tenderlove)
+  * Windows needs more flushing. (Akio Tajima)
+
 === 2.2.1 / 2011-05-31
 
 * 1 bug fix:
