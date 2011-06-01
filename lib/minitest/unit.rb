@@ -211,7 +211,7 @@ module MiniTest
     # See also: MiniTest::Assertions.diff
 
     def assert_equal exp, act, msg = nil
-      msg = message(msg) { diff exp, act }
+      msg = message(msg, "") { diff exp, act }
       assert(exp == act, msg)
     end
 
@@ -459,10 +459,10 @@ module MiniTest
     ##
     # Returns a proc that will output +msg+ along with the default message.
 
-    def message msg = nil, &default
+    def message msg = nil, ending = ".", &default
       proc {
         custom_message = "#{msg}.\n" unless msg.nil? or msg.to_s.empty?
-        "#{custom_message}#{default.call}."
+        "#{custom_message}#{default.call}#{ending}"
       }
     end
 
