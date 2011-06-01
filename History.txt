@@ -1,3 +1,9 @@
+=== 2.2.1 / 2011-05-31
+
+* 1 bug fix:
+
+  * My _ONE_ non-rubygems-using minitest user goes to Seattle.rb!
+
 === 2.2.0 / 2011-05-29
 
 * 6 minor enhancements:
