@@ -1,3 +1,13 @@
+=== 2.2.0 / 2011-05-29
+
+* 5 minor enhancements:
+
+  * assert_equal (and must_equal) now tries to diff output where it makes sense.
+    * Added Assertions#diff(exp, act) to be used by assert_equal.
+    * Added Assertions#mu_pp_for_diff
+    * Added Assertions.diff and diff=
+  * Moved minitest hoe-plugin from hoe-seattlerb. (erikh)
+
 === 2.1.0 / 2011-04-11
 
 * 5 minor enhancements:
