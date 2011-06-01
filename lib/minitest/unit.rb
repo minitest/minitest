@@ -115,10 +115,11 @@ module MiniTest
 
       Tempfile.open("expect") do |a|
         a.puts expect
-        a.rewind
+        a.flush
+
         Tempfile.open("butwas") do |b|
           b.puts butwas
-          b.rewind
+          b.flush
 
           result = `#{MiniTest::Assertions.diff} #{a.path} #{b.path}`
           result.sub!(/^\-\-\- .+/, "--- expected")
