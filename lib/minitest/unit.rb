@@ -761,7 +761,15 @@ module MiniTest
     end
 
     def _run_suites suites, type
-      suites.map { |suite| _run_suite suite, type }
+      results = []
+      suites.each do |suite|
+        results << _run_suite(suite, type)
+        if options[:stop_on_failure] && failure_or_error
+          puts "\n\n# Stopping early due to test failure or error."
+          break
+        end
+      end
+      results
     end
 
     def _run_suite suite, type
@@ -771,7 +779,8 @@ module MiniTest
       filter = options[:filter] || '/./'
       filter = Regexp.new $1 if filter =~ /\/(.*)\//
 
-      assertions = suite.send("#{type}_methods").grep(filter).map { |method|
+      assertions = []
+      suite.send("#{type}_methods").grep(filter).each { |method|
         inst = suite.new method
         inst._assertions = 0
 
@@ -785,10 +794,15 @@ module MiniTest
         print result
         puts if @verbose
 
-        inst._assertions
+        assertions << inst._assertions
+        break if options[:stop_on_failure] && failure_or_error
       }
 
       return assertions.size, assertions.inject(0) { |sum, n| sum + n }
+    end
+
+    def failure_or_error # :nodoc:
+      @failures > 0 || @errors > 0
     end
 
     def location e # :nodoc:
@@ -851,6 +865,10 @@ module MiniTest
 
         opts.on '-n', '--name PATTERN', "Filter test names on pattern." do |a|
           options[:filter] = a
+        end
+
+        opts.on '-f', '--stop-on-failure', "Stop on first error or failure." do
+          options[:stop_on_failure] = true
         end
 
         opts.parse! args
