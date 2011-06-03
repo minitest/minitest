@@ -765,7 +765,7 @@ module MiniTest
       suites.each do |suite|
         results << _run_suite(suite, type)
         if options[:stop_on_failure] && failure_or_error
-          puts "\n\n# Stopping early due to test failure or error."
+          print "\n\n# Stopping early due to test failure or error."
           break
         end
       end

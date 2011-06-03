@@ -436,6 +436,47 @@ Finished tests in 0.00
     assert_report expected
   end
 
+  def test_stop_on_failure
+    tc = Class.new(MiniTest::Unit::TestCase) do
+      def self.test_order
+        :alpha
+      end
+
+      def test_something_1
+        assert true
+      end
+
+      def test_something_2
+        assert false
+      end
+
+      def test_something_3
+        assert false
+      end
+    end
+
+    Object.const_set(:ATestCase, tc)
+    @tu.run %w[--seed 42 --stop-on-failure]
+
+    expected = "Run options: --seed 42 --stop-on-failure
+
+# Running tests:
+
+.F
+
+# Stopping early due to test failure or error.
+
+Finished tests in 0.00
+
+  1) Failure:
+test_something_2(ATestCase) [FILE:LINE]:
+Failed assertion, no message given.
+
+2 tests, 2 assertions, 1 failures, 0 errors, 0 skips
+"
+    assert_report expected
+  end
+
   def util_expand_bt bt
     if RUBY_VERSION =~ /^1\.9/ then
       bt.map { |f| (f =~ /^\./) ? File.expand_path(f) : f }
