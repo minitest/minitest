@@ -983,6 +983,7 @@ module MiniTest
 
       def self.inherited klass # :nodoc:
         @@test_suites[klass] = true
+        super
       end
 
       ##

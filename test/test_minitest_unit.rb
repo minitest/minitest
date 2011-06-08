@@ -436,6 +436,27 @@ Finished tests in 0.00
     assert_report expected
   end
 
+  def test_inherited_hook_plays_nice_with_others
+    Class.class.class_eval do
+      alias_method :orig_inherited, :inherited
+      undef_method :inherited
+      define_method :inherited do |sub|
+        throw :inherited_hook, :was_invoked
+      end
+    end
+
+    assert_equal :was_invoked, catch(:inherited_hook) {
+      Class.new(MiniTest::Unit::TestCase)
+    }
+
+  ensure
+    Class.class.class_eval do
+      undef_method :inherited
+      alias_method :inherited, :orig_inherited
+      undef_method :orig_inherited
+    end
+  end
+
   def util_expand_bt bt
     if RUBY_VERSION =~ /^1\.9/ then
       bt.map { |f| (f =~ /^\./) ? File.expand_path(f) : f }
