@@ -21,14 +21,25 @@ module MiniTest
     end
 
     ##
-    # Expect that method +name+ is called, optionally with +args+, and
-    # returns +retval+.
+    # Expect that method +name+ is called, optionally with +args+, and returns
+    # +retval+.
     #
     #   @mock.expect(:meaning_of_life, 42)
     #   @mock.meaning_of_life # => 42
     #
     #   @mock.expect(:do_something_with, true, [some_obj, true])
     #   @mock.do_something_with(some_obj, true) # => true
+    #
+    # +args+ is compared to the expected args using case equality (ie, the
+    # '===' operator), allowing for less specific expectations.
+    #
+    #   @mock.expect(:uses_any_string, true, [String])
+    #   @mock.uses_any_string("foo") # => true
+    #   @mock.verify  # => true
+    #
+    #   @mock.expect(:uses_one_string, true, ["foo"]
+    #   @mock.uses_one_string("bar") # => true
+    #   @mock.verify  # => raises MockExpectationError
 
     def expect(name, retval, args=[])
       @expected_calls[name] = { :retval => retval, :args => args }
@@ -62,7 +73,9 @@ module MiniTest
       end
 
       retval = @expected_calls[sym][:retval]
-      @actual_calls[sym] << { :retval => retval, :args => args }
+      args_case = @expected_calls[sym][:args].
+        each_with_index.map{|a, i| a if a === args[i]}
+      @actual_calls[sym] << { :retval => retval, :args => args_case }
       retval
     end
 
