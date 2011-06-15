@@ -451,6 +451,7 @@ Finished tests in 0.00
     end
   ensure
     Class.class_eval do
+      alias ignored   inherited # no clue why this is needed
       alias inherited inherited_without_hacks
 
       undef_method :inherited_with_hacks
