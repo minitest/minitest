@@ -106,6 +106,22 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
     assert @mock == 1, "didn't mock :=="
   end
 
+  def test_verify_allows_called_args_to_be_loosely_specified
+    mock = MiniTest::Mock.new
+    mock.expect :loose_expectation, true, [Integer]
+    mock.loose_expectation 1
+
+    assert mock.verify
+  end
+
+  def test_verify_raises_with_strict_args
+    mock = MiniTest::Mock.new
+    mock.expect :strict_expectation, true, [2]
+    mock.strict_expectation 1
+
+    util_verify_bad
+  end
+
   def util_verify_bad
     assert_raises MockExpectationError do
       @mock.verify
