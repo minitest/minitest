@@ -436,7 +436,7 @@ Finished tests in 0.00
     assert_report expected
   end
 
-  def test_inherited_hook_plays_nice_with_others
+  def with_overridden_include
     Class.class_eval do
       def inherited_with_hacks klass
         throw :inherited_hook
@@ -444,14 +444,13 @@ Finished tests in 0.00
 
       alias inherited_without_hacks inherited
       alias inherited               inherited_with_hacks
+      alias IGNORE_ME!              inherited # 1.8 bug. god I love venture bros
     end
 
-    assert_throws :inherited_hook do
-      Class.new MiniTest::Unit::TestCase
-    end
+    yield
+
   ensure
     Class.class_eval do
-      alias ignored   inherited # no clue why this is needed
       alias inherited inherited_without_hacks
 
       undef_method :inherited_with_hacks
@@ -460,6 +459,124 @@ Finished tests in 0.00
 
     refute_respond_to Class, :inherited_with_hacks
     refute_respond_to Class, :inherited_without_hacks
+  end
+
+  def test_inherited_hook_plays_nice_with_others
+    with_overridden_include do
+      assert_throws :inherited_hook do
+        Class.new MiniTest::Unit::TestCase
+      end
+    end
+  end
+
+  def test_setup_hooks
+    call_order = []
+
+    tc = Class.new(MiniTest::Unit::TestCase) do
+      define_method :setup do
+        super()
+        call_order << :method
+      end
+
+      define_method :test2 do
+        call_order << :test2
+      end
+
+      define_method :test1 do
+        call_order << :test1
+      end
+    end
+
+    tc.add_setup_hook lambda { call_order << :proc }
+
+    argument = nil
+
+    tc.add_setup_hook do |arg|
+      argument = arg
+      call_order << :block
+    end
+
+    @tu.run %w[--seed 42]
+
+    assert_kind_of tc, argument
+
+    expected = [:method, :proc, :block, :test1,
+                :method, :proc, :block, :test2]
+
+    assert_equal expected, call_order
+  end
+
+  def test_teardown_hooks
+    call_order = []
+
+    tc = Class.new(MiniTest::Unit::TestCase) do
+      define_method :teardown do
+        super()
+        call_order << :method
+      end
+
+      define_method :test2 do
+        call_order << :test2
+      end
+
+      define_method :test1 do
+        call_order << :test1
+      end
+    end
+
+    tc.add_teardown_hook lambda { call_order << :proc }
+
+    argument = nil
+
+    tc.add_teardown_hook do |arg|
+      argument = arg
+      call_order << :block
+    end
+
+    @tu.run %w[--seed 42]
+
+    assert_kind_of tc, argument
+
+    expected = [:test1, :block, :proc, :method,
+                :test2, :block, :proc, :method]
+
+    assert_equal expected, call_order
+  end
+
+  def test_setup_and_teardown_hooks_survive_inheritance
+    call_order = []
+
+    parent = Class.new(MiniTest::Unit::TestCase) do
+      define_method :setup do
+        super()
+        call_order << :setup_method
+      end
+
+      define_method :teardown do
+        super()
+        call_order << :teardown_method
+      end
+
+      define_method :test_something do
+        call_order << :test
+      end
+    end
+
+    parent.add_setup_hook     { call_order << :setup_hook }
+    parent.add_teardown_hook  { call_order << :teardown_hook }
+
+    _ = Class.new parent
+
+    parent.add_setup_hook     { call_order << :setup_after }
+    parent.add_teardown_hook  { call_order << :teardown_after }
+
+    @tu.run %w[--seed 42]
+
+    # Once for the parent class, once for the child
+    expected = [:setup_method, :setup_hook, :setup_after, :test,
+                :teardown_after, :teardown_hook, :teardown_method] * 2
+
+    assert_equal expected, call_order
   end
 
   def util_expand_bt bt

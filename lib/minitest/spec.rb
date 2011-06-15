@@ -82,17 +82,8 @@ module Kernel
                           else
                             MiniTest::Spec.spec_type desc
                           end
-    cls   = Class.new sclas
 
-    sclas.children << cls unless cls == MiniTest::Spec
-
-    # :stopdoc:
-    # omg this sucks
-    (class << cls; self; end).send(:define_method, :to_s) { name }
-    (class << cls; self; end).send(:define_method, :desc) { desc }
-    # :startdoc:
-
-    cls.nuke_test_methods!
+    cls = sclas.create(name, desc)
 
     stack.push cls
     cls.class_eval(&block)
@@ -161,25 +152,6 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   end
 
   ##
-  # Spec users want setup/teardown to be inherited and NOTHING ELSE.
-  # It is almost like method reuse is lost on them.
-
-  def self.define_inheritable_method name, &block # :nodoc:
-    # regular super() warns
-    super_method = self.superclass.instance_method name
-
-    teardown     = name.to_s == "teardown"
-    super_before = super_method && ! teardown
-    super_after  = super_method && teardown
-
-    define_method name do
-      super_method.bind(self).call if super_before
-      instance_eval(&block)
-      super_method.bind(self).call if super_after
-    end
-  end
-
-  ##
   # Define a 'before' action. Inherits the way normal methods should.
   #
   # NOTE: +type+ is ignored and is only there to make porting easier.
@@ -188,7 +160,8 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
 
   def self.before type = :each, &block
     raise "unsupported before type: #{type}" unless type == :each
-    define_inheritable_method :setup, &block
+
+    add_setup_hook {|tc| tc.instance_eval(&block) }
   end
 
   ##
@@ -200,7 +173,8 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
 
   def self.after type = :each, &block
     raise "unsupported after type: #{type}" unless type == :each
-    define_inheritable_method :teardown, &block
+
+    add_teardown_hook {|tc| tc.instance_eval(&block) }
   end
 
   ##
@@ -226,6 +200,29 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
       mod.send :undef_method, name if mod.public_method_defined? name
     end
   end
+
+  def self.create(name, desc) # :nodoc:
+    cls = Class.new(self) do
+      @name = name
+      @desc = desc
+
+      nuke_test_methods!
+    end
+
+    children << cls
+
+    cls
+  end
+
+  def self.to_s # :nodoc:
+    defined?(@name) ? @name : super
+  end
+
+  # :stopdoc:
+  class << self
+    attr_reader :name, :desc
+  end
+  # :startdoc:
 end
 
 Object.infect_with_assertions(:must, :wont,

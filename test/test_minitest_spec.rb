@@ -239,8 +239,8 @@ class TestMeta < MiniTest::Unit::TestCase
     assert_equal "inner thingy", y.desc
     assert_equal "very inner thingy", z.desc
 
-    top_methods = %w(setup teardown test_0001_top_level_it)
-    inner_methods = %w(setup teardown test_0001_inner_it)
+    top_methods = %w(test_0001_top_level_it)
+    inner_methods = %w(test_0001_inner_it)
 
     assert_equal top_methods,   x.instance_methods(false).sort.map {|o| o.to_s }
     assert_equal inner_methods, y.instance_methods(false).sort.map {|o| o.to_s }
@@ -251,8 +251,9 @@ class TestMeta < MiniTest::Unit::TestCase
     _, _, z, before_list, after_list = util_structure
 
     tc = z.new(nil)
-    tc.setup
-    tc.teardown
+
+    tc.run_setup_hooks
+    tc.run_teardown_hooks
 
     assert_equal [1, 2, 3], before_list
     assert_equal [3, 2, 1], after_list
