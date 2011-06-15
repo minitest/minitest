@@ -45,8 +45,9 @@ module MiniTest
     end
 
     def method_missing(sym, *args) # :nodoc:
-      raise NoMethodError unless @expected_calls.has_key?(sym)
-      raise ArgumentError unless @expected_calls[sym][:args].size == args.size
+      raise NoMethodError, sym.to_s unless @expected_calls.has_key?(sym)
+      msg = "#{sym} expected #{@expected_calls[sym][:args].size} arguments, received #{args.size}"
+      raise ArgumentError, msg unless @expected_calls[sym][:args].size == args.size
       retval = @expected_calls[sym][:retval]
       @actual_calls[sym] << { :retval => retval, :args => args }
       retval
