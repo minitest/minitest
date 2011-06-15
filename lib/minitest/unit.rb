@@ -485,7 +485,7 @@ module MiniTest
     # Fails if +obj+ is empty.
 
     def refute_empty obj, msg = nil
-      msg = message(msg) { "Expected #{obj.inspect} to not be empty" }
+      msg = message(msg) { "Expected #{mu_pp(obj)} not to be empty" }
       assert_respond_to obj, :empty?
       refute obj.empty?, msg
     end
@@ -497,7 +497,7 @@ module MiniTest
 
     def refute_equal exp, act, msg = nil
       msg = message(msg) {
-        "Expected #{mu_pp(act)} to not be equal to #{mu_pp(exp)}"
+        "Expected #{mu_pp(act)} not to be equal to #{mu_pp(exp)}"
       }
       refute exp == act, msg
     end
@@ -510,7 +510,7 @@ module MiniTest
     def refute_in_delta exp, act, delta = 0.001, msg = nil
       n = (exp - act).abs
       msg = message(msg) {
-        "Expected #{exp} - #{act} (#{n}) to not be < #{delta}"
+        "Expected #{exp} - #{act} (#{n}) not to be < #{delta}"
       }
       refute delta > n, msg
     end
@@ -528,7 +528,7 @@ module MiniTest
 
     def refute_includes collection, obj, msg = nil
       msg = message(msg) {
-        "Expected #{mu_pp(collection)} to not include #{mu_pp(obj)}"
+        "Expected #{mu_pp(collection)} not to include #{mu_pp(obj)}"
       }
       assert_respond_to collection, :include?
       refute collection.include?(obj), msg
@@ -539,7 +539,7 @@ module MiniTest
 
     def refute_instance_of cls, obj, msg = nil
       msg = message(msg) {
-        "Expected #{mu_pp(obj)} to not be an instance of #{cls}"
+        "Expected #{mu_pp(obj)} not to be an instance of #{cls}"
       }
       refute obj.instance_of?(cls), msg
     end
@@ -548,7 +548,7 @@ module MiniTest
     # Fails if +obj+ is a kind of +cls+
 
     def refute_kind_of cls, obj, msg = nil # TODO: merge with instance_of
-      msg = message(msg) { "Expected #{mu_pp(obj)} to not be a kind of #{cls}" }
+      msg = message(msg) { "Expected #{mu_pp(obj)} not to be a kind of #{cls}" }
       refute obj.kind_of?(cls), msg
     end
 
@@ -556,7 +556,7 @@ module MiniTest
     # Fails if +exp+ <tt>=~</tt> +act+
 
     def refute_match exp, act, msg = nil
-      msg = message(msg) { "Expected #{mu_pp(exp)} to not match #{mu_pp(act)}" }
+      msg = message(msg) { "Expected #{mu_pp(exp)} not to match #{mu_pp(act)}" }
       assert_respond_to act, :"=~"
       exp = (/#{Regexp.escape exp}/) if String === exp and String === act
       refute exp =~ act, msg
@@ -566,7 +566,7 @@ module MiniTest
     # Fails if +obj+ is nil.
 
     def refute_nil obj, msg = nil
-      msg = message(msg) { "Expected #{mu_pp(obj)} to not be nil" }
+      msg = message(msg) { "Expected #{mu_pp(obj)} not to be nil" }
       refute obj.nil?, msg
     end
 
@@ -578,7 +578,7 @@ module MiniTest
 
     def refute_operator o1, op, o2, msg = nil
       msg = message(msg) {
-        "Expected #{mu_pp(o1)} to not be #{op} #{mu_pp(o2)}"
+        "Expected #{mu_pp(o1)} not to be #{op} #{mu_pp(o2)}"
       }
       refute o1.__send__(op, o2), msg
     end
@@ -587,7 +587,7 @@ module MiniTest
     # Fails if +obj+ responds to the message +meth+.
 
     def refute_respond_to obj, meth, msg = nil
-      msg = message(msg) { "Expected #{mu_pp(obj)} to not respond to #{meth}" }
+      msg = message(msg) { "Expected #{mu_pp(obj)} not to respond to #{meth}" }
 
       refute obj.respond_to?(meth), msg
     end
@@ -598,7 +598,7 @@ module MiniTest
     def refute_same exp, act, msg = nil
       msg = message(msg) {
         data = [mu_pp(act), act.object_id, mu_pp(exp), exp.object_id]
-        "Expected %s (oid=%d) to not be the same as %s (oid=%d)" % data
+        "Expected %s (oid=%d) not to be the same as %s (oid=%d)" % data
       }
       refute exp.equal?(act), msg
     end

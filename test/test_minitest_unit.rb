@@ -1093,7 +1093,7 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   def test_refute_empty_triggered
     @assertion_count = 2
 
-    util_assert_triggered "Expected [] to not be empty." do
+    util_assert_triggered "Expected [] not to be empty." do
       @tc.refute_empty []
     end
   end
@@ -1103,7 +1103,7 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   end
 
   def test_refute_equal_triggered
-    util_assert_triggered 'Expected "blah" to not be equal to "blah".' do
+    util_assert_triggered 'Expected "blah" not to be equal to "blah".' do
       @tc.refute_equal "blah", "blah"
     end
   end
@@ -1113,7 +1113,7 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   end
 
   def test_refute_in_delta_triggered
-    util_assert_triggered 'Expected 0.0 - 0.001 (0.001) to not be < 0.1.' do
+    util_assert_triggered 'Expected 0.0 - 0.001 (0.001) not to be < 0.1.' do
       @tc.refute_in_delta 0.0, 1.0 / 1000, 0.1
     end
   end
@@ -1123,7 +1123,7 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   end
 
   def test_refute_in_epsilon_triggered
-    util_assert_triggered 'Expected 10000 - 9991 (9) to not be < 10.0.' do
+    util_assert_triggered 'Expected 10000 - 9991 (9) not to be < 10.0.' do
       @tc.refute_in_epsilon 10000, 9991
       fail
     end
@@ -1142,7 +1142,7 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
       @tc.refute_includes [true], true
     end
 
-    expected = "Expected [true] to not include true."
+    expected = "Expected [true] not to include true."
     assert_equal expected, e.message
   end
 
@@ -1151,7 +1151,7 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   end
 
   def test_refute_instance_of_triggered
-    util_assert_triggered 'Expected "blah" to not be an instance of String.' do
+    util_assert_triggered 'Expected "blah" not to be an instance of String.' do
       @tc.refute_instance_of String, "blah"
     end
   end
@@ -1161,7 +1161,7 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   end
 
   def test_refute_kind_of_triggered
-    util_assert_triggered 'Expected "blah" to not be a kind of String.' do
+    util_assert_triggered 'Expected "blah" not to be a kind of String.' do
       @tc.refute_kind_of String, "blah"
     end
   end
@@ -1183,14 +1183,14 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
     def pattern.=~(other) true end
     def pattern.inspect; "[Object]" end
 
-    util_assert_triggered 'Expected [Object] to not match 5.' do
+    util_assert_triggered 'Expected [Object] not to match 5.' do
       @tc.refute_match pattern, 5
     end
   end
 
   def test_refute_match_triggered
     @assertion_count = 2
-    util_assert_triggered 'Expected /\w+/ to not match "blah blah blah".' do
+    util_assert_triggered 'Expected /\w+/ not to match "blah blah blah".' do
       @tc.refute_match(/\w+/, "blah blah blah")
     end
   end
@@ -1200,7 +1200,7 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   end
 
   def test_refute_nil_triggered
-    util_assert_triggered 'Expected nil to not be nil.' do
+    util_assert_triggered 'Expected nil not to be nil.' do
       @tc.refute_nil nil
     end
   end
@@ -1210,7 +1210,7 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   end
 
   def test_refute_operator_triggered
-    util_assert_triggered "Expected 2 to not be > 1." do
+    util_assert_triggered "Expected 2 not to be > 1." do
       @tc.refute_operator 2, :>, 1
     end
   end
@@ -1220,7 +1220,7 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   end
 
   def test_refute_respond_to_triggered
-    util_assert_triggered 'Expected "blah" to not respond to empty?.' do
+    util_assert_triggered 'Expected "blah" not to respond to empty?.' do
       @tc.refute_respond_to "blah", :empty?
     end
   end
@@ -1230,7 +1230,7 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   end
 
   def test_refute_same_triggered
-    util_assert_triggered 'Expected 1 (oid=N) to not be the same as 1 (oid=N).' do
+    util_assert_triggered 'Expected 1 (oid=N) not to be the same as 1 (oid=N).' do
       @tc.refute_same 1, 1
     end
   end
