@@ -939,6 +939,7 @@ module MiniTest
         begin
           @passed = nil
           self.setup
+          self.run_setup_hooks
           self.__send__ self.__name__
           result = "." unless io?
           @passed = true
@@ -949,6 +950,7 @@ module MiniTest
           result = runner.puke self.class, self.__name__, e
         ensure
           begin
+            self.run_teardown_hooks
             self.teardown
           rescue *PASSTHROUGH_EXCEPTIONS
             raise
@@ -983,6 +985,7 @@ module MiniTest
 
       def self.inherited klass # :nodoc:
         @@test_suites[klass] = true
+        klass.reset_setup_teardown_hooks
         super
       end
 
@@ -1029,6 +1032,111 @@ module MiniTest
       # Runs after every test. Use this to refactor test cleanup.
 
       def teardown; end
+
+      def self.reset_setup_teardown_hooks # :nodoc:
+        @setup_hooks = []
+        @teardown_hooks = []
+      end
+
+      reset_setup_teardown_hooks
+
+      ##
+      # Adds a block of code that will be executed before every TestCase is
+      # run. Equivalent to +setup+, but usable multiple times and without
+      # re-opening any classes.
+      #
+      # All of the setup hooks will run in order after the +setup+ method, if
+      # one is defined.
+      #
+      # The argument can be any object that responds to #call or a block.
+      # That means that this call,
+      #
+      #     MiniTest::TestCase.add_setup_hook { puts "foo" }
+      #
+      # ... is equivalent to:
+      #
+      #     module MyTestSetup
+      #       def call
+      #         puts "foo"
+      #       end
+      #     end
+      #
+      #     MiniTest::TestCase.add_setup_hook MyTestSetup
+      #
+      # The blocks passed to +add_setup_hook+ take an optional parameter that
+      # will be the TestCase instance that is executing the block.
+
+      def self.add_setup_hook arg=nil, &block
+        hook = arg || block
+        @setup_hooks << hook
+      end
+
+      def self.setup_hooks # :nodoc:
+        if superclass.respond_to? :setup_hooks then
+          superclass.setup_hooks
+        else
+          []
+        end + @setup_hooks
+      end
+
+      def run_setup_hooks # :nodoc:
+        self.class.setup_hooks.each do |hook|
+          if hook.respond_to?(:arity) && hook.arity == 1
+            hook.call(self)
+          else
+            hook.call
+          end
+        end
+      end
+
+      ##
+      # Adds a block of code that will be executed after every TestCase is
+      # run. Equivalent to +teardown+, but usable multiple times and without
+      # re-opening any classes.
+      #
+      # All of the teardown hooks will run in reverse order after the
+      # +teardown+ method, if one is defined.
+      #
+      # The argument can be any object that responds to #call or a block.
+      # That means that this call,
+      #
+      #     MiniTest::TestCase.add_teardown_hook { puts "foo" }
+      #
+      # ... is equivalent to:
+      #
+      #     module MyTestTeardown
+      #       def call
+      #         puts "foo"
+      #       end
+      #     end
+      #
+      #     MiniTest::TestCase.add_teardown_hook MyTestTeardown
+      #
+      # The blocks passed to +add_teardown_hook+ take an optional parameter
+      # that will be the TestCase instance that is executing the block.
+
+      def self.add_teardown_hook arg=nil, &block
+        hook = arg || block
+        @teardown_hooks << hook
+      end
+
+      def self.teardown_hooks # :nodoc:
+        if superclass.respond_to? :teardown_hooks then
+          superclass.teardown_hooks
+        else
+          []
+        end + @teardown_hooks
+      end
+
+      def run_teardown_hooks # :nodoc:
+        self.class.teardown_hooks.reverse.each do |hook|
+          if hook.respond_to?(:arity) && hook.arity == 1
+            hook.call(self)
+          else
+            hook.call
+          end
+        end
+      end
 
       include MiniTest::Assertions
     end # class TestCase
