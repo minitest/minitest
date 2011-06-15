@@ -436,6 +436,31 @@ Finished tests in 0.00
     assert_report expected
   end
 
+  def test_inherited_hook_plays_nice_with_others
+    Class.class_eval do
+      def inherited_with_hacks klass
+        throw :inherited_hook
+      end
+
+      alias inherited_without_hacks inherited
+      alias inherited               inherited_with_hacks
+    end
+
+    assert_throws :inherited_hook do
+      Class.new MiniTest::Unit::TestCase
+    end
+  ensure
+    Class.class_eval do
+      alias inherited inherited_without_hacks
+
+      undef_method :inherited_with_hacks
+      undef_method :inherited_without_hacks
+    end
+
+    refute_respond_to Class, :inherited_with_hacks
+    refute_respond_to Class, :inherited_without_hacks
+  end
+
   def util_expand_bt bt
     if RUBY_VERSION =~ /^1\.9/ then
       bt.map { |f| (f =~ /^\./) ? File.expand_path(f) : f }
