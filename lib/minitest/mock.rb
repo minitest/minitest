@@ -9,6 +9,12 @@ module MiniTest
   # All mock objects are an instance of Mock
 
   class Mock
+    alias :__respond_to? :respond_to?
+
+    instance_methods.each do |m| 
+      undef_method m unless m =~ /^__|object_id|respond_to_missing?/
+    end
+
     def initialize # :nodoc:
       @expected_calls = {}
       @actual_calls = Hash.new {|h,k| h[k] = [] }
@@ -60,10 +66,9 @@ module MiniTest
       retval
     end
 
-    alias :original_respond_to? :respond_to?
     def respond_to?(sym) # :nodoc:
       return true if @expected_calls.has_key?(sym)
-      return original_respond_to?(sym)
+      return __respond_to?(sym)
     end
   end
 end

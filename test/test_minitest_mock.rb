@@ -98,6 +98,14 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
     assert !MiniTest::Mock.new.respond_to?(:foo)
   end
 
+  def test_mock_is_a_blank_slate
+    @mock.expect :kind_of?, true, [Fixnum]
+    @mock.expect :==, true, [1]
+
+    assert @mock.kind_of?(Fixnum), "didn't mock :kind_of?"
+    assert @mock == 1, "didn't mock :=="
+  end
+
   def util_verify_bad
     assert_raises MockExpectationError do
       @mock.verify
