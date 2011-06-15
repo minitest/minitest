@@ -43,20 +43,16 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
     util_verify_bad
   end
 
-  def test_not_verify_if_unexpected_method_is_called
-    assert_raises NoMethodError do
-      @mock.unexpected
-    end
-  end
-
   def test_blow_up_on_wrong_number_of_arguments
     @mock.foo
     @mock.meaning_of_life
     @mock.expect(:sum, 3, [1, 2])
 
-    assert_raises ArgumentError do
+    e = assert_raises ArgumentError do
       @mock.sum
     end
+
+    assert_equal "mocked method 'sum' expects 2 arguments, got 0", e.message
   end
 
   def test_blow_up_on_wrong_arguments
@@ -75,9 +71,13 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
   end
 
   def test_no_method_error_on_unexpected_methods
-    assert_raises NoMethodError do
+    e = assert_raises NoMethodError do
       @mock.bar
     end
+
+    expected = "unmocked method 'bar', expected one of 'foo', 'meaning_of_life'"
+
+    assert_equal expected, e.message
   end
 
   def test_assign_per_mock_return_values
