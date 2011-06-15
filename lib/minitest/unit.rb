@@ -485,7 +485,7 @@ module MiniTest
     # Fails if +obj+ is empty.
 
     def refute_empty obj, msg = nil
-      msg = message(msg) { "Expected #{obj.inspect} to not be empty" }
+      msg = message(msg) { "Expected #{mu_pp(obj)} to not be empty" }
       assert_respond_to obj, :empty?
       refute obj.empty?, msg
     end
