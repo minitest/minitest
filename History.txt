@@ -1,3 +1,18 @@
+=== 2.3.0 / 2011-06-15
+
+* 5 minor enhancements:
+
+  * Add setup and teardown hooks to MiniTest::TestCase. (phiggins)
+  * Added nicer error messages for MiniTest::Mock. (phiggins)
+  * Allow for less specific expected arguments in Mock. (bhenderson/phiggins)
+  * Made MiniTest::Mock a blank slate. (phiggins)
+  * Refactored minitest/spec to use the hooks instead of define_inheritable_method. (phiggins)
+
+* 2 bug fixes:
+
+  * Fixed TestCase's inherited hook. (dchelimsky/phiggins/jamis, the 'good' neighbor)
+  * MiniTest::Assertions#refute_empty should use mu_pp in the default message. (whatthejeff)
+
 === 2.2.2 / 2011-06-01
 
 * 2 bug fixes:
