@@ -6,6 +6,7 @@ MiniTest::Unit.autorun
 
 module MyModule; end
 class AnError < StandardError; include MyModule; end
+class ImmutableString < String; def inspect; super.freeze; end; end
 
 class TestMiniTestUnit < MiniTest::Unit::TestCase
   pwd = Pathname.new(File.expand_path(Dir.pwd))
@@ -1219,6 +1220,11 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
 
   def test_pass
     @tc.pass
+  end
+
+  def test_prints
+    printer = Class.new { extend MiniTest::Assertions }
+    @tc.assert_equal '"test"', printer.mu_pp(ImmutableString.new 'test')
   end
 
   def test_refute
