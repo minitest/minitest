@@ -1,3 +1,9 @@
+=== 2.3.1 / 2011-06-22
+
+* 1 bug fix:
+
+  * Fixed minitest hoe plugin to be a spermy dep and not depend on itself.
+
 === 2.3.0 / 2011-06-15
 
 * 5 minor enhancements:
