@@ -1,9 +1,10 @@
 module Hoe::Minitest
   def initialize_minitest
     require 'minitest/unit'
-    version = MiniTest::Unit::VERSION
+    version = MiniTest::Unit::VERSION.split(/\./).first(2).join(".")
 
-    extra_dev_deps << ['minitest', ">= #{version}"]
+    dependency 'minitest', "~> #{version}", :development unless
+      self.name == "minitest"
   end
 
   def define_minitest_tasks
