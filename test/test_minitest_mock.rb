@@ -122,6 +122,24 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
     util_verify_bad
   end
 
+  def test_return_mock_does_not_raise
+    retval = MiniTest::Mock.new
+    mock = MiniTest::Mock.new
+    mock.expect(:foo, retval)
+    mock.foo
+
+    assert mock.verify
+  end
+
+  def test_mock_args_does_not_raise
+    arg = MiniTest::Mock.new
+    mock = MiniTest::Mock.new
+    mock.expect(:foo, nil, [arg])
+    mock.foo(arg)
+
+    assert mock.verify
+  end
+
   def util_verify_bad
     assert_raises MockExpectationError do
       @mock.verify
