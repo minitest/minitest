@@ -75,7 +75,7 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
       @mock.bar
     end
 
-    expected = "unmocked method 'bar', expected one of 'foo', 'meaning_of_life'"
+    expected = "unmocked method :bar, expected one of [:foo, :meaning_of_life]"
 
     assert_equal expected, e.message
   end
@@ -83,10 +83,10 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
   def test_assign_per_mock_return_values
     a = MiniTest::Mock.new
     b = MiniTest::Mock.new
-    
+
     a.expect(:foo, :a)
     b.expect(:foo, :b)
-    
+
     assert_equal :a, a.foo
     assert_equal :b, b.foo
   end
@@ -102,7 +102,7 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
     @mock.expect :kind_of?, true, [Fixnum]
     @mock.expect :==, true, [1]
 
-    assert @mock.kind_of?(Fixnum), "didn't mock :kind_of?"
+    assert @mock.kind_of?(Fixnum), "didn't mock :kind_of\?"
     assert @mock == 1, "didn't mock :=="
   end
 

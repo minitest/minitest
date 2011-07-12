@@ -11,7 +11,7 @@ module MiniTest
   class Mock
     alias :__respond_to? :respond_to?
 
-    instance_methods.each do |m| 
+    instance_methods.each do |m|
       undef_method m unless m =~ /^__|object_id|respond_to_missing?/
     end
 
@@ -63,8 +63,8 @@ module MiniTest
 
     def method_missing(sym, *args) # :nodoc:
       unless @expected_calls.has_key?(sym)
-        raise NoMethodError, "unmocked method '%s', expected one of %s" % 
-          [sym, @expected_calls.keys.map{|s| "'#{s}'" }.sort.join(", ")]
+        raise NoMethodError, "unmocked method %p, expected one of %p" %
+          [sym, @expected_calls.keys.sort_by(&:to_s)]
       end
 
       unless @expected_calls[sym][:args].size == args.size
