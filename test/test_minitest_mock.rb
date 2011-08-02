@@ -52,7 +52,7 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
       @mock.sum
     end
 
-    assert_equal "mocked method 'sum' expects 2 arguments, got 0", e.message
+    assert_equal "mocked method :sum expects 2 arguments, got 0", e.message
   end
 
   def test_blow_up_on_wrong_arguments

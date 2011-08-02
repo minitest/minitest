@@ -62,20 +62,25 @@ module MiniTest
     end
 
     def method_missing(sym, *args) # :nodoc:
-      unless @expected_calls.has_key?(sym)
+      expected = @expected_calls[sym]
+
+      unless expected then
         raise NoMethodError, "unmocked method %p, expected one of %p" %
           [sym, @expected_calls.keys.sort_by(&:to_s)]
       end
 
-      unless @expected_calls[sym][:args].size == args.size
-        raise ArgumentError, "mocked method '%s' expects %d arguments, got %d" %
-          [sym, @expected_calls[sym][:args].size, args.size]
+      expected_args, retval = expected[:args], expected[:retval]
+
+      unless expected_args.size == args.size
+        raise ArgumentError, "mocked method %p expects %d arguments, got %d" %
+          [sym, expected[:args].size, args.size]
       end
 
-      retval = @expected_calls[sym][:retval]
-      args_case = @expected_calls[sym][:args].
-        each_with_index.map{|a, i| a if a === args[i]}
-      @actual_calls[sym] << { :retval => retval, :args => args_case }
+      @actual_calls[sym] << {
+        :retval => retval,
+        :args => expected_args.zip(args).map { |mod, a| mod if mod === a }
+      }
+
       retval
     end
 
