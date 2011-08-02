@@ -75,7 +75,7 @@ end
 ##
 # MiniTest::Spec -- The faster, better, less-magical spec framework!
 #
-# For a list of expectations, see Object.
+# For a list of expectations, see MiniTest::Expectations.
 
 class MiniTest::Spec < MiniTest::Unit::TestCase
   ##
@@ -114,6 +114,9 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   def self.current # :nodoc:
     @@current_spec
   end
+
+  ##
+  # Returns the children of this spec"
 
   def self.children
     @children ||= []
@@ -206,179 +209,268 @@ end
 
 module MiniTest::Expectations
   ##
-  # See MiniTest::Assertions#assert_empty
+  # See MiniTest::Assertions#assert_empty.
+  #
+  #    collection.must_be_empty
+  #
   # :method: must_be_empty
 
   infect_an_assertion :assert_empty, :must_be_empty
 
   ##
   # See MiniTest::Assertions#assert_equal
+  #
+  #    a.must_equal b
+  #
   # :method: must_equal
 
   infect_an_assertion :assert_equal, :must_equal
 
   ##
   # See MiniTest::Assertions#assert_in_delta
+  #
+  #    n.must_be_close_to m [, delta]
+  #
   # :method: must_be_within_delta
 
-  infect_an_assertion :assert_in_delta, :must_be_within_delta
+  infect_an_assertion :assert_in_delta, :must_be_close_to
 
-  alias :must_be_close_to :must_be_within_delta
+  alias :must_be_within_delta :must_be_close_to
 
   ##
   # See MiniTest::Assertions#assert_in_epsilon
+  #
+  #    n.must_be_within_epsilon m [, epsilon]
+  #
   # :method: must_be_within_epsilon
 
   infect_an_assertion :assert_in_epsilon, :must_be_within_epsilon
 
   ##
   # See MiniTest::Assertions#assert_includes
+  #
+  #    collection.must_include obj
+  #
   # :method: must_include
 
   infect_an_assertion :assert_includes, :must_include, :reverse
 
   ##
   # See MiniTest::Assertions#assert_instance_of
+  #
+  #    obj.must_be_instance_of klass
+  #
   # :method: must_be_instance_of
 
   infect_an_assertion :assert_instance_of, :must_be_instance_of
 
   ##
   # See MiniTest::Assertions#assert_kind_of
+  #
+  #    obj.must_be_kind_of mod
+  #
   # :method: must_be_kind_of
 
   infect_an_assertion :assert_kind_of, :must_be_kind_of
 
   ##
   # See MiniTest::Assertions#assert_match
+  #
+  #    a.must_match b
+  #
   # :method: must_match
 
   infect_an_assertion :assert_match, :must_match
 
   ##
   # See MiniTest::Assertions#assert_nil
+  #
+  #    obj.must_be_nil
+  #
   # :method: must_be_nil
 
   infect_an_assertion :assert_nil, :must_be_nil
 
   ##
   # See MiniTest::Assertions#assert_operator
+  #
+  #    n.must_be :<=, 42
+  #
   # :method: must_be
 
   infect_an_assertion :assert_operator, :must_be
 
   ##
   # See MiniTest::Assertions#assert_output
+  #
+  #    proc { ... }.must_output out_or_nil [, err]
+  #
   # :method: must_output
 
   infect_an_assertion :assert_output, :must_output
 
   ##
   # See MiniTest::Assertions#assert_raises
+  #
+  #    proc { ... }.must_raise exception
+  #
   # :method: must_raise
 
   infect_an_assertion :assert_raises, :must_raise
 
   ##
   # See MiniTest::Assertions#assert_respond_to
+  #
+  #    obj.must_respond_to msg
+  #
   # :method: must_respond_to
 
   infect_an_assertion :assert_respond_to, :must_respond_to, :reverse
 
   ##
   # See MiniTest::Assertions#assert_same
+  #
+  #    a.must_be_same_as b
+  #
   # :method: must_be_same_as
 
   infect_an_assertion :assert_same, :must_be_same_as
 
   ##
   # See MiniTest::Assertions#assert_send
+  # TODO: remove me
+  #
+  #    a.must_send
+  #
   # :method: must_send
 
   infect_an_assertion :assert_send, :must_send
 
   ##
   # See MiniTest::Assertions#assert_silent
+  #
+  #    proc { ... }.must_be_silent
+  #
   # :method: must_be_silent
 
   infect_an_assertion :assert_silent, :must_be_silent
 
   ##
   # See MiniTest::Assertions#assert_throws
+  #
+  #    proc { ... }.must_throw sym
+  #
   # :method: must_throw
 
   infect_an_assertion :assert_throws, :must_throw
 
   ##
   # See MiniTest::Assertions#refute_empty
+  #
+  #    collection.wont_be_empty
+  #
   # :method: wont_be_empty
 
   infect_an_assertion :refute_empty, :wont_be_empty
 
   ##
   # See MiniTest::Assertions#refute_equal
+  #
+  #    a.wont_equal b
+  #
   # :method: wont_equal
 
   infect_an_assertion :refute_equal, :wont_equal
 
   ##
   # See MiniTest::Assertions#refute_in_delta
+  #
+  #    n.wont_be_close_to m [, delta]
+  #
   # :method: wont_be_within_delta
 
   infect_an_assertion :refute_in_delta, :wont_be_within_delta
 
   alias :wont_be_close_to :wont_be_within_delta
+  # FIX: reverse aliases
 
   ##
   # See MiniTest::Assertions#refute_in_epsilon
+  #
+  #    n.wont_be_within_epsilon m [, epsilon]
+  #
   # :method: wont_be_within_epsilon
 
   infect_an_assertion :refute_in_epsilon, :wont_be_within_epsilon
 
   ##
   # See MiniTest::Assertions#refute_includes
+  #
+  #    collection.wont_include obj
+  #
   # :method: wont_include
 
   infect_an_assertion :refute_includes, :wont_include, :reverse
 
   ##
   # See MiniTest::Assertions#refute_instance_of
+  #
+  #    obj.wont_be_instance_of klass
+  #
   # :method: wont_be_instance_of
 
   infect_an_assertion :refute_instance_of, :wont_be_instance_of
 
   ##
   # See MiniTest::Assertions#refute_kind_of
+  #
+  #    obj.wont_be_kind_of mod
+  #
   # :method: wont_be_kind_of
 
   infect_an_assertion :refute_kind_of, :wont_be_kind_of
 
   ##
   # See MiniTest::Assertions#refute_match
+  #
+  #    a.wont_match b
+  #
   # :method: wont_match
 
   infect_an_assertion :refute_match, :wont_match
 
   ##
   # See MiniTest::Assertions#refute_nil
+  #
+  #    obj.wont_be_nil
+  #
   # :method: wont_be_nil
 
   infect_an_assertion :refute_nil, :wont_be_nil
 
   ##
   # See MiniTest::Assertions#refute_operator
+  #
+  #    n.wont_be :<=, 42
+  #
   # :method: wont_be
 
   infect_an_assertion :refute_operator, :wont_be
 
   ##
   # See MiniTest::Assertions#refute_respond_to
+  #
+  #    obj.wont_respond_to msg
+  #
   # :method: wont_respond_to
 
   infect_an_assertion :refute_respond_to, :wont_respond_to, :reverse
 
   ##
   # See MiniTest::Assertions#refute_same
+  #
+  #    a.wont_be_same_as b
+  #
   # :method: wont_be_same_as
 
   infect_an_assertion :refute_same, :wont_be_same_as
