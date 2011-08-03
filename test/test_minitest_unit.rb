@@ -41,12 +41,12 @@ Finished tests in 0.00
     MiniTest::Unit::TestCase.reset
     @tu = MiniTest::Unit.new
     @output = StringIO.new("")
+    MiniTest::Unit.runner = nil # protect the outer runner from the inner tests
     MiniTest::Unit.output = @output
   end
 
   def teardown
     MiniTest::Unit.output = $stdout
-    MiniTest::Unit.runner = nil
     Object.send :remove_const, :ATestCase if defined? ATestCase
   end
 
