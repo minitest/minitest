@@ -55,6 +55,24 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
     assert_equal "mocked method :sum expects 2 arguments, got 0", e.message
   end
 
+  def test_return_mock_does_not_raise
+    retval = MiniTest::Mock.new
+    mock = MiniTest::Mock.new
+    mock.expect(:foo, retval)
+    mock.foo
+
+    assert mock.verify
+  end
+
+  def test_mock_args_does_not_raise
+    arg = MiniTest::Mock.new
+    mock = MiniTest::Mock.new
+    mock.expect(:foo, nil, [arg])
+    mock.foo(arg)
+
+    assert mock.verify
+  end
+
   def test_blow_up_on_wrong_arguments
     @mock.foo
     @mock.meaning_of_life
