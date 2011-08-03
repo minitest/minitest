@@ -12,7 +12,7 @@ module MiniTest
     alias :__respond_to? :respond_to?
 
     instance_methods.each do |m|
-      undef_method m unless m =~ /^__|object_id|respond_to_missing?/
+      undef_method m unless m =~ /^__|object_id|respond_to_missing?|inspect|===/
     end
 
     def initialize # :nodoc:
@@ -54,8 +54,14 @@ module MiniTest
     def verify
       @expected_calls.each_key do |name|
         expected = @expected_calls[name]
-        msg = "expected #{name}, #{expected.inspect}"
-        raise MockExpectationError, msg unless
+        msg1 = "expected #{name}, #{expected.inspect}"
+        msg2 = "#{msg1}, got #{@actual_calls[name].inspect}"
+
+        raise MockExpectationError, msg2 if
+          @actual_calls.has_key? name and
+          not @actual_calls[name].include?(expected)
+
+        raise MockExpectationError, msg1 unless
           @actual_calls.has_key? name and @actual_calls[name].include?(expected)
       end
       true
