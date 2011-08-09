@@ -1,13 +1,12 @@
-require 'minitest/rspec_api'
+require 'minitest/rspec'
 require 'stringio'
 
 MiniTest::Unit.autorun
 
-describe MiniTest::RspecApi do
-  include MiniTest::RspecApi
+describe MiniTest::Spec do
 
   it 'is an ancestor of the current spec class' do
-    self.class.must_be :<, MiniTest::RspecApi
+    self.class.must_be :<=, MiniTest::Spec
   end
 
   describe '.let' do
@@ -67,7 +66,19 @@ describe MiniTest::RspecApi do
 
   describe '#described_class' do
     it 'returns the most recent class handed to a describe call' do
-      described_class.must_be_same_as ::MiniTest::RspecApi
+      described_class.must_be_same_as ::MiniTest::Spec
+    end
+
+    describe 'in a double-nested describe block' do
+      it 'still returns the most recent class handed to a describe call' do
+        described_class.must_be_same_as ::MiniTest::Spec
+      end
+
+      describe MiniTest::Unit::TestCase do
+        it 'returns the last described class, updating on "describe Class"' do
+          described_class.must_be_same_as ::MiniTest::Unit::TestCase
+        end
+      end
     end
   end
 

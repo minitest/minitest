@@ -1,21 +1,16 @@
 require 'minitest/spec'
 
-module MiniTest::RspecApi
-
-  def self.included(test_case)
-    test_case.extend ClassMethods
-  end
+class MiniTest::Spec
 
   def described_class
-    previous = nil
-    self.class.ancestors.each do |klass|
-      return previous unless klass.respond_to?(:desc)
-      previous = klass.desc
+    self.class.ancestors.each do |ancestor|
+      return nil unless ancestor.respond_to?(:desc)
+      return ancestor.desc if Class === ancestor.desc
     end
   end
 
 
-  module ClassMethods
+  class << self
     def let(name, &block)
       ivar_name = "@__#{name}"
 
