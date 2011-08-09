@@ -5,7 +5,7 @@ class MiniTest::Spec
   def described_class
     self.class.ancestors.each do |ancestor|
       return nil unless ancestor.respond_to?(:desc)
-      return ancestor.desc if Class === ancestor.desc
+      return ancestor.desc if Module === ancestor.desc
     end
   end
 
