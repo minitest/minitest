@@ -1,3 +1,19 @@
+=== 2.4.0 / 2011-08-09
+
+* 4 minor enhancements:
+
+  * Added simple examples for all expectations.
+  * Improved Mock error output when args mismatch.
+  * Moved all expectations from Object to MiniTest::Expectations.
+  * infect_with_assertions has been removed due to excessive clever
+
+* 4 bug fixes:
+
+  * Fix Assertions#mu_pp to deal with immutable encoded strings. (ferrous26)
+  * Fix minitest/pride for MacRuby (ferrous26)
+  * Made error output less fancy so it is more readable
+  * Mock shouldn't undef === and inspect. (dgraham)
+
 === 2.3.1 / 2011-06-22
 
 * 1 bug fix:
