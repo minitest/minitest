@@ -11,8 +11,10 @@ module MiniTest
   class Mock
     alias :__respond_to? :respond_to?
 
+    skip_methods = %w(object_id respond_to_missing? inspect === to_s)
+
     instance_methods.each do |m|
-      undef_method m unless m =~ /^__|object_id|respond_to_missing?|inspect|===/
+      undef_method m unless skip_methods.include?(m.to_s) || m =~ /^__/
     end
 
     def initialize # :nodoc:
