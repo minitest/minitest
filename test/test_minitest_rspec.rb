@@ -65,19 +65,49 @@ describe MiniTest::Spec do
   end
 
   describe '#described_class' do
-    it 'returns the most recent class handed to a describe call' do
+    it 'returns the most recent Class handed to a describe call' do
       described_class.must_be_same_as ::MiniTest::Spec
     end
 
     describe 'in a double-nested describe block' do
-      it 'still returns the most recent class handed to a describe call' do
+      it 'still returns the most recent Class handed to a describe call' do
         described_class.must_be_same_as ::MiniTest::Spec
       end
 
       describe MiniTest::Unit::TestCase do
-        it 'returns the last described class, updating on "describe Class"' do
+        it 'returns the last described Class, updating on "describe Class"' do
           described_class.must_be_same_as ::MiniTest::Unit::TestCase
         end
+      end
+    end
+
+    describe MiniTest do
+      it 'does not return the most recently described Module, only a Class' do
+        described_class.must_be_same_as ::MiniTest::Spec
+      end
+    end
+  end
+
+  describe '#described_type' do
+    it 'returns the most recent Module handed to a describe call' do
+      described_type.must_be_same_as ::MiniTest::Spec
+    end
+
+    describe 'in a double-nested describe block' do
+      it 'still returns the most recent Module handed to a describe call' do
+        described_type.must_be_same_as ::MiniTest::Spec
+      end
+
+      describe MiniTest::Assertions do
+        it 'returns the last described Module, updating on "describe Module"' do
+          described_type.must_be_same_as ::MiniTest::Assertions
+        end
+      end
+    end
+
+    describe MiniTest::Unit do
+      it 'returns the most recently described Module, which may be a Class' do
+        described_type.must_be_same_as ::MiniTest::Unit
       end
     end
   end
