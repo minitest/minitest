@@ -116,7 +116,7 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   end
 
   ##
-  # Returns the children of this spec"
+  # Returns the children of this spec.
 
   def self.children
     @children ||= []
