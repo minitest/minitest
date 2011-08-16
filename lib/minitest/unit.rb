@@ -571,7 +571,7 @@ module MiniTest
     end
 
     ##
-    # Fails if +o1+ is not +op+ +o2+ nil. eg:
+    # Fails if +o1+ is not +op+ +o2+. Eg:
     #
     #   refute_operator 1, :>, 2 #=> pass
     #   refute_operator 1, :<, 2 #=> fail
