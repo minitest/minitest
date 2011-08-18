@@ -983,18 +983,24 @@ module MiniTest
 
       reset
 
+      ##
+      # Call this at the top of your tests when you absolutely
+      # positively need to have ordered tests. In doing so, you're
+      # admitting that you suck and your tests are weak.
+
+      def self.i_suck_and_my_tests_are_order_dependent!
+        class << self
+          define_method :test_order do :alpha end
+        end
+      end
+
       def self.inherited klass # :nodoc:
         @@test_suites[klass] = true
         klass.reset_setup_teardown_hooks
         super
       end
 
-      ##
-      # Defines test order and is subclassable. Defaults to :random
-      # but can be overridden to return :alpha if your tests are order
-      # dependent (read: weak).
-
-      def self.test_order
+      def self.test_order # :nodoc:
         :random
       end
 
