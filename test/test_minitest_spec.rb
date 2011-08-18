@@ -1,7 +1,5 @@
-require 'minitest/spec'
+require 'minitest/autorun'
 require 'stringio'
-
-MiniTest::Unit.autorun
 
 describe MiniTest::Spec do
   before do
@@ -193,6 +191,53 @@ describe MiniTest::Spec do
     @assertion_count = 6
     [1, 2, 3].wont_include(5).must_equal false
     proc { [1, 2, 3].wont_include 2 }.must_raise MiniTest::Assertion
+  end
+end
+
+describe MiniTest::Spec, :let do
+  i_suck_and_my_tests_are_order_dependent!
+
+  def _count
+    $let_count ||= 0
+  end
+
+  let :count do
+    $let_count += 1
+    $let_count
+  end
+
+  it "is evaluated once per example" do
+    _count.must_equal 0
+
+    count.must_equal 1
+    count.must_equal 1
+
+    _count.must_equal 1
+  end
+
+  it "is REALLY evaluated once per example" do
+    _count.must_equal 1
+
+    count.must_equal 2
+    count.must_equal 2
+
+    _count.must_equal 2
+  end
+end
+
+describe MiniTest::Spec, :subject do
+  attr_reader :subject_evaluation_count
+
+  subject do
+    @subject_evaluation_count ||= 0
+    @subject_evaluation_count  += 1
+    @subject_evaluation_count
+  end
+
+  it "is evaluated once per example" do
+    subject.must_equal 1
+    subject.must_equal 1
+    subject_evaluation_count.must_equal 1
   end
 end
 
