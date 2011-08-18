@@ -53,16 +53,16 @@ module Kernel # :nodoc:
   #       end
   #     end
 
-  def describe desc, &block # :doc:
+  def describe desc, additional_desc = nil, &block # :doc:
     stack = MiniTest::Spec.describe_stack
-    name  = [stack.last, desc].compact.join("::")
+    name  = [stack.last, desc, additional_desc].compact.join("::")
     sclas = stack.last || if Class === self && self < MiniTest::Spec then
                             self
                           else
                             MiniTest::Spec.spec_type desc
                           end
 
-    cls = sclas.create(name, desc)
+    cls = sclas.create(name, desc, additional_desc)
 
     stack.push cls
     cls.class_eval(&block)
@@ -183,10 +183,11 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
     end
   end
 
-  def self.create(name, desc) # :nodoc:
+  def self.create(name, desc, additional_desc = nil) # :nodoc:
     cls = Class.new(self) do
       @name = name
       @desc = desc
+      @additional_desc = additional_desc
 
       nuke_test_methods!
     end
@@ -202,7 +203,7 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
 
   # :stopdoc:
   class << self
-    attr_reader :name, :desc
+    attr_reader :name, :desc, :additional_desc
   end
   # :startdoc:
 end
