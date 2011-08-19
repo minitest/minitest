@@ -2,7 +2,7 @@
 
 * 4 minor enhancements:
 
-  * Added 2 more arguments against rspec: let & subject in 9 loc! (emmanual/luis)
+  * Added 2 more arguments against rspec: let & subject in 9 loc! (emmanuel/luis)
   * Added TestCase.i_suck_and_my_tests_are_order_dependent!
   * Extended describe to take an optional method name (2 line change!). (emmanuel)
   * Refactored and extended minitest/pride to do full 256 color support. (lolcat)
