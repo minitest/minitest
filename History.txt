@@ -1,3 +1,10 @@
+=== 2.5.1 / 2011-08-27
+
+* 2 minor enhancements:
+
+  * Added gem activation for minitest in minitest/autoload to help out 1.9 users
+  * Extended Spec.register_spec_type to allow for procs instead of just regexps.
+
 === 2.5.0 / 2011-08-18
 
 * 4 minor enhancements:
