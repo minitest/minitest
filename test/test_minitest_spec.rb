@@ -211,6 +211,10 @@ describe MiniTest::Spec, :let do
     $let_count
   end
 
+  let :full_name do |name|
+    "#{name.first} #{name.last}"
+  end
+
   it "is evaluated once per example" do
     _count.must_equal 0
 
@@ -227,6 +231,10 @@ describe MiniTest::Spec, :let do
     count.must_equal 2
 
     _count.must_equal 2
+  end
+
+  it "takes a block with arguments " do
+    full_name('John', 'Doe').must_equal "John Doe"
   end
 end
 
