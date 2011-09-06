@@ -1,11 +1,11 @@
-===================================
 minitest/{unit,spec,mock,benchmark}
+===================================
 
-home :: https://github.com/seattlerb/minitest
+home :: https://github.com/seattlerb/minitest  
 rdoc :: http://bfts.rubyforge.org/minitest
 
-------------
 DESCRIPTION:
+------------
 
 minitest provides a complete suite of testing facilities supporting
 TDD, BDD, mocking, and benchmarking.
@@ -34,8 +34,8 @@ implementors that need a minimal set of methods to bootstrap a working
 test suite. For example, there is no magic involved for test-case
 discovery.
 
-------------------
 FEATURES/PROBLEMS:
+------------------
 
 * minitest/autorun - the easy and explicit way to run all your tests.
 * minitest/unit - a very fast, simple, and clean test system.
@@ -45,13 +45,13 @@ FEATURES/PROBLEMS:
 * minitest/pride - show your pride in testing!
 * Incredibly small and fast runner, but no bells and whistles.
 
-----------
 RATIONALE:
+----------
 
-See design_rationale.rb to see how specs and tests work in minitest.
+See ```design_rationale.rb``` to see how specs and tests work in minitest.
 
----------
 SYNOPSIS:
+---------
 
 Given that you'd like to test the following class:
 
@@ -252,8 +252,8 @@ fixture loading:
 
 * Ruby 1.8, maybe even 1.6 or lower. No magic is involved.
 
---------
 INSTALL:
+--------
 
 ```
   sudo gem install minitest
@@ -270,8 +270,8 @@ the gem, but you'll need to activate the gem explicitly to use it:
   # ... usual testing stuffs ...
 ```
 
---------
 LICENSE:
+--------
 
 (The MIT License)
 
