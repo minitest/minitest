@@ -1,9 +1,11 @@
-= minitest/{unit,spec,mock,benchmark}
+minitest/{unit,spec,mock,benchmark}
+===================================
 
-home :: https://github.com/seattlerb/minitest
+home :: https://github.com/seattlerb/minitest  
 rdoc :: http://bfts.rubyforge.org/minitest
 
-== DESCRIPTION:
+DESCRIPTION:
+------------
 
 minitest provides a complete suite of testing facilities supporting
 TDD, BDD, mocking, and benchmarking.
@@ -32,7 +34,8 @@ implementors that need a minimal set of methods to bootstrap a working
 test suite. For example, there is no magic involved for test-case
 discovery.
 
-== FEATURES/PROBLEMS:
+FEATURES/PROBLEMS:
+------------------
 
 * minitest/autorun - the easy and explicit way to run all your tests.
 * minitest/unit - a very fast, simple, and clean test system.
@@ -42,14 +45,17 @@ discovery.
 * minitest/pride - show your pride in testing!
 * Incredibly small and fast runner, but no bells and whistles.
 
-== RATIONALE:
+RATIONALE:
+----------
 
-See design_rationale.rb to see how specs and tests work in minitest.
+See ```design_rationale.rb``` to see how specs and tests work in minitest.
 
-== SYNOPSIS:
+SYNOPSIS:
+---------
 
 Given that you'd like to test the following class:
 
+```ruby
   class Meme
     def i_can_has_cheezburger?
       "OHAI!"
@@ -59,9 +65,11 @@ Given that you'd like to test the following class:
       "YES!"
     end
   end
+```
 
-=== Unit tests
+### Unit tests
 
+```ruby
   require 'minitest/autorun'
 
   class TestMeme < MiniTest::Unit::TestCase
@@ -77,9 +85,11 @@ Given that you'd like to test the following class:
       refute_match /^no/i, @meme.will_it_blend?
     end
   end
+```
 
-=== Specs
+### Specs
 
+```ruby
   require 'minitest/autorun'
 
   describe Meme do
@@ -99,12 +109,14 @@ Given that you'd like to test the following class:
       end
     end
   end
+```
 
-=== Benchmarks
+### Benchmarks
 
 Add benchmarks to your regular unit tests. If the unit tests fail, the
 benchmarks won't run.
 
+```ruby
   # optionally run benchmarks, good for CI-only work!
   require 'minitest/benchmark' if ENV["BENCH"]
 
@@ -118,11 +130,13 @@ benchmarks won't run.
       end
     end
   end
+```
 
 Or add them to your specs. If you make benchmarks optional, you'll
 need to wrap your benchmarks in a conditional since the methods won't
 be defined.
 
+```ruby
   describe Meme do
     if ENV["BENCH"] then
       bench_performance_linear "my_algorithm", 0.9999 do |n|
@@ -132,19 +146,23 @@ be defined.
       end
     end
   end
+```
 
 outputs something like:
 
+```
   # Running benchmarks:
 
   TestBlah	100	1000	10000
   bench_my_algorithm	 0.006167	 0.079279	 0.786993
   bench_other_algorithm	 0.061679	 0.792797	 7.869932
+```
 
 Output is tab-delimited to make it easy to paste into a spreadsheet.
 
-=== Mocks
+### Mocks
 
+```ruby
   class MemeAsker
     def initialize(meme)
       @meme = meme
@@ -174,14 +192,16 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
       end
     end
   end
+```
 
-=== Customizable Test Runner Types:
+### Customizable Test Runner Types:
 
 MiniTest::Unit.runner=(runner) provides an easy way of creating custom
 test runners for specialized needs. Justin Weiss provides the
 following real-world example to create an alternative to regular
 fixture loading:
 
+```ruby
   class MiniTestWithHooks::Unit < MiniTest::Unit
     def before_suites
     end
@@ -226,25 +246,32 @@ fixture loading:
   end
 
   MiniTest::Unit.runner = MiniTestWithTransactions::Unit.new
+```
 
-== REQUIREMENTS:
+### REQUIREMENTS:
 
 * Ruby 1.8, maybe even 1.6 or lower. No magic is involved.
 
-== INSTALL:
+INSTALL:
+--------
 
+```
   sudo gem install minitest
+```
 
 On 1.9, you already have it. To get newer candy you can still install
 the gem, but you'll need to activate the gem explicitly to use it:
 
+```ruby
   require 'rubygems'
   gem 'minitest' # ensures you're using the gem, and not the built in MT
   require 'minitest/autorun'
-  
-  # ... usual testing stuffs ...
 
-== LICENSE:
+  # ... usual testing stuffs ...
+```
+
+LICENSE:
+--------
 
 (The MIT License)
 
