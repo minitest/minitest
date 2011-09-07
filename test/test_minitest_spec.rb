@@ -296,6 +296,24 @@ class TestMeta < MiniTest::Unit::TestCase
     MiniTest::Spec::TYPES.replace original_types
   end
 
+  def test_registered_type_spec
+    original_types = MiniTest::Spec::TYPES.dup
+
+    controller_spec = Class.new(MiniTest::Spec) do
+      def self.registered_spec_type spec
+        @@registered = true
+      end
+    end
+
+    MiniTest::Spec.register_spec_type(/Controller/, controller_spec)
+
+    spec = describe("PostsController") {}
+
+    assert_equal true, spec.class_variable_get(:@@registered)
+  ensure
+    MiniTest::Spec::TYPES.replace original_types
+  end
+
   def test_spec_type
     original_types = MiniTest::Spec::TYPES.dup
 

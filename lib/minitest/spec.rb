@@ -127,6 +127,30 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
     }.last
   end
 
+  ##
+  # Callback invoked whenever a registered spec class is created.
+  #
+  # Ex:
+  #
+  #   class ControllerSpec < MiniTest::Spec
+  #     self.inherited_spec_type spec
+  #       puts "New controller spec for: #{spec.desc}"
+  #     end
+  #   end
+  #
+  #   MiniTest::Spec.register_spec_type /Controller/, ControllerSpec
+  #
+  #   describe PostsController do
+  #   end
+  #
+  # produces:
+  #
+  #   New controller spec for: PostsController
+  #
+
+  def self.registered_spec_type spec
+  end
+
   @@describe_stack = []
   def self.describe_stack # :nodoc:
     @@describe_stack
@@ -222,6 +246,8 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
 
       nuke_test_methods!
     end
+
+    registered_spec_type cls
 
     children << cls
 
