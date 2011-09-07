@@ -143,6 +143,15 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
     @children ||= []
   end
 
+  ##
+  # Returns hash with test method names as keys, and original
+  # descriptions as values
+  #
+
+  def self.test_descriptions
+    @test_descriptions || {}
+  end
+
   def initialize name # :nodoc:
     super
     @@current_spec = self
@@ -196,6 +205,8 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
     @specs += 1
 
     name = "test_%04d_%s" % [ @specs, desc.gsub(/\W+/, '_').downcase ]
+    @test_descriptions ||= {}
+    @test_descriptions[name] = desc
 
     define_method name, &block
 

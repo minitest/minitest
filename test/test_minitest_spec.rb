@@ -321,6 +321,9 @@ class TestMeta < MiniTest::Unit::TestCase
     assert_equal "inner thingy", y.desc
     assert_equal "very inner thingy", z.desc
 
+    assert_equal "top-level-it", x.test_descriptions["test_0001_top_level_it"]
+    assert_equal "inner-it", y.test_descriptions["test_0001_inner_it"]
+
     top_methods = %w(test_0001_top_level_it)
     inner_methods = %w(test_0001_inner_it)
 
