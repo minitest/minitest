@@ -328,9 +328,13 @@ module MiniTest::Expectations
   #
   #    n.must_be :<=, 42
   #
+  # This can also do predicates:
+  #
+  #    str.must_be :empty?
+  #
   # :method: must_be
 
-  infect_an_assertion :assert_operator, :must_be
+  infect_an_assertion :assert_operator, :must_be, :reverse
 
   ##
   # See MiniTest::Assertions#assert_output
@@ -485,9 +489,13 @@ module MiniTest::Expectations
   #
   #    n.wont_be :<=, 42
   #
+  # This can also do predicates:
+  #
+  #    str.wont_be :empty?
+  #
   # :method: wont_be
 
-  infect_an_assertion :refute_operator, :wont_be
+  infect_an_assertion :refute_operator, :wont_be, :reverse
 
   ##
   # See MiniTest::Assertions#refute_respond_to

@@ -285,12 +285,16 @@ module MiniTest
       assert obj.nil?, msg
     end
 
+    UNDEFINED = Object.new
+    def UNDEFINED.inspect; "UNDEFINED"; end
+
     ##
-    # For testing equality operators and so-forth.
+    # For testing with binary operators.
     #
     #   assert_operator 5, :<=, 4
 
-    def assert_operator o1, op, o2, msg = nil
+    def assert_operator o1, op, o2 = UNDEFINED, msg = nil
+      return assert_predicate o1, op, msg if o2 == UNDEFINED
       msg = message(msg) { "Expected #{mu_pp(o1)} to be #{op} #{mu_pp(o2)}" }
       assert o1.__send__(op, o2), msg
     end
@@ -311,6 +315,20 @@ module MiniTest
       y = assert_equal stderr, err, "In stderr" if stderr
 
       (!stdout || x) && (!stderr || y)
+    end
+
+    ##
+    # For testing with predicates.
+    #
+    #   assert_predicate str, :empty?
+    #
+    # This is really meant for specs and is front-ended by assert_operator:
+    #
+    #   str.must_be :empty?
+
+    def assert_predicate o1, op, msg = nil
+      msg = message(msg) { "Expected #{mu_pp(o1)} to be #{op}" }
+      assert o1.__send__(op), msg
     end
 
     ##
@@ -576,11 +594,24 @@ module MiniTest
     #   refute_operator 1, :>, 2 #=> pass
     #   refute_operator 1, :<, 2 #=> fail
 
-    def refute_operator o1, op, o2, msg = nil
-      msg = message(msg) {
-        "Expected #{mu_pp(o1)} to not be #{op} #{mu_pp(o2)}"
-      }
+    def refute_operator o1, op, o2 = UNDEFINED, msg = nil
+      return refute_predicate o1, op if o2 == UNDEFINED
+      msg = message(msg) { "Expected #{mu_pp(o1)} to not be #{op} #{mu_pp(o2)}"}
       refute o1.__send__(op, o2), msg
+    end
+
+    ##
+    # For testing with predicates.
+    #
+    #   refute_predicate str, :empty?
+    #
+    # This is really meant for specs and is front-ended by refute_operator:
+    #
+    #   str.wont_be :empty?
+
+    def refute_predicate o1, op, msg = nil
+      msg = message(msg) { "Expected #{mu_pp(o1)} to not be #{op}" }
+      refute o1.__send__(op), msg
     end
 
     ##
