@@ -89,9 +89,14 @@ describe MiniTest::Spec do
     proc { 42.must_be_nil }.must_raise MiniTest::Assertion
   end
 
-  it "needs to verify using any operator" do
+  it "needs to verify using any binary operator" do
     41.must_be(:<, 42).must_equal true
     proc { 42.must_be(:<, 41) }.must_raise MiniTest::Assertion
+  end
+
+  it "needs to verify using any predicate" do
+    "".must_be(:empty?).must_equal true
+    proc { "blah".must_be(:empty?) }.must_raise MiniTest::Assertion
   end
 
   it "needs to catch an expected exception" do
@@ -148,6 +153,11 @@ describe MiniTest::Spec do
     @assertion_count = 6
     "blah".wont_match(/\d+/).must_equal false
     proc { "blah".wont_match(/\w+/) }.must_raise MiniTest::Assertion
+  end
+
+  it "needs to verify using any (negative) predicate" do
+    "blah".wont_be(:empty?).must_equal false
+    proc { "".wont_be(:empty?) }.must_raise MiniTest::Assertion
   end
 
   it "needs to verify non-nil" do
