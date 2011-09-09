@@ -281,6 +281,9 @@ class TestMeta < MiniTest::Unit::TestCase
           before { before_list << 3 }
           after  { after_list  << 3 }
           it "inner-it" do end
+
+          it      {} # ignore me
+          specify {} # anonymous it
         end
       end
     end
@@ -332,11 +335,13 @@ class TestMeta < MiniTest::Unit::TestCase
     assert_equal "very inner thingy", z.desc
 
     top_methods = %w(test_0001_top_level_it)
-    inner_methods = %w(test_0001_inner_it)
+    inner_methods1 = %w(test_0001_inner_it)
+    inner_methods2 = inner_methods1 +
+      %w(test_0002_anonymous test_0003_anonymous)
 
-    assert_equal top_methods,   x.instance_methods(false).sort.map {|o| o.to_s }
-    assert_equal inner_methods, y.instance_methods(false).sort.map {|o| o.to_s }
-    assert_equal inner_methods, z.instance_methods(false).sort.map {|o| o.to_s }
+    assert_equal top_methods,   x.instance_methods(false).sort.map(&:to_s)
+    assert_equal inner_methods1, y.instance_methods(false).sort.map(&:to_s)
+    assert_equal inner_methods2, z.instance_methods(false).sort.map(&:to_s)
   end
 
   def test_setup_teardown_behavior
