@@ -247,7 +247,7 @@ module MiniTest
     end
 
     ##
-    # Fails unless +obj+ is an instace of +cls+.
+    # Fails unless +obj+ is an instance of +cls+.
 
     def assert_instance_of cls, obj, msg = nil
       msg = message(msg) {
