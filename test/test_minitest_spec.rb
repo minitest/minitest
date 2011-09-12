@@ -36,6 +36,7 @@ describe MiniTest::Spec do
                         must_be_silent
                         must_be_within_delta
                         must_be_within_epsilon
+                        must_differ
                         must_equal
                         must_include
                         must_match
@@ -52,6 +53,15 @@ describe MiniTest::Spec do
 
     musts.must_equal expected_musts
     wonts.must_equal expected_wonts
+  end
+  
+  it "needs to verify difference" do
+    @assertion_count = 3
+    
+    string = "blah"
+    
+    proc { string << "haha" }.must_differ 'string.length', 4
+    proc { proc { string }.must_differ ->{ string.length}, 4 }.must_raise MiniTest::Assertion
   end
 
   it "needs to verify equality" do
@@ -142,6 +152,15 @@ describe MiniTest::Spec do
     proc { throw :blah }.must_throw(:blah).must_equal true
     proc { proc { }.must_throw(:blah) }.must_raise MiniTest::Assertion
     proc { proc { throw :xxx }.must_throw(:blah) }.must_raise MiniTest::Assertion
+  end
+  
+  it "needs to verify indifference" do
+    @assertion_count = 3
+    
+    string = "blah"
+    
+    proc { string << "haha" }.wont_differ 'string.length', 2
+    proc { proc { string << "haha" }.wont_differ ->{ string.length}, 4 }.must_raise MiniTest::Assertion
   end
 
   it "needs to verify inequality" do

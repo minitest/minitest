@@ -244,6 +244,15 @@ end
 
 module MiniTest::Expectations
   ##
+  # See MiniTest::Assertions#assert_difference
+  #
+  #    proc { ... }.must_differ proc, by
+  #
+  # :method: must_differ
+
+  infect_an_assertion :assert_difference, :must_differ
+  
+  ##
   # See MiniTest::Assertions#assert_empty.
   #
   #    collection.must_be_empty
@@ -402,6 +411,15 @@ module MiniTest::Expectations
   # :method: must_throw
 
   infect_an_assertion :assert_throws, :must_throw
+
+  ##
+  # See MiniTest::Assertions#refute_difference
+  #
+  #    proc { ... }.wont_differ proc, by
+  #
+  # :method: wont_differ
+
+  infect_an_assertion :refute_difference, :wont_differ
 
   ##
   # See MiniTest::Assertions#refute_empty
