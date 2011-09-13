@@ -1,7 +1,7 @@
 = minitest/{unit,spec,mock,benchmark}
 
 home :: https://github.com/seattlerb/minitest
-rdoc :: http://bfts.rubyforge.org/minitest
+rdoc :: http://docs.seattlerb.org/minitest
 
 == DESCRIPTION:
 
