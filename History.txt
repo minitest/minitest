@@ -1,3 +1,14 @@
+=== 2.6.0 / 2011-09-13
+
+* 2 minor enhancements:
+
+  * Added specify alias for it and made desc optional.
+  * Spec#must_be and #wont_be can be used with predicates (metaskills)
+
+* 1 bug fix:
+
+  * Fixed Mock.respond_to?(var) to work with strings. (holli)
+
 === 2.5.1 / 2011-08-27
 
 * 2 minor enhancements:
