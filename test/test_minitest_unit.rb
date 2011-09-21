@@ -635,6 +635,52 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
       end
     end
   end
+  
+  def test_assert_difference
+    @assertion_count = 1
+    
+    string = "blah"
+    
+    @tc.assert_difference ->{ string.length }, 4 do
+      string << "haha"
+    end
+  end
+  
+  def test_assert_difference_eval
+    @assertion_count = 1
+    
+    string = "blah"
+    
+    @tc.assert_difference 'string.length', 4 do
+      string << "haha"
+    end
+  end
+  
+  def test_assert_difference_triggered
+    @assertion_count = 1
+    
+    string = "blah"
+    
+    lambda = ->{ string.length }
+    
+    util_assert_triggered "Expected #{lambda.inspect} to change by 4." do
+      @tc.assert_difference lambda, 4 do
+        string << "ha"
+      end
+    end
+  end
+  
+  def test_assert_difference_triggered_eval
+    @assertion_count = 1
+  
+    string = "blah"
+  
+    util_assert_triggered "Expected \"string.length\" to change by 4." do
+      @tc.assert_difference 'string.length', 4 do
+        string << "ha"
+      end
+    end
+  end
 
   def test_assert_empty
     @assertion_count = 2
@@ -1231,6 +1277,52 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
     @assertion_count = 2
 
     @tc.assert_equal false, @tc.refute(false), "returns false on success"
+  end
+  
+  def test_refute_difference
+    @assertion_count = 1
+    
+    string = "blah"
+    
+    @tc.refute_difference ->{ string.length }, 2 do
+      string << "haha"
+    end
+  end
+  
+  def test_refute_difference_eval
+    @assertion_count = 1
+    
+    string = "blah"
+    
+    @tc.refute_difference 'string.length', 2 do
+      string << "haha"
+    end
+  end
+  
+  def test_refute_difference_triggered
+    @assertion_count = 1
+    
+    string = "blah"
+    
+    lambda = ->{ string.length }
+    
+    util_assert_triggered "Expected #{lambda.inspect} to not change by 4." do
+      @tc.refute_difference lambda, 4 do
+        string << "haha"
+      end
+    end
+  end
+  
+  def test_refute_difference_triggered_eval
+    @assertion_count = 1
+  
+    string = "blah"
+  
+    util_assert_triggered "Expected \"string.length\" to not change by 4." do
+      @tc.refute_difference 'string.length', 4 do
+        string << "haha"
+      end
+    end
   end
 
   def test_refute_empty

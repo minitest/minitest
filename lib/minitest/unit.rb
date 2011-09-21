@@ -188,6 +188,17 @@ module MiniTest
       msg = message(msg) { "Expected block to return true value" }
       assert yield, msg
     end
+    
+    ##
+    # Fails unless the return value of +expr+ differs like expected.
+    
+    def assert_difference expr, by = 1, msg = nil, &block
+      proc = expr.respond_to?(:call) ? expr : ->{ eval(expr, block.binding) }
+      msg = message(msg) { "Expected #{expr.inspect} to change by #{by}" }
+      before = proc.call
+      yield
+      assert before + by == proc.call, msg
+    end
 
     ##
     # Fails unless +obj+ is empty.
@@ -247,7 +258,7 @@ module MiniTest
     end
 
     ##
-    # Fails unless +obj+ is an instace of +cls+.
+    # Fails unless +obj+ is an instance of +cls+.
 
     def assert_instance_of cls, obj, msg = nil
       msg = message(msg) {
@@ -497,6 +508,17 @@ module MiniTest
     def refute test, msg = nil
       msg ||= "Failed refutation, no message given"
       not assert(! test, msg)
+    end
+    
+    ##
+    # Fails if the return value of +expr+ differs like expected.
+    
+    def refute_difference expr, by = 1, msg = nil, &block
+      proc = expr.respond_to?(:call) ? expr : ->{ eval(expr, block.binding) }
+      msg = message(msg) { "Expected #{expr.inspect} to not change by #{by}" }
+      before = proc.call
+      yield
+      assert before + by != proc.call, msg
     end
 
     ##
