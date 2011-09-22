@@ -236,8 +236,9 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
 
   # :stopdoc:
   class << self
-    attr_reader :name, :desc
+    attr_reader :desc
     alias :specify :it
+    alias :name :to_s
   end
   # :startdoc:
 end
