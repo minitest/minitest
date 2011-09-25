@@ -294,7 +294,7 @@ module MiniTest
     #   assert_operator 5, :<=, 4
 
     def assert_operator o1, op, o2 = UNDEFINED, msg = nil
-      return assert_predicate o1, op, msg if o2 == UNDEFINED
+      return assert_predicate o1, op, msg if UNDEFINED == o2
       msg = message(msg) { "Expected #{mu_pp(o1)} to be #{op} #{mu_pp(o2)}" }
       assert o1.__send__(op, o2), msg
     end
@@ -595,7 +595,7 @@ module MiniTest
     #   refute_operator 1, :<, 2 #=> fail
 
     def refute_operator o1, op, o2 = UNDEFINED, msg = nil
-      return refute_predicate o1, op if o2 == UNDEFINED
+      return refute_predicate o1, op, msg if UNDEFINED == o2
       msg = message(msg) { "Expected #{mu_pp(o1)} to not be #{op} #{mu_pp(o2)}"}
       refute o1.__send__(op, o2), msg
     end
