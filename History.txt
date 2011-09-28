@@ -1,3 +1,10 @@
+=== 2.6.1 / 2011-09-27
+
+* 2 bug fixes:
+
+  * Alias Spec.name from Spec.to_s so it works when @name is nil (nathany)
+  * Fixed assert and refute_operator where second object has a bad == method.
+
 === 2.6.0 / 2011-09-13
 
 * 2 minor enhancements:
