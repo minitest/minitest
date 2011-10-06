@@ -2,6 +2,7 @@
 
 home :: https://github.com/seattlerb/minitest
 rdoc :: http://docs.seattlerb.org/minitest
+vim  :: https://github.com/sunaku/vim-ruby-minitest
 
 == DESCRIPTION:
 
