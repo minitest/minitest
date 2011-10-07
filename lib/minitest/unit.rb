@@ -802,7 +802,9 @@ module MiniTest
       filter = options[:filter] || '/./'
       filter = Regexp.new $1 if filter =~ /\/(.*)\//
 
-      assertions = suite.send("#{type}_methods").grep(filter).map { |method|
+      assertions = suite.send("#{type}_methods").grep(filter).reject {|method|
+        (tag = suite.tags[method]) && tag.match(/^fails/)
+      }.map { |method|
         inst = suite.new method
         inst._assertions = 0
 
@@ -882,6 +884,10 @@ module MiniTest
 
         opts.on '-n', '--name PATTERN', "Filter test names on pattern." do |a|
           options[:filter] = a
+        end
+        
+        opts.on '--tags DIR', "Load tag files from DIR to filter tests." do |a|
+          options[:tag_base] = a
         end
 
         opts.parse! args
@@ -1006,6 +1012,19 @@ module MiniTest
 
       def io?
         @__io__
+      end
+      
+      def self.tags
+        @__tags__ ||= begin
+          tag_lines = File.read("#{ENV['TAG_BASE']}/#{name}_tags.txt").lines rescue []
+          tags = {}
+          tag_lines.each do |line|
+            match = line.match(/^.*?:(.*)$/)
+            tags[match[1]] = line
+          end
+          
+          tags
+        end
       end
 
       def self.reset # :nodoc:
