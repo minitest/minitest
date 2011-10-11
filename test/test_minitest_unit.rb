@@ -282,7 +282,7 @@ Failed assertion, no message given.
     assert_report expected
   end
 
-  def test_run_failing_filtered
+  def test_run_passing_filtered
     tc = Class.new(MiniTest::Unit::TestCase) do
       def test_something
         assert true
@@ -298,6 +298,38 @@ Failed assertion, no message given.
     @tu.run %w[--name /some|thing/ --seed 42]
 
     expected = "Run options: --name \"/some|thing/\" --seed 42
+
+# Running tests:
+
+.
+
+Finished tests in 0.00
+
+1 tests, 1 assertions, 0 failures, 0 errors, 0 skips
+"
+    assert_report expected
+  end
+
+  def test_run_passing_line
+    # --line requires 1.9 or above
+    return unless Class.respond_to? :public_instance_method
+
+    test_line = __LINE__ + 2
+    tc = Class.new(MiniTest::Unit::TestCase) do
+      def test_something
+        assert true
+      end
+
+      def test_failure
+        assert false
+      end
+    end
+
+    Object.const_set(:ATestCase, tc)
+
+    @tu.run ["--line=#{test_line}", "--seed=42"]
+
+    expected = "Run options: --line=#{test_line} --seed=42
 
 # Running tests:
 
