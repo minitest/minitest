@@ -1,5 +1,6 @@
 module Hoe::Minitest
   def initialize_minitest
+    gem "minitest"
     require 'minitest/unit'
     version = MiniTest::Unit::VERSION.split(/\./).first(2).join(".")
 
