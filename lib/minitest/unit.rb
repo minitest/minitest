@@ -997,6 +997,11 @@ module MiniTest
         @__name__ = name
         @__io__ = nil
         @passed = nil
+        @@current = self
+      end
+
+      def self.current # :nodoc:
+        @@current
       end
 
       def io
