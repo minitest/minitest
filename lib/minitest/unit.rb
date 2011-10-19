@@ -18,7 +18,7 @@ module MiniTest
 
   class Skip < Assertion; end
 
-  file = if RUBY_VERSION =~ /^1\.9/ then  # bt's expanded, but __FILE__ isn't :(
+  file = if RUBY_VERSION >= '1.9.0' then  # bt's expanded, but __FILE__ isn't :(
            File.expand_path __FILE__
          elsif  __FILE__ =~ /^[^\.]/ then # assume both relative
            require 'pathname'

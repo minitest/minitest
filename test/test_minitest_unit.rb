@@ -581,7 +581,7 @@ Finished tests in 0.00
   end
 
   def util_expand_bt bt
-    if RUBY_VERSION =~ /^1\.9/ then
+    if RUBY_VERSION >= '1.9.0' then
       bt.map { |f| (f =~ /^\./) ? File.expand_path(f) : f }
     else
       bt
@@ -991,7 +991,7 @@ FILE:LINE:in `test_assert_raises_triggered_different'
 ---------------"
 
     actual = e.message.gsub(/^.+:\d+/, 'FILE:LINE')
-    actual.gsub!(/block \(\d+ levels\) in /, '') if RUBY_VERSION =~ /^1\.9/
+    actual.gsub!(/block \(\d+ levels\) in /, '') if RUBY_VERSION >= '1.9.0'
 
     assert_equal expected, actual
   end
@@ -1012,7 +1012,7 @@ FILE:LINE:in `test_assert_raises_triggered_different_msg'
 ---------------"
 
     actual = e.message.gsub(/^.+:\d+/, 'FILE:LINE')
-    actual.gsub!(/block \(\d+ levels\) in /, '') if RUBY_VERSION =~ /^1\.9/
+    actual.gsub!(/block \(\d+ levels\) in /, '') if RUBY_VERSION >= '1.9.0'
 
     assert_equal expected, actual
   end
@@ -1056,7 +1056,7 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
 ---------------"
 
     actual = e.message.gsub(/^.+:\d+/, 'FILE:LINE')
-    actual.gsub!(/block \(\d+ levels\) in /, '') if RUBY_VERSION =~ /^1\.9/
+    actual.gsub!(/block \(\d+ levels\) in /, '') if RUBY_VERSION >= '1.9.0'
 
     assert_equal expected, actual
   end
