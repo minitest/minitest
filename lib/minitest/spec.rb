@@ -132,20 +132,11 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
     @@describe_stack
   end
 
-  def self.current # :nodoc:
-    @@current_spec
-  end
-
   ##
   # Returns the children of this spec.
 
   def self.children
     @children ||= []
-  end
-
-  def initialize name # :nodoc:
-    super
-    @@current_spec = self
   end
 
   def self.nuke_test_methods! # :nodoc:
