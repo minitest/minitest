@@ -1,8 +1,6 @@
 require 'stringio'
 require 'pathname'
-require 'minitest/unit'
-
-MiniTest::Unit.autorun
+require 'minitest/autorun'
 
 module MyModule; end
 class AnError < StandardError; include MyModule; end
@@ -1202,6 +1200,18 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
 
     assert_equal 1, MiniTest::Unit::TestCase.test_suites.size
     assert_equal [ATestCase], MiniTest::Unit::TestCase.test_suites
+  end
+
+  def test_expectation
+    @assertion_count = 2
+
+    @tc.assert_equal true, 1.must_equal(1)
+  end
+
+  def test_expectation_triggered
+    util_assert_triggered "Expected: 2\n  Actual: 1" do
+      1.must_equal 2
+    end
   end
 
   def test_flunk
