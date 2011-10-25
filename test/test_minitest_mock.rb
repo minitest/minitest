@@ -141,6 +141,18 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
     util_verify_bad
   end
 
+  def test_verify_shows_the_actual_arguments_in_the_message
+    mock = MiniTest::Mock.new
+    mock.expect :capitalized, true, ["Foobar"]
+    mock.capitalized "foobaz"
+    e = assert_raises MockExpectationError do
+      mock.verify
+    end
+
+    expected = "expected capitalized, {:retval=>true, :args=>[\"Foobar\"]}, got [{:retval=>true, :args=>[\"foobaz\"]}]"
+    assert_equal expected, e.message
+  end
+
   def util_verify_bad
     assert_raises MockExpectationError do
       @mock.verify
