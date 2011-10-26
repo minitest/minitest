@@ -1,3 +1,15 @@
+=== 2.7.0 / 2011-10-25
+
+* 2 minor enhancements:
+
+  * Include failed values in the expected arg output in MockExpectationError. (nono)
+  * Make minitest/pride work with other 256 color capable terms. (sunaku)
+
+* 2 bug fixes:
+
+  * Clarified the documentation of minitest/benchmark (eregon)
+  * Fixed using expectations in regular unit tests. (sunaku)
+
 === 2.6.2 / 2011-10-19
 
 * 1 minor enhancement:
