@@ -1093,17 +1093,17 @@ module MiniTest
       # The argument can be any object that responds to #call or a block.
       # That means that this call,
       #
-      #     MiniTest::TestCase.add_setup_hook { puts "foo" }
+      #     MiniTest::Unit::TestCase.add_setup_hook { puts "foo" }
       #
       # ... is equivalent to:
       #
       #     module MyTestSetup
-      #       def call
+      #       def self.call
       #         puts "foo"
       #       end
       #     end
       #
-      #     MiniTest::TestCase.add_setup_hook MyTestSetup
+      #     MiniTest::Unit::TestCase.add_setup_hook MyTestSetup
       #
       # The blocks passed to +add_setup_hook+ take an optional parameter that
       # will be the TestCase instance that is executing the block.
@@ -1142,17 +1142,17 @@ module MiniTest
       # The argument can be any object that responds to #call or a block.
       # That means that this call,
       #
-      #     MiniTest::TestCase.add_teardown_hook { puts "foo" }
+      #     MiniTest::Unit::TestCase.add_teardown_hook { puts "foo" }
       #
       # ... is equivalent to:
       #
       #     module MyTestTeardown
-      #       def call
+      #       def self.call
       #         puts "foo"
       #       end
       #     end
       #
-      #     MiniTest::TestCase.add_teardown_hook MyTestTeardown
+      #     MiniTest::Unit::TestCase.add_teardown_hook MyTestTeardown
       #
       # The blocks passed to +add_teardown_hook+ take an optional parameter
       # that will be the TestCase instance that is executing the block.
