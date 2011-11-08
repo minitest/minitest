@@ -143,13 +143,16 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
 
   def test_verify_shows_the_actual_arguments_in_the_message
     mock = MiniTest::Mock.new
-    mock.expect :capitalized, true, ["Foobar"]
-    mock.capitalized "foobaz"
+    mock.expect :capitalized, true, ["a"]
+    mock.capitalized "b"
     e = assert_raises MockExpectationError do
       mock.verify
     end
 
-    expected = "expected capitalized, {:retval=>true, :args=>[\"Foobar\"]}, got [{:retval=>true, :args=>[\"foobaz\"]}]"
+    a = {:retval=>true, :args=>["a"]}
+    b = {:retval=>true, :args=>["b"]}
+
+    expected = "expected capitalized, #{a.inspect}, got [#{b.inspect}]"
     assert_equal expected, e.message
   end
 
