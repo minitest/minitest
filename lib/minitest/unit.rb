@@ -33,14 +33,13 @@ module MiniTest
 
   # './lib' in project dir, or '/usr/local/blahblah' if installed
   MINI_DIR = File.dirname(File.dirname(file)) # :nodoc:
-  IN_CORE  = MINI_DIR == File.join(Dir.pwd, "lib") # :nodoc:
 
   def self.filter_backtrace bt # :nodoc:
     return ["No backtrace"] unless bt
 
     new_bt = []
 
-    unless $DEBUG or IN_CORE then
+    unless $DEBUG then
       bt.each do |line|
         break if line.rindex MINI_DIR, 0
         new_bt << line
