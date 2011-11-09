@@ -182,6 +182,38 @@ Finished tests in 0.00
     assert_equal ex, fu
   end
 
+  def test_run_test
+    tc = Class.new(MiniTest::Unit::TestCase) do
+      attr_reader :foo
+
+      def run_test name
+        @foo = "hi mom!"
+        super
+        @foo = "okay"
+      end
+
+      def test_something
+        assert_equal "hi mom!", foo
+      end
+    end
+
+    Object.const_set(:ATestCase, tc)
+
+    @tu.run %w[--seed 42]
+
+    expected = "Run options: --seed 42
+
+# Running tests:
+
+.
+
+Finished tests in 0.00
+
+1 tests, 1 assertions, 0 failures, 0 errors, 0 skips
+"
+    assert_report expected
+  end
+
   def test_run_error
     tc = Class.new(MiniTest::Unit::TestCase) do
       def test_something
