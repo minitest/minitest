@@ -18,22 +18,6 @@ module MiniTest
 
   class Skip < Assertion; end
 
-  file = if RUBY_VERSION >= '1.9.0' then  # bt's expanded, but __FILE__ isn't :(
-           File.expand_path __FILE__
-         elsif  __FILE__ =~ /^[^\.]/ then # assume both relative
-           require 'pathname'
-           pwd = Pathname.new Dir.pwd
-           pn = Pathname.new File.expand_path(__FILE__)
-           relpath = pn.relative_path_from(pwd) rescue pn
-           pn = File.join ".", relpath unless pn.relative?
-           pn.to_s
-         else                             # assume both are expanded
-           __FILE__
-         end
-
-  # './lib' in project dir, or '/usr/local/blahblah' if installed
-  MINI_DIR = File.dirname(File.dirname(file)) # :nodoc:
-
   def self.filter_backtrace bt # :nodoc:
     return ["No backtrace"] unless bt
 
@@ -41,11 +25,11 @@ module MiniTest
 
     unless $DEBUG then
       bt.each do |line|
-        break if line.rindex MINI_DIR, 0
+        break if line =~ /lib\/minitest/
         new_bt << line
       end
 
-      new_bt = bt.reject { |line| line.rindex MINI_DIR, 0 } if new_bt.empty?
+      new_bt = bt.reject { |line| line =~ /lib\/minitest/ } if new_bt.empty?
       new_bt = bt.dup if new_bt.empty?
     else
       new_bt = bt.dup
