@@ -955,7 +955,7 @@ module MiniTest
           @passed = nil
           self.setup
           self.run_setup_hooks
-          self.__send__ self.__name__
+          self.run_test self.__name__
           result = "." unless io?
           @passed = true
         rescue *PASSTHROUGH_EXCEPTIONS
@@ -976,6 +976,8 @@ module MiniTest
         end
         result
       end
+
+      alias :run_test :__send__
 
       def initialize name # :nodoc:
         @__name__ = name
