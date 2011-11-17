@@ -8,6 +8,18 @@ require 'rbconfig'
 
 module MiniTest
 
+  def self.const_missing name # :nodoc:
+    case name
+    when :MINI_DIR then
+      msg = "MiniTest::MINI_DIR was removed. Don't violate other's internals."
+      warn "WAR\NING: #{msg}"
+      warn "WAR\NING: Used by #{caller.first}."
+      const_set :MINI_DIR, "bad value"
+    else
+      super
+    end
+  end
+
   ##
   # Assertion base class
 
