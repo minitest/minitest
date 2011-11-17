@@ -1,3 +1,9 @@
+=== 2.8.1 / 2011-11-17
+
+* 1 bug fix:
+
+  * Ugh. 1.9's test/unit violates my internals. Added const_missing.
+
 === 2.8.0 / 2011-11-08
 
 * 2 minor enhancements:
