@@ -117,6 +117,9 @@ Given that you'd like to test the following class:
     end
   end
 
+For matchers support check out:
+https://github.com/zenspider/minitest-matchers
+
 === Benchmarks
 
 Add benchmarks to your regular unit tests. If the unit tests fail, the
