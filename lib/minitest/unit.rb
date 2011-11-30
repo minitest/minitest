@@ -939,12 +939,61 @@ module MiniTest
     end
 
     ##
+    # Provides a simple set of guards that you can use in your tests
+    # to skip execution if it is not applicable. These methods are
+    # mixed into TestCase as both instance and class methods so you
+    # can use them inside or outside of the test methods.
+    #
+    #   def test_something_for_mri
+    #     skip "bug 1234"  if jruby?
+    #     # ...
+    #   end
+    #
+    #   if windows? then
+    #     # ... lots of test methods ...
+    #   end
+
+    module Guard
+
+      ##
+      # Is this running on jruby?
+
+      def jruby? platform = RUBY_PLATFORM
+        "java" == platform
+      end
+
+      ##
+      # Is this running on mri?
+
+      def mri? platform = RUBY_DESCRIPTION
+        /^ruby/ =~ platform
+      end
+
+      ##
+      # Is this running on rubinius?
+
+      def rubinius? platform = defined?(RUBY_ENGINE) && RUBY_ENGINE
+        "rbx" == platform
+      end
+
+      ##
+      # Is this running on windows?
+
+      def windows? platform = RUBY_PLATFORM
+        /mswin|mingw/ =~ platform
+      end
+    end
+
+    ##
     # Subclass TestCase to create your own tests. Typically you'll want a
     # TestCase subclass per implementation class.
     #
     # See MiniTest::Assertions
 
     class TestCase
+      include Guard
+      extend Guard
+
       attr_reader :__name__ # :nodoc:
 
       PASSTHROUGH_EXCEPTIONS = [NoMemoryError, SignalException,
