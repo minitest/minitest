@@ -1502,3 +1502,25 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
     MiniTest::Assertions.diff = old_diff
   end
 end
+
+class TestMiniTestGuard < MiniTest::Unit::TestCase
+  def test_mri_eh
+    assert self.class.mri? "ruby blah"
+    assert self.mri? "ruby blah"
+  end
+
+  def test_jruby_eh
+    assert self.class.jruby? "java"
+    assert self.jruby? "java"
+  end
+
+  def test_rubinius_eh
+    assert self.class.rubinius? "rbx"
+    assert self.rubinius? "rbx"
+  end
+
+  def test_windows_eh
+    assert self.class.windows? "mswin"
+    assert self.windows? "mswin"
+  end
+end
