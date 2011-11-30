@@ -980,6 +980,12 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     end
   end
 
+  def test_assert_raises_module
+    @tc.assert_raises MyModule do
+      raise AnError
+    end
+  end
+
   ##
   # *sigh* This is quite an odd scenario, but it is from real (albeit
   # ugly) test code in ruby-core:
@@ -997,12 +1003,6 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
           skip "skipped"
         end
       end
-    end
-  end
-
-  def test_assert_raises_module
-    @tc.assert_raises MyModule do
-      raise AnError
     end
   end
 
