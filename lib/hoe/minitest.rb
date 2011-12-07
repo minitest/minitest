@@ -1,3 +1,8 @@
+# :stopdoc:
+
+class Hoe
+end
+
 module Hoe::Minitest
   def initialize_minitest
     gem "minitest"

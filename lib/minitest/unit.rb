@@ -55,8 +55,13 @@ module MiniTest
   # printed if the assertion fails.
 
   module Assertions
+    UNDEFINED = Object.new # :nodoc:
 
-    WINDOZE = RbConfig::CONFIG['host_os'] =~ /mswin|mingw/
+    def UNDEFINED.inspect # :nodoc:
+      "UNDEFINED" # again with the rdoc bugs... :(
+    end
+
+    WINDOZE = RbConfig::CONFIG['host_os'] =~ /mswin|mingw/ # :nodoc:
 
     ##
     # Returns the diff command to use in #diff. Tries to intelligently
@@ -280,9 +285,6 @@ module MiniTest
       msg = message(msg) { "Expected #{mu_pp(obj)} to be nil" }
       assert obj.nil?, msg
     end
-
-    UNDEFINED = Object.new
-    def UNDEFINED.inspect; "UNDEFINED"; end
 
     ##
     # For testing with binary operators.
@@ -640,7 +642,7 @@ module MiniTest
     end
   end
 
-  class Unit
+  class Unit # :nodoc:
     VERSION = "2.8.1" # :nodoc:
 
     attr_accessor :report, :failures, :errors, :skips # :nodoc:
@@ -649,6 +651,9 @@ module MiniTest
     attr_accessor :help                               # :nodoc:
     attr_accessor :verbose                            # :nodoc:
     attr_writer   :options                            # :nodoc:
+
+    ##
+    # Lazy accessor for options.
 
     def options
       @options ||= {}
@@ -738,6 +743,9 @@ module MiniTest
                      grep(/^run_/).map { |s| s.to_s }).uniq
     end
 
+    ##
+    # Return the IO for output.
+
     def output
       self.class.output
     end
@@ -749,6 +757,9 @@ module MiniTest
     def print *a # :nodoc:
       output.print(*a)
     end
+
+    ##
+    # Runner for a given +type+ (eg, test vs bench).
 
     def _run_anything type
       suites = TestCase.send "#{type}_suites"
@@ -787,9 +798,15 @@ module MiniTest
       status
     end
 
+    ##
+    # Runs all the +suites+ for a given +type+.
+
     def _run_suites suites, type
       suites.map { |suite| _run_suite suite, type }
     end
+
+    ##
+    # Run a single +suite+ for a given +type+.
 
     def _run_suite suite, type
       header = "#{type}_suite_header"
@@ -855,7 +872,7 @@ module MiniTest
       @verbose = false
     end
 
-    def process_args args = []
+    def process_args args = [] # :nodoc:
       options = {}
       orig_args = args.dup
 
@@ -1051,10 +1068,16 @@ module MiniTest
         @@current
       end
 
+      ##
+      # Return the output IO object
+
       def io
         @__io__ = true
         MiniTest::Unit.output
       end
+
+      ##
+      # Have we hooked up the IO yet?
 
       def io?
         @__io__
