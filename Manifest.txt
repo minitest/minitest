@@ -7,11 +7,15 @@ design_rationale.rb
 lib/hoe/minitest.rb
 lib/minitest/autorun.rb
 lib/minitest/benchmark.rb
+lib/minitest/excludes.rb
 lib/minitest/mock.rb
 lib/minitest/pride.rb
 lib/minitest/spec.rb
 lib/minitest/unit.rb
+test/metametameta.rb
 test/test_minitest_benchmark.rb
+test/test_minitest_excludes.rb
 test/test_minitest_mock.rb
 test/test_minitest_spec.rb
 test/test_minitest_unit.rb
+
