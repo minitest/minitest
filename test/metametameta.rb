@@ -19,6 +19,7 @@ class MetaMetaMetaTestCase < MiniTest::Unit::TestCase
     output = @output.string.dup
     output.sub!(/Finished tests in .*/, "Finished tests in 0.00")
     output.sub!(/Loaded suite .*/, 'Loaded suite blah')
+    output.gsub!(/[\w\/]+\/test\/[^:]+:\d+/, 'FILE:LINE')
     output.gsub!(/(?:.\/)?test\/[^:]+:\d+/, 'FILE:LINE')
     output.gsub!(/\[[^\]]+\]/, '[FILE:LINE]')
     assert_equal(expected, output)
