@@ -44,6 +44,8 @@ class MiniTest::Unit::TestCase
     return warn "Method #{self}##{name} is not defined" unless
       method_defined? name
 
+    alias_method :"old_#{name}", name
+
     define_method name do
       skip reason
     end
