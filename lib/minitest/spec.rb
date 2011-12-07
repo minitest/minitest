@@ -197,12 +197,21 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
     end
   end
 
+  ##
+  # Essentially, define an accessor for +name+ with +block+.
+  #
+  # Why use let instead of def? I honestly don't know.
+
   def self.let name, &block
     define_method name do
       @_memoized ||= {}
       @_memoized.fetch(name) { |k| @_memoized[k] = instance_eval(&block) }
     end
   end
+
+  ##
+  # Another lazy man's accessor generator. Made even more lazy by
+  # setting the name for you to +subject+.
 
   def self.subject &block
     let :subject, &block
@@ -233,6 +242,9 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   end
   # :startdoc:
 end
+
+##
+# It's where you hide your "assertions".
 
 module MiniTest::Expectations
   ##
@@ -511,6 +523,6 @@ module MiniTest::Expectations
   infect_an_assertion :refute_same, :wont_be_same_as
 end
 
-class Object
+class Object # :nodoc:
   include MiniTest::Expectations
 end
