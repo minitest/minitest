@@ -34,21 +34,30 @@ require 'minitest/unit'
 # set the EXCLUDE_DIR environment variable.
 
 class MiniTest::Unit::TestCase
-  ENV['EXCLUDE_DIR'] ||= "test/excludes"
+  EXCLUDE_DIR = ENV['EXCLUDE_DIR'] || "test/excludes"
 
   ##
   # Exclude a test from a testcase. This is intended to be used by
   # exclusion files.
 
-  def self.exclude name, reason
+  def self.exclude name, reason = nil
     return warn "Method #{self}##{name} is not defined" unless
       method_defined? name
+      
+    __excludes__ << name
 
     alias_method :"old_#{name}", name
 
     define_method name do
       skip reason
     end
+  end
+  
+  ##
+  # Excluded methods for this class
+  
+  def self.__excludes__
+    @__excludes__ ||= []
   end
 
   ##
@@ -58,8 +67,23 @@ class MiniTest::Unit::TestCase
     @__load_excludes__ ||=
       begin
         if name and not name.empty? then
-          file = File.join ENV['EXCLUDE_DIR'], "#{name}.rb"
-          instance_eval File.read file if File.exist? file
+          file = File.join EXCLUDE_DIR, "#{name}.rb"
+          if File.exist? file
+            instance_eval File.read file
+            
+            # redefine setup and teardown to skip for excluded tests
+            alias_method :old_setup, :setup
+            define_method :setup do
+              return if self.class.__excludes__.include? :"#{__name__}"
+              old_setup
+            end
+            
+            alias_method :old_teardown, :teardown
+            define_method :teardown do
+              return if self.class.__excludes__.include? :"#{__name__}"
+              old_teardown
+            end
+          end
         end
         true
       end

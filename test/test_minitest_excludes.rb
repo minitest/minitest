@@ -4,12 +4,12 @@ require 'minitest/excludes'
 class TestMiniTestExcludes < MetaMetaMetaTestCase
   def test_cls_excludes
     srand 42
-    old_exclude_base = ENV['EXCLUDE_DIR']
+    old_exclude_base = MiniTest::Unit::TestCase::EXCLUDE_DIR
 
     @assertion_count = 0
 
     Dir.mktmpdir do |path|
-      ENV['EXCLUDE_DIR'] = path
+      MiniTest::Unit::TestCase::EXCLUDE_DIR.replace(path)
       File.open File.join(path, "ATestCase.rb"), "w" do |f|
         f.puts <<-EOM
           exclude :test_test2, "because it is borked"
@@ -49,6 +49,6 @@ class TestMiniTestExcludes < MetaMetaMetaTestCase
       assert_report expected
     end
   ensure
-    ENV['EXCLUDE_DIR'] = old_exclude_base
+    MiniTest::Unit::TestCase::EXCLUDE_DIR.replace(old_exclude_base)
   end
 end
