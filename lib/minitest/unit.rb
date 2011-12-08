@@ -309,8 +309,8 @@ module MiniTest
         yield
       end
 
-      x = assert_equal stdout, out, "In stdout" if stdout
       y = assert_equal stderr, err, "In stderr" if stderr
+      x = assert_equal stdout, out, "In stdout" if stdout
 
       (!stdout || x) && (!stderr || y)
     end
