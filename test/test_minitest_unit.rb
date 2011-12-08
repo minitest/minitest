@@ -921,7 +921,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_assert_output_triggered_both
-    util_assert_triggered util_msg("yay", "boo", "In stdout") do
+    util_assert_triggered util_msg("blah", "blah blah", "In stderr") do
       @tc.assert_output "yay", "blah" do
         print "boo"
         $stderr.print "blah blah"
@@ -1115,8 +1115,6 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   end
 
   def test_assert_silent_triggered_err
-    @assertion_count = 2
-
     util_assert_triggered util_msg("", "blah blah", "In stderr") do
       @tc.assert_silent do
         $stderr.print "blah blah"
@@ -1125,6 +1123,8 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   end
 
   def test_assert_silent_triggered_out
+    @assertion_count = 2
+
     util_assert_triggered util_msg("", "blah blah", "In stdout") do
       @tc.assert_silent do
         print "blah blah"
