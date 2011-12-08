@@ -187,7 +187,7 @@ describe MiniTest::Spec do
   end
 
   it "needs to ensure silence" do
-    @assertion_count = 5
+    @assertion_count = 6
 
     proc {  }.must_be_silent.must_equal true
 
