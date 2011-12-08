@@ -69,7 +69,7 @@ class MiniTest::Unit::TestCase
         if name and not name.empty? then
           file = File.join EXCLUDE_DIR, "#{name}.rb"
           if File.exist? file
-            instance_eval File.read file
+            instance_eval File.read(file), file, 1
             
             # redefine setup and teardown to skip for excluded tests
             alias_method :old_setup, :setup
