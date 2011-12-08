@@ -1,3 +1,12 @@
+=== 2.9.0 / 2011-12-07
+
+* 4 minor enhancements:
+
+  * Added TestCase.exclude and load_excludes for programmatic filtering of tests.
+  * Added guard methods so you can cleanly skip based on platform/impl
+  * Holy crap! 100% doco! `rdoc -C` ftw
+  * Switch assert_output to test stderr before stdout to possibly improve debugging
+
 === 2.8.1 / 2011-11-17
 
 * 1 bug fix:
