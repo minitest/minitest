@@ -18,4 +18,3 @@ test/test_minitest_excludes.rb
 test/test_minitest_mock.rb
 test/test_minitest_spec.rb
 test/test_minitest_unit.rb
-
