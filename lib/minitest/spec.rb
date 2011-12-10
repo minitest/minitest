@@ -11,6 +11,8 @@ class Module # :nodoc:
           Proc === self
         return MiniTest::Spec.current.#{meth}(args.first, self) if
           args.size == 1 unless #{!!dont_flip}
+        return MiniTest::Spec.current.#{meth}(args.first, self, args.last) if
+          args.size == 2 unless #{!!dont_flip}
         return MiniTest::Spec.current.#{meth}(self, *args)
       end
     EOM

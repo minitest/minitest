@@ -1217,6 +1217,12 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
     end
   end
 
+  def test_expectation_with_a_message
+    util_assert_triggered "Expected: 2\n  Actual: 1" do
+      1.must_equal 2, ''
+    end
+  end
+
   def test_flunk
     util_assert_triggered 'Epic Fail!' do
       @tc.flunk
