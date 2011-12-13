@@ -224,7 +224,7 @@ module MiniTest
 
     def assert_in_delta exp, act, delta = 0.001, msg = nil
       n = (exp - act).abs
-      msg = message(msg) { "Expected #{exp} - #{act} (#{n}) to be < #{delta}" }
+      msg = message(msg) { "Expected |#{exp} - #{act}| (#{n}) to be < #{delta}"}
       assert delta >= n, msg
     end
 
@@ -333,7 +333,7 @@ module MiniTest
     # Fails unless the block raises one of +exp+
 
     def assert_raises *exp
-      msg = "#{exp.pop}\n" if String === exp.last
+      msg = "#{exp.pop}.\n" if String === exp.last
 
       should_raise = false
       begin
@@ -526,7 +526,7 @@ module MiniTest
     def refute_in_delta exp, act, delta = 0.001, msg = nil
       n = (exp - act).abs
       msg = message(msg) {
-        "Expected #{exp} - #{act} (#{n}) to not be < #{delta}"
+        "Expected |#{exp} - #{act}| (#{n}) to not be < #{delta}"
       }
       refute delta > n, msg
     end
