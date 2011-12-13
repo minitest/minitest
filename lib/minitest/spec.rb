@@ -7,11 +7,14 @@ class Module # :nodoc:
     # warn "%-22p -> %p %p" % [meth, new_name, dont_flip]
     self.class_eval <<-EOM
       def #{new_name} *args
-        return MiniTest::Spec.current.#{meth}(*args, &self) if
-          Proc === self
-        return MiniTest::Spec.current.#{meth}(args.first, self) if
-          args.size == 1 unless #{!!dont_flip}
-        return MiniTest::Spec.current.#{meth}(self, *args)
+        case
+        when Proc === self then
+          MiniTest::Spec.current.#{meth}(*args, &self)
+        when #{!!dont_flip} then
+          MiniTest::Spec.current.#{meth}(self, *args)
+        else
+          MiniTest::Spec.current.#{meth}(args.first, self, *args[1..-1])
+        end
       end
     EOM
   end
@@ -328,7 +331,7 @@ module MiniTest::Expectations
   #
   # :method: must_be_nil
 
-  infect_an_assertion :assert_nil, :must_be_nil
+  infect_an_assertion :assert_nil, :must_be_nil, :unary
 
   ##
   # See MiniTest::Assertions#assert_operator
@@ -489,7 +492,7 @@ module MiniTest::Expectations
   #
   # :method: wont_be_nil
 
-  infect_an_assertion :refute_nil, :wont_be_nil
+  infect_an_assertion :refute_nil, :wont_be_nil, :unary
 
   ##
   # See MiniTest::Assertions#refute_operator

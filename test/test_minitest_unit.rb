@@ -769,7 +769,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_assert_in_delta_triggered
-    util_assert_triggered 'Expected 0.0 - 0.001 (0.001) to be < 1.0e-06.' do
+    util_assert_triggered 'Expected |0.0 - 0.001| (0.001) to be < 1.0e-06.' do
       @tc.assert_in_delta 0.0, 1.0 / 1000, 0.000001
     end
   end
@@ -789,7 +789,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_assert_in_epsilon_triggered
-    util_assert_triggered 'Expected 10000 - 9990 (10) to be < 9.99.' do
+    util_assert_triggered 'Expected |10000 - 9990| (10) to be < 9.99.' do
       @tc.assert_in_epsilon 10000, 9990
     end
   end
@@ -1004,13 +1004,15 @@ FILE:LINE:in `test_assert_raises_triggered_different'
       end
     end
 
-    expected = "XXX
-[RuntimeError] exception expected, not
-Class: <SyntaxError>
-Message: <\"icky\">
----Backtrace---
-FILE:LINE:in `test_assert_raises_triggered_different_msg'
----------------"
+    expected = <<-EOM.gsub(/^ {6}/, '').chomp
+      XXX.
+      [RuntimeError] exception expected, not
+      Class: <SyntaxError>
+      Message: <\"icky\">
+      ---Backtrace---
+      FILE:LINE:in `test_assert_raises_triggered_different_msg'
+      ---------------
+    EOM
 
     actual = e.message.gsub(/^.+:\d+/, 'FILE:LINE')
     actual.gsub!(/block \(\d+ levels\) in /, '') if RUBY_VERSION >= '1.9.0'
@@ -1037,7 +1039,7 @@ FILE:LINE:in `test_assert_raises_triggered_different_msg'
       end
     end
 
-    expected = "XXX\nMiniTest::Assertion expected but nothing was raised."
+    expected = "XXX.\nMiniTest::Assertion expected but nothing was raised."
 
     assert_equal expected, e.message
   end
@@ -1217,6 +1219,12 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
     end
   end
 
+  def test_expectation_with_a_message
+    util_assert_triggered "Expected: 2\n  Actual: 1" do
+      1.must_equal 2, ''
+    end
+  end
+
   def test_flunk
     util_assert_triggered 'Epic Fail!' do
       @tc.flunk
@@ -1282,7 +1290,7 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   end
 
   def test_refute_in_delta_triggered
-    util_assert_triggered 'Expected 0.0 - 0.001 (0.001) to not be < 0.1.' do
+    util_assert_triggered 'Expected |0.0 - 0.001| (0.001) to not be < 0.1.' do
       @tc.refute_in_delta 0.0, 1.0 / 1000, 0.1
     end
   end
@@ -1292,7 +1300,7 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   end
 
   def test_refute_in_epsilon_triggered
-    util_assert_triggered 'Expected 10000 - 9991 (9) to not be < 10.0.' do
+    util_assert_triggered 'Expected |10000 - 9991| (9) to not be < 10.0.' do
       @tc.refute_in_epsilon 10000, 9991
       fail
     end
