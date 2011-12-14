@@ -1,3 +1,16 @@
+=== 2.9.1 / 2011-12-13
+
+* 4 minor enhancements:
+
+  * Added a ton of tests on spec error message output.
+  * Cleaned up consistency of msg handling on unary expectations.
+  * Improved error messages on assert/refute_in_delta.
+  * infect_an_assertion no longer checks arity and better handles args.
+
+* 1 bug fix:
+
+  * Fixed error message on specs when 2+ args and custom message provided. (chastell)
+
 === 2.9.0 / 2011-12-07
 
 * 4 minor enhancements:
