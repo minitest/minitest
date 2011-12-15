@@ -417,7 +417,7 @@ module MiniTest::Expectations
   #
   # :method: wont_be_empty
 
-  infect_an_assertion :refute_empty, :wont_be_empty
+  infect_an_assertion :refute_empty, :wont_be_empty, true
 
   ##
   # See MiniTest::Assertions#refute_equal
