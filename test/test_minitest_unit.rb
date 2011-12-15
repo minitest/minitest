@@ -945,6 +945,16 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     end
   end
 
+  def test_assert_predicate
+    @tc.assert_predicate "", :empty?
+  end
+
+  def test_assert_predicate_triggered
+    util_assert_triggered 'Expected "blah" to be empty?.' do
+      @tc.assert_predicate "blah", :empty?
+    end
+  end
+
   def test_assert_raises
     @tc.assert_raises RuntimeError do
       raise "blah"
@@ -1379,6 +1389,16 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   def test_refute_nil_triggered
     util_assert_triggered 'Expected nil to not be nil.' do
       @tc.refute_nil nil
+    end
+  end
+
+  def test_refute_predicate
+    @tc.refute_predicate "42", :empty?
+  end
+
+  def test_refute_predicate_triggered
+    util_assert_triggered 'Expected "" to not be empty?.' do
+      @tc.refute_predicate "", :empty?
     end
   end
 
