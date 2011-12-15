@@ -257,7 +257,7 @@ module MiniTest::Expectations
   #
   # :method: must_be_empty
 
-  infect_an_assertion :assert_empty, :must_be_empty
+  infect_an_assertion :assert_empty, :must_be_empty, :unary
 
   ##
   # See MiniTest::Assertions#assert_equal
@@ -417,7 +417,7 @@ module MiniTest::Expectations
   #
   # :method: wont_be_empty
 
-  infect_an_assertion :refute_empty, :wont_be_empty
+  infect_an_assertion :refute_empty, :wont_be_empty, :unary
 
   ##
   # See MiniTest::Assertions#refute_equal
