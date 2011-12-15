@@ -28,9 +28,6 @@ describe MiniTest::Spec do
     self._assertions.must_equal @assertion_count
   end
 
-  # TODO: figure out how the hell to write a test for this
-  # it "will skip if there is no block"
-
   it "needs to have all methods named well" do
     @assertion_count = 2
 
@@ -290,6 +287,108 @@ describe MiniTest::Spec do
     end
   end
 
+  it "needs to verify floats within an epsilon" do
+    @assertion_count += 1 # extra test
+
+    (6.0 * 7).must_be_within_epsilon(42.0).must_equal true
+
+    assert_triggered 'Expected |0.0 - 0.01| (0.01) to be < 0.0.' do
+      (1.0 / 100).must_be_within_epsilon 0.0
+    end
+
+    assert_triggered 'Expected |0.0 - 0.001| (0.001) to be < 0.0.' do
+      (1.0 / 1000).must_be_within_epsilon 0.0, 0.000001
+    end
+
+    assert_triggered "msg.\nExpected |0.0 - 0.001| (0.001) to be < 0.0." do
+      (1.0 / 1000).must_be_within_epsilon 0.0, 0.000001, "msg"
+    end
+  end
+
+  it "needs to verify floats outside a delta" do
+    @assertion_count += 1 # extra test
+
+    24.wont_be_close_to(42).must_equal false
+
+    assert_triggered 'Expected |42 - 42.0| (0.0) to not be < 0.001.' do
+      (6 * 7.0).wont_be_close_to 42
+    end
+
+    assert_triggered 'Expected |42 - 42.0| (0.0) to not be < 1.0e-05.' do
+      (6 * 7.0).wont_be_close_to 42, 0.00001
+    end
+
+    assert_triggered "msg.\nExpected |42 - 42.0| (0.0) to not be < 1.0e-05." do
+      (6 * 7.0).wont_be_close_to 42, 0.00001, "msg"
+    end
+  end
+
+  it "needs to verify floats outside an epsilon" do
+    @assertion_count += 1 # extra test
+
+    24.wont_be_within_epsilon(42).must_equal false
+
+    assert_triggered 'Expected |42 - 42.0| (0.0) to not be < 0.042.' do
+      (6 * 7.0).wont_be_within_epsilon 42
+    end
+
+    assert_triggered 'Expected |42 - 42.0| (0.0) to not be < 0.00042.' do
+      (6 * 7.0).wont_be_within_epsilon 42, 0.00001
+    end
+
+    assert_triggered "msg.\nExpected |42 - 42.0| (0.0) to not be < 0.00042." do
+      (6 * 7.0).wont_be_within_epsilon 42, 0.00001, "msg"
+    end
+  end
+
+  it "needs to verify instances of a class" do
+    42.wont_be_instance_of(String).must_equal false
+
+    assert_triggered 'Expected 42 to not be an instance of Fixnum.' do
+      42.wont_be_instance_of Fixnum
+    end
+
+    assert_triggered "msg.\nExpected 42 to not be an instance of Fixnum." do
+      42.wont_be_instance_of Fixnum, "msg"
+    end
+  end
+
+  it "needs to verify kinds of a class" do
+    42.wont_be_kind_of(String).must_equal false
+
+    assert_triggered 'Expected 42 to not be a kind of Integer.' do
+      42.wont_be_kind_of Integer
+    end
+
+    assert_triggered "msg.\nExpected 42 to not be a kind of Integer." do
+      42.wont_be_kind_of Integer, "msg"
+    end
+  end
+
+  it "needs to verify binary messages" do
+    42.wont_be(:<, 24).must_equal false
+
+    assert_triggered 'Expected 24 to not be < 42.' do
+      24.wont_be :<, 42
+    end
+
+    assert_triggered "msg.\nExpected 24 to not be < 42." do
+      24.wont_be :<, 42, "msg"
+    end
+  end
+
+  it "needs to verify objects not responding to a message" do
+    "".wont_respond_to(:woot!).must_equal false
+
+    assert_triggered 'Expected "" to not respond to to_s.' do
+      "".wont_respond_to :to_s
+    end
+
+    assert_triggered "msg.\nExpected \"\" to not respond to to_s." do
+      "".wont_respond_to :to_s, "msg"
+    end
+  end
+
   it "needs to verify using any (negative) predicate" do
     @assertion_count -= 1 # doesn't take a message
 
@@ -309,6 +408,34 @@ describe MiniTest::Spec do
 
     assert_triggered "msg.\nExpected nil to not be nil." do
       nil.wont_be_nil "msg"
+    end
+  end
+
+  it "needs to verify emptyness" do
+    @assertion_count += 3 # empty is 2 assertions
+
+    [].must_be_empty.must_equal true
+
+    assert_triggered "Expected [42] to be empty." do
+      [42].must_be_empty
+    end
+
+    assert_triggered "msg.\nExpected [42] to be empty." do
+      [42].must_be_empty "msg"
+    end
+  end
+
+  it "needs to verify non-emptyness" do
+    @assertion_count += 3 # empty is 2 assertions
+
+    ['some item'].wont_be_empty.must_equal false
+
+    assert_triggered "Expected [] to not be empty." do
+      [].wont_be_empty
+    end
+
+    assert_triggered "msg.\nExpected [] to not be empty." do
+      [].wont_be_empty "msg"
     end
   end
 
