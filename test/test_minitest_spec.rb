@@ -312,6 +312,20 @@ describe MiniTest::Spec do
     end
   end
 
+  it "needs to verify non-emptyness" do
+    @assertion_count += 3
+
+    ['some item'].wont_be_empty.must_equal false
+
+    assert_triggered "Expected [] to not be empty." do
+      [].wont_be_empty
+    end
+
+    assert_triggered "msg.\nExpected [] to not be empty." do
+      [].wont_be_empty "msg"
+    end
+  end
+
   it "needs to verify non-identity" do
     1.wont_be_same_as(2).must_equal false
 
