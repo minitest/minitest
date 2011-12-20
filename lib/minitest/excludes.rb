@@ -34,7 +34,7 @@ require 'minitest/unit'
 # set the EXCLUDE_DIR environment variable.
 
 class MiniTest::Unit::TestCase
-  ENV['EXCLUDE_DIR'] ||= "test/excludes"
+  EXCLUDE_DIR = ENV['EXCLUDE_DIR'] || "test/excludes"
 
   ##
   # Exclude a test from a testcase. This is intended to be used by
@@ -44,11 +44,7 @@ class MiniTest::Unit::TestCase
     return warn "Method #{self}##{name} is not defined" unless
       method_defined? name
 
-    alias_method :"old_#{name}", name
-
-    define_method name do
-      skip reason
-    end
+    remove_method name
   end
 
   ##
@@ -58,7 +54,7 @@ class MiniTest::Unit::TestCase
     @__load_excludes__ ||=
       begin
         if name and not name.empty? then
-          file = File.join ENV['EXCLUDE_DIR'], "#{name}.rb"
+          file = File.join EXCLUDE_DIR, "#{name.gsub(/::/, '/')}.rb"
           instance_eval File.read file if File.exist? file
         end
         true
