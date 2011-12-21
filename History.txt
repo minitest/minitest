@@ -1,3 +1,15 @@
+=== 2.10.0 / 2011-12-20
+
+* 3 minor enhancements:
+
+  * Added specs for must/wont be_empty/respond_to/be_kind_of and others.
+  * Added tests for assert/refute predicate.
+  * Split minitest/excludes.rb out to its own gem.
+
+* 1 bug fix:
+
+  * Fixed must_be_empty and wont_be_empty argument handling. (mrsimo)
+
 === 2.9.1 / 2011-12-13
 
 * 4 minor enhancements:
