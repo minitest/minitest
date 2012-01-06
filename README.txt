@@ -44,7 +44,7 @@ implementors that need a minimal set of methods to bootstrap a working
 test suite. For example, there is no magic involved for test-case
 discovery.
 
-    "Again, I can’t praise enough the idea of a testing/specing
+    "Again, I can't praise enough the idea of a testing/specing
      framework that I can actually read in full in one sitting!"
 
     -- Piotr Szotkowski
