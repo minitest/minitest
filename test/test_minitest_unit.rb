@@ -1,12 +1,11 @@
-require 'stringio'
 require 'pathname'
-require 'minitest/autorun'
+require 'test/metametameta'
 
 module MyModule; end
 class AnError < StandardError; include MyModule; end
 class ImmutableString < String; def inspect; super.freeze; end; end
 
-class TestMiniTestUnit < MiniTest::Unit::TestCase
+class TestMiniTestUnit < MetaMetaMetaTestCase
   pwd = Pathname.new(File.expand_path(Dir.pwd))
   basedir = Pathname.new(File.expand_path("lib/minitest")) + 'mini'
   basedir = basedir.relative_path_from(pwd).to_s
@@ -15,38 +14,6 @@ class TestMiniTestUnit < MiniTest::Unit::TestCase
                "#{MINITEST_BASE_DIR}/test.rb:158:in `each'",
                "#{MINITEST_BASE_DIR}/test.rb:139:in `run'",
                "#{MINITEST_BASE_DIR}/test.rb:106:in `run'"]
-
-  def assert_report expected = nil
-    expected ||= "Run options: --seed 42
-
-# Running tests:
-
-.
-
-Finished tests in 0.00
-
-1 tests, 1 assertions, 0 failures, 0 errors, 0 skips
-"
-    output = @output.string.sub(/Finished tests in .*/, "Finished tests in 0.00")
-    output.sub!(/Loaded suite .*/, 'Loaded suite blah')
-    output.sub!(/^(\s+)(?:#{Regexp.union(__FILE__, File.expand_path(__FILE__))}):\d+:/o, '\1FILE:LINE:')
-    output.sub!(/\[(?:#{Regexp.union(__FILE__, File.expand_path(__FILE__))}):\d+\]/o, '[FILE:LINE]')
-    assert_equal(expected, output)
-  end
-
-  def setup
-    srand 42
-    MiniTest::Unit::TestCase.reset
-    @tu = MiniTest::Unit.new
-    @output = StringIO.new("")
-    MiniTest::Unit.runner = nil # protect the outer runner from the inner tests
-    MiniTest::Unit.output = @output
-  end
-
-  def teardown
-    MiniTest::Unit.output = $stdout
-    Object.send :remove_const, :ATestCase if defined? ATestCase
-  end
 
   def test_class_puke_with_assertion_failed
     exception = MiniTest::Assertion.new "Oh no!"
@@ -229,21 +196,23 @@ Finished tests in 0.00
 
     @tu.run %w[--seed 42]
 
-    expected = "Run options: --seed 42
+    expected = <<-EOM.gsub(/^ {6}/, '')
+      Run options: --seed 42
 
-# Running tests:
+      # Running tests:
 
-E.
+      E.
 
-Finished tests in 0.00
+      Finished tests in 0.00
 
-  1) Error:
-test_error(ATestCase):
-RuntimeError: unhandled exception
-    FILE:LINE:in `test_error'
+        1) Error:
+      test_error(ATestCase):
+      RuntimeError: unhandled exception
+          FILE:LINE:in `test_error'
 
-2 tests, 1 assertions, 0 failures, 1 errors, 0 skips
-"
+      2 tests, 1 assertions, 0 failures, 1 errors, 0 skips
+    EOM
+
     assert_report expected
   end
 
@@ -621,6 +590,8 @@ end
 
 class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   def setup
+    super
+
     MiniTest::Unit::TestCase.reset
 
     @tc = MiniTest::Unit::TestCase.new 'fake tc'
@@ -798,7 +769,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_assert_in_delta_triggered
-    util_assert_triggered 'Expected 0.0 - 0.001 (0.001) to be < 1.0e-06.' do
+    util_assert_triggered 'Expected |0.0 - 0.001| (0.001) to be < 1.0e-06.' do
       @tc.assert_in_delta 0.0, 1.0 / 1000, 0.000001
     end
   end
@@ -818,7 +789,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_assert_in_epsilon_triggered
-    util_assert_triggered 'Expected 10000 - 9990 (10) to be < 9.99.' do
+    util_assert_triggered 'Expected |10000 - 9990| (10) to be < 9.99.' do
       @tc.assert_in_epsilon 10000, 9990
     end
   end
@@ -950,7 +921,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_assert_output_triggered_both
-    util_assert_triggered util_msg("yay", "boo", "In stdout") do
+    util_assert_triggered util_msg("blah", "blah blah", "In stderr") do
       @tc.assert_output "yay", "blah" do
         print "boo"
         $stderr.print "blah blah"
@@ -974,9 +945,25 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     end
   end
 
+  def test_assert_predicate
+    @tc.assert_predicate "", :empty?
+  end
+
+  def test_assert_predicate_triggered
+    util_assert_triggered 'Expected "blah" to be empty?.' do
+      @tc.assert_predicate "blah", :empty?
+    end
+  end
+
   def test_assert_raises
     @tc.assert_raises RuntimeError do
       raise "blah"
+    end
+  end
+
+  def test_assert_raises_module
+    @tc.assert_raises MyModule do
+      raise AnError
     end
   end
 
@@ -997,12 +984,6 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
           skip "skipped"
         end
       end
-    end
-  end
-
-  def test_assert_raises_module
-    @tc.assert_raises MyModule do
-      raise AnError
     end
   end
 
@@ -1033,13 +1014,15 @@ FILE:LINE:in `test_assert_raises_triggered_different'
       end
     end
 
-    expected = "XXX
-[RuntimeError] exception expected, not
-Class: <SyntaxError>
-Message: <\"icky\">
----Backtrace---
-FILE:LINE:in `test_assert_raises_triggered_different_msg'
----------------"
+    expected = <<-EOM.gsub(/^ {6}/, '').chomp
+      XXX.
+      [RuntimeError] exception expected, not
+      Class: <SyntaxError>
+      Message: <\"icky\">
+      ---Backtrace---
+      FILE:LINE:in `test_assert_raises_triggered_different_msg'
+      ---------------
+    EOM
 
     actual = e.message.gsub(/^.+:\d+/, 'FILE:LINE')
     actual.gsub!(/block \(\d+ levels\) in /, '') if RUBY_VERSION >= '1.9.0'
@@ -1066,7 +1049,7 @@ FILE:LINE:in `test_assert_raises_triggered_different_msg'
       end
     end
 
-    expected = "XXX\nMiniTest::Assertion expected but nothing was raised."
+    expected = "XXX.\nMiniTest::Assertion expected but nothing was raised."
 
     assert_equal expected, e.message
   end
@@ -1144,8 +1127,6 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   end
 
   def test_assert_silent_triggered_err
-    @assertion_count = 2
-
     util_assert_triggered util_msg("", "blah blah", "In stderr") do
       @tc.assert_silent do
         $stderr.print "blah blah"
@@ -1154,6 +1135,8 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   end
 
   def test_assert_silent_triggered_out
+    @assertion_count = 2
+
     util_assert_triggered util_msg("", "blah blah", "In stdout") do
       @tc.assert_silent do
         print "blah blah"
@@ -1246,6 +1229,12 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
     end
   end
 
+  def test_expectation_with_a_message
+    util_assert_triggered "Expected: 2\n  Actual: 1" do
+      1.must_equal 2, ''
+    end
+  end
+
   def test_flunk
     util_assert_triggered 'Epic Fail!' do
       @tc.flunk
@@ -1311,7 +1300,7 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   end
 
   def test_refute_in_delta_triggered
-    util_assert_triggered 'Expected 0.0 - 0.001 (0.001) to not be < 0.1.' do
+    util_assert_triggered 'Expected |0.0 - 0.001| (0.001) to not be < 0.1.' do
       @tc.refute_in_delta 0.0, 1.0 / 1000, 0.1
     end
   end
@@ -1321,7 +1310,7 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   end
 
   def test_refute_in_epsilon_triggered
-    util_assert_triggered 'Expected 10000 - 9991 (9) to not be < 10.0.' do
+    util_assert_triggered 'Expected |10000 - 9991| (9) to not be < 10.0.' do
       @tc.refute_in_epsilon 10000, 9991
       fail
     end
@@ -1400,6 +1389,16 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
   def test_refute_nil_triggered
     util_assert_triggered 'Expected nil to not be nil.' do
       @tc.refute_nil nil
+    end
+  end
+
+  def test_refute_predicate
+    @tc.refute_predicate "42", :empty?
+  end
+
+  def test_refute_predicate_triggered
+    util_assert_triggered 'Expected "" to not be empty?.' do
+      @tc.refute_predicate "", :empty?
     end
   end
 
@@ -1500,5 +1499,27 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
     yield
   ensure
     MiniTest::Assertions.diff = old_diff
+  end
+end
+
+class TestMiniTestGuard < MiniTest::Unit::TestCase
+  def test_mri_eh
+    assert self.class.mri? "ruby blah"
+    assert self.mri? "ruby blah"
+  end
+
+  def test_jruby_eh
+    assert self.class.jruby? "java"
+    assert self.jruby? "java"
+  end
+
+  def test_rubinius_eh
+    assert self.class.rubinius? "rbx"
+    assert self.rubinius? "rbx"
+  end
+
+  def test_windows_eh
+    assert self.class.windows? "mswin"
+    assert self.windows? "mswin"
   end
 end

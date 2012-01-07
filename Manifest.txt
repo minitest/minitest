@@ -11,6 +11,7 @@ lib/minitest/mock.rb
 lib/minitest/pride.rb
 lib/minitest/spec.rb
 lib/minitest/unit.rb
+test/metametameta.rb
 test/test_minitest_benchmark.rb
 test/test_minitest_mock.rb
 test/test_minitest_spec.rb

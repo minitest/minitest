@@ -8,6 +8,18 @@ require 'rbconfig'
 
 module MiniTest
 
+  def self.const_missing name # :nodoc:
+    case name
+    when :MINI_DIR then
+      msg = "MiniTest::MINI_DIR was removed. Don't violate other's internals."
+      warn "WAR\NING: #{msg}"
+      warn "WAR\NING: Used by #{caller.first}."
+      const_set :MINI_DIR, "bad value"
+    else
+      super
+    end
+  end
+
   ##
   # Assertion base class
 
@@ -43,8 +55,13 @@ module MiniTest
   # printed if the assertion fails.
 
   module Assertions
+    UNDEFINED = Object.new # :nodoc:
 
-    WINDOZE = RbConfig::CONFIG['host_os'] =~ /mswin|mingw/
+    def UNDEFINED.inspect # :nodoc:
+      "UNDEFINED" # again with the rdoc bugs... :(
+    end
+
+    WINDOZE = RbConfig::CONFIG['host_os'] =~ /mswin|mingw/ # :nodoc:
 
     ##
     # Returns the diff command to use in #diff. Tries to intelligently
@@ -207,7 +224,7 @@ module MiniTest
 
     def assert_in_delta exp, act, delta = 0.001, msg = nil
       n = (exp - act).abs
-      msg = message(msg) { "Expected #{exp} - #{act} (#{n}) to be < #{delta}" }
+      msg = message(msg) { "Expected |#{exp} - #{act}| (#{n}) to be < #{delta}"}
       assert delta >= n, msg
     end
 
@@ -269,9 +286,6 @@ module MiniTest
       assert obj.nil?, msg
     end
 
-    UNDEFINED = Object.new
-    def UNDEFINED.inspect; "UNDEFINED"; end
-
     ##
     # For testing with binary operators.
     #
@@ -295,8 +309,8 @@ module MiniTest
         yield
       end
 
-      x = assert_equal stdout, out, "In stdout" if stdout
       y = assert_equal stderr, err, "In stderr" if stderr
+      x = assert_equal stdout, out, "In stdout" if stdout
 
       (!stdout || x) && (!stderr || y)
     end
@@ -319,7 +333,7 @@ module MiniTest
     # Fails unless the block raises one of +exp+
 
     def assert_raises *exp
-      msg = "#{exp.pop}\n" if String === exp.last
+      msg = "#{exp.pop}.\n" if String === exp.last
 
       should_raise = false
       begin
@@ -512,7 +526,7 @@ module MiniTest
     def refute_in_delta exp, act, delta = 0.001, msg = nil
       n = (exp - act).abs
       msg = message(msg) {
-        "Expected #{exp} - #{act} (#{n}) to not be < #{delta}"
+        "Expected |#{exp} - #{act}| (#{n}) to not be < #{delta}"
       }
       refute delta > n, msg
     end
@@ -628,8 +642,8 @@ module MiniTest
     end
   end
 
-  class Unit
-    VERSION = "2.8.0" # :nodoc:
+  class Unit # :nodoc:
+    VERSION = "2.10.0" # :nodoc:
 
     attr_accessor :report, :failures, :errors, :skips # :nodoc:
     attr_accessor :test_count, :assertion_count       # :nodoc:
@@ -637,6 +651,9 @@ module MiniTest
     attr_accessor :help                               # :nodoc:
     attr_accessor :verbose                            # :nodoc:
     attr_writer   :options                            # :nodoc:
+
+    ##
+    # Lazy accessor for options.
 
     def options
       @options ||= {}
@@ -726,6 +743,9 @@ module MiniTest
                      grep(/^run_/).map { |s| s.to_s }).uniq
     end
 
+    ##
+    # Return the IO for output.
+
     def output
       self.class.output
     end
@@ -737,6 +757,9 @@ module MiniTest
     def print *a # :nodoc:
       output.print(*a)
     end
+
+    ##
+    # Runner for a given +type+ (eg, test vs bench).
 
     def _run_anything type
       suites = TestCase.send "#{type}_suites"
@@ -775,9 +798,15 @@ module MiniTest
       status
     end
 
+    ##
+    # Runs all the +suites+ for a given +type+.
+
     def _run_suites suites, type
       suites.map { |suite| _run_suite suite, type }
     end
+
+    ##
+    # Run a single +suite+ for a given +type+.
 
     def _run_suite suite, type
       header = "#{type}_suite_header"
@@ -843,7 +872,7 @@ module MiniTest
       @verbose = false
     end
 
-    def process_args args = []
+    def process_args args = [] # :nodoc:
       options = {}
       orig_args = args.dup
 
@@ -927,12 +956,61 @@ module MiniTest
     end
 
     ##
+    # Provides a simple set of guards that you can use in your tests
+    # to skip execution if it is not applicable. These methods are
+    # mixed into TestCase as both instance and class methods so you
+    # can use them inside or outside of the test methods.
+    #
+    #   def test_something_for_mri
+    #     skip "bug 1234"  if jruby?
+    #     # ...
+    #   end
+    #
+    #   if windows? then
+    #     # ... lots of test methods ...
+    #   end
+
+    module Guard
+
+      ##
+      # Is this running on jruby?
+
+      def jruby? platform = RUBY_PLATFORM
+        "java" == platform
+      end
+
+      ##
+      # Is this running on mri?
+
+      def mri? platform = RUBY_DESCRIPTION
+        /^ruby/ =~ platform
+      end
+
+      ##
+      # Is this running on rubinius?
+
+      def rubinius? platform = defined?(RUBY_ENGINE) && RUBY_ENGINE
+        "rbx" == platform
+      end
+
+      ##
+      # Is this running on windows?
+
+      def windows? platform = RUBY_PLATFORM
+        /mswin|mingw/ =~ platform
+      end
+    end
+
+    ##
     # Subclass TestCase to create your own tests. Typically you'll want a
     # TestCase subclass per implementation class.
     #
     # See MiniTest::Assertions
 
     class TestCase
+      include Guard
+      extend Guard
+
       attr_reader :__name__ # :nodoc:
 
       PASSTHROUGH_EXCEPTIONS = [NoMemoryError, SignalException,
@@ -990,10 +1068,16 @@ module MiniTest
         @@current
       end
 
+      ##
+      # Return the output IO object
+
       def io
         @__io__ = true
         MiniTest::Unit.output
       end
+
+      ##
+      # Have we hooked up the IO yet?
 
       def io?
         @__io__

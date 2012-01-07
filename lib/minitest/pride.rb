@@ -4,12 +4,17 @@ require "minitest/unit"
 # Show your testing pride!
 
 class PrideIO
+
+  # Start an escape sequence
   ESC = "\e["
+
+  # End the escape sequence
   NND = "#{ESC}0m"
 
+  # The IO we're going to pipe through.
   attr_reader :io
 
-  def initialize io
+  def initialize io # :nodoc:
     @io = io
     # stolen from /System/Library/Perl/5.10.0/Term/ANSIColor.pm
     # also reference http://en.wikipedia.org/wiki/ANSI_escape_code
@@ -18,6 +23,9 @@ class PrideIO
     @index  = 0
     # io.sync = true
   end
+
+  ##
+  # Wrap print to colorize the output.
 
   def print o
     case o
@@ -30,7 +38,7 @@ class PrideIO
     end
   end
 
-  def puts(*o)
+  def puts(*o) # :nodoc:
     o.map! { |s|
       s.sub(/Finished tests/) {
         @index = 0
@@ -43,6 +51,9 @@ class PrideIO
     super
   end
 
+  ##
+  # Color a string.
+
   def pride string
     string = "*" if string == "."
     c = @colors[@index % @size]
@@ -50,15 +61,20 @@ class PrideIO
     "#{ESC}#{c}m#{string}#{NND}"
   end
 
-  def method_missing msg, *args
+  def method_missing msg, *args # :nodoc:
     io.send(msg, *args)
   end
 end
 
-class PrideLOL < PrideIO # inspired by lolcat, but massively cleaned up
-  PI_3 = Math::PI / 3
+##
+# If you thought the PrideIO was colorful...
+#
+# (Inspired by lolcat, but with clean math)
 
-  def initialize io
+class PrideLOL < PrideIO
+  PI_3 = Math::PI / 3 # :nodoc:
+
+  def initialize io # :nodoc:
     # walk red, green, and blue around a circle separated by equal thirds.
     #
     # To visualize, type this into wolfram-alpha:
@@ -81,6 +97,9 @@ class PrideLOL < PrideIO # inspired by lolcat, but massively cleaned up
 
     super
   end
+
+  ##
+  # Make the string even more colorful. Damnit.
 
   def pride string
     c = @colors[@index % @size]

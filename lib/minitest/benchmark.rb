@@ -1,9 +1,7 @@
 require 'minitest/unit'
 require 'minitest/spec'
 
-class MiniTest::Unit
-  attr_accessor :runner
-
+class MiniTest::Unit # :nodoc:
   def run_benchmarks # :nodoc:
     _run_anything :benchmark
   end
@@ -311,6 +309,15 @@ class MiniTest::Spec
   def self.bench name, &block
     define_method "bench_#{name.gsub(/\W+/, '_')}", &block
   end
+
+  ##
+  # Specifies the ranges used for benchmarking for that class.
+  #
+  #   bench_range do
+  #     bench_exp(2, 16, 2)
+  #   end
+  #
+  # See Unit::TestCase.bench_range for more details.
 
   def self.bench_range &block
     return super unless block
