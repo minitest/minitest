@@ -1031,6 +1031,7 @@ module MiniTest
         result = ""
         begin
           @passed = nil
+          self.before_setup
           self.setup
           self.after_setup
           self.run_test self.__name__
@@ -1045,6 +1046,7 @@ module MiniTest
           begin
             self.before_teardown
             self.teardown
+            self.after_teardown
           rescue *PASSTHROUGH_EXCEPTIONS
             raise
           rescue Exception => e
@@ -1147,6 +1149,11 @@ module MiniTest
       def after_setup; end
 
       ##
+      # Runs before every setup. Use this to refactor test initialization.
+
+      def before_setup; end
+
+      ##
       # Runs after every test. Use this to refactor test cleanup.
 
       def teardown; end
@@ -1156,6 +1163,11 @@ module MiniTest
       # initialization.
 
       def before_teardown; end
+
+      ##
+      # Runs after every teardown. Use this to refactor test cleanup.
+
+      def after_teardown; end
 
       def self.reset_setup_teardown_hooks # :nodoc:
         @setup_hooks = []

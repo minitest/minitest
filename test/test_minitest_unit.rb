@@ -469,6 +469,48 @@ Finished tests in 0.00
     end
   end
 
+  def test_before_setup
+    call_order = []
+    Class.new(MiniTest::Unit::TestCase) do
+      define_method :setup do
+        super()
+        call_order << :setup
+      end
+
+      define_method :before_setup do
+        call_order << :before_setup
+      end
+
+      def test_omg; assert true; end
+    end
+
+    @tu.run %w[--seed 42]
+
+    expected = [:before_setup, :setup]
+    assert_equal expected, call_order
+  end
+
+  def test_after_teardown
+    call_order = []
+    Class.new(MiniTest::Unit::TestCase) do
+      define_method :teardown do
+        super()
+        call_order << :teardown
+      end
+
+      define_method :after_teardown do
+        call_order << :after_teardown
+      end
+
+      def test_omg; assert true; end
+    end
+
+    @tu.run %w[--seed 42]
+
+    expected = [:teardown, :after_teardown]
+    assert_equal expected, call_order
+  end
+
   def test_setup_hooks
     call_order = []
 
