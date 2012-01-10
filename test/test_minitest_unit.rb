@@ -472,7 +472,7 @@ Finished tests in 0.00
   def test_setup_hooks
     call_order = []
 
-    tc = Class.new(MiniTest::Unit::TestCase) do
+    tc = Class.new(MiniTest::Spec) do
       define_method :setup do
         super()
         call_order << :method
@@ -509,7 +509,7 @@ Finished tests in 0.00
   def test_teardown_hooks
     call_order = []
 
-    tc = Class.new(MiniTest::Unit::TestCase) do
+    tc = Class.new(MiniTest::Spec) do
       define_method :teardown do
         super()
         call_order << :method
@@ -546,7 +546,7 @@ Finished tests in 0.00
   def test_setup_and_teardown_hooks_survive_inheritance
     call_order = []
 
-    parent = Class.new(MiniTest::Unit::TestCase) do
+    parent = Class.new(MiniTest::Spec) do
       define_method :setup do
         super()
         call_order << :setup_method
