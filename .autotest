@@ -1,12 +1,13 @@
 # -*- ruby -*-
 
 require 'autotest/restart'
-require 'autotest/rcov'
+require 'autotest/rcov' if ENV['RCOV']
 
 Autotest.add_hook :initialize do |at|
   at.testlib = 'minitest/unit'
 
   at.extra_class_map["MiniTest::Spec"]           = "test/test_minitest_spec.rb"
+  at.extra_class_map["TestMeta"]                 = "test/test_minitest_spec.rb"
   at.extra_class_map["TestMiniTestUnitTestCase"] = "test/test_minitest_unit.rb"
   at.extra_class_map["TestMiniTestUnit"]         = "test/test_minitest_unit.rb"
   at.add_exception 'coverage.info'
