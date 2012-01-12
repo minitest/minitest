@@ -1,24 +1,24 @@
-= minitest/{unit,spec,mock,benchmark}
+# minitest/{unit,spec,mock,benchmark}
 
 home :: https://github.com/seattlerb/minitest
 rdoc :: http://docs.seattlerb.org/minitest
 vim  :: https://github.com/sunaku/vim-ruby-minitest
 
-== DESCRIPTION:
+## DESCRIPTION:
 
 minitest provides a complete suite of testing facilities supporting
 TDD, BDD, mocking, and benchmarking.
 
-    "I had a class with Jim Weirich on testing last week and we were
-     allowed to choose our testing frameworks. Kirk Haines and I were
-     paired up and we cracked open the code for a few test
-     frameworks...
-
-     I MUST say that mintiest is *very* readable / understandable
-     compared to the 'other two' options we looked at. Nicely done and
-     thank you for helping us keep our mental sanity."
-
-    -- Wayne E. Seguin
+> "I had a class with Jim Weirich on testing last week and we were
+>  allowed to choose our testing frameworks. Kirk Haines and I were
+>  paired up and we cracked open the code for a few test
+>  frameworks...
+> 
+>  I MUST say that mintiest is *very* readable / understandable
+>  compared to the 'other two' options we looked at. Nicely done and
+>  thank you for helping us keep our mental sanity."
+> 
+> -- Wayne E. Seguin
 
 minitest/unit is a small and incredibly fast unit testing framework.
 It provides a rich set of assertions to make your tests clean and
@@ -44,12 +44,12 @@ implementors that need a minimal set of methods to bootstrap a working
 test suite. For example, there is no magic involved for test-case
 discovery.
 
-    "Again, I can't praise enough the idea of a testing/specing
-     framework that I can actually read in full in one sitting!"
+> "Again, I can't praise enough the idea of a testing/specing
+> framework that I can actually read in full in one sitting!"
+>
+> -- Piotr Szotkowski
 
-    -- Piotr Szotkowski
-
-== FEATURES/PROBLEMS:
+## FEATURES/PROBLEMS:
 
 * minitest/autorun - the easy and explicit way to run all your tests.
 * minitest/unit - a very fast, simple, and clean test system.
@@ -59,11 +59,11 @@ discovery.
 * minitest/pride - show your pride in testing!
 * Incredibly small and fast runner, but no bells and whistles.
 
-== RATIONALE:
+## RATIONALE:
 
 See design_rationale.rb to see how specs and tests work in minitest.
 
-== SYNOPSIS:
+## SYNOPSIS:
 
 Given that you'd like to test the following class:
 
@@ -77,7 +77,7 @@ Given that you'd like to test the following class:
     end
   end
 
-=== Unit tests
+### Unit tests
 
   require 'minitest/autorun'
 
@@ -95,7 +95,7 @@ Given that you'd like to test the following class:
     end
   end
 
-=== Specs
+### Specs
 
   require 'minitest/autorun'
 
@@ -120,7 +120,7 @@ Given that you'd like to test the following class:
 For matchers support check out:
 https://github.com/zenspider/minitest-matchers
 
-=== Benchmarks
+### Benchmarks
 
 Add benchmarks to your regular unit tests. If the unit tests fail, the
 benchmarks won't run.
@@ -155,13 +155,13 @@ outputs something like:
 
   # Running benchmarks:
 
-  TestBlah	100	1000	10000
-  bench_my_algorithm	 0.006167	 0.079279	 0.786993
-  bench_other_algorithm	 0.061679	 0.792797	 7.869932
+  TestBlah  100 1000  10000
+  bench_my_algorithm   0.006167  0.079279  0.786993
+  bench_other_algorithm  0.061679  0.792797  7.869932
 
 Output is tab-delimited to make it easy to paste into a spreadsheet.
 
-=== Mocks
+### Mocks
 
   class MemeAsker
     def initialize(meme)
@@ -193,7 +193,7 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
     end
   end
 
-=== Customizable Test Runner Types:
+### Customizable Test Runner Types:
 
 MiniTest::Unit.runner=(runner) provides an easy way of creating custom
 test runners for specialized needs. Justin Weiss provides the
@@ -245,11 +245,11 @@ fixture loading:
 
   MiniTest::Unit.runner = MiniTestWithTransactions::Unit.new
 
-== REQUIREMENTS:
+## REQUIREMENTS:
 
 * Ruby 1.8, maybe even 1.6 or lower. No magic is involved.
 
-== INSTALL:
+## INSTALL:
 
   sudo gem install minitest
 
@@ -262,7 +262,7 @@ the gem, but you'll need to activate the gem explicitly to use it:
   
   # ... usual testing stuffs ...
 
-== LICENSE:
+## LICENSE:
 
 (The MIT License)
 
