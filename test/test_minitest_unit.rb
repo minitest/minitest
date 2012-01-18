@@ -511,6 +511,36 @@ Finished tests in 0.00
     assert_equal expected, call_order
   end
 
+  def test_all_teardowns_are_guaranteed_to_run
+    call_order = []
+    Class.new(MiniTest::Unit::TestCase) do
+      define_method :after_teardown do
+        super()
+        call_order << :after_teardown
+        raise
+      end
+
+      define_method :teardown do
+        super()
+        call_order << :teardown
+        raise
+      end
+
+      define_method :before_teardown do
+        super()
+        call_order << :before_teardown
+        raise
+      end
+
+      def test_omg; assert true; end
+    end
+
+    @tu.run %w[--seed 42]
+
+    expected = [:before_teardown, :teardown, :after_teardown]
+    assert_equal expected, call_order
+  end
+
   def test_setup_hooks
     call_order = []
 

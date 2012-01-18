@@ -1043,14 +1043,14 @@ module MiniTest
           @passed = false
           result = runner.puke self.class, self.__name__, e
         ensure
-          begin
-            self.before_teardown
-            self.teardown
-            self.after_teardown
-          rescue *PASSTHROUGH_EXCEPTIONS
-            raise
-          rescue Exception => e
-            result = runner.puke self.class, self.__name__, e
+          %w{ before_teardown teardown after_teardown }.each do |hook|
+            begin
+              self.send hook
+            rescue *PASSTHROUGH_EXCEPTIONS
+              raise
+            rescue Exception => e
+              result = runner.puke self.class, self.__name__, e
+            end
           end
           trap 'INFO', 'DEFAULT' if SUPPORTS_INFO_SIGNAL
         end
