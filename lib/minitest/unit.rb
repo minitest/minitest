@@ -1031,8 +1031,9 @@ module MiniTest
         result = ""
         begin
           @passed = nil
+          self.before_setup
           self.setup
-          self.run_setup_hooks
+          self.after_setup
           self.run_test self.__name__
           result = "." unless io?
           @passed = true
@@ -1042,13 +1043,14 @@ module MiniTest
           @passed = false
           result = runner.puke self.class, self.__name__, e
         ensure
-          begin
-            self.run_teardown_hooks
-            self.teardown
-          rescue *PASSTHROUGH_EXCEPTIONS
-            raise
-          rescue Exception => e
-            result = runner.puke self.class, self.__name__, e
+          %w{ before_teardown teardown after_teardown }.each do |hook|
+            begin
+              self.send hook
+            rescue *PASSTHROUGH_EXCEPTIONS
+              raise
+            rescue Exception => e
+              result = runner.puke self.class, self.__name__, e
+            end
           end
           trap 'INFO', 'DEFAULT' if SUPPORTS_INFO_SIGNAL
         end
@@ -1141,9 +1143,31 @@ module MiniTest
       def setup; end
 
       ##
+      # Runs before every test after setup. Use this to refactor test
+      # initialization.
+
+      def after_setup; end
+
+      ##
+      # Runs before every setup. Use this to refactor test initialization.
+
+      def before_setup; end
+
+      ##
       # Runs after every test. Use this to refactor test cleanup.
 
       def teardown; end
+
+      ##
+      # Runs after every test before teardown. Use this to refactor test
+      # initialization.
+
+      def before_teardown; end
+
+      ##
+      # Runs after every teardown. Use this to refactor test cleanup.
+
+      def after_teardown; end
 
       def self.reset_setup_teardown_hooks # :nodoc:
         @setup_hooks = []
