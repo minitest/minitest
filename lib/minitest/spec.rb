@@ -238,6 +238,14 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   end
 
   # :stopdoc:
+  def after_setup
+    run_setup_hooks
+  end
+
+  def before_teardown
+    run_teardown_hooks
+  end
+
   class << self
     attr_reader :desc
     alias :specify :it
