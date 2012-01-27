@@ -45,7 +45,8 @@ module MiniTest
     #   @mock.verify  # => raises MockExpectationError
 
     def expect(name, retval, args=[])
-      @expected_calls[name] = { :retval => retval, :args => Array(args) }
+      raise ArgumentError, "args must be an array" unless Array === args
+      @expected_calls[name] = { :retval => retval, :args => args }
       self
     end
 

@@ -84,13 +84,9 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
   end
 
   def test_expect_with_non_array_args
-    @mock.foo
-    @mock.meaning_of_life
-
-    @mock.expect :blah, 3, false
-    @mock.blah false
-
-    assert @mock.verify
+    assert_raises ArgumentError do
+      @mock.expect :blah, 3, false
+    end
   end
 
   def test_respond_appropriately
