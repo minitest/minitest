@@ -893,7 +893,7 @@ module MiniTest
           options[:verbose] = true
         end
 
-        opts.on '-n', '--name PATTERN', "Filter test names on pattern." do |a|
+        opts.on '-n', '--name PATTERN', "Filter test names on pattern (e.g. /foo/)" do |a|
           options[:filter] = a
         end
 
