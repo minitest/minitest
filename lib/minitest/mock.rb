@@ -78,24 +78,24 @@ module MiniTest
           [sym, @expected_calls.keys.sort_by(&:to_s)]
       end
 
-      x_calls = @expected_calls[sym].select { |call| call[:args].size == args.size }
+      expected_calls = @expected_calls[sym].select { |call| call[:args].size == args.size }
 
-      if x_calls.empty?
+      if expected_calls.empty?
         arg_sizes = @expected_calls[sym].map { |call| call[:args].size }.uniq.sort
         raise ArgumentError, "mocked method %p expects %s arguments, got %d" %
           [sym, arg_sizes.join('/'), args.size]
       end
 
-      x_call = x_calls.find do |call|
+      expected_call = expected_calls.find do |call|
         call[:args].zip(args).all? { |mod, a| mod === a or mod == a }
       end
 
-      unless x_call
+      unless expected_call
         raise MockExpectationError, "mocked method %p called with unexpected arguments %p" %
           [sym, args]
       end
 
-      expected_args, retval = x_call[:args], x_call[:retval]
+      expected_args, retval = expected_call[:args], expected_call[:retval]
       
       @actual_calls[sym] << {
         :retval => retval,
