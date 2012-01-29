@@ -78,9 +78,9 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
     @mock.meaning_of_life
     @mock.expect(:sum, 3, [1, 2])
 
-    @mock.sum(2, 4)
-
-    util_verify_bad
+    assert_raises MockExpectationError do
+      @mock.sum(2, 4)
+    end
   end
 
   def test_expect_with_non_array_args
@@ -142,15 +142,19 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
   def test_verify_raises_with_strict_args
     mock = MiniTest::Mock.new
     mock.expect :strict_expectation, true, [2]
-    mock.strict_expectation 1
 
-    util_verify_bad
+    assert_raises MockExpectationError do
+      mock.strict_expectation 1
+    end
   end
 
   def test_verify_shows_the_actual_arguments_in_the_message
     mock = MiniTest::Mock.new
     mock.expect :capitalized, true, ["a"]
+    mock.expect :capitalized, true, ["b"]
+
     mock.capitalized "b"
+
     e = assert_raises MockExpectationError do
       mock.verify
     end
@@ -162,6 +166,27 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
     assert_equal expected, e.message
   end
 
+  def test_same_method_expects_are_verified_when_all_called
+    mock = MiniTest::Mock.new
+    mock.expect :foo, nil, [:bar]
+    mock.expect :foo, nil, [:baz]
+
+    mock.foo :bar
+    mock.foo :baz
+
+    assert mock.verify
+  end
+
+  def test_same_method_expects_blow_up_when_not_all_called
+    mock = MiniTest::Mock.new
+    mock.expect :foo, nil, [:bar]
+    mock.expect :foo, nil, [:baz]
+
+    mock.foo :baz
+
+    assert_raises(MockExpectationError) { mock.verify }
+  end
+  
   def util_verify_bad
     assert_raises MockExpectationError do
       @mock.verify
