@@ -19,8 +19,8 @@ module MiniTest
     end
 
     def initialize # :nodoc:
-      @expected_calls = {}
-      @actual_calls = Hash.new {|h,k| h[k] = [] }
+      @expected_calls = Hash.new { |calls, name| calls[name] = [] }
+      @actual_calls   = Hash.new { |calls, name| calls[name] = [] }
     end
 
     ##
@@ -46,7 +46,7 @@ module MiniTest
 
     def expect(name, retval, args=[])
       raise ArgumentError, "args must be an array" unless Array === args
-      @expected_calls[name] = { :retval => retval, :args => args }
+      @expected_calls[name] << { :retval => retval, :args => args }
       self
     end
 
@@ -56,36 +56,47 @@ module MiniTest
     # expected.
 
     def verify
-      @expected_calls.each_key do |name|
-        expected = @expected_calls[name]
-        msg1 = "expected #{name}, #{expected.inspect}"
-        msg2 = "#{msg1}, got #{@actual_calls[name].inspect}"
+      @expected_calls.each do |name, calls|
+        calls.each do |expected|
+          msg1 = "expected #{name}, #{expected.inspect}"
+          msg2 = "#{msg1}, got #{@actual_calls[name].inspect}"
 
-        raise MockExpectationError, msg2 if
-          @actual_calls.has_key? name and
-          not @actual_calls[name].include?(expected)
+          raise MockExpectationError, msg2 if
+            @actual_calls.has_key? name and
+            not @actual_calls[name].include?(expected)
 
-        raise MockExpectationError, msg1 unless
-          @actual_calls.has_key? name and @actual_calls[name].include?(expected)
+          raise MockExpectationError, msg1 unless
+            @actual_calls.has_key? name and @actual_calls[name].include?(expected)
+        end
       end
       true
     end
 
     def method_missing(sym, *args) # :nodoc:
-      expected = @expected_calls[sym]
-
-      unless expected then
+      unless @expected_calls.has_key?(sym) then
         raise NoMethodError, "unmocked method %p, expected one of %p" %
           [sym, @expected_calls.keys.sort_by(&:to_s)]
       end
 
-      expected_args, retval = expected[:args], expected[:retval]
+      x_calls = @expected_calls[sym].select { |call| call[:args].size == args.size }
 
-      unless expected_args.size == args.size
-        raise ArgumentError, "mocked method %p expects %d arguments, got %d" %
-          [sym, expected[:args].size, args.size]
+      if x_calls.empty?
+        arg_sizes = @expected_calls[sym].map { |call| call[:args].size }.uniq.sort
+        raise ArgumentError, "mocked method %p expects %s arguments, got %d" %
+          [sym, arg_sizes.join('/'), args.size]
       end
 
+      x_call = x_calls.find do |call|
+        call[:args].zip(args).all? { |mod, a| mod === a or mod == a }
+      end
+
+      unless x_call
+        raise MockExpectationError, "mocked method %p called with unexpected arguments %p" %
+          [sym, args]
+      end
+
+      expected_args, retval = x_call[:args], x_call[:retval]
+      
       @actual_calls[sym] << {
         :retval => retval,
         :args => expected_args.zip(args).map { |mod, a| mod === a ? mod : a }
