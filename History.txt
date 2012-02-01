@@ -1,3 +1,10 @@
+=== 2.11.1 / 2012-02-01
+
+* 2 bug fixes:
+
+  * Improved description for --name argument (drd)
+  * Ensure Mock#expect's expected args is an Array. (mperham)
+
 === 2.11.0 / 2012-01-25
 
 * 2 minor enhancements:
