@@ -10,6 +10,7 @@ Hoe.plugin :seattlerb
 Hoe.spec 'minitest' do
   developer 'Ryan Davis', 'ryand-ruby@zenspider.com'
 
+  self.readme_file = "README.rdoc"
   self.rubyforge_name = "bfts"
   self.testlib = :minitest
 end
