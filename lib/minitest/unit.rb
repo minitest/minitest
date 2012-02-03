@@ -4,7 +4,7 @@ require 'rbconfig'
 ##
 # Minimal (mostly drop-in) replacement for test-unit.
 #
-# :include: README.txt
+# :include: README.rdoc
 
 module MiniTest
 
