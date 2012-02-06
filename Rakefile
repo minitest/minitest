@@ -12,6 +12,7 @@ Hoe.spec 'minitest' do
 
   self.rubyforge_name = "bfts"
   self.testlib = :minitest
+  self.readme_file = "README.rdoc"
 end
 
 def loc dir
