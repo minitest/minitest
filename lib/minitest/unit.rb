@@ -661,6 +661,7 @@ module MiniTest
 
     @@installed_at_exit ||= false
     @@out = $stdout
+    @@after_tests = []
 
     ##
     # A simple hook allowing you to run a block of code after the
@@ -668,8 +669,8 @@ module MiniTest
     #
     #   MiniTest::Unit.after_tests { p $debugging_info }
 
-    def self.after_tests
-      at_exit { at_exit { yield } }
+    def self.after_tests &block
+      @@after_tests << block
     end
 
     ##
@@ -685,7 +686,10 @@ module MiniTest
         # to run (at_exit stacks).
         exit_code = nil
 
-        at_exit { exit false if exit_code && exit_code != 0 }
+        at_exit {
+          @@after_tests.reverse_each(&:call)
+          exit false if exit_code && exit_code != 0
+        }
 
         exit_code = MiniTest::Unit.new.run ARGV
       } unless @@installed_at_exit
