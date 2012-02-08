@@ -1027,8 +1027,12 @@ module MiniTest
 
       def run runner
         trap "INFO" do
+          runner.report.each_with_index do |msg, i|
+            warn "\n%3d) %s" % [i + 1, msg]
+          end
+          warn ''
           time = runner.start_time ? Time.now - runner.start_time : 0
-          warn "%s#%s %.2fs" % [self.class, self.__name__, time]
+          warn "Current Test: %s#%s %.2fs" % [self.class, self.__name__, time]
           runner.status $stderr
         end if SUPPORTS_INFO_SIGNAL
 
