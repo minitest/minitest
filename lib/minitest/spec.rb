@@ -306,6 +306,15 @@ module MiniTest::Expectations
   infect_an_assertion :assert_includes, :must_include, :reverse
 
   ##
+  # See MiniTest::Assertions#assert_includes_all
+  #
+  #    collection.must_include_all elements
+  #
+  # :method: must_include_all
+
+  infect_an_assertion :assert_includes_all, :must_include_all, :reverse
+
+  ##
   # See MiniTest::Assertions#assert_instance_of
   #
   #    obj.must_be_instance_of klass
