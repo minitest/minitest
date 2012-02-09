@@ -248,6 +248,25 @@ module MiniTest
     end
 
     ##
+    # Fails unless +collection+ includes all the +elements+, ignoring the
+    # order of the elements.
+
+    def assert_includes_all collection, elements, msg = nil
+      msg = message(msg) {
+        "Expected #{mu_pp(collection)} to include all the elements of #{mu_pp(elements)}"
+      }
+      assert_respond_to collection, :to_a
+      assert_respond_to elements, :size
+      remaining = collection.dup.to_a
+      assert remaining.size == elements.size, msg
+      elements.each do |e|
+        index = remaining.index e
+        remaining.delete_at index if index
+      end
+      assert remaining.empty?, msg
+    end
+
+    ##
     # Fails unless +obj+ is an instance of +cls+.
 
     def assert_instance_of cls, obj, msg = nil
