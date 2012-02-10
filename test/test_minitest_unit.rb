@@ -895,6 +895,16 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     @tc.assert_equal_unordered [true, false, true], [true, true, false]
   end
 
+  def test_assert_equal_unordered_keeps_equality_contract
+    @assertion_count = 4
+
+    # sanity checks
+    assert_equal (1 == 1.0),  true
+    assert_equal 1.eql?(1.0), false
+
+    @tc.assert_equal_unordered [1.0, 2, 3], [1, 2, 3]
+  end
+
   def test_assert_equal_unordered_when_enumerable_actual
     @assertion_count = 4
 
