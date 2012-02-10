@@ -64,17 +64,17 @@ describe MiniTest::Spec do
     end
   end
 
-  it "needs to be sensible about must_include_all order" do
-    @assertion_count += 8 # must_include_all is 4 assertions
+  it "needs to be sensible about must_equal_unordered order" do
+    @assertion_count += 8 # must_equal_unordered is 4 assertions
 
-    [1, 2, 3].must_include_all([1, 2, 3]).must_equal true
+    [1, 2, 3].must_equal_unordered([1, 2, 3]).must_equal true
 
-    assert_triggered "Expected [1, 2] to include all the elements of [1, 2, 3]." do
-      [1, 2].must_include_all [1, 2, 3]
+    assert_triggered "Expected [1, 2] to contain equal elements of [1, 2, 3]." do
+      [1, 2].must_equal_unordered [1, 2, 3]
     end
 
-    assert_triggered "msg.\nExpected [1, 2, 4] to include all the elements of [1, 2, 3]." do
-      [1, 2, 4].must_include_all [1, 2, 3], "msg"
+    assert_triggered "msg.\nExpected [1, 2, 4] to contain equal elements of [1, 2, 3]." do
+      [1, 2, 4].must_equal_unordered [1, 2, 3], "msg"
     end
   end
 
@@ -134,8 +134,8 @@ describe MiniTest::Spec do
                         must_be_within_delta
                         must_be_within_epsilon
                         must_equal
+                        must_equal_unordered
                         must_include
-                        must_include_all
                         must_match
                         must_output
                         must_raise
@@ -143,7 +143,7 @@ describe MiniTest::Spec do
                         must_send
                         must_throw)
 
-    bad = %w[not raise throw send output be_silent include_all]
+    bad = %w[not raise throw send output be_silent equal_unordered]
 
     expected_wonts = expected_musts.map { |m| m.sub(/^must/, 'wont') }
     expected_wonts.reject! { |m| m =~ /wont_#{Regexp.union(*bad)}/ }

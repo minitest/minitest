@@ -306,13 +306,13 @@ module MiniTest::Expectations
   infect_an_assertion :assert_includes, :must_include, :reverse
 
   ##
-  # See MiniTest::Assertions#assert_includes_all
+  # See MiniTest::Assertions#assert_equal_unordered
   #
-  #    collection.must_include_all elements
+  #    collection.must_equal_unordered elements
   #
-  # :method: must_include_all
+  # :method: must_equal_unordered
 
-  infect_an_assertion :assert_includes_all, :must_include_all, :reverse
+  infect_an_assertion :assert_equal_unordered, :must_equal_unordered, :reverse
 
   ##
   # See MiniTest::Assertions#assert_instance_of

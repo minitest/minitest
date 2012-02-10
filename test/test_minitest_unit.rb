@@ -883,42 +883,42 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     assert_equal expected, e.message
   end
 
-  def test_assert_includes_all
+  def test_assert_equal_unordered
     @assertion_count = 4
 
-    @tc.assert_includes_all [true, false, true], [true, true, false]
+    @tc.assert_equal_unordered [true, false, true], [true, true, false]
   end
 
-  def test_assert_includes_all_triggered_when_actual_has_more_elements_than_expected
-    @assertion_count = 4
-
-    e = @tc.assert_raises MiniTest::Assertion do
-      @tc.assert_includes_all [true, true], [true]
-    end
-
-    expected = "Expected [true, true] to include all the elements of [true]."
-    assert_equal expected, e.message
-  end
-
-  def test_assert_includes_all_triggered_when_actual_has_less_elements_than_expected
+  def test_assert_equal_unordered_triggered_when_actual_has_more_elements_than_expected
     @assertion_count = 4
 
     e = @tc.assert_raises MiniTest::Assertion do
-      @tc.assert_includes_all [true], [true, true]
+      @tc.assert_equal_unordered [true, true], [true]
     end
 
-    expected = "Expected [true] to include all the elements of [true, true]."
+    expected = "Expected [true, true] to contain equal elements of [true]."
     assert_equal expected, e.message
   end
 
-  def test_assert_includes_all_triggered_when_actual_has_different_elements_than_expected
+  def test_assert_equal_unordered_triggered_when_actual_has_less_elements_than_expected
+    @assertion_count = 4
+
+    e = @tc.assert_raises MiniTest::Assertion do
+      @tc.assert_equal_unordered [true], [true, true]
+    end
+
+    expected = "Expected [true] to contain equal elements of [true, true]."
+    assert_equal expected, e.message
+  end
+
+  def test_assert_equal_unordered_triggered_when_actual_has_different_elements_than_expected
     @assertion_count = 5
 
     e = @tc.assert_raises MiniTest::Assertion do
-      @tc.assert_includes_all [true, false, true], [false, false, true]
+      @tc.assert_equal_unordered [true, false, true], [false, false, true]
     end
 
-    expected = "Expected [true, false, true] to include all the elements of [false, false, true]."
+    expected = "Expected [true, false, true] to contain equal elements of [false, false, true]."
     assert_equal expected, e.message
   end
 
@@ -1299,7 +1299,7 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
     methods = MiniTest::Assertions.public_instance_methods
     methods.map! { |m| m.to_s } if Symbol === methods.first
 
-    ignores = %w(assert_block assert_includes_all assert_no_match
+    ignores = %w(assert_block assert_equal_unordered assert_no_match
                  assert_not_equal assert_not_nil assert_not_same
                  assert_nothing_raised assert_nothing_thrown
                  assert_output assert_raise assert_raises

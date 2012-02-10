@@ -248,12 +248,12 @@ module MiniTest
     end
 
     ##
-    # Fails unless +collection+ includes all the +elements+, ignoring the
-    # order of the elements.
+    # Fails unless +collection+ contains equal +elements+, ignoring the order
+    # of the elements.
 
-    def assert_includes_all collection, elements, msg = nil
+    def assert_equal_unordered collection, elements, msg = nil
       msg = message(msg) {
-        "Expected #{mu_pp(collection)} to include all the elements of #{mu_pp(elements)}"
+        "Expected #{mu_pp(collection)} to contain equal elements of #{mu_pp(elements)}"
       }
       assert_respond_to collection, :to_a
       assert_respond_to elements, :size
