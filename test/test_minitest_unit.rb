@@ -883,10 +883,34 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     assert_equal expected, e.message
   end
 
-  def test_assert_equal_unordered
+  def test_assert_equal_unordered_when_comparable_elements
+    @assertion_count = 4
+
+    @tc.assert_equal_unordered [1, 2, 3], [2, 3, 1]
+  end
+
+  def test_assert_equal_unordered_when_not_comparable_elements
     @assertion_count = 4
 
     @tc.assert_equal_unordered [true, false, true], [true, true, false]
+  end
+
+  def test_assert_equal_unordered_when_enumerable_actual
+    @assertion_count = 4
+
+    es = Class.new do
+      include Enumerable
+
+      def initialize
+        @elems = [true, false, true]
+      end
+
+      def each
+        @elems.each { |e| yield e }
+      end
+    end.new
+
+    @tc.assert_equal_unordered es, [true, true, false]
   end
 
   def test_assert_equal_unordered_triggered_when_actual_has_more_elements_than_expected
