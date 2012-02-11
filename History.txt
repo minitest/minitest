@@ -1,9 +1,10 @@
 === 2.11.1 / 2012-02-01
 
-* 2 bug fixes:
+* 3 bug fixes:
 
-  * Improved description for --name argument (drd)
+  * Improved description for --name argument. (drd)
   * Ensure Mock#expect's expected args is an Array. (mperham)
+  * Ensure Mock#verify verifies multiple expects of the same method. (chastell)
 
 === 2.11.0 / 2012-01-25
 
