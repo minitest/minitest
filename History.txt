@@ -1,3 +1,13 @@
+=== 2.11.2 / 2012-02-14
+
+* 1 minor enhancement:
+
+  * Display failures/errors on SIGINFO. (tenderlove)
+
+* 1 bug fix:
+
+  * Fixed MiniTest::Unit.after_tests for Ruby 1.9.3. (ysbaddaden)
+
 === 2.11.1 / 2012-02-01
 
 * 3 bug fixes:
