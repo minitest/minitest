@@ -869,6 +869,12 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     end
   end
   
+  def test_assert_in_epsilon_triggered_negative_case
+    util_assert_triggered 'Expected |-1.1 - -1| (0.10000000000000009) to be < 0.1.' do
+      @tc.assert_in_epsilon -1.1, -1, 0.1
+    end
+  end
+  
   def test_assert_includes
     @assertion_count = 2
 
