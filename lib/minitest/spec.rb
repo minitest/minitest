@@ -191,7 +191,7 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
     @specs ||= 0
     @specs += 1
     
-    name = "test_%04d_%s" % [ @specs, desc.gsub(/[^[[:word:]]]+/, '_').downcase ]
+    name = "test_%04d_%s" % [ @specs, desc.gsub(/[^[[:word:]]]/, '_').downcase ]
 
     define_method name, &block
 
