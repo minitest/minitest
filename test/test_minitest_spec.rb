@@ -683,11 +683,12 @@ class TestMeta < MiniTest::Unit::TestCase
       y = describe "first thingy" do end
 
       it "top-level-it" do end
+      it "не латинские буквы-и-спецсимволы&いった α, β, γ, δ, ε hello!!! world" do end
 
       z = describe "second thingy" do end
     end
 
-    assert_equal ['test_0001_top_level_it'],
+    assert_equal ['test_0001_top_level_it', 'test_0002_не_латинские_буквы_и_спецсимволы_いった_α_β_γ_δ_ε_hello_world'],
       x.instance_methods.grep(/^test/).map {|o| o.to_s}
     assert_equal [], y.instance_methods.grep(/^test/)
     assert_equal [], z.instance_methods.grep(/^test/)
