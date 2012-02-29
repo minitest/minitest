@@ -14,7 +14,7 @@ TDD, BDD, mocking, and benchmarking.
      paired up and we cracked open the code for a few test
      frameworks...
 
-     I MUST say that mintiest is *very* readable / understandable
+     I MUST say that minitest is *very* readable / understandable
      compared to the 'other two' options we looked at. Nicely done and
      thank you for helping us keep our mental sanity."
 
