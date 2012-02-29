@@ -330,7 +330,8 @@ module MiniTest
     end
 
     ##
-    # Fails unless the block raises one of +exp+
+    # Fails unless the block raises one of +exp+. Returns the
+    # exception matched so you can check the message, attributes, etc.
 
     def assert_raises *exp
       msg = "#{exp.pop}.\n" if String === exp.last
