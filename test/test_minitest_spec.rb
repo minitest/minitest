@@ -102,12 +102,13 @@ describe MiniTest::Spec do
   end
 
   it "needs to have all methods named well" do
-    @assertion_count = 2
+    @assertion_count = 3
 
     methods = Object.public_instance_methods.find_all { |n| n =~ /^must|^wont/ }
     methods.map! { |m| m.to_s } if Symbol === methods.first
 
-    musts, wonts = methods.sort.partition { |m| m =~ /^must/ }
+    wonts, musts = methods.sort.partition { |m| m =~ /^must_not|^wont/ }
+    wonts, must_nots = wonts.partition { |m| m =~ /^wont/ }
 
     expected_musts = %w(must_be
                         must_be_close_to
@@ -131,10 +132,14 @@ describe MiniTest::Spec do
     bad = %w[not raise throw send output be_silent]
 
     expected_wonts = expected_musts.map { |m| m.sub(/^must/, 'wont') }
+
     expected_wonts.reject! { |m| m =~ /wont_#{Regexp.union(*bad)}/ }
+
+    expected_must_nots = expected_wonts.map { |m| m.sub(/^wont/, 'must_not') }
 
     musts.must_equal expected_musts
     wonts.must_equal expected_wonts
+    must_nots.must_equal expected_must_nots
   end
 
   it "needs to raise if an expected exception is not raised" do
