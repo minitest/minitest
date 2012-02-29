@@ -426,6 +426,7 @@ module MiniTest::Expectations
   # :method: wont_be_empty
 
   infect_an_assertion :refute_empty, :wont_be_empty, :unary
+  alias :must_not_be_empty :wont_be_empty
 
   ##
   # See MiniTest::Assertions#refute_equal
@@ -435,6 +436,7 @@ module MiniTest::Expectations
   # :method: wont_equal
 
   infect_an_assertion :refute_equal, :wont_equal
+  alias :must_not_equal :wont_equal
 
   ##
   # See MiniTest::Assertions#refute_in_delta
@@ -444,8 +446,10 @@ module MiniTest::Expectations
   # :method: wont_be_within_delta
 
   infect_an_assertion :refute_in_delta, :wont_be_within_delta
+  alias :must_not_be_within_delta :wont_be_within_delta
 
   alias :wont_be_close_to :wont_be_within_delta
+  alias :must_not_be_close_to :wont_be_close_to
   # FIX: reverse aliases
 
   ##
@@ -456,6 +460,7 @@ module MiniTest::Expectations
   # :method: wont_be_within_epsilon
 
   infect_an_assertion :refute_in_epsilon, :wont_be_within_epsilon
+  alias :must_not_be_within_epsilon :wont_be_within_epsilon
 
   ##
   # See MiniTest::Assertions#refute_includes
@@ -465,6 +470,7 @@ module MiniTest::Expectations
   # :method: wont_include
 
   infect_an_assertion :refute_includes, :wont_include, :reverse
+  alias :must_not_include :wont_include
 
   ##
   # See MiniTest::Assertions#refute_instance_of
@@ -474,6 +480,7 @@ module MiniTest::Expectations
   # :method: wont_be_instance_of
 
   infect_an_assertion :refute_instance_of, :wont_be_instance_of
+  alias :must_not_be_instance_of :wont_be_instance_of
 
   ##
   # See MiniTest::Assertions#refute_kind_of
@@ -483,6 +490,7 @@ module MiniTest::Expectations
   # :method: wont_be_kind_of
 
   infect_an_assertion :refute_kind_of, :wont_be_kind_of
+  alias :must_not_be_kind_of :wont_be_kind_of
 
   ##
   # See MiniTest::Assertions#refute_match
@@ -492,6 +500,7 @@ module MiniTest::Expectations
   # :method: wont_match
 
   infect_an_assertion :refute_match, :wont_match
+  alias :must_not_match :wont_match
 
   ##
   # See MiniTest::Assertions#refute_nil
@@ -501,6 +510,7 @@ module MiniTest::Expectations
   # :method: wont_be_nil
 
   infect_an_assertion :refute_nil, :wont_be_nil, :unary
+  alias :must_not_be_nil :wont_be_nil
 
   ##
   # See MiniTest::Assertions#refute_operator
@@ -514,6 +524,7 @@ module MiniTest::Expectations
   # :method: wont_be
 
   infect_an_assertion :refute_operator, :wont_be, :reverse
+  alias :must_not_be :wont_be
 
   ##
   # See MiniTest::Assertions#refute_respond_to
@@ -523,6 +534,7 @@ module MiniTest::Expectations
   # :method: wont_respond_to
 
   infect_an_assertion :refute_respond_to, :wont_respond_to, :reverse
+  alias :must_not_respond_to :wont_respond_to
 
   ##
   # See MiniTest::Assertions#refute_same
@@ -532,6 +544,7 @@ module MiniTest::Expectations
   # :method: wont_be_same_as
 
   infect_an_assertion :refute_same, :wont_be_same_as
+  alias :must_not_be_same_as :wont_be_same_as
 end
 
 class Object # :nodoc:
