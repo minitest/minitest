@@ -847,7 +847,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_assert_in_epsilon
-    @assertion_count = 8
+    @assertion_count = 10
 
     @tc.assert_in_epsilon 10000, 9991
     @tc.assert_in_epsilon 9991, 10000
@@ -858,6 +858,9 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     @tc.assert_in_epsilon 9999.1, 10000, 0.0001
     @tc.assert_in_epsilon 1.0, 1.0001, 0.0001
     @tc.assert_in_epsilon 1.0001, 1.0, 0.0001
+    
+    @tc.assert_in_epsilon -1, -1
+    @tc.assert_in_epsilon -10000, -9991
   end
 
   def test_assert_in_epsilon_triggered
@@ -865,7 +868,13 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
       @tc.assert_in_epsilon 10000, 9990
     end
   end
-
+  
+  def test_assert_in_epsilon_triggered_negative_case
+    util_assert_triggered 'Expected |-1.1 - -1| (0.10000000000000009) to be < 0.1.' do
+      @tc.assert_in_epsilon -1.1, -1, 0.1
+    end
+  end
+  
   def test_assert_includes
     @assertion_count = 2
 
