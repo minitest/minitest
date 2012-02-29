@@ -233,7 +233,7 @@ module MiniTest
     # error less than +epsilon+.
 
     def assert_in_epsilon a, b, epsilon = 0.001, msg = nil
-      assert_in_delta a, b, [a, b].min * epsilon, msg
+      assert_in_delta a, b, [a.abs, b.abs].min * epsilon, msg
     end
 
     ##
