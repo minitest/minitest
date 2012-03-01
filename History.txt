@@ -1,3 +1,10 @@
+=== 2.11.3 / 2012-02-29
+
+* 2 bug fixes:
+
+  * Clarified that assert_raises returns the exception for further testing
+  * Fixed assert_in_epsilon when both args are negative. (tamc)
+
 === 2.11.2 / 2012-02-14
 
 * 1 minor enhancement:
