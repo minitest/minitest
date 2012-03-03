@@ -190,8 +190,12 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
 
     @specs ||= 0
     @specs += 1
-
-    name = "test_%04d_%s" % [ @specs, desc.gsub(/\W+/, '_').downcase ]
+    regexp = if RUBY_VERSION.to_f >= 1.9
+      Regexp.new("[^[[:word:]]]+")
+    else
+      Regexp.new(/\W+/u)
+    end
+    name = "test_%04d_%s" % [ @specs, desc.gsub(regexp, '_').downcase ]
 
     define_method name, &block
 
