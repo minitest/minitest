@@ -193,8 +193,7 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
     regexp = if RUBY_VERSION.to_f >= 1.9
       Regexp.new("[^[[:word:]]]+")
     else
-      $KCODE = 'U'
-      Regexp.new(/\W+/)
+      Regexp.new(/\W+/u)
     end
     name = "test_%04d_%s" % [ @specs, desc.gsub(regexp, '_').downcase ]
 
