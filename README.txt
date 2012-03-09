@@ -245,6 +245,45 @@ fixture loading:
 
   MiniTest::Unit.runner = MiniTestWithTransactions::Unit.new
 
+== Known Extensions:
+
+minitest-capistrano    :: Assertions and expectations for testing Capistrano recipes
+minitest-capybara      :: Capybara matchers support for minitest unit and spec
+minitest-chef-handler  :: Run Minitest suites as Chef report handlers
+minitest-ci            :: CI reporter plugin for MiniTest.
+minitest-colorize      :: Colorize MiniTest output and show failing tests instantly.
+minitest-context       :: Defines contexts for code reuse in MiniTest
+                          specs that share common expectations.
+minitest-debugger      :: Wraps assert so failed assertions drop into
+                          the ruby debugger.
+minitest-display       :: Patches MiniTest to allow for an easily configurable output.
+minitest-emoji         :: Print out emoji for your test passes, fails, and skips.
+minitest-excludes      :: Clean API for excluding certain tests you
+                          don't want to run under certain conditions.
+minitest-firemock      :: Makes your MiniTest mocks more resilient.
+minitest-growl         :: Test notifier for minitest via growl.
+minitest-instrument    :: Instrument ActiveSupport::Notifications when
+                          test method is executed
+minitest-instrument-db :: Store information about speed of test
+                          execution provided by minitest-instrument in database
+minitest-libnotify     :: Test notifier for minitest via libnotify.
+minitest-macruby       :: Provides extensions to minitest for macruby UI testing.
+minitest-macruby-pride :: minitest/pride for macruby
+minitest-matchers      :: Adds support for RSpec-style matchers to minitest.
+minitest-mongoid       :: Mongoid assertion matchers for MiniTest
+minitest-must_not      :: Provides must_not as an alias for wont in MiniTest
+minitest-predicates    :: Adds support for .predicate? methods
+minitest-pry           :: A minitest plugin to drop into pry on assertion failure.
+minitest-rails         :: MiniTest integration for Rails 3.1.
+minitest-reporters     :: Create customizable MiniTest output formats
+minitest-rg            :: redgreen minitest
+minitest-spec-magic    :: Minitest::Spec extensions for Rails and beyond
+minitest-tags          :: add tags for minitest
+minitest-wscolor       :: Yet another test colorizer.
+minitest_owrapper      :: Get tests results as a TestResult object.
+minitest_should        :: Shoulda style syntax for minitest test::unit.
+minitest_tu_shim       :: minitest_tu_shim bridges between test/unit and minitest.
+
 == REQUIREMENTS:
 
 * Ruby 1.8, maybe even 1.6 or lower. No magic is involved.
