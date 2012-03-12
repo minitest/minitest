@@ -18,14 +18,14 @@ class StrictMockTest < MiniTest::Unit::TestCase
     mock = MiniTest::StrictMock.new('NotDefinedConstant')
     mock.expect(:defined_method, 42)
     assert_equal 42, mock.defined_method
-    mock.verify
+    assert mock.verify
   end
 
   def test_mock_is_valid_when_defined_and_responds_to_method
     mock = MiniTest::StrictMock.new('DefinedConstant')
     mock.expect(:defined_method, 42)
     assert_equal 42, mock.defined_method
-    mock.verify
+    assert mock.verify
   end
 
   def test_mock_is_invalid_when_defined_but_dont_responds_to_method
@@ -41,14 +41,14 @@ class StrictMockTest < MiniTest::Unit::TestCase
     mock = MiniTest::StrictMock.new('Namespace::NotDefinedConstant')
     mock.expect(:defined_method, 42)
     assert_equal 42, mock.defined_method
-    mock.verify
+    assert mock.verify
   end
 
   def test_mock_with_namespace_is_valid_when_defined_and_responds_to_method
     mock = MiniTest::StrictMock.new('Namespace::NamespacedConstant')
     mock.expect(:defined_method, 42)
     assert_equal 42, mock.defined_method
-    mock.verify
+    assert mock.verify
   end
 
   def test_mock_with_namespace_is_invalid_when_defined_but_dont_responds_to_method
