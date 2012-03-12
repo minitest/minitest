@@ -36,6 +36,9 @@ one!
 minitest/mock by Steven Baker, is a beautifully tiny mock object
 framework.
 
+minitest/strict_mock by Cainã Costa, is a stricter superset of minitest/mock,
+for intelligent mocks, both on isolated and integrated tests.
+
 minitest/pride shows pride in testing and adds coloring to your test
 output. I guess it is an example of how to write IO pipes too. :P
 
@@ -55,7 +58,7 @@ discovery.
 * minitest/unit - a very fast, simple, and clean test system.
 * minitest/spec - a very fast, simple, and clean spec system.
 * minitest/mock - a simple and clean mock system.
-* minitest/strict_mock - a stricter subset of minitest/mock.
+* minitest/strict_mock - a stricter superset of minitest/mock.
 * minitest/benchmark - an awesome way to assert your algorithm's performance.
 * minitest/pride - show your pride in testing!
 * Incredibly small and fast runner, but no bells and whistles.

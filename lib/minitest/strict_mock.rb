@@ -1,7 +1,7 @@
 require 'minitest/mock'
 
 ##
-# A strict subset of MiniTest::Mock.
+# A strict superset of MiniTest::Mock.
 #
 # In isolated tests, a StrictMock is no different than a common mock.
 # The only difference is when the test is called on a not-isolated
