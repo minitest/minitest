@@ -30,9 +30,11 @@ class StrictMockTest < MiniTest::Unit::TestCase
 
   def test_mock_is_invalid_when_defined_but_dont_responds_to_method
     mock = MiniTest::StrictMock.new('DefinedConstant')
-    assert_raises MockExpectationError, "expected Foo to define `not_defined_method`, but it doesn't" do
+    e = assert_raises MockExpectationError do
       mock.expect(:not_defined_method, 42)
     end
+
+    assert_equal "expected DefinedConstant to define `not_defined_method`, but it doesn't", e.message
   end
 
   def test_mock_with_namespace_is_valid_when_not_defined
@@ -51,15 +53,19 @@ class StrictMockTest < MiniTest::Unit::TestCase
 
   def test_mock_with_namespace_is_invalid_when_defined_but_dont_responds_to_method
     mock = MiniTest::StrictMock.new('Namespace::NamespacedConstant')
-    assert_raises MockExpectationError, "expected Foo to define `not_defined_method`, but it doesn't" do
+    e = assert_raises MockExpectationError do
       mock.expect(:not_defined_method, 42)
     end
+
+    assert_equal "expected Namespace::NamespacedConstant to define `not_defined_method`, but it doesn't", e.message
   end
 
   def test_valid_mock_with_different_arity
     mock = MiniTest::StrictMock.new('DefinedConstant')
-    assert_raises MockExpectationError, "`defined_method` expects 0 arguments, given 3" do
+    e = assert_raises MockExpectationError do
       mock.expect(:defined_method, 42, [1,2,3])
     end
+
+    assert_equal "`defined_method` expects 0 arguments, given 3", e.message
   end
 end
