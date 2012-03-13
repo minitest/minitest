@@ -170,7 +170,7 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
 
     def ask(question)
       method = question.tr(" ","_") + "?"
-      @meme.send(method)
+      @meme.__send__(method)
     end
   end
 
