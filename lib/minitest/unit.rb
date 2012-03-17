@@ -821,23 +821,30 @@ module MiniTest
       filter = Regexp.new $1 if filter =~ /\/(.*)\//
 
       assertions = suite.send("#{type}_methods").grep(filter).map { |method|
-        inst = suite.new method
-        inst._assertions = 0
-
-        print "#{suite}##{method} = " if @verbose
-
-        @start_time = Time.now
-        result = inst.run self
-        time = Time.now - @start_time
-
-        print "%.2f s = " % time if @verbose
-        print result
-        puts if @verbose
-
-        inst._assertions
+        _run_suite_method(suite, method).first
       }
 
       return assertions.size, assertions.inject(0) { |sum, n| sum + n }
+    end
+
+    ##
+    # Run a single +method+ for a given +suite+.
+
+    def _run_suite_method suite, method
+      inst = suite.new method
+      inst._assertions = 0
+
+      print "#{suite}##{method} = " if @verbose
+
+      @start_time = Time.now
+      result = inst.run self
+      time = Time.now - @start_time
+
+      print "%.2f s = " % time if @verbose
+      print result
+      puts if @verbose
+
+      [inst._assertions, time]
     end
 
     def location e # :nodoc:
