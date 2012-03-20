@@ -118,6 +118,7 @@ Given that you'd like to test the following class:
   end
 
 For matchers support check out:
+
 https://github.com/zenspider/minitest-matchers
 
 === Benchmarks
