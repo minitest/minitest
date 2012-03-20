@@ -204,6 +204,8 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
     self.children.each do |mod|
       mod.send :undef_method, name if mod.public_method_defined? name
     end
+
+    name
   end
 
   ##
