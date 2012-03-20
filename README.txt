@@ -270,6 +270,7 @@ minitest-instrument-db :: Store information about speed of test
 minitest-libnotify     :: Test notifier for minitest via libnotify.
 minitest-macruby       :: Provides extensions to minitest for macruby UI testing.
 minitest-matchers      :: Adds support for RSpec-style matchers to minitest.
+minitest-metadata      :: Annotate tests with metadata (key-value).
 minitest-mongoid       :: Mongoid assertion matchers for MiniTest
 minitest-must_not      :: Provides must_not as an alias for wont in MiniTest
 minitest-predicates    :: Adds support for .predicate? methods
