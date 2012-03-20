@@ -312,6 +312,15 @@ module MiniTest::Expectations
   infect_an_assertion :assert_includes, :must_include, :reverse
 
   ##
+  # See MiniTest::Assertions#assert_equal_unordered
+  #
+  #    collection.must_equal_unordered elements
+  #
+  # :method: must_equal_unordered
+
+  infect_an_assertion :assert_equal_unordered, :must_equal_unordered, :reverse
+
+  ##
   # See MiniTest::Assertions#assert_instance_of
   #
   #    obj.must_be_instance_of klass
