@@ -1,3 +1,14 @@
+=== 2.11.4 / 2012-03-20
+
+* 2 minor enhancements:
+
+  * Updated known extensions
+  * You got your unicode in my tests! You got your tests in my unicode! (fl00r)
+
+* 1 bug fix:
+
+  * Fixed MiniTest::Mock example in the readme. (conradwt)
+
 === 2.11.3 / 2012-02-29
 
 * 2 bug fixes:
