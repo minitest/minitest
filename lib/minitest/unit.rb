@@ -821,23 +821,30 @@ module MiniTest
       filter = Regexp.new $1 if filter =~ /\/(.*)\//
 
       assertions = suite.send("#{type}_methods").grep(filter).map { |method|
-        inst = suite.new method
-        inst._assertions = 0
-
-        print "#{suite}##{method} = " if @verbose
-
-        @start_time = Time.now
-        result = inst.run self
-        time = Time.now - @start_time
-
-        print "%.2f s = " % time if @verbose
-        print result
-        puts if @verbose
-
-        inst._assertions
+        _run_suite_method(suite, method)._assertions
       }
 
       return assertions.size, assertions.inject(0) { |sum, n| sum + n }
+    end
+
+    ##
+    # Run a single +method+ for a given +suite+.
+
+    def _run_suite_method suite, method
+      inst = suite.new method
+      inst._assertions = 0
+
+      print "#{suite}##{method} = " if @verbose
+
+      @start_time = Time.now
+      result = inst.run self
+      time = Time.now - @start_time
+
+      print "%.2f s = " % time if @verbose
+      print result
+      puts if @verbose
+
+      inst
     end
 
     def location e # :nodoc:
@@ -1018,6 +1025,9 @@ module MiniTest
 
       attr_reader :__name__ # :nodoc:
 
+      # the run time of the test.
+      attr_reader :run_time
+
       PASSTHROUGH_EXCEPTIONS = [NoMemoryError, SignalException,
                                 Interrupt, SystemExit] # :nodoc:
 
@@ -1032,8 +1042,7 @@ module MiniTest
             warn "\n%3d) %s" % [i + 1, msg]
           end
           warn ''
-          time = runner.start_time ? Time.now - runner.start_time : 0
-          warn "Current Test: %s#%s %.2fs" % [self.class, self.__name__, time]
+          warn "Current Test: %s#%s %.2fs" % [self.class, self.__name__, self.current_run_time(runner)]
           runner.status $stderr
         end if SUPPORTS_INFO_SIGNAL
 
@@ -1061,6 +1070,7 @@ module MiniTest
               result = runner.puke self.class, self.__name__, e
             end
           end
+          @run_time = current_run_time(runner)
           trap 'INFO', 'DEFAULT' if SUPPORTS_INFO_SIGNAL
         end
         result
@@ -1072,6 +1082,7 @@ module MiniTest
         @__name__ = name
         @__io__ = nil
         @passed = nil
+        @run_time = 0
         @@current = self
       end
 
@@ -1137,6 +1148,13 @@ module MiniTest
         else
           raise "Unknown test_order: #{self.test_order.inspect}"
         end
+      end
+
+      ##
+      # Returns the total time the test has been running so far.
+
+      def current_run_time runner
+        runner.start_time ? Time.now - runner.start_time : 0
       end
 
       ##
