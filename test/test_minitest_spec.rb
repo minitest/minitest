@@ -679,17 +679,20 @@ class TestMeta < MiniTest::Unit::TestCase
   end
 
   def test_describe_first_structure
-    x = y = z = nil
+    x = x1 = x2 = y = z = nil
     x = describe "top-level thingy" do
       y = describe "first thingy" do end
 
-      it "top-level-it" do end
-      it "не латинские буквы-и-спецсимволы&いった α, β, γ, δ, ε hello!!! world" do end
+      x1 = it "top-level-it" do end
+      x2 = it "не латинские буквы-и-спецсимволы&いった α, β, γ, δ, ε hello!!! world" do end
 
       z = describe "second thingy" do end
     end
 
-    assert_equal ['test_0001_top_level_it', 'test_0002_не_латинские_буквы_и_спецсимволы_いった_α_β_γ_δ_ε_hello_world'].sort,
+    test_methods = ['test_0001_top_level_it', 'test_0002_не_латинские_буквы_и_спецсимволы_いった_α_β_γ_δ_ε_hello_world'].sort 
+
+    assert_equal test_methods, [x1, x2]
+    assert_equal test_methods,
       x.instance_methods.grep(/^test/).map {|o| o.to_s}.sort
     assert_equal [], y.instance_methods.grep(/^test/)
     assert_equal [], z.instance_methods.grep(/^test/)
