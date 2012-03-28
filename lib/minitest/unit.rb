@@ -1,5 +1,6 @@
 require 'optparse'
 require 'rbconfig'
+require 'rubygems/deprecate'
 
 ##
 # Minimal (mostly drop-in) replacement for test-unit.
@@ -189,6 +190,9 @@ module MiniTest
       msg = message(msg) { "Expected block to return true value" }
       assert yield, msg
     end
+
+    extend Gem::Deprecate
+    deprecate :assert_block, :assert, 2012, 9
 
     ##
     # Fails unless +obj+ is empty.
