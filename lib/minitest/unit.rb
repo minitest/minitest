@@ -191,9 +191,6 @@ module MiniTest
       assert yield, msg
     end
 
-    extend Gem::Deprecate
-    deprecate :assert_block, :assert, 2012, 9
-
     ##
     # Fails unless +obj+ is empty.
 
@@ -645,6 +642,9 @@ module MiniTest
       msg ||= "Skipped, no message given"
       raise MiniTest::Skip, msg, bt
     end
+
+    extend Gem::Deprecate
+    deprecate :assert_block, :assert, 2012, 9
   end
 
   class Unit # :nodoc:
