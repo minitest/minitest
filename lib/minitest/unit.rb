@@ -652,6 +652,7 @@ module MiniTest
     attr_accessor :help                               # :nodoc:
     attr_accessor :verbose                            # :nodoc:
     attr_writer   :options                            # :nodoc:
+    attr_accessor :last_error                         # :nodoc:
 
     ##
     # Lazy accessor for options.
@@ -827,8 +828,11 @@ module MiniTest
         print "#{suite}##{method} = " if @verbose
 
         @start_time = Time.now
+        self.last_error = nil
         result = inst.run self
         time = Time.now - @start_time
+
+        record suite, method, inst._assertions, time, last_error
 
         print "%.2f s = " % time if @verbose
         print result
@@ -838,6 +842,21 @@ module MiniTest
       }
 
       return assertions.size, assertions.inject(0) { |sum, n| sum + n }
+    end
+
+    ##
+    # Record the result of a single run. Makes it very easy to gather
+    # information. Eg:
+    #
+    #   class StatisticsRecorder < MiniTest::Unit
+    #     def record suite, method, assertions, time, error
+    #       # ... record the results somewhere ...
+    #     end
+    #   end
+    #
+    #   MiniTest::Unit.runner = StatisticsRecorder.new
+
+    def record suite, method, assertions, time, error
     end
 
     def location e # :nodoc:
@@ -854,6 +873,7 @@ module MiniTest
     # exception +e+
 
     def puke klass, meth, e
+      self.last_error = e
       e = case e
           when MiniTest::Skip then
             @skips += 1
@@ -875,6 +895,7 @@ module MiniTest
       @report = []
       @errors = @failures = @skips = 0
       @verbose = false
+      self.last_error = nil
     end
 
     def process_args args = [] # :nodoc:
@@ -1287,6 +1308,8 @@ module MiniTest
     end # class TestCase
   end # class Unit
 end # module MiniTest
+
+Minitest = MiniTest # because ugh... I typo this all the time
 
 if $DEBUG then
   module Test                # :nodoc:
