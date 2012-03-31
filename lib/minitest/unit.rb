@@ -1132,6 +1132,7 @@ module MiniTest
 
       def self.i_suck_and_my_tests_are_order_dependent!
         class << self
+          undef_method :test_order if method_defined? :test_order
           define_method :test_order do :alpha end
         end
       end
