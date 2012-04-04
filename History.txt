@@ -1,3 +1,16 @@
+=== 2.12.0 / 2012-04-03
+
+* 4 minor enhancements:
+
+  * ::it returns test method name (wojtekmach)
+  * Added #record method to runner so runner subclasses can cleanly gather data.
+  * Added Minitest alias for MiniTest because even I forget.
+  * Deprecated assert_block!! Yay!!!
+
+* 1 bug fix:
+
+  * Fixed warning in i_suck_and_my_tests_are_order_dependent! (phiggins)
+
 === 2.11.4 / 2012-03-20
 
 * 2 minor enhancements:
