@@ -73,6 +73,7 @@ module Kernel # :nodoc:
     cls
   end
   private :describe
+  alias_method :context, :describe
 end
 
 ##
