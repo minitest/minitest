@@ -1,6 +1,5 @@
 require 'pathname'
 require 'test/metametameta'
-require 'rubygems/deprecate'
 
 module MyModule; end
 class AnError < StandardError; include MyModule; end
@@ -698,10 +697,11 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     end
   end
 
-  include Gem::Deprecate
-
   def test_assert_block
-    skip_during do
+    exp = ["NOTE: MiniTest::Unit::TestCase#assert_block is deprecated,",
+           "use assert. It will be removed on or after 2012-06-01.\n"].join " "
+
+    assert_output "", exp do
       @tc.assert_block do
         true
       end
@@ -709,7 +709,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_assert_block_triggered
-    skip_during do
+    assert_output do
       util_assert_triggered "blah.\nExpected block to return true value." do
         @tc.assert_block "blah" do
           false
