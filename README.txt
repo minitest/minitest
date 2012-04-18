@@ -284,6 +284,7 @@ minitest-wscolor       :: Yet another test colorizer.
 minitest_owrapper      :: Get tests results as a TestResult object.
 minitest_should        :: Shoulda style syntax for minitest test::unit.
 minitest_tu_shim       :: minitest_tu_shim bridges between test/unit and minitest.
+mongoid-minitest       :: MiniTest matchers for Mongoid.
 
 == REQUIREMENTS:
 
