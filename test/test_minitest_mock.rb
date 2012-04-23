@@ -186,7 +186,7 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
 
     assert_raises(MockExpectationError) { mock.verify }
   end
-  
+
   def util_verify_bad
     assert_raises MockExpectationError do
       @mock.verify

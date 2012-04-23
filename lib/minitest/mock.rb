@@ -9,13 +9,23 @@ module MiniTest
   ##
   # All mock objects are an instance of Mock
 
-  class Mock
-    alias :__respond_to? :respond_to?
+  module Mocker
 
-    skip_methods = %w(object_id respond_to_missing? inspect === to_s)
+    def self.extended base
+      base.instance_variable_set :@expected_calls, Hash.new { |calls, name| calls[name] = [] }
+      base.instance_variable_set :@actual_calls  , Hash.new { |calls, name| calls[name] = [] }
+    end
 
-    instance_methods.each do |m|
-      undef_method m unless skip_methods.include?(m.to_s) || m =~ /^__/
+    def self.included base
+      mod = self
+      base.class_eval do
+        skip_methods = %w(object_id respond_to_missing? inspect === to_s)
+        skip_methods += mod.public_instance_methods.map!(&:to_s)
+
+        instance_methods.each do |m|
+          undef_method m unless skip_methods.include?(m.to_s) || m =~ /^__/
+        end
+      end
     end
 
     def initialize # :nodoc:
@@ -96,7 +106,7 @@ module MiniTest
       end
 
       expected_args, retval = expected_call[:args], expected_call[:retval]
-      
+
       @actual_calls[sym] << {
         :retval => retval,
         :args => expected_args.zip(args).map { |mod, a| mod === a ? mod : a }
@@ -107,7 +117,11 @@ module MiniTest
 
     def respond_to?(sym) # :nodoc:
       return true if @expected_calls.has_key?(sym.to_sym)
-      return __respond_to?(sym)
+      return super
     end
+  end
+
+  class Mock
+    include Mocker
   end
 end
