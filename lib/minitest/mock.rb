@@ -7,16 +7,37 @@ end # omg... worst bug ever. rdoc doesn't allow 1-liners
 module MiniTest
 
   ##
-  # All mock objects are an instance of Mock
+  # A Mocker module to extend any object. Afterwards, acts just like a Mock
+  # object except that only expected methods are temporarily removed. All
+  # expected methods are reset when verify is called.
+  #
+  #   @mock = Object.new
+  #   def @mock.foo() 'hi' end
+  #   @mock.extend MiniTest::Mocker
+  #   @mock.expect :foo, 'hello world'
+  #   @mock.foo # => 'hello world'
+  #
+  #   @mock.verify # => true
+  #   @mock.foo # => 'hi'
 
   module Mocker
 
-    def self.extended base
+    def self.alias_method_for o, orig, reverse = false # :nodoc:
+      name = "__mocker_#{orig}"
+      name, orig = orig, name if reverse
+      mc = class << o; self; end
+      if mc.method_defined?(orig)
+        mc.__send__ :alias_method, name, orig
+        mc.__send__ :undef_method, orig
+      end
+    end
+
+    def self.extended base # :nodoc:
       base.instance_variable_set :@expected_calls, Hash.new { |calls, name| calls[name] = [] }
       base.instance_variable_set :@actual_calls  , Hash.new { |calls, name| calls[name] = [] }
     end
 
-    def self.included base
+    def self.included base # :nodoc:
       mod = self
       base.class_eval do
         skip_methods = %w(object_id respond_to_missing? inspect === to_s)
@@ -56,6 +77,7 @@ module MiniTest
 
     def expect(name, retval, args=[])
       raise ArgumentError, "args must be an array" unless Array === args
+      MiniTest::Mocker.alias_method_for self, name
       @expected_calls[name] << { :retval => retval, :args => args }
       self
     end
@@ -80,6 +102,11 @@ module MiniTest
         end
       end
       true
+    ensure
+      @expected_calls.each_key do |name|
+        # restore method if exists
+        MiniTest::Mocker.alias_method_for self, name, true
+      end
     end
 
     def method_missing(sym, *args) # :nodoc:
@@ -120,6 +147,9 @@ module MiniTest
       return super
     end
   end
+
+  ##
+  # All mock objects are an instance of Mock
 
   class Mock
     include Mocker
