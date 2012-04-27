@@ -96,7 +96,7 @@ module MiniTest
       end
 
       expected_args, retval = expected_call[:args], expected_call[:retval]
-      
+
       @actual_calls[sym] << {
         :retval => retval,
         :args => expected_args.zip(args).map { |mod, a| mod === a ? mod : a }
