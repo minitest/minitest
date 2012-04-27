@@ -927,13 +927,13 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     @tc.assert_match(/\w+/, "blah blah blah")
   end
 
-  def test_assert_match_object
+  def test_assert_match_unusual_object
     @assertion_count = 2
 
-    pattern = Object.new
-    def pattern.=~(other) true end
+    unusual_object = Object.new
+    def unusual_object.=~(other) true end
 
-    @tc.assert_match pattern, 5
+    @tc.assert_match /pattern/, unusual_object
   end
 
   def test_assert_match_object_triggered
