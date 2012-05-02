@@ -4,6 +4,13 @@ require 'minitest/unit'
 MiniTest::Unit.autorun
 
 class TestMiniTestMock < MiniTest::Unit::TestCase
+
+  class MockerClass
+    def self.bar() 4 end
+    def initialize() @foo = 3 end
+    def foo() @foo end
+  end
+
   def setup
     @mock = MiniTest::Mock.new.expect(:foo, nil)
     @mock.expect(:meaning_of_life, 42)
@@ -186,7 +193,88 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
 
     assert_raises(MockExpectationError) { mock.verify }
   end
-  
+
+  def test_extend_with_mocker
+    @mock = Object.new
+    def @mock.foo() 3 end
+    def @mock.bar() 4 end
+
+    @mock.extend MiniTest::Mocker
+
+    @mock.expect :foo, 42
+    assert_equal 42, @mock.foo
+    assert_equal 4, @mock.bar
+
+    assert @mock.verify
+
+    # methods restored
+    assert_equal 3, @mock.foo
+    assert_equal 4, @mock.bar
+  end
+
+  def test_extend_raises
+    @mock = Object.new
+    def @mock.foo(a=nil) 3 end
+    @mock.extend MiniTest::Mocker
+
+    @mock.expect :foo, 42, [:bar]
+
+    assert_raises(ArgumentError) { @mock.foo }
+    util_verify_bad
+
+    assert_equal 3, @mock.foo, 'expected method to be restored'
+  end
+
+  def test_extend_only_instance
+    @mock = Object.new
+    @mock.extend MiniTest::Mocker
+
+    @mock.expect :foo, 42
+    assert_equal 42, @mock.foo
+    refute @mock.class.new.respond_to?(:foo)
+  end
+
+  def test_extend_does_not_remove_methods
+    @mock = Object.new
+    assert @mock.to_s
+  end
+
+  def test_extend_non_existent_methods
+    @mock = Object.new
+    @mock.extend MiniTest::Mocker
+
+    @mock.expect :foo, 42
+    assert_equal 42, @mock.foo
+    assert @mock.verify
+  end
+
+  def test_extend_verify_replaces_all_methods
+    @mock = Object.new
+    def @mock.foo() 3 end
+    def @mock.bar() 4 end
+    @mock.extend MiniTest::Mocker
+
+    @mock.expect :foo, 42
+    @mock.expect :bar, 42
+
+    util_verify_bad
+
+    assert_equal 3, @mock.foo
+    assert_equal 4, @mock.bar
+  end
+
+  def test_extend_a_class
+    @mock = MockerClass
+    @mock.extend MiniTest::Mocker
+    assert_equal 3, @mock.new.foo
+    @mock.expect :bar, 42
+    assert_equal 42, @mock.bar
+
+    @mock.verify
+
+    assert_equal 4, @mock.bar
+  end
+
   def util_verify_bad
     assert_raises MockExpectationError do
       @mock.verify
