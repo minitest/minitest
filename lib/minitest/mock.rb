@@ -50,6 +50,15 @@ module MiniTest
       self
     end
 
+    def call name, data
+      case data
+      when Hash then
+        "#{name}(#{data[:args].inspect[1..-2]}) => #{data[:retval].inspect}"
+      else
+        data.map { |d| call name, d }.join ", "
+      end
+    end
+
     ##
     # Verify that all methods were called as expected. Raises
     # +MockExpectationError+ if the mock object was not called as
@@ -58,8 +67,8 @@ module MiniTest
     def verify
       @expected_calls.each do |name, calls|
         calls.each do |expected|
-          msg1 = "expected #{name}, #{expected.inspect}"
-          msg2 = "#{msg1}, got #{@actual_calls[name].inspect}"
+          msg1 = "expected #{call name, expected}"
+          msg2 = "#{msg1}, got [#{call name, @actual_calls[name]}]"
 
           raise MockExpectationError, msg2 if
             @actual_calls.has_key? name and
@@ -78,24 +87,29 @@ module MiniTest
           [sym, @expected_calls.keys.sort_by(&:to_s)]
       end
 
-      expected_calls = @expected_calls[sym].select { |call| call[:args].size == args.size }
+      index = @actual_calls[sym].length
+      expected_call = @expected_calls[sym][index]
 
-      if expected_calls.empty?
-        arg_sizes = @expected_calls[sym].map { |call| call[:args].size }.uniq.sort
-        raise ArgumentError, "mocked method %p expects %s arguments, got %d" %
-          [sym, arg_sizes.join('/'), args.size]
-      end
-
-      expected_call = expected_calls.find do |call|
-        call[:args].zip(args).all? { |mod, a| mod === a or mod == a }
-      end
-
-      unless expected_call
-        raise MockExpectationError, "mocked method %p called with unexpected arguments %p" %
+      unless expected_call then
+        raise MockExpectationError, "No more expects available for %p: %p" %
           [sym, args]
       end
 
       expected_args, retval = expected_call[:args], expected_call[:retval]
+
+      if expected_args.size != args.size then
+        raise ArgumentError, "mocked method %p expects %d arguments, got %d" %
+          [sym, expected_args.size, args.size]
+      end
+
+      fully_matched = expected_args.zip(args).all? { |mod, a|
+        mod === a or mod == a
+      }
+
+      unless fully_matched then
+        raise MockExpectationError, "mocked method %p called with unexpected arguments %p" %
+          [sym, args]
+      end
 
       @actual_calls[sym] << {
         :retval => retval,
