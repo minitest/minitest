@@ -1580,6 +1580,20 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
     assert_equal expected, sample_test_case.test_methods
   end
 
+  def test_test_methods_defined
+    @assertion_count = 0
+
+    sample_test_case = Class.new(MiniTest::Unit::TestCase) do
+      def self.test_order; :defined end
+      def test_test3; assert "does not matter" end
+      def test_test2; assert "does not matter" end
+      def test_test1; assert "does not matter" end
+    end
+
+    expected = %w(test_test3 test_test2 test_test1)
+    assert_equal expected, sample_test_case.test_methods
+  end
+
   def test_i_suck_and_my_tests_are_order_dependent_bang_sets_test_order_alpha
     @assertion_count = 0
 
