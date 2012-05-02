@@ -927,13 +927,22 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     @tc.assert_match(/\w+/, "blah blah blah")
   end
 
-  def test_assert_match_object
+  def test_assert_match_matcher_object
     @assertion_count = 2
 
     pattern = Object.new
     def pattern.=~(other) true end
 
     @tc.assert_match pattern, 5
+  end
+
+  def test_assert_match_matchee_to_str
+    @assertion_count = 2
+
+    obj = Object.new
+    def obj.to_str; "blah" end
+
+    @tc.assert_match "blah", obj
   end
 
   def test_assert_match_object_triggered
@@ -1454,7 +1463,7 @@ FILE:LINE:in `test_assert_raises_triggered_subclass'
     @tc.refute_match(/\d+/, "blah blah blah")
   end
 
-  def test_refute_match_object
+  def test_refute_match_matcher_object
     @assertion_count = 2
     @tc.refute_match Object.new, 5 # default #=~ returns false
   end

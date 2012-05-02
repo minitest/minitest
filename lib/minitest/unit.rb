@@ -270,13 +270,13 @@ module MiniTest
     end
 
     ##
-    # Fails unless +exp+ is <tt>=~</tt> +act+.
+    # Fails unless +matcher+ <tt>=~</tt> +obj+.
 
-    def assert_match exp, act, msg = nil
-      msg = message(msg) { "Expected #{mu_pp(exp)} to match #{mu_pp(act)}" }
-      assert_respond_to act, :"=~"
-      exp = Regexp.new Regexp.escape exp if String === exp and String === act
-      assert exp =~ act, msg
+    def assert_match matcher, obj, msg = nil
+      msg = message(msg) { "Expected #{mu_pp matcher} to match #{mu_pp obj}" }
+      assert_respond_to matcher, :"=~"
+      matcher = Regexp.new Regexp.escape matcher if String === matcher
+      assert matcher =~ obj, msg
     end
 
     ##
@@ -521,7 +521,7 @@ module MiniTest
     end
 
     ##
-    # For comparing Floats.  Fails if +exp+ is within +delta+ of +act+
+    # For comparing Floats.  Fails if +exp+ is within +delta+ of +act+.
     #
     #   refute_in_delta Math::PI, (22.0 / 7.0)
 
@@ -542,7 +542,7 @@ module MiniTest
     end
 
     ##
-    # Fails if +collection+ includes +obj+
+    # Fails if +collection+ includes +obj+.
 
     def refute_includes collection, obj, msg = nil
       msg = message(msg) {
@@ -553,7 +553,7 @@ module MiniTest
     end
 
     ##
-    # Fails if +obj+ is an instance of +cls+
+    # Fails if +obj+ is an instance of +cls+.
 
     def refute_instance_of cls, obj, msg = nil
       msg = message(msg) {
@@ -563,7 +563,7 @@ module MiniTest
     end
 
     ##
-    # Fails if +obj+ is a kind of +cls+
+    # Fails if +obj+ is a kind of +cls+.
 
     def refute_kind_of cls, obj, msg = nil # TODO: merge with instance_of
       msg = message(msg) { "Expected #{mu_pp(obj)} to not be a kind of #{cls}" }
@@ -571,13 +571,13 @@ module MiniTest
     end
 
     ##
-    # Fails if +exp+ <tt>=~</tt> +act+
+    # Fails if +matcher+ <tt>=~</tt> +obj+.
 
-    def refute_match exp, act, msg = nil
-      msg = message(msg) { "Expected #{mu_pp(exp)} to not match #{mu_pp(act)}" }
-      assert_respond_to act, :"=~"
-      exp = (/#{Regexp.escape exp}/) if String === exp and String === act
-      refute exp =~ act, msg
+    def refute_match matcher, obj, msg = nil
+      msg = message(msg) {"Expected #{mu_pp matcher} to not match #{mu_pp obj}"}
+      assert_respond_to matcher, :"=~"
+      matcher = Regexp.new Regexp.escape matcher if String === matcher
+      refute matcher =~ obj, msg
     end
 
     ##
