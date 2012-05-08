@@ -36,6 +36,9 @@ one!
 minitest/mock by Steven Baker, is a beautifully tiny mock object
 framework.
 
+minitest/strict_mock by Cainã Costa, is a stricter superset of minitest/mock,
+for intelligent mocks, both on isolated and integrated tests.
+
 minitest/pride shows pride in testing and adds coloring to your test
 output. I guess it is an example of how to write IO pipes too. :P
 
@@ -55,6 +58,7 @@ discovery.
 * minitest/unit - a very fast, simple, and clean test system.
 * minitest/spec - a very fast, simple, and clean spec system.
 * minitest/mock - a simple and clean mock system.
+* minitest/strict_mock - a stricter superset of minitest/mock.
 * minitest/benchmark - an awesome way to assert your algorithm's performance.
 * minitest/pride - show your pride in testing!
 * Incredibly small and fast runner, but no bells and whistles.
@@ -189,6 +193,48 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
           @meme.expect :will_it_blend?, :return_value
           @meme_asker.ask "will it blend"
           @meme.verify
+        end
+      end
+    end
+  end
+
+=== Strict Mocks
+
+  class DefinedConstant
+    def defined_method(arg1, arg2)
+    end
+  end
+
+  require 'minitest/autorun'
+
+  describe DefinedConstant do
+    before do
+      @undefined = MiniTest::StrictMock.new("UndefinedConstant")
+      @defined = MiniTest::StrictMock.new("DefinedConstant")
+    end
+
+    describe "#ask" do
+      describe "when passed an unpunctuated question" do
+        it "should mock correctly methods on undefined constant" do
+          @undefined.expect(:meaning_of_life, 42)
+          assert_equal @undefined.meaning_of_life, 42
+
+          @undefined.verify
+        end
+
+        it "should mock correctly defined methods on defined constants" do
+          @defined.expect(:defined_method, 42, [:foo, :bar])
+          assert_equal @undefined.defined_method, 42
+
+          @defined.verify
+        end
+
+        it "should fail because the method don't exist" do
+          assert_raises(MockExpectationError) { @defined.expect(:meaning_of_life, 42) }
+        end
+
+        it "should fail because the arity of the method is different" do
+          assert_raises(MockExpectationError) { @defined.expect(:defined_method, 42, [:foo]) }
         end
       end
     end
