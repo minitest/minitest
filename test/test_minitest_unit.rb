@@ -699,13 +699,16 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
 
   def test_assert_block
     exp = ["NOTE: MiniTest::Unit::TestCase#assert_block is deprecated,",
-           "use assert. It will be removed on or after 2012-06-01.\n"].join " "
+           "use assert. It will be removed on or after 2012-06-01."].join " "
 
-    assert_output "", exp do
+    out, err = capture_io do
       @tc.assert_block do
         true
       end
     end
+
+    assert_equal "", out
+    assert_match exp, err
   end
 
   def test_assert_block_triggered
