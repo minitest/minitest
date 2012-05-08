@@ -1,5 +1,5 @@
 require 'pathname'
-require 'test/metametameta'
+require 'test/rubygems/metametameta'
 
 module MyModule; end
 class AnError < StandardError; include MyModule; end
