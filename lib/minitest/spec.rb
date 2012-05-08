@@ -216,8 +216,9 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   def self.let name, &block
     define_method name do
       @_memoized ||= {}
-      @_memoized.fetch(name) { |k| @_memoized[k] = instance_eval(&block) }
+      @_memoized[name] ||= send(:"original_let_#{name}")
     end
+    define_method "original_let_#{name}", &block
   end
 
   ##

@@ -542,6 +542,17 @@ describe MiniTest::Spec, :let do
 
     _count.must_equal 2
   end
+
+  describe "fiz" do
+    let(:foo) { "fiz" }
+    describe "bas" do
+      let(:foo) { super() + "baz" }
+
+      it "should be 'fizbaz'" do
+        foo.must_equal 'fizbaz'
+      end
+    end
+  end
 end
 
 describe MiniTest::Spec, :subject do
