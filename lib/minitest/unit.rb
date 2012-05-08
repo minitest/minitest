@@ -1157,6 +1157,8 @@ module MiniTest
           methods.sort.sort_by { rand max }
         when :alpha, :sorted then
           methods.sort
+        when :defined then
+          methods
         else
           raise "Unknown test_order: #{self.test_order.inspect}"
         end
