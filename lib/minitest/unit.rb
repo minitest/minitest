@@ -186,7 +186,7 @@ module MiniTest
     # Fails unless the block returns a true value.
 
     def assert_block msg = nil
-      warn "NOTE: MiniTest::Unit::TestCase#assert_block is deprecated, use assert. It will be removed on or after 2012-06-01."
+      warn "NOTE: MiniTest::Unit::TestCase#assert_block is deprecated, use assert. It will be removed on or after 2012-06-01. Called from #{caller.first}"
       msg = message(msg) { "Expected block to return true value" }
       assert yield, msg
     end
