@@ -1,3 +1,21 @@
+=== 3.0.0 / 2012-05-08
+
+* 3 major enhancements:
+
+  * Added Object#stub (in minitest/mock.rb).
+  * Mock#expect mocks are used in the order they're given.
+  * Mock#verify now strictly compares against expect calls.
+
+* 3 minor enhancements:
+
+  * Added caller to deprecation message.
+  * Mock error messages are much prettier.
+  * Removed String check for RHS of assert/refute_match. This lets #to_str work properly.
+
+* 1 bug fix:
+
+  * Support drive letter on Windows. Patch provided from MRI by Usaku NAKAMURA. (ayumin)
+
 === 2.12.1 / 2012-04-10
 
 * 1 minor enhancement:
