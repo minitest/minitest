@@ -1,3 +1,9 @@
+=== 3.0.1 / 2012-05-24
+
+* 1 bug fix:
+
+  * I'm a dumbass and refactored into Mock#call. Renamed to #__call so you can mock #call. (mschuerig)
+
 === 3.0.0 / 2012-05-08
 
 * 3 major enhancements:
