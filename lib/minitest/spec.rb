@@ -197,7 +197,7 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
     @specs ||= 0
     @specs += 1
 
-    name = "test_%04d_%s" % [ @specs, desc.gsub(NAME_RE, '_').downcase ]
+    name = "test_%04d_%s" % [ @specs, desc_to_method_name(desc) ]
 
     define_method name, &block
 
@@ -206,6 +206,14 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
     end
 
     name
+  end
+
+  ##
+  # Convert a description string into a valid Ruby method by
+  # replacing anything between words with underscores.
+
+  def self.desc_to_method_name(desc)
+    desc.gsub(NAME_RE, '_').downcase
   end
 
   ##

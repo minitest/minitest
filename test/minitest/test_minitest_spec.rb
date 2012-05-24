@@ -560,6 +560,34 @@ describe MiniTest::Spec, :subject do
   end
 end
 
+class TestMiniTestSpec < MetaMetaMetaTestCase
+  def test_filters_on_description_name_as_string_instead_of_regular_expression
+    Class.new(MiniTest::Spec) do
+      it 'tests this even though it has spaces' do
+        true.must_equal true
+      end
+
+      it 'does not test this' do
+        false.must_equal true
+      end
+    end
+
+    MiniTest::Unit.new.run ['--name', 'tests this even though it has spaces', '--seed', '42']
+
+    expected = "Run options: --name \"tests this even though it has spaces\" --seed 42
+
+# Running tests:
+
+.
+
+Finished tests in 0.00
+
+1 tests, 1 assertions, 0 failures, 0 errors, 0 skips
+"
+    assert_report expected
+  end
+end
+
 class TestMeta < MiniTest::Unit::TestCase
   def test_setup
     srand 42
