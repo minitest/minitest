@@ -213,7 +213,7 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   # replacing anything between words with underscores.
 
   def self.desc_to_method_name(desc)
-    desc.gsub(NAME_RE, '_').downcase
+    desc.gsub(NAME_RE, '_')
   end
 
   ##

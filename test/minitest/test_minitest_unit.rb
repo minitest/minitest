@@ -309,6 +309,34 @@ Finished tests in 0.00
     assert_report expected
   end
 
+  def test_run_failing_filtered_with_case_sensitivity
+    tc = Class.new(MiniTest::Unit::TestCase) do
+      def test_Omg
+        assert true
+      end
+
+      def test_omg
+        assert false
+      end
+    end
+
+    Object.const_set(:ATestCase, tc)
+
+    @tu.run %w[--name test_Omg --seed 42]
+
+    expected = "Run options: --name test_Omg --seed 42
+
+# Running tests:
+
+.
+
+Finished tests in 0.00
+
+1 tests, 1 assertions, 0 failures, 0 errors, 0 skips
+"
+    assert_report expected
+  end
+
   def test_run_passing
     tc = Class.new(MiniTest::Unit::TestCase) do
       def test_something
