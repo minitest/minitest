@@ -707,16 +707,6 @@ module MiniTest
     end
 
     ##
-    # Returns the stream to use for output.
-    #
-    # DEPRECATED: use ::output instead.
-
-    def self.out
-      warn "::out deprecated, use ::output instead." if $VERBOSE
-      output
-    end
-
-    ##
     # Sets MiniTest::Unit to write output to +stream+.  $stdout is the default
     # output
 
