@@ -809,8 +809,15 @@ module MiniTest
       header = "#{type}_suite_header"
       puts send(header, suite) if respond_to? header
 
-      filter = options[:filter] || '/./'
-      filter = Regexp.new $1 if filter =~ /\/(.*)\//
+      filter = case options[:filter]
+               when /\/(.*)\// # E.g. /name/
+                 Regexp.new $1
+               when nil
+                 /./
+               else # Assume this is a description of a spec.
+                 method = MiniTest::Spec.desc_to_method_name(options[:filter])
+                 Regexp.new method
+               end
 
       assertions = suite.send("#{type}_methods").grep(filter).map { |method|
         inst = suite.new method
@@ -910,7 +917,7 @@ module MiniTest
           options[:verbose] = true
         end
 
-        opts.on '-n', '--name PATTERN', "Filter test names on pattern (e.g. /foo/)" do |a|
+        opts.on '-n', '--name PATTERN', 'Filter test names on pattern (e.g. /foo/ or "spec description")' do |a|
           options[:filter] = a
         end
 
