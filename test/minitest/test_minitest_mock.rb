@@ -261,4 +261,10 @@ class TestMiniTestStub < MiniTest::Unit::TestCase
 
     assert_stub obj
   end
+
+  def test_stub_yield_self
+    "foo".stub :to_s, "bar" do |s|
+      @tc.assert_equal "bar", s.to_s
+    end
+  end
 end

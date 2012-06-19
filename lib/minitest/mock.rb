@@ -157,7 +157,7 @@ class Object # :nodoc:
       end
     end
 
-    yield
+    yield self
   ensure
     metaclass.send :undef_method, name
     metaclass.send :alias_method, name, new_name
