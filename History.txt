@@ -1,3 +1,13 @@
+=== 3.2.0 / 2012-06-26
+
+* 1 minor enhancement:
+
+  * Stubs now yield self. (peterhellberg)
+
+* 1 bug fix:
+
+  * Fixed verbose test that only fails when run in verbose mode. mmmm irony.
+
 === 3.1.0 / 2012-06-13
 
 * 2 minor enhancements:
