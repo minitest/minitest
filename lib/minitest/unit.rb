@@ -1139,7 +1139,7 @@ module MiniTest
       end
 
       def self.test_methods # :nodoc:
-        methods = public_instance_methods(true).grep(/^test/).map { |m| m.to_s }
+        methods = public_instance_methods(true).grep(/^test_/).map { |m| m.to_s }
 
         case self.test_order
         when :random then
