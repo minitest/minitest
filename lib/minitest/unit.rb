@@ -1070,6 +1070,7 @@ module MiniTest
             rescue *PASSTHROUGH_EXCEPTIONS
               raise
             rescue Exception => e
+              @passed = false
               result = runner.puke self.class, self.__name__, e
             end
           end
