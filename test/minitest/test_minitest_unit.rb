@@ -490,31 +490,25 @@ Finished tests in 0.00
     assert_equal expected, call_order
   end
 
-  def test_teardown_with_successful_assertion
-    test_class = Class.new(MiniTest::Unit::TestCase) do
-      define_method :teardown do
-        assert true
-      end
-
+  def test_passed_eh_teardown_good
+    test_class = Class.new MiniTest::Unit::TestCase do
+      def teardown; assert true; end
       def test_omg; assert true; end
     end
 
-    test = test_class.new(:test_omg)
-    test.run(@tu)
+    test = test_class.new :test_omg
+    test.run @tu
     assert test.passed?
   end
 
-  def test_teardown_with_failing_assertion
-    test_class = Class.new(MiniTest::Unit::TestCase) do
-      define_method :teardown do
-        flunk
-      end
-
+  def test_passed_eh_teardown_flunked
+    test_class = Class.new MiniTest::Unit::TestCase do
+      def teardown; flunk;       end
       def test_omg; assert true; end
     end
 
-    test = test_class.new(:test_omg)
-    test.run(@tu)
+    test = test_class.new :test_omg
+    test.run @tu
     refute test.passed?
   end
 
