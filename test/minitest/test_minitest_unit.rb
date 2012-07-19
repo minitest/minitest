@@ -515,7 +515,7 @@ class TestMiniTestUnit < MetaMetaMetaTestCase
   def test_setup_hooks
     call_order = []
 
-    tc = Class.new MiniTest::Spec do
+    tc = Class.new MiniTest::Unit::TestCase do
       define_method :setup do
         super()
         call_order << :method
@@ -552,7 +552,7 @@ class TestMiniTestUnit < MetaMetaMetaTestCase
   def test_teardown_hooks
     call_order = []
 
-    tc = Class.new MiniTest::Spec do
+    tc = Class.new MiniTest::Unit::TestCase do
       define_method :teardown do
         super()
         call_order << :method
