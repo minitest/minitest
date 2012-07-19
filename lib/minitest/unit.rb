@@ -1055,6 +1055,7 @@ module MiniTest
           self.before_setup
           self.setup
           self.after_setup
+          self.run_setup_hooks
           self.run_test self.__name__
           result = "." unless io?
           @passed = true
@@ -1064,7 +1065,7 @@ module MiniTest
           @passed = false
           result = runner.puke self.class, self.__name__, e
         ensure
-          %w{ before_teardown teardown after_teardown }.each do |hook|
+          %w{ before_teardown run_teardown_hooks teardown after_teardown }.each do |hook|
             begin
               self.send hook
             rescue *PASSTHROUGH_EXCEPTIONS
