@@ -155,10 +155,11 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   #
   # Equivalent to MiniTest::Unit::TestCase#setup.
 
-  def self.before type = :each, &block
-    raise "unsupported before type: #{type}" unless type == :each
-
-    add_setup_hook {|tc| tc.instance_eval(&block) }
+  def self.before type = nil, &block
+    define_method :setup do
+      super()
+      self.instance_eval(&block)
+    end
   end
 
   ##
@@ -168,10 +169,11 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   #
   # Equivalent to MiniTest::Unit::TestCase#teardown.
 
-  def self.after type = :each, &block
-    raise "unsupported after type: #{type}" unless type == :each
-
-    add_teardown_hook {|tc| tc.instance_eval(&block) }
+  def self.after type = nil, &block
+    define_method :teardown do
+      self.instance_eval(&block)
+      super()
+    end
   end
 
   ##
@@ -240,14 +242,6 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   end
 
   # :stopdoc:
-  def after_setup
-    run_setup_hooks
-  end
-
-  def before_teardown
-    run_teardown_hooks
-  end
-
   class << self
     attr_reader :desc
     alias :specify :it
