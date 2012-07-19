@@ -1239,7 +1239,11 @@ module MiniTest
       end
 
       def run_setup_hooks # :nodoc:
-        self.class.setup_hooks.each do |hook|
+        _run_hooks self.class.setup_hooks
+      end
+
+      def _run_hooks hooks # :nodoc:
+        hooks.each do |hook|
           if hook.respond_to?(:arity) && hook.arity == 1
             hook.call(self)
           else
@@ -1288,13 +1292,7 @@ module MiniTest
       end
 
       def run_teardown_hooks # :nodoc:
-        self.class.teardown_hooks.reverse.each do |hook|
-          if hook.respond_to?(:arity) && hook.arity == 1
-            hook.call(self)
-          else
-            hook.call
-          end
-        end
+        _run_hooks self.class.teardown_hooks
       end
 
       include MiniTest::Assertions
@@ -1302,7 +1300,7 @@ module MiniTest
   end # class Unit
 end # module MiniTest
 
-Minitest = MiniTest # because ugh... I typo this all the time
+Minitest = MiniTest # :nodoc: because ugh... I typo this all the time
 
 if $DEBUG then
   module Test                # :nodoc:
