@@ -1301,7 +1301,7 @@ module MiniTest
       end
 
       def run_teardown_hooks # :nodoc:
-        _run_hooks self.class.teardown_hooks
+        _run_hooks self.class.teardown_hooks.reverse
       end
 
       include MiniTest::Assertions
