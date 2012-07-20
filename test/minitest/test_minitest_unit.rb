@@ -984,12 +984,14 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
       end
     end
 
-    expected = "[RuntimeError] exception expected, not
-Class: <SyntaxError>
-Message: <\"icky\">
----Backtrace---
-FILE:LINE:in `test_assert_raises_triggered_different'
----------------"
+    expected = clean <<-EOM.chomp
+      [RuntimeError] exception expected, not
+      Class: <SyntaxError>
+      Message: <\"icky\">
+      ---Backtrace---
+      FILE:LINE:in `test_assert_raises_triggered_different'
+      ---------------
+    EOM
 
     actual = e.message.gsub(/^.+:\d+/, 'FILE:LINE')
     actual.gsub!(/block \(\d+ levels\) in /, '') if RUBY_VERSION >= '1.9.0'
@@ -1051,12 +1053,14 @@ FILE:LINE:in `test_assert_raises_triggered_different'
       end
     end
 
-    expected = "[StandardError] exception expected, not
-Class: <AnError>
-Message: <\"AnError\">
----Backtrace---
-FILE:LINE:in `test_assert_raises_triggered_subclass'
----------------"
+    expected = clean <<-EOM.chomp
+      [StandardError] exception expected, not
+      Class: <AnError>
+      Message: <\"AnError\">
+      ---Backtrace---
+      FILE:LINE:in `test_assert_raises_triggered_subclass'
+      ---------------
+    EOM
 
     actual = e.message.gsub(/^.+:\d+/, 'FILE:LINE')
     actual.gsub!(/block \(\d+ levels\) in /, '') if RUBY_VERSION >= '1.9.0'
