@@ -461,6 +461,47 @@ class TestMiniTestUnit < MetaMetaMetaTestCase
     refute test.passed?
   end
 
+  def test_after_test
+    call_order = []
+    Class.new MiniTest::Unit::TestCase do
+      define_method :test_omg do
+        call_order << :test_omg
+      end
+
+      define_method :after_test do
+        call_order << :after_test
+      end
+
+      define_method :before_teardown do
+        call_order << :before_teardown
+      end
+    end
+
+    @tu.run %w[--seed 42]
+
+    expected = [:test_omg, :after_test, :before_teardown]
+    assert_equal expected, call_order
+  end
+
+  def test_after_test_not_called_when_test_flunks
+    call_order = []
+    Class.new MiniTest::Unit::TestCase do
+      define_method :test_omg do
+        call_order << :test_omg
+        flunk
+      end
+
+      define_method :after_test do
+        call_order << :after_test
+      end
+    end
+
+    @tu.run %w[--seed 42]
+
+    expected = [:test_omg]
+    assert_equal expected, call_order
+  end
+
   def test_after_teardown
     call_order = []
     Class.new MiniTest::Unit::TestCase do
