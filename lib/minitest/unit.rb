@@ -1054,6 +1054,11 @@ module MiniTest
       #       super
       #     end
       #
+      #     def after_test
+      #       # ... stuff to do after the test is run
+      #       super
+      #     end
+      #
       #     def before_teardown
       #       super
       #       # ... stuff to do before teardown is run
@@ -1070,6 +1075,14 @@ module MiniTest
       #   end
 
       def before_setup; end
+
+      ##
+      # Runs after every test, but is considered part of the test.
+      # This hook is meant for libraries to extend minitest.
+      # It is not meant to be used by test developers.
+      #
+      # See #before_setup for an example.
+      def after_test; end
 
       ##
       # Runs after every test, before teardown. This hook is meant for
@@ -1198,6 +1211,7 @@ module MiniTest
           self.setup
           self.after_setup
           self.run_test self.__name__
+          self.after_test
           result = "." unless io?
           @passed = true
         rescue *PASSTHROUGH_EXCEPTIONS
