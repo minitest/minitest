@@ -277,11 +277,11 @@ module MiniTest::Expectations
   #
   #    n.must_be_close_to m [, delta]
   #
-  # :method: must_be_within_delta
+  # :method: must_be_close_to
 
   infect_an_assertion :assert_in_delta, :must_be_close_to
 
-  alias :must_be_within_delta :must_be_close_to
+  alias :must_be_within_delta :must_be_close_to # :nodoc:
 
   ##
   # See MiniTest::Assertions#assert_in_epsilon
@@ -437,12 +437,11 @@ module MiniTest::Expectations
   #
   #    n.wont_be_close_to m [, delta]
   #
-  # :method: wont_be_within_delta
+  # :method: wont_be_close_to
 
-  infect_an_assertion :refute_in_delta, :wont_be_within_delta
+  infect_an_assertion :refute_in_delta, :wont_be_close_to
 
-  alias :wont_be_close_to :wont_be_within_delta
-  # FIX: reverse aliases
+  alias :wont_be_within_delta :wont_be_close_to # :nodoc:
 
   ##
   # See MiniTest::Assertions#refute_in_epsilon
