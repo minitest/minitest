@@ -1,3 +1,21 @@
+=== 3.3.0 / 2012-07-26
+
+* 1 major enhancement:
+
+  * Deprecated add_(setup|teardown)_hook in favor of (before|after)_(setup|teardown) [2013-01-01]
+
+* 4 minor enhancements:
+
+  * Refactored deprecated hook system into a module.
+  * Refactored lifecycle hooks into a module.
+  * Removed after_setup/before_teardown + run_X_hooks from Spec.
+  * Spec#before/after now do a simple define_method and call super. DUR.
+
+* 2 bug fixes:
+
+  * Fixed #passed? when used against a test that called flunk. (floehopper)
+  * Fixed rdoc bug preventing doco for some expectations. (stomar).
+
 === 3.2.0 / 2012-06-26
 
 * 1 minor enhancement:
