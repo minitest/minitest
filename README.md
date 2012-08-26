@@ -1,10 +1,10 @@
-= minitest/{unit,spec,mock,benchmark}
+# minitest/{unit,spec,mock,benchmark}
 
 home :: https://github.com/seattlerb/minitest
 rdoc :: http://docs.seattlerb.org/minitest
 vim  :: https://github.com/sunaku/vim-ruby-minitest
 
-== DESCRIPTION:
+## DESCRIPTION:
 
 minitest provides a complete suite of testing facilities supporting
 TDD, BDD, mocking, and benchmarking.
@@ -49,7 +49,7 @@ discovery.
 
     -- Piotr Szotkowski
 
-== FEATURES/PROBLEMS:
+## FEATURES/PROBLEMS:
 
 * minitest/autorun - the easy and explicit way to run all your tests.
 * minitest/unit - a very fast, simple, and clean test system.
@@ -59,11 +59,11 @@ discovery.
 * minitest/pride - show your pride in testing!
 * Incredibly small and fast runner, but no bells and whistles.
 
-== RATIONALE:
+## RATIONALE:
 
 See design_rationale.rb to see how specs and tests work in minitest.
 
-== SYNOPSIS:
+## SYNOPSIS:
 
 Given that you'd like to test the following class:
 
@@ -77,7 +77,7 @@ Given that you'd like to test the following class:
     end
   end
 
-=== Unit tests
+### Unit tests
 
   require 'minitest/autorun'
 
@@ -95,7 +95,7 @@ Given that you'd like to test the following class:
     end
   end
 
-=== Specs
+### Specs
 
   require 'minitest/autorun'
 
@@ -121,7 +121,7 @@ For matchers support check out:
 
 https://github.com/zenspider/minitest-matchers
 
-=== Benchmarks
+### Benchmarks
 
 Add benchmarks to your regular unit tests. If the unit tests fail, the
 benchmarks won't run.
@@ -162,7 +162,7 @@ outputs something like:
 
 Output is tab-delimited to make it easy to paste into a spreadsheet.
 
-=== Mocks
+### Mocks
 
   class MemeAsker
     def initialize(meme)
@@ -194,7 +194,7 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
     end
   end
 
-=== Stubs
+### Stubs
 
   def test_stale_eh
     obj_under_test = Something.new
@@ -206,7 +206,7 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
     end
   end
 
-=== Customizable Test Runner Types:
+### Customizable Test Runner Types:
 
 MiniTest::Unit.runner=(runner) provides an easy way of creating custom
 test runners for specialized needs. Justin Weiss provides the
@@ -258,7 +258,7 @@ fixture loading:
 
   MiniTest::Unit.runner = MiniTestWithTransactions::Unit.new
 
-== Known Extensions:
+## Known Extensions:
 
 minitest-capistrano    :: Assertions and expectations for testing Capistrano recipes
 minitest-capybara      :: Capybara matchers support for minitest unit and spec
@@ -298,11 +298,11 @@ minitest_should        :: Shoulda style syntax for minitest test::unit.
 minitest_tu_shim       :: minitest_tu_shim bridges between test/unit and minitest.
 mongoid-minitest       :: MiniTest matchers for Mongoid.
 
-== REQUIREMENTS:
+## REQUIREMENTS:
 
 * Ruby 1.8, maybe even 1.6 or lower. No magic is involved.
 
-== INSTALL:
+## INSTALL:
 
   sudo gem install minitest
 
@@ -315,7 +315,7 @@ the gem, but you'll need to activate the gem explicitly to use it:
   
   # ... usual testing stuffs ...
 
-== LICENSE:
+## LICENSE:
 
 (The MIT License)
 
