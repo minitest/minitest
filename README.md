@@ -1,4 +1,4 @@
-# MINITEST/{unit,spec,mock,benchmark}
+# minitest/{unit,spec,mock,benchmark}
 
 home :: https://github.com/seattlerb/minitest<br />
 rdoc :: http://docs.seattlerb.org/minitest<br />
