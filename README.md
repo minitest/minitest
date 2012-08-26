@@ -1,9 +1,7 @@
 # minitest/{unit,spec,mock,benchmark}
 
-home :: https://github.com/seattlerb/minitest
-
-rdoc :: http://docs.seattlerb.org/minitest
-
+home :: https://github.com/seattlerb/minitest<br />
+rdoc :: http://docs.seattlerb.org/minitest<br />
 vim  :: https://github.com/sunaku/vim-ruby-minitest
 
 ## DESCRIPTION:
