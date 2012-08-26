@@ -1,7 +1,9 @@
 # minitest/{unit,spec,mock,benchmark}
 
 home :: https://github.com/seattlerb/minitest
+
 rdoc :: http://docs.seattlerb.org/minitest
+
 vim  :: https://github.com/sunaku/vim-ruby-minitest
 
 ## DESCRIPTION:
@@ -20,26 +22,26 @@ TDD, BDD, mocking, and benchmarking.
 
     -- Wayne E. Seguin
 
-minitest/unit is a small and incredibly fast unit testing framework.
+**minitest/unit** is a small and incredibly fast unit testing framework.
 It provides a rich set of assertions to make your tests clean and
 readable.
 
-minitest/spec is a functionally complete spec engine. It hooks onto
+**minitest/spec** is a functionally complete spec engine. It hooks onto
 minitest/unit and seamlessly bridges test assertions over to spec
 expectations.
 
-minitest/benchmark is an awesome way to assert the performance of your
+**minitest/benchmark** is an awesome way to assert the performance of your
 algorithms in a repeatable manner. Now you can assert that your newb
 co-worker doesn't replace your linear algorithm with an exponential
 one!
 
-minitest/mock by Steven Baker, is a beautifully tiny mock (and stub)
+**minitest/mock** by Steven Baker, is a beautifully tiny mock (and stub)
 object framework.
 
-minitest/pride shows pride in testing and adds coloring to your test
+**minitest/pride** shows pride in testing and adds coloring to your test
 output. I guess it is an example of how to write IO pipes too. :P
 
-minitest/unit is meant to have a clean implementation for language
+**minitest/unit** is meant to have a clean implementation for language
 implementors that need a minimal set of methods to bootstrap a working
 test suite. For example, there is no magic involved for test-case
 discovery.
@@ -164,7 +166,7 @@ be defined.
 
 outputs something like:
 
-  # Running benchmarks:
+#### Running benchmarks:
 <table>
   <tr>
     <td>TestBlah</td><td>100</td><td>1000</td><td>10000</td>
