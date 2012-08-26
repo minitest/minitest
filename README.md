@@ -162,8 +162,6 @@ be defined.
   end
 ```
 
-outputs something like:
-
 #### Running benchmarks:
 <table>
   <tr>
