@@ -67,6 +67,7 @@ See design_rationale.rb to see how specs and tests work in minitest.
 
 Given that you'd like to test the following class:
 
+```ruby
   class Meme
     def i_can_has_cheezburger?
       "OHAI!"
@@ -76,9 +77,11 @@ Given that you'd like to test the following class:
       "YES!"
     end
   end
+```
 
 ### Unit tests
 
+```ruby
   require 'minitest/autorun'
 
   class TestMeme < MiniTest::Unit::TestCase
@@ -94,9 +97,11 @@ Given that you'd like to test the following class:
       refute_match /^no/i, @meme.will_it_blend?
     end
   end
+```
 
 ### Specs
 
+```ruby
   require 'minitest/autorun'
 
   describe Meme do
@@ -116,6 +121,7 @@ Given that you'd like to test the following class:
       end
     end
   end
+```
 
 For matchers support check out:
 
@@ -126,6 +132,7 @@ https://github.com/zenspider/minitest-matchers
 Add benchmarks to your regular unit tests. If the unit tests fail, the
 benchmarks won't run.
 
+```ruby
   # optionally run benchmarks, good for CI-only work!
   require 'minitest/benchmark' if ENV["BENCH"]
 
@@ -137,11 +144,13 @@ benchmarks won't run.
       end
     end
   end
+```
 
 Or add them to your specs. If you make benchmarks optional, you'll
 need to wrap your benchmarks in a conditional since the methods won't
 be defined.
 
+```ruby
   describe Meme do
     if ENV["BENCH"] then
       bench_performance_linear "my_algorithm", 0.9999 do |n|
@@ -151,6 +160,7 @@ be defined.
       end
     end
   end
+```
 
 outputs something like:
 
@@ -164,6 +174,7 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
 
 ### Mocks
 
+```ruby
   class MemeAsker
     def initialize(meme)
       @meme = meme
@@ -193,9 +204,11 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
       end
     end
   end
+```
 
 ### Stubs
 
+```ruby
   def test_stale_eh
     obj_under_test = Something.new
 
@@ -205,6 +218,7 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
       assert obj_under_test.stale?
     end
   end
+```
 
 ### Customizable Test Runner Types:
 
@@ -213,6 +227,7 @@ test runners for specialized needs. Justin Weiss provides the
 following real-world example to create an alternative to regular
 fixture loading:
 
+```ruby
   class MiniTestWithHooks::Unit < MiniTest::Unit
     def before_suites
     end
@@ -257,6 +272,7 @@ fixture loading:
   end
 
   MiniTest::Unit.runner = MiniTestWithTransactions::Unit.new
+```
 
 ## Known Extensions:
 
