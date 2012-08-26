@@ -164,24 +164,19 @@ be defined.
 
 outputs something like:
 
+  # Running benchmarks:
 <table>
   <tr>
-    <th>ID</th><th>Name</th><th>Rank</th>
+    <td>TestBlah</td><td>100</td><td>1000</td><td>10000</td>
   </tr>
   <tr>
-    <td>1</td><td>Tom Preston-Werner</td><td>Awesome</td>
+    <td>bench_my_algorithm</td><td>0.006167</td><td>0.079279</td><td>0.786993</td>
   </tr>
   <tr>
-    <td>2</td><td>Albert Einstein</td><td>Nearly as awesome</td>
+    <td>bench_other_algorithm</td><td>0.061679</td><td>0.792797</td><td>7.869932</td>
   </tr>
 </table>
-
-  # Running benchmarks:
-
-  TestBlah	100	1000	10000
-  bench_my_algorithm	 0.006167	 0.079279	 0.786993
-  bench_other_algorithm	 0.061679	 0.792797	 7.869932
-
+  
 Output is tab-delimited to make it easy to paste into a spreadsheet.
 
 ### Mocks
