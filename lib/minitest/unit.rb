@@ -368,6 +368,7 @@ module MiniTest
       flunk "#{msg}#{mu_pp(exp)} expected but nothing was raised." if
         should_raise
     end
+    alias_method :assert_raise, :assert_raises
 
     ##
     # Fails unless +obj+ responds to +meth+.
