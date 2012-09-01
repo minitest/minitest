@@ -960,6 +960,12 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     end
   end
 
+  def test_assert_raise
+    @tc.assert_raise RuntimeError do
+      raise "blah"
+    end
+  end
+
   def test_assert_raises_module
     @tc.assert_raises MyModule do
       raise AnError
