@@ -304,7 +304,8 @@ module MiniTest
     ##
     # Fails if stdout or stderr do not output the expected results.
     # Pass in nil if you don't care about that streams output. Pass in
-    # "" if you require it to be silent.
+    # "" if you require it to be silent. Pass in a regexp if you want
+    # to pattern match.
     #
     # See also: #assert_silent
 
