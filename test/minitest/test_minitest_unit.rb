@@ -1181,6 +1181,14 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
 
     assert_equal "hi\n", out
     assert_equal "bye!\n", err
+
+    out, err = capture_io do
+      system("echo 'hi'")
+      system("echo 'bye!' 1>&2")
+    end
+
+    assert_equal "hi\n", out
+    assert_equal "bye!\n", err
   ensure
     $VERBOSE = orig_verbose
   end

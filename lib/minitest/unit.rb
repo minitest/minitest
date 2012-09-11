@@ -440,23 +440,38 @@ module MiniTest
     #
     #   out, err = capture_io do
     #     warn "You did a bad thing"
+    #     puts "Some info"
     #   end
     #
+    # even in subprocesses:
+    # 
+    #   out, err = full_capture_io do
+    #     system("echo 'You did a bad thing' 1>&2")
+    #     system("echo 'Some info'")
+    #   end
+    # 
     #   assert_match %r%bad%, err
+    #   assert_match %r%info%, out
 
     def capture_io
-      require 'stringio'
+      require 'tempfile'
 
-      orig_stdout, orig_stderr         = $stdout, $stderr
-      captured_stdout, captured_stderr = StringIO.new, StringIO.new
-      $stdout, $stderr                 = captured_stdout, captured_stderr
+      stdout, stderr = Tempfile.new(""), Tempfile.new("")
+      orig_stdout, orig_stderr = $stdout.dup, $stderr.dup
+      $stdout.reopen(stdout)
+      $stderr.reopen(stderr)
 
       yield
 
-      return captured_stdout.string, captured_stderr.string
+      $stdout.rewind
+      $stderr.rewind
+      return $stdout.read, $stderr.read
     ensure
-      $stdout = orig_stdout
-      $stderr = orig_stderr
+      stdout.unlink
+      stderr.unlink
+
+      $stdout.reopen(orig_stdout)
+      $stderr.reopen(orig_stderr)
     end
 
     ##
