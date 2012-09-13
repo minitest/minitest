@@ -148,7 +148,13 @@ class Object # :nodoc:
     new_name = "__minitest_stub__#{name}"
 
     metaclass = class << self; self; end
+    if metaclass.respond_to?(name) && !metaclass.methods.include?(name.to_sym)
+      metaclass.send :define_method, name do |*args|
+        super
+      end
+    end
     metaclass.send :alias_method, new_name, name
+
     metaclass.send :define_method, name do |*args|
       if val_or_callable.respond_to? :call then
         val_or_callable.call(*args)
