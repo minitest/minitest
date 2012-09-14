@@ -271,4 +271,25 @@ class TestMiniTestStub < MiniTest::Unit::TestCase
 
     @tc.assert_equal "bar", val
   end
+
+  def test_dynamic_method
+    dynamic = Class.new do
+      def self.respond_to?(meth)
+        meth == :found
+      end
+
+      def self.method_missing(meth, *args, &block)
+        if meth == :found
+          false
+        else
+          super
+        end
+      end
+    end
+
+    val = dynamic.stub(:found, "something") do |s|
+      s.found
+    end
+    @tc.assert val
+  end
 end
