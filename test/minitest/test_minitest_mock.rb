@@ -287,7 +287,7 @@ class TestMiniTestStub < MiniTest::Unit::TestCase
       end
     end
 
-    val = dynamic.stub(:found, "something") do |s|
+    val = dynamic.stub(:found, true) do |s|
       s.found
     end
     @tc.assert val
