@@ -1174,9 +1174,27 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
 
     orig_verbose = $VERBOSE
     $VERBOSE = false
+
     out, err = capture_io do
       puts 'hi'
       warn 'bye!'
+    end
+
+    assert_equal "hi\n", out
+    assert_equal "bye!\n", err
+  ensure
+    $VERBOSE = orig_verbose
+  end
+
+  def test_capture_subprocess_io
+    @assertion_count = 0
+
+    orig_verbose = $VERBOSE
+    $VERBOSE = false
+
+    out, err = capture_subprocess_io do
+      system("echo 'hi'")
+      system("echo 'bye!' 1>&2")
     end
 
     assert_equal "hi\n", out

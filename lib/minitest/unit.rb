@@ -307,6 +307,8 @@ module MiniTest
     # "" if you require it to be silent. Pass in a regexp if you want
     # to pattern match.
     #
+    # NOTE: this uses #capture_io, not #capture_subprocess_io.
+    #
     # See also: #assert_silent
 
     def assert_output stdout = nil, stderr = nil
@@ -439,10 +441,16 @@ module MiniTest
     # Captures $stdout and $stderr into strings:
     #
     #   out, err = capture_io do
+    #     puts "Some info"
     #     warn "You did a bad thing"
     #   end
     #
+    #   assert_match %r%info%, out
     #   assert_match %r%bad%, err
+    #
+    # NOTE: For efficiency, this method uses StringIO and does not
+    # capture IO for subprocesses. Use #capture_subprocess_io for
+    # that.
 
     def capture_io
       require 'stringio'
@@ -457,6 +465,42 @@ module MiniTest
     ensure
       $stdout = orig_stdout
       $stderr = orig_stderr
+    end
+
+    ##
+    # Captures $stdout and $stderr into strings, using Tempfile to
+    # ensure that subprocess IO is captured as well.
+    #
+    #   out, err = capture_subprocess_io do
+    #     system "echo Some info"
+    #     system "echo You did a bad thing 1>&2"
+    #   end
+    #
+    #   assert_match %r%info%, out
+    #   assert_match %r%bad%, err
+    #
+    # NOTE: This method is approximately 10x slower than #capture_io so
+    # only use it when you need to test the output of a subprocess.
+
+    def capture_subprocess_io
+      require 'tempfile'
+
+      captured_stdout, captured_stderr = Tempfile.new("out"), Tempfile.new("err")
+      orig_stdout, orig_stderr = $stdout.dup, $stderr.dup
+      $stdout.reopen captured_stdout
+      $stderr.reopen captured_stderr
+
+      yield
+
+      $stdout.rewind
+      $stderr.rewind
+
+      return captured_stdout.read, captured_stderr.read
+    ensure
+      captured_stdout.unlink
+      captured_stderr.unlink
+      $stdout.reopen orig_stdout
+      $stderr.reopen orig_stderr
     end
 
     ##
