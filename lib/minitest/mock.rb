@@ -120,9 +120,9 @@ module MiniTest
       retval
     end
 
-    def respond_to?(sym) # :nodoc:
+    def respond_to?(sym, include_private = false) # :nodoc:
       return true if @expected_calls.has_key?(sym.to_sym)
-      return __respond_to?(sym)
+      return __respond_to?(sym, include_private)
     end
   end
 end
