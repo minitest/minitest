@@ -61,14 +61,14 @@ module MiniTest
       "UNDEFINED" # again with the rdoc bugs... :(
     end
 
-    MSWINDOWS = RbConfig::CONFIG['host_os'] =~ /mswin|mingw/ # :nodoc:
+    WINDOWS = RbConfig::CONFIG['host_os'] =~ /mswin|mingw/ # :nodoc:
 
     ##
     # Returns the diff command to use in #diff. Tries to intelligently
     # figure out what diff to use.
 
     def self.diff
-      @diff = if MSWINDOWS
+      @diff = if WINDOWS
                 "diff.exe -u"
               else
                 if system("gdiff", __FILE__, __FILE__)
