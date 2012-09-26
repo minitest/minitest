@@ -129,7 +129,7 @@ module MiniTest
           if result.empty? then
             klass = exp.class
             result = [
-                      "No visible difference in the #{klass}#inspect outputs.",
+                      "No visible difference in the #{klass}#inspect output.",
                       "You should look at your implementation of #{klass}#==.",
                       expect
                      ].join "\n"
