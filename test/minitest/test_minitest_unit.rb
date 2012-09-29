@@ -660,7 +660,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     o1 = Object.new
     o2 = Object.new
 
-    msg = "No visible difference.
+    msg = "No visible difference in the Object#inspect output.
            You should look at your implementation of Object#==.
            #<Object:0xXXXXXX>".gsub(/^ +/, "")
 
@@ -686,7 +686,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_assert_equal_different_long_invisible
-    msg = "No visible difference.
+    msg = "No visible difference in the String#inspect output.
            You should look at your implementation of String#==.
            \"blahblahblahblahblahblahblahblahblahblah\"".gsub(/^ +/, "")
 
