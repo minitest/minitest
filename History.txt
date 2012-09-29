@@ -1,3 +1,19 @@
+=== 4.0.0 / 2012-09-28
+
+* 1 major enhancement:
+
+  * The names of a privately-used undocumented constants are Super Important™.
+
+* 1 minor enhancement:
+
+  * Support stubbing methods that would be handled via method_missing. (jhsu)
+
+* 3 bug fixes:
+
+  * Add include_private param to MiniTest::Mock#respond_to? (rf-)
+  * Fixed use of minitest/pride with --help. (zw963)
+  * Made 'No visible difference.' message more clear. (ckrailo)
+
 === 3.5.0 / 2012-09-21
 
 * 1 minor enhancement:
