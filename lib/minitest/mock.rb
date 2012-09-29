@@ -157,10 +157,23 @@ class Object # :nodoc:
       end
     end
 
-    yield self
-  ensure
-    metaclass.send :undef_method, name
-    metaclass.send :alias_method, name, new_name
-    metaclass.send :undef_method, new_name
+    if block_given?
+      begin
+        yield self
+      ensure
+        unstub name
+      end
+    end
+  end
+
+  def unstub name
+    original_name = "__minitest_stub__#{name}"
+    metaclass = class << self; self; end
+
+    if metaclass.method_defined? original_name
+      metaclass.send :undef_method, name
+      metaclass.send :alias_method, name, original_name
+      metaclass.send :undef_method, original_name
+    end
   end
 end

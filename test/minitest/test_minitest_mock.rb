@@ -222,15 +222,26 @@ class TestMiniTestStub < MiniTest::Unit::TestCase
   end
 
   def assert_stub val_or_callable
-    @assertion_count += 1
+    @assertion_count += 2
 
     t = Time.now.to_i
 
+    assert_stub_block val_or_callable
+    assert_stub_non_block val_or_callable
+
+    @tc.assert_operator Time.now.to_i, :>=, t
+  end
+
+  def assert_stub_block val_or_callable
     Time.stub :now, val_or_callable do
       @tc.assert_equal 42, Time.now
     end
+  end
 
-    @tc.assert_operator Time.now.to_i, :>=, t
+  def assert_stub_non_block val_or_callable
+    Time.stub :now, val_or_callable
+    @tc.assert_equal 42, Time.now
+    Time.unstub :now
   end
 
   def test_stub_value
@@ -271,5 +282,11 @@ class TestMiniTestStub < MiniTest::Unit::TestCase
     end
 
     @tc.assert_equal "bar", val
+  end
+
+  def test_unstub_is_not_destructive
+    t = Time.now.to_i
+    Time.unstub :now
+    @tc.assert_operator Time.now.to_i, :>=, t
   end
 end
