@@ -1142,25 +1142,52 @@ module MiniTest
     # This entire module is deprecated and slated for removal on 2013-01-01.
 
       module Hooks
-        ##
-        # Adds a block of code that will be executed before every
-        # TestCase is run.
-        #
-        # NOTE: This method is deprecated, use before/after_setup. It
-        # will be removed on 2013-01-01.
-
-        def self.add_setup_hook arg=nil, &block
-          warn "NOTE: MiniTest::Unit::TestCase.add_setup_hook is deprecated, use before/after_setup via a module (and call super!). It will be removed on 2013-01-01. Called from #{caller.first}"
-          hook = arg || block
-          @setup_hooks << hook
+        def self.included(base)
+          base.extend ClassMethods
         end
 
-        def self.setup_hooks # :nodoc:
-          if superclass.respond_to? :setup_hooks then
-            superclass.setup_hooks
-          else
-            []
-          end + @setup_hooks
+        module ClassMethods
+          ##
+          # Adds a block of code that will be executed before every
+          # TestCase is run.
+          #
+          # NOTE: This method is deprecated, use before/after_setup. It
+          # will be removed on 2013-01-01.
+
+          def add_setup_hook arg=nil, &block
+            warn "NOTE: MiniTest::Unit::TestCase.add_setup_hook is deprecated, use before/after_setup via a module (and call super!). It will be removed on 2013-01-01. Called from #{caller.first}"
+            hook = arg || block
+            @setup_hooks << hook
+          end
+
+          def setup_hooks # :nodoc:
+            if superclass.respond_to? :setup_hooks then
+              superclass.setup_hooks
+            else
+              []
+            end + @setup_hooks
+          end
+
+          ##
+          # Adds a block of code that will be executed after every
+          # TestCase is run.
+          #
+          # NOTE: This method is deprecated, use before/after_teardown. It
+          # will be removed on 2013-01-01.
+
+          def add_teardown_hook arg=nil, &block
+            warn "NOTE: MiniTest::Unit::TestCase#add_teardown_hook is deprecated, use before/after_teardown. It will be removed on 2013-01-01. Called from #{caller.first}"
+            hook = arg || block
+            @teardown_hooks << hook
+          end
+
+          def teardown_hooks # :nodoc:
+            if superclass.respond_to? :teardown_hooks then
+              superclass.teardown_hooks
+            else
+              []
+            end + @teardown_hooks
+          end
         end
 
         def run_setup_hooks # :nodoc:
@@ -1175,27 +1202,6 @@ module MiniTest
               hook.call
             end
           end
-        end
-
-        ##
-        # Adds a block of code that will be executed after every
-        # TestCase is run.
-        #
-        # NOTE: This method is deprecated, use before/after_teardown. It
-        # will be removed on 2013-01-01.
-
-        def self.add_teardown_hook arg=nil, &block
-          warn "NOTE: MiniTest::Unit::TestCase#add_teardown_hook is deprecated, use before/after_teardown. It will be removed on 2013-01-01. Called from #{caller.first}"
-          hook = arg || block
-          @teardown_hooks << hook
-        end
-
-        def self.teardown_hooks # :nodoc:
-          if superclass.respond_to? :teardown_hooks then
-            superclass.teardown_hooks
-          else
-            []
-          end + @teardown_hooks
         end
 
         def run_teardown_hooks # :nodoc:
