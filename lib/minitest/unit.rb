@@ -691,6 +691,7 @@ module MiniTest
       msg ||= "Skipped, no message given"
       raise MiniTest::Skip, msg, bt
     end
+    alias :pending :skip
   end
 
   class Unit # :nodoc:

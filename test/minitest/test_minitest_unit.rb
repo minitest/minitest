@@ -304,14 +304,18 @@ class TestMiniTestUnit < MetaMetaMetaTestCase
       def test_skip
         skip "not yet"
       end
+
+      def test_pending
+        pending "later"
+      end
     end
 
     expected = clean <<-EOM
-      S.
+      SS.
 
       Finished tests in 0.00
 
-      2 tests, 1 assertions, 0 failures, 0 errors, 1 skips
+      3 tests, 1 assertions, 0 failures, 0 errors, 2 skips
     EOM
 
     assert_report expected
