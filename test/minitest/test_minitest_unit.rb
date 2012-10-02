@@ -15,6 +15,23 @@ class TestMiniTestUnit < MetaMetaMetaTestCase
                "#{MINITEST_BASE_DIR}/test.rb:139:in `run'",
                "#{MINITEST_BASE_DIR}/test.rb:106:in `run'"]
 
+  def test_wtf
+    $hook_value = nil
+
+    capture_io do # don't care about deprecation
+      MiniTest::Unit::TestCase.add_setup_hook do
+        $hook_value = 42
+      end
+    end
+
+    run_setup_hooks
+
+    assert_equal 42, $hook_value
+    assert_equal [Proc], MiniTest::Unit::TestCase.setup_hooks.map(&:class)
+    MiniTest::Unit::TestCase.reset_setup_teardown_hooks
+    assert_equal [],     MiniTest::Unit::TestCase.setup_hooks.map(&:class)
+  end
+
   def test_class_puke_with_assertion_failed
     exception = MiniTest::Assertion.new "Oh no!"
     exception.set_backtrace ["unhappy"]
