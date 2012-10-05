@@ -30,24 +30,36 @@ module MiniTest
 
   class Skip < Assertion; end
 
-  def self.filter_backtrace bt # :nodoc:
-    return ["No backtrace"] unless bt
+  class << self
+    attr_accessor :backtrace_filter
+  end
 
-    new_bt = []
+  class BacktraceFilter # :nodoc:
+    def filter bt
+      return ["No backtrace"] unless bt
 
-    unless $DEBUG then
-      bt.each do |line|
-        break if line =~ /lib\/minitest/
-        new_bt << line
+      new_bt = []
+
+      unless $DEBUG then
+        bt.each do |line|
+          break if line =~ /lib\/minitest/
+          new_bt << line
+        end
+
+        new_bt = bt.reject { |line| line =~ /lib\/minitest/ } if new_bt.empty?
+        new_bt = bt.dup if new_bt.empty?
+      else
+        new_bt = bt.dup
       end
 
-      new_bt = bt.reject { |line| line =~ /lib\/minitest/ } if new_bt.empty?
-      new_bt = bt.dup if new_bt.empty?
-    else
-      new_bt = bt.dup
+      new_bt
     end
+  end
 
-    new_bt
+  self.backtrace_filter = BacktraceFilter.new
+
+  def self.filter_backtrace bt # :nodoc:
+    backtrace_filter.filter bt
   end
 
   ##
