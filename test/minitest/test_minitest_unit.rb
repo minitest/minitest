@@ -871,6 +871,39 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     end
   end
 
+  def test_assert_no_match
+    @assertion_count = 2
+    @tc.assert_no_match(/xx/, "blah blah blah")
+  end
+
+  def test_assert_no_match_matcher_object
+    @assertion_count = 2
+
+    pattern = Object.new
+    def pattern.=~(other) false end
+
+    @tc.assert_no_match pattern, 5
+  end
+
+  def test_assert_no_match_object_triggered
+    @assertion_count = 2
+
+    pattern = Object.new
+    def pattern.=~(other) true end
+    def pattern.inspect; "[Object]" end
+
+    util_assert_triggered 'Expected [Object] to NOT match 5.' do
+      @tc.assert_no_match pattern, 5
+    end
+  end
+
+  def test_assert_no_match_triggered
+    @assertion_count = 2
+    util_assert_triggered 'Expected /\d+/ to match "blah blah blah".' do
+      @tc.assert_match(/\d+/, "blah blah blah")
+    end
+  end
+
   def test_assert_nil
     @tc.assert_nil nil
   end

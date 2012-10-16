@@ -293,6 +293,16 @@ module MiniTest
     end
 
     ##
+    # Fails unless +matcher+ <tt>!~</tt> +obj+
+
+    def assert_no_match nexp, act, msg = nil
+      msg = message(msg) { "Expected #{mu_pp(nexp)} to NOT match #{mu_pp(act)}" }
+      assert_respond_to act, :"=~"
+      nexp = Regexp.new Regexp.escape nexp if String === nexp and String === act
+      assert nexp !~ act, msg
+    end
+
+    ##
     # Fails unless +obj+ is nil
 
     def assert_nil obj, msg = nil
