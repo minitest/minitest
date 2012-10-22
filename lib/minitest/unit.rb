@@ -873,16 +873,16 @@ module MiniTest
       filter = options[:filter] || '/./'
       filter = Regexp.new $1 if filter =~ /\/(.*)\//
 
-      assertions = suite.send("#{type}_methods").grep(filter).map { |method|
+      assertions = _map_run(suite.send("#{type}_methods").grep(filter)) { |method|
         inst = suite.new method
         inst._assertions = 0
 
         print "#{suite}##{method} = " if @verbose
 
-        @start_time = Time.now
+        @start_time = start_time = Time.now
         self.last_error = nil
         result = inst.run self
-        time = Time.now - @start_time
+        time = Time.now - start_time
 
         record suite, method, inst._assertions, time, last_error
 
@@ -894,6 +894,25 @@ module MiniTest
       }
 
       return assertions.size, assertions.inject(0) { |sum, n| sum + n }
+    end
+
+    ##
+    # Iterates over each test method for the suite, yielding the method name
+    # to a given block.  Subclasses can implement this method to change test
+    # run strategies, for example running each test method in a thread:
+    #
+    #   class ThreadedRunner < MiniTest::Unit
+    #     # Each test method will run in a separate thread
+    #     def_map_run methods
+    #       threads = test_methods.map do |method|
+    #         Thread.new { yield method }
+    #       end
+    #       threads.map { |t| t.join }.map { |t| t.value }
+    #     end
+    #   end
+
+    def _map_run test_methods
+      test_methods.map { |method| yield method }
     end
 
     ##
