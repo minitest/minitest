@@ -903,7 +903,7 @@ module MiniTest
     #
     #   class ThreadedRunner < MiniTest::Unit
     #     # Each test method will run in a separate thread
-    #     def_map_run methods
+    #     def _map_run methods
     #       threads = test_methods.map do |method|
     #         Thread.new { yield method }
     #       end
