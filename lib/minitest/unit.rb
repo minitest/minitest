@@ -1,5 +1,6 @@
 require 'optparse'
 require 'rbconfig'
+require 'thread' # required for 1.8
 
 ##
 # Minimal (mostly drop-in) replacement for test-unit.
@@ -465,16 +466,21 @@ module MiniTest
     def capture_io
       require 'stringio'
 
-      orig_stdout, orig_stderr         = $stdout, $stderr
       captured_stdout, captured_stderr = StringIO.new, StringIO.new
-      $stdout, $stderr                 = captured_stdout, captured_stderr
 
-      yield
+      @__mutex__.synchronize do
+        orig_stdout, orig_stderr = $stdout, $stderr
+        $stdout, $stderr         = captured_stdout, captured_stderr
+
+        begin
+          yield
+        ensure
+          $stdout = orig_stdout
+          $stderr = orig_stderr
+        end
+      end
 
       return captured_stdout.string, captured_stderr.string
-    ensure
-      $stdout = orig_stdout
-      $stderr = orig_stderr
     end
 
     ##
@@ -496,21 +502,26 @@ module MiniTest
       require 'tempfile'
 
       captured_stdout, captured_stderr = Tempfile.new("out"), Tempfile.new("err")
-      orig_stdout, orig_stderr = $stdout.dup, $stderr.dup
-      $stdout.reopen captured_stdout
-      $stderr.reopen captured_stderr
 
-      yield
+      @__mutex__.synchronize do
+        orig_stdout, orig_stderr = $stdout.dup, $stderr.dup
+        $stdout.reopen captured_stdout
+        $stderr.reopen captured_stderr
 
-      $stdout.rewind
-      $stderr.rewind
+        begin
+          yield
 
-      return captured_stdout.read, captured_stderr.read
-    ensure
-      captured_stdout.unlink
-      captured_stderr.unlink
-      $stdout.reopen orig_stdout
-      $stderr.reopen orig_stderr
+          $stdout.rewind
+          $stderr.rewind
+
+          [captured_stdout.read, captured_stderr.read]
+        ensure
+          captured_stdout.unlink
+          captured_stderr.unlink
+          $stdout.reopen orig_stdout
+          $stderr.reopen orig_stderr
+        end
+      end
     end
 
     ##
@@ -1288,6 +1299,7 @@ module MiniTest
 
       def initialize name # :nodoc:
         @__name__ = name
+        @__mutex__ = Mutex.new
         @__io__ = nil
         @passed = nil
         @@current = self
