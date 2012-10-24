@@ -450,7 +450,9 @@ class TestMiniTestUnit < MetaMetaMetaTestCase
       def test_omg; assert true; end
     end
 
-    @tu.run %w[--seed 42]
+    with_output do
+      @tu.run %w[--seed 42]
+    end
 
     expected = [:before_setup, :setup]
     assert_equal expected, call_order
@@ -493,7 +495,9 @@ class TestMiniTestUnit < MetaMetaMetaTestCase
       def test_omg; assert true; end
     end
 
-    @tu.run %w[--seed 42]
+    with_output do
+      @tu.run %w[--seed 42]
+    end
 
     expected = [:teardown, :after_teardown]
     assert_equal expected, call_order
@@ -523,7 +527,9 @@ class TestMiniTestUnit < MetaMetaMetaTestCase
       def test_omg; assert true; end
     end
 
-    @tu.run %w[--seed 42]
+    with_output do
+      @tu.run %w[--seed 42]
+    end
 
     expected = [:before_teardown, :teardown, :after_teardown]
     assert_equal expected, call_order
@@ -548,7 +554,9 @@ class TestMiniTestUnit < MetaMetaMetaTestCase
 
     _ = Class.new parent
 
-    @tu.run %w[--seed 42]
+    with_output do
+      @tu.run %w[--seed 42]
+    end
 
     # Once for the parent class, once for the child
     expected = [:setup_method, :test, :teardown_method] * 2
