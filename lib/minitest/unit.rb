@@ -714,7 +714,6 @@ module MiniTest
     attr_accessor :help                               # :nodoc:
     attr_accessor :verbose                            # :nodoc:
     attr_writer   :options                            # :nodoc:
-    attr_accessor :last_error                         # :nodoc:
 
     ##
     # Lazy accessor for options.
@@ -879,14 +878,10 @@ module MiniTest
 
         print "#{suite}##{method} = " if @verbose
 
-        @start_time = Time.now
-        self.last_error = nil
+        start_time = Time.now if @verbose
         result = inst.run self
-        time = Time.now - @start_time
 
-        record suite, method, inst._assertions, time, last_error
-
-        print "%.2f s = " % time if @verbose
+        print "%.2f s = " % (Time.now - start_time) if @verbose
         print result
         puts if @verbose
 
@@ -925,7 +920,6 @@ module MiniTest
     # exception +e+
 
     def puke klass, meth, e
-      self.last_error = e
       e = case e
           when MiniTest::Skip then
             @skips += 1
@@ -947,7 +941,6 @@ module MiniTest
       @report = []
       @errors = @failures = @skips = 0
       @verbose = false
-      self.last_error = nil
     end
 
     def process_args args = [] # :nodoc:
@@ -1255,6 +1248,8 @@ module MiniTest
           runner.status $stderr
         end if SUPPORTS_INFO_SIGNAL
 
+        start_time = Time.now
+
         result = ""
         begin
           @passed = nil
@@ -1263,11 +1258,15 @@ module MiniTest
           self.after_setup
           self.run_test self.__name__
           result = "." unless io?
+          time = Time.now - start_time
+          runner.record self.class, self.__name__, self._assertions, time, nil
           @passed = true
         rescue *PASSTHROUGH_EXCEPTIONS
           raise
         rescue Exception => e
           @passed = false
+          time = Time.now - start_time
+          runner.record self.class, self.__name__, self._assertions, time, e
           result = runner.puke self.class, self.__name__, e
         ensure
           %w{ before_teardown teardown after_teardown }.each do |hook|
