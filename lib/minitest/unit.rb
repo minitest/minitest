@@ -468,7 +468,7 @@ module MiniTest
 
       captured_stdout, captured_stderr = StringIO.new, StringIO.new
 
-      @__mutex__.synchronize do
+      __mutex__.synchronize do
         orig_stdout, orig_stderr = $stdout, $stderr
         $stdout, $stderr         = captured_stdout, captured_stderr
 
@@ -503,7 +503,7 @@ module MiniTest
 
       captured_stdout, captured_stderr = Tempfile.new("out"), Tempfile.new("err")
 
-      @__mutex__.synchronize do
+      __mutex__.synchronize do
         orig_stdout, orig_stderr = $stdout.dup, $stderr.dup
         $stdout.reopen captured_stdout
         $stderr.reopen captured_stderr
@@ -885,6 +885,7 @@ module MiniTest
 
       assertions = suite.send("#{type}_methods").grep(filter).map { |method|
         inst = suite.new method
+        inst.__mutex__ = @mutex
         inst._assertions = 0
 
         print "#{suite}##{method} = " if @verbose
@@ -952,6 +953,7 @@ module MiniTest
       @report = []
       @errors = @failures = @skips = 0
       @verbose = false
+      @mutex = Mutex.new
     end
 
     def process_args args = [] # :nodoc:
@@ -1239,6 +1241,7 @@ module MiniTest
       extend Guard
 
       attr_reader :__name__ # :nodoc:
+      attr_accessor :__mutex__ # :nodoc:
 
       PASSTHROUGH_EXCEPTIONS = [NoMemoryError, SignalException,
                                 Interrupt, SystemExit] # :nodoc:
