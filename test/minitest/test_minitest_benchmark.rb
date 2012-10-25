@@ -110,4 +110,3 @@ class TestMiniTestBenchmark < MiniTest::Unit::TestCase
     assert_in_delta exp_b, b
   end
 end
-
