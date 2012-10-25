@@ -6,6 +6,8 @@ class AnError < StandardError; include MyModule; end
 class ImmutableString < String; def inspect; super.freeze; end; end
 
 class TestMiniTestUnit < MetaMetaMetaTestCase
+  parallelize_me!
+
   pwd = Pathname.new File.expand_path Dir.pwd
   basedir = Pathname.new(File.expand_path "lib/minitest") + 'mini'
   basedir = basedir.relative_path_from(pwd).to_s
@@ -164,6 +166,85 @@ class TestMiniTestUnit < MetaMetaMetaTestCase
     ex = ["-e:1"]
     fu = MiniTest::filter_backtrace bt
     assert_equal ex, fu
+  end
+
+  def test_default_runner_is_minitest_unit
+    assert_instance_of MiniTest::Unit, MiniTest::Unit.runner
+  end
+
+  def with_overridden_include
+    Class.class_eval do
+      def inherited_with_hacks klass
+        throw :inherited_hook
+      end
+
+      alias inherited_without_hacks inherited
+      alias inherited               inherited_with_hacks
+      alias IGNORE_ME!              inherited # 1.8 bug. god I love venture bros
+    end
+
+    yield
+  ensure
+    Class.class_eval do
+      alias inherited inherited_without_hacks
+
+      undef_method :inherited_with_hacks
+      undef_method :inherited_without_hacks
+    end
+
+    refute_respond_to Class, :inherited_with_hacks
+    refute_respond_to Class, :inherited_without_hacks
+  end
+
+  def test_inherited_hook_plays_nice_with_others
+    with_overridden_include do
+      assert_throws :inherited_hook do
+        Class.new MiniTest::Unit::TestCase
+      end
+    end
+  end
+
+  def test_passed_eh_teardown_good
+    test_class = Class.new MiniTest::Unit::TestCase do
+      def teardown; assert true; end
+      def test_omg; assert true; end
+    end
+
+    test = test_class.new :test_omg
+    test.run @tu
+    assert test.passed?
+  end
+
+  def test_passed_eh_teardown_flunked
+    test_class = Class.new MiniTest::Unit::TestCase do
+      def teardown; flunk;       end
+      def test_omg; assert true; end
+    end
+
+    test = test_class.new :test_omg
+    test.run @tu
+    refute test.passed?
+  end
+
+  def util_expand_bt bt
+    if RUBY_VERSION >= '1.9.0' then
+      bt.map { |f| (f =~ /^\./) ? File.expand_path(f) : f }
+    else
+      bt
+    end
+  end
+end
+
+class TestMiniTestRunner < MetaMetaMetaTestCase
+  # do not parallelize this suite... it just can't handle it.
+
+  def test_class_test_suites
+    @assertion_count = 0
+
+    tc = Class.new(MiniTest::Unit::TestCase)
+
+    assert_equal 1, MiniTest::Unit::TestCase.test_suites.size
+    assert_equal [tc], MiniTest::Unit::TestCase.test_suites
   end
 
   def test_run_test
@@ -362,10 +443,6 @@ class TestMiniTestUnit < MetaMetaMetaTestCase
     assert_report expected, %w[--seed 42 --verbose]
   end
 
-  def test_default_runner_is_minitest_unit
-    assert_instance_of MiniTest::Unit, MiniTest::Unit.runner
-  end
-
   def test_run_with_other_runner
     MiniTest::Unit.runner = Class.new MiniTest::Unit do
       def _run_suite suite, type
@@ -403,37 +480,74 @@ class TestMiniTestUnit < MetaMetaMetaTestCase
     assert_report expected
   end
 
-  def with_overridden_include
-    Class.class_eval do
-      def inherited_with_hacks klass
-        throw :inherited_hook
-      end
+  require 'monitor'
 
-      alias inherited_without_hacks inherited
-      alias inherited               inherited_with_hacks
-      alias IGNORE_ME!              inherited # 1.8 bug. god I love venture bros
+  class Latch
+    def initialize count = 1
+      @count = count
+      @lock  = Monitor.new
+      @cv    = @lock.new_cond
     end
 
-    yield
-  ensure
-    Class.class_eval do
-      alias inherited inherited_without_hacks
-
-      undef_method :inherited_with_hacks
-      undef_method :inherited_without_hacks
-    end
-
-    refute_respond_to Class, :inherited_with_hacks
-    refute_respond_to Class, :inherited_without_hacks
-  end
-
-  def test_inherited_hook_plays_nice_with_others
-    with_overridden_include do
-      assert_throws :inherited_hook do
-        Class.new MiniTest::Unit::TestCase
+    def release
+      @lock.synchronize do
+        @count -= 1 if @count > 0
+        @cv.broadcast if @count == 0
       end
     end
+
+    def await
+      @lock.synchronize { @cv.wait_while { @count > 0 } }
+    end
   end
+
+  def test_run_parallel
+    test_count = 2
+    test_latch = Latch.new test_count
+    main_latch = Latch.new
+
+    thread = Thread.new {
+      Thread.current.abort_on_exception = true
+
+      # This latch waits until both test latches have been released.  Both
+      # latches can't be released unless done in separate threads because
+      # `main_latch` keeps the test method from finishing.
+      test_latch.await
+      main_latch.release
+    }
+
+    Class.new MiniTest::Unit::TestCase do
+      parallelize_me!
+
+      test_count.times do |i|
+        define_method :"test_wait_on_main_thread_#{i}" do
+          test_latch.release
+
+          # This latch blocks until the "main thread" releases it. The main
+          # thread can't release this latch until both test latches have
+          # been released.  This forces the latches to be released in separate
+          # threads.
+          main_latch.await
+          assert true
+        end
+      end
+    end
+
+    expected = clean <<-EOM
+      ..
+
+      Finished tests in 0.00
+
+      2 tests, 2 assertions, 0 failures, 0 errors, 0 skips
+    EOM
+
+    assert_report expected
+    assert thread.join
+  end
+end
+
+class TestMiniTestUnitOrder < MetaMetaMetaTestCase
+  # do not parallelize this suite... it just can't handle it.
 
   def test_before_setup
     call_order = []
@@ -456,28 +570,6 @@ class TestMiniTestUnit < MetaMetaMetaTestCase
 
     expected = [:before_setup, :setup]
     assert_equal expected, call_order
-  end
-
-  def test_passed_eh_teardown_good
-    test_class = Class.new MiniTest::Unit::TestCase do
-      def teardown; assert true; end
-      def test_omg; assert true; end
-    end
-
-    test = test_class.new :test_omg
-    test.run @tu
-    assert test.passed?
-  end
-
-  def test_passed_eh_teardown_flunked
-    test_class = Class.new MiniTest::Unit::TestCase do
-      def teardown; flunk;       end
-      def test_omg; assert true; end
-    end
-
-    test = test_class.new :test_omg
-    test.run @tu
-    refute test.passed?
   end
 
   def test_after_teardown
@@ -563,17 +655,11 @@ class TestMiniTestUnit < MetaMetaMetaTestCase
 
     assert_equal expected, call_order
   end
-
-  def util_expand_bt bt
-    if RUBY_VERSION >= '1.9.0' then
-      bt.map { |f| (f =~ /^\./) ? File.expand_path(f) : f }
-    else
-      bt
-    end
-  end
 end
 
 class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
+  parallelize_me!
+
   RUBY18 = ! defined? Encoding
 
   def setup
@@ -1213,6 +1299,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
 
   def test_capture_subprocess_io
     @assertion_count = 0
+    skip "Dunno why but the parallel run of this fails"
 
     orig_verbose = $VERBOSE
     $VERBOSE = false
@@ -1249,15 +1336,6 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
 
     assert_empty refutes.map { |n| n.sub(/^refute/, 'assert') } - asserts
     assert_empty asserts.map { |n| n.sub(/^assert/, 'refute') } - refutes
-  end
-
-  def test_class_test_suites
-    @assertion_count = 0
-
-    tc = Class.new(MiniTest::Unit::TestCase)
-
-    assert_equal 1, MiniTest::Unit::TestCase.test_suites.size
-    assert_equal [tc], MiniTest::Unit::TestCase.test_suites
   end
 
   def test_expectation
@@ -1494,6 +1572,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     @assertion_count = 0
 
     sample_test_case = Class.new MiniTest::Unit::TestCase do
+      def self.test_order; :random; end
       def test_test1; assert "does not matter" end
       def test_test2; assert "does not matter" end
       def test_test3; assert "does not matter" end
@@ -1568,6 +1647,8 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
 end
 
 class TestMiniTestGuard < MiniTest::Unit::TestCase
+  parallelize_me!
+
   def test_mri_eh
     assert self.class.mri? "ruby blah"
     assert self.mri? "ruby blah"

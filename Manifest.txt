@@ -7,7 +7,9 @@ design_rationale.rb
 lib/hoe/minitest.rb
 lib/minitest/autorun.rb
 lib/minitest/benchmark.rb
+lib/minitest/hell.rb
 lib/minitest/mock.rb
+lib/minitest/parallel_each.rb
 lib/minitest/pride.rb
 lib/minitest/spec.rb
 lib/minitest/unit.rb

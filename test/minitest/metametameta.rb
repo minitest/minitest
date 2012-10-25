@@ -44,6 +44,7 @@ class MetaMetaMetaTestCase < MiniTest::Unit::TestCase
     srand 42
     MiniTest::Unit::TestCase.reset
     @tu = MiniTest::Unit.new
+
     MiniTest::Unit.runner = nil # protect the outer runner from the inner tests
   end
 
@@ -52,7 +53,7 @@ class MetaMetaMetaTestCase < MiniTest::Unit::TestCase
   end
 
   def with_output
-    Minitest::Unit.runner.synchronize do
+    synchronize do
       begin
         @output = StringIO.new("")
         MiniTest::Unit.output = @output
