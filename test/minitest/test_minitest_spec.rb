@@ -8,6 +8,8 @@ class ExampleA; end
 class ExampleB < ExampleA; end
 
 describe MiniTest::Spec do
+  # do not parallelize this suite... it just can't handle it.
+
   def assert_triggered expected = "blah", klass = MiniTest::Assertion
     @assertion_count += 2
 
@@ -561,6 +563,8 @@ describe MiniTest::Spec, :subject do
 end
 
 class TestMeta < MiniTest::Unit::TestCase
+  parallelize_me!
+
   def test_setup
     srand 42
     MiniTest::Unit::TestCase.reset
@@ -652,17 +656,15 @@ class TestMeta < MiniTest::Unit::TestCase
     _, _, z, before_list, after_list = util_structure
 
     @tu = MiniTest::Unit.new
-    @output = StringIO.new("")
     MiniTest::Unit.runner = nil # protect the outer runner from the inner tests
-    MiniTest::Unit.output = @output
 
-    tc = z.new :test_0002_anonymous
-    tc.run @tu
+    with_output do
+      tc = z.new :test_0002_anonymous
+      tc.run @tu
+    end
 
     assert_equal [1, 2, 3], before_list
     assert_equal [3, 2, 1], after_list
-  ensure
-    MiniTest::Unit.output = $stdout
   end
 
   def test_children
@@ -715,5 +717,18 @@ class TestMeta < MiniTest::Unit::TestCase
     assert_respond_to x.new(nil), "xyz"
     assert_respond_to y.new(nil), "xyz"
     assert_respond_to z.new(nil), "xyz"
+  end
+
+  def with_output # REFACTOR: dupe from metametameta
+    synchronize do
+      begin
+        @output = StringIO.new("")
+        MiniTest::Unit.output = @output
+
+        yield
+      ensure
+        MiniTest::Unit.output = STDOUT
+      end
+    end
   end
 end

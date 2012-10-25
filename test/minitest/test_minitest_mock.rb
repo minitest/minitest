@@ -4,6 +4,8 @@ require 'minitest/unit'
 MiniTest::Unit.autorun
 
 class TestMiniTestMock < MiniTest::Unit::TestCase
+  parallelize_me!
+
   def setup
     @mock = MiniTest::Mock.new.expect(:foo, nil)
     @mock.expect(:meaning_of_life, 42)
@@ -208,6 +210,8 @@ end
 require "minitest/metametameta"
 
 class TestMiniTestStub < MiniTest::Unit::TestCase
+  parallelize_me!
+
   def setup
     super
     MiniTest::Unit::TestCase.reset
@@ -224,13 +228,15 @@ class TestMiniTestStub < MiniTest::Unit::TestCase
   def assert_stub val_or_callable
     @assertion_count += 1
 
-    t = Time.now.to_i
+    synchronize do
+      t = Time.now.to_i
 
-    Time.stub :now, val_or_callable do
-      @tc.assert_equal 42, Time.now
+      Time.stub :now, val_or_callable do
+        @tc.assert_equal 42, Time.now
+      end
+
+      @tc.assert_operator Time.now.to_i, :>=, t
     end
-
-    @tc.assert_operator Time.now.to_i, :>=, t
   end
 
   def test_stub_value
@@ -244,13 +250,15 @@ class TestMiniTestStub < MiniTest::Unit::TestCase
   def test_stub_block_args
     @assertion_count += 1
 
-    t = Time.now.to_i
+    synchronize do
+      t = Time.now.to_i
 
-    Time.stub :now,  lambda { |n| n * 2 } do
-      @tc.assert_equal 42, Time.now(21)
+      Time.stub :now,  lambda { |n| n * 2 } do
+        @tc.assert_equal 42, Time.now(21)
+      end
+
+      @tc.assert_operator Time.now.to_i, :>=, t
     end
-
-    @tc.assert_operator Time.now.to_i, :>=, t
   end
 
   def test_stub_callable

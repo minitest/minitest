@@ -1,6 +1,7 @@
 require 'optparse'
 require 'rbconfig'
 require 'thread' # required for 1.8
+require 'minitest/parallel_each'
 
 ##
 # Minimal (mostly drop-in) replacement for test-unit.
@@ -437,6 +438,8 @@ module MiniTest
       catch(sym) do
         begin
           yield
+        rescue ThreadError => e       # wtf?!? 1.8 + threads == suck
+          default += ", not :#{e.message[/uncaught throw \`(\w+?)\'/, 1]}"
         rescue ArgumentError => e     # 1.9 exception
           default += ", not #{e.message.split(/ /).last}"
         rescue NameError => e         # 1.8 exception
@@ -468,7 +471,7 @@ module MiniTest
 
       captured_stdout, captured_stderr = StringIO.new, StringIO.new
 
-      MiniTest::Unit.runner.synchronize do
+      synchronize do
         orig_stdout, orig_stderr = $stdout, $stderr
         $stdout, $stderr         = captured_stdout, captured_stderr
 
@@ -503,7 +506,7 @@ module MiniTest
 
       captured_stdout, captured_stderr = Tempfile.new("out"), Tempfile.new("err")
 
-      MiniTest::Unit.runner.synchronize do
+      synchronize do
         orig_stdout, orig_stderr = $stdout.dup, $stderr.dup
         $stdout.reopen captured_stdout
         $stderr.reopen captured_stderr
@@ -714,6 +717,15 @@ module MiniTest
       msg ||= "Skipped, no message given"
       raise MiniTest::Skip, msg, bt
     end
+
+    ##
+    # Takes a block and wraps it with the runner's shared mutex.
+
+    def synchronize
+      Minitest::Unit.runner.synchronize do
+        yield
+      end
+    end
   end
 
   class Unit # :nodoc:
@@ -867,10 +879,15 @@ module MiniTest
     end
 
     ##
-    # Runs all the +suites+ for a given +type+.
+    # Runs all the +suites+ for a given +type+. Runs suites declaring
+    # a test_order of +:parallel+ in parallel, and everything else
+    # serial.
 
     def _run_suites suites, type
-      suites.map { |suite| _run_suite suite, type }
+      parallel, serial = suites.partition { |s| s.test_order == :parallel }
+
+      ParallelEach.new(parallel).map { |suite| _run_suite suite, type } +
+        serial.map { |suite| _run_suite suite, type }
     end
 
     ##
@@ -1346,6 +1363,18 @@ module MiniTest
         end
       end
 
+      ##
+      # Call this at the top of your tests when you want to run your
+      # tests in parallel. In doing so, you're admitting that you rule
+      # and your tests are awesome.
+
+      def self.parallelize_me!
+        class << self
+          undef_method :test_order if method_defined? :test_order
+          define_method :test_order do :parallel end
+        end
+      end
+
       def self.inherited klass # :nodoc:
         @@test_suites[klass] = true
         klass.reset_setup_teardown_hooks
@@ -1364,6 +1393,9 @@ module MiniTest
         methods = public_instance_methods(true).grep(/^test/).map { |m| m.to_s }
 
         case self.test_order
+        when :parallel
+          max = methods.size
+          ParallelEach.new methods.sort.sort_by { rand max }
         when :random then
           max = methods.size
           methods.sort.sort_by { rand max }
