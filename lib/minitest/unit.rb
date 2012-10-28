@@ -139,6 +139,10 @@ module MiniTest
           result.sub!(/^\+\+\+ .+/, "+++ actual")
 
           if result.empty? then
+            if exp.is_a?(Array) && act.is_a?(Array)
+              diff = (exp | act) - (exp & act)
+              exp = diff.first
+            end
             klass = exp.class
             result = [
                       "No visible difference in the #{klass}#inspect output.",

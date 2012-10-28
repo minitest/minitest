@@ -780,6 +780,19 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     end
   end
 
+  def test_assert_equal_array_of_objects_different_hex_invisible
+    object1 = Object.new
+    object2 = Object.new
+
+    msg = "No visible difference in the Object#inspect output.
+           You should look at your implementation of Object#==.
+           [#<Object:0xXXXXXX>]".gsub(/^ +/, "")
+
+    util_assert_triggered msg do
+      @tc.assert_equal [object1], [object2]
+    end
+  end
+
   def test_assert_equal_different_long
     msg = "--- expected
            +++ actual
