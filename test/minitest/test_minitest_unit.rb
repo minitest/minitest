@@ -784,7 +784,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     object1 = Object.new
     object2 = Object.new
 
-    msg = "No visible difference in the Object#inspect output.
+    msg = "No visible difference in the Array#inspect output.
            You should look at your implementation of Object#==.
            [#<Object:0xXXXXXX>]".gsub(/^ +/, "")
 

@@ -139,14 +139,18 @@ module MiniTest
           result.sub!(/^\+\+\+ .+/, "+++ actual")
 
           if result.empty? then
+            klass          = exp.class
+
             if exp.is_a?(Array) && act.is_a?(Array)
               diff = (exp | act) - (exp & act)
-              exp = diff.first
+              klass_compared = diff.first.class
+            else
+              klass_compared = exp.class
             end
-            klass = exp.class
+
             result = [
                       "No visible difference in the #{klass}#inspect output.",
-                      "You should look at your implementation of #{klass}#==.",
+                      "You should look at your implementation of #{klass_compared}#==.",
                       expect
                      ].join "\n"
           end
