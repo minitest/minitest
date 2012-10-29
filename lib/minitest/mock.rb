@@ -33,7 +33,7 @@ module MiniTest
     #   @mock.expect(:do_something_with, true, [some_obj, true])
     #   @mock.do_something_with(some_obj, true) # => true
     #
-    #   @mock.expect(:do_something_else, nil do |*args|
+    #   @mock.expect(:do_something_else, true) do |*args|
     #     args[0] == "buggs" && args[1] == :bunny
     #   end
     #
