@@ -250,6 +250,17 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
     assert_equal exp, e.message
   end
 
+  def test_mock_returns_retval_when_called_with_block
+    mock = MiniTest::Mock.new
+    mock.expect(:foo, 32) do
+      true
+    end
+
+    rs = mock.foo
+
+    assert_equal rs, 32
+  end
+
   def util_verify_bad exp
     e = assert_raises MockExpectationError do
       @mock.verify
