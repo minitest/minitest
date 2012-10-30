@@ -141,16 +141,9 @@ module MiniTest
           if result.empty? then
             klass = exp.class
 
-            if exp.is_a?(Array) && act.is_a?(Array)
-              diff = (exp | act) - (exp & act)
-              klass_compared = diff.first.class
-            else
-              klass_compared = exp.class
-            end
-
             result = [
                       "No visible difference in the #{klass}#inspect output.",
-                      "You should look at your implementation of #{klass_compared}#==.",
+                      "You should look at your implementation of #{klass}#== or the #== method of its members if it is Enumerable.",
                       expect
                      ].join "\n"
           end
