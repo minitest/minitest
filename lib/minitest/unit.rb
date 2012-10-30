@@ -139,7 +139,7 @@ module MiniTest
           result.sub!(/^\+\+\+ .+/, "+++ actual")
 
           if result.empty? then
-            klass          = exp.class
+            klass = exp.class
 
             if exp.is_a?(Array) && act.is_a?(Array)
               diff = (exp | act) - (exp & act)
