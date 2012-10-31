@@ -33,8 +33,8 @@ module MiniTest
     #   @mock.expect(:do_something_with, true, [some_obj, true])
     #   @mock.do_something_with(some_obj, true) # => true
     #
-    #   @mock.expect(:do_something_else, true) do |*args|
-    #     args[0] == "buggs" && args[1] == :bunny
+    #   @mock.expect(:do_something_else, true) do |a1, a2|
+    #     a1 == "buggs" && a2 == :bunny
     #   end
     #
     # +args+ is compared to the expected args using case equality (ie, the
@@ -50,7 +50,7 @@ module MiniTest
 
     def expect(name, retval, args=[], &blk)
       if block_given?
-        raise ArgumentError, "args ignored when supplying a block" unless [] == args
+        raise ArgumentError, "args ignored when supplying a block" unless args.empty?
         @expected_calls[name] << { :retval => retval, :block => blk }
       else
         raise ArgumentError, "args must be an array" unless Array === args
@@ -108,7 +108,7 @@ module MiniTest
       expected_args, retval, val_block = expected_call[:args], expected_call[:retval], expected_call[:block]
 
       if val_block then
-        raise MockExpectationError, "mocked method #{sym} failed block validation" unless val_block.call(*args)
+        raise MockExpectationError, "mocked method #{sym} failed block validation" unless val_block.call(args)
 
         # keep "verify" happy
         @actual_calls[sym] << expected_call

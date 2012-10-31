@@ -212,11 +212,10 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
   def test_mock_block_is_passed_function_params
     arg1, arg2, arg3 = :bar, [1,2,3], {:a => 'a'}
     mock = MiniTest::Mock.new
-    mock.expect :foo, nil do |*args|
-      args[0] == arg1 &&
-      args[1] == arg2 &&
-      args[2] == arg3 &&
-      args.length == 3
+    mock.expect :foo, nil do |a1, a2, a3|
+      a1 == arg1 &&
+      a2 == arg2 &&
+      a3 == arg3
     end
 
     mock.foo arg1, arg2, arg3
