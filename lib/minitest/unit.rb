@@ -1364,6 +1364,20 @@ module MiniTest
       end
 
       ##
+      # Make diffs for this TestCase use #pretty_inspect so that diff
+      # in assert_equal can be more details. NOTE: this is much slower
+      # than the regular inspect but much more usable for complex
+      # objects.
+
+      def self.make_my_diffs_pretty!
+        require 'pp'
+
+        define_method :mu_pp do |o|
+          o.pretty_inspect
+        end
+      end
+
+      ##
       # Call this at the top of your tests when you want to run your
       # tests in parallel. In doing so, you're admitting that you rule
       # and your tests are awesome.
