@@ -439,7 +439,7 @@ module MiniTest
         begin
           yield
         rescue ThreadError => e       # wtf?!? 1.8 + threads == suck
-          default += ", not :#{e.message[/uncaught throw \`(\w+?)\'/, 1]}"
+          default += ", not \:#{e.message[/uncaught throw \`(\w+?)\'/, 1]}"
         rescue ArgumentError => e     # 1.9 exception
           default += ", not #{e.message.split(/ /).last}"
         rescue NameError => e         # 1.8 exception
