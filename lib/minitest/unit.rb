@@ -358,30 +358,30 @@ module MiniTest
     def assert_raises *exp
       msg = "#{exp.pop}.\n" if String === exp.last
 
-      should_raise = false
       begin
         yield
-        should_raise = true
       rescue MiniTest::Skip => e
-        details = "#{msg}#{mu_pp(exp)} exception expected, not"
-
-        if exp.include? MiniTest::Skip then
-          return e
-        else
-          raise e
-        end
+        return e if exp.include? MiniTest::Skip
+        raise e
       rescue Exception => e
-        details = "#{msg}#{mu_pp(exp)} exception expected, not"
-        assert(exp.any? { |ex|
-                 ex.instance_of?(Module) ? e.kind_of?(ex) : ex == e.class
-               }, exception_details(e, details))
+        expected = exp.any? { |ex|
+          if ex.instance_of? Module then
+            e.kind_of? ex
+          else
+            e.instance_of? ex
+          end
+        }
+
+        assert expected, proc {
+          exception_details(e, "#{msg}#{mu_pp(exp)} exception expected, not")
+        }
 
         return e
       end
 
       exp = exp.first if exp.size == 1
-      flunk "#{msg}#{mu_pp(exp)} expected but nothing was raised." if
-        should_raise
+
+      flunk "#{msg}#{mu_pp(exp)} expected but nothing was raised."
     end
 
     ##
