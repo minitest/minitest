@@ -290,7 +290,6 @@ minitest-metadata      :: Annotate tests with metadata (key-value).
 minitest-mongoid       :: Mongoid assertion matchers for MiniTest
 minitest-must_not      :: Provides must_not as an alias for wont in MiniTest
 minitest-predicates    :: Adds support for .predicate? methods
-minitest-pry           :: A minitest plugin to drop into pry on assertion failure.
 minitest-rails         :: MiniTest integration for Rails 3.1.
 minitest-reporters     :: Create customizable MiniTest output formats
 minitest-rg            :: redgreen minitest
@@ -301,6 +300,7 @@ minitest_owrapper      :: Get tests results as a TestResult object.
 minitest_should        :: Shoulda style syntax for minitest test::unit.
 minitest_tu_shim       :: minitest_tu_shim bridges between test/unit and minitest.
 mongoid-minitest       :: MiniTest matchers for Mongoid.
+pry-rescue             :: A pry plugin w/ minitest support. See pry-rescue/minitest.rb.
 
 == REQUIREMENTS:
 
