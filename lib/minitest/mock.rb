@@ -24,7 +24,7 @@ module MiniTest
     end
 
     ##
-    # Expect that method +name+ is called, optionally with +args+, and returns
+    # Expect that method +name+ is called, optionally with +args+ or a +blk+, and returns
     # +retval+.
     #
     #   @mock.expect(:meaning_of_life, 42)
@@ -32,6 +32,10 @@ module MiniTest
     #
     #   @mock.expect(:do_something_with, true, [some_obj, true])
     #   @mock.do_something_with(some_obj, true) # => true
+    #
+    #   @mock.expect(:do_something_else, true) do |a1, a2|
+    #     a1 == "buggs" && a2 == :bunny
+    #   end
     #
     # +args+ is compared to the expected args using case equality (ie, the
     # '===' operator), allowing for less specific expectations.
@@ -44,9 +48,14 @@ module MiniTest
     #   @mock.uses_one_string("bar") # => true
     #   @mock.verify  # => raises MockExpectationError
 
-    def expect(name, retval, args=[])
-      raise ArgumentError, "args must be an array" unless Array === args
-      @expected_calls[name] << { :retval => retval, :args => args }
+    def expect(name, retval, args=[], &blk)
+      if block_given?
+        raise ArgumentError, "args ignored when supplying a block" unless args.empty?
+        @expected_calls[name] << { :retval => retval, :block => blk }
+      else
+        raise ArgumentError, "args must be an array" unless Array === args
+        @expected_calls[name] << { :retval => retval, :args => args }
+      end
       self
     end
 
@@ -96,26 +105,33 @@ module MiniTest
           [sym, args]
       end
 
-      expected_args, retval = expected_call[:args], expected_call[:retval]
+      expected_args, retval, val_block = expected_call[:args], expected_call[:retval], expected_call[:block]
 
-      if expected_args.size != args.size then
-        raise ArgumentError, "mocked method %p expects %d arguments, got %d" %
-          [sym, expected_args.size, args.size]
+      if val_block then
+        raise MockExpectationError, "mocked method #{sym} failed block validation" unless val_block.call(args)
+
+        # keep "verify" happy
+        @actual_calls[sym] << expected_call
+      else
+        if expected_args.size != args.size then
+          raise ArgumentError, "mocked method %p expects %d arguments, got %d" %
+            [sym, expected_args.size, args.size]
+        end
+
+        fully_matched = expected_args.zip(args).all? { |mod, a|
+          mod === a or mod == a
+        }
+
+        unless fully_matched then
+          raise MockExpectationError, "mocked method %p called with unexpected arguments %p" %
+            [sym, args]
+        end
+
+        @actual_calls[sym] << {
+          :retval => retval,
+          :args => expected_args.zip(args).map { |mod, a| mod === a ? mod : a }
+        }
       end
-
-      fully_matched = expected_args.zip(args).all? { |mod, a|
-        mod === a or mod == a
-      }
-
-      unless fully_matched then
-        raise MockExpectationError, "mocked method %p called with unexpected arguments %p" %
-          [sym, args]
-      end
-
-      @actual_calls[sym] << {
-        :retval => retval,
-        :args => expected_args.zip(args).map { |mod, a| mod === a ? mod : a }
-      }
 
       retval
     end
