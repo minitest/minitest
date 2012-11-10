@@ -198,6 +198,68 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
     assert_equal exp, e.message
   end
 
+  def test_verify_passes_when_mock_block_returns_true
+    mock = MiniTest::Mock.new
+    mock.expect :foo, nil do
+      true
+    end
+
+    mock.foo
+
+    assert mock.verify
+  end
+
+  def test_mock_block_is_passed_function_params
+    arg1, arg2, arg3 = :bar, [1,2,3], {:a => 'a'}
+    mock = MiniTest::Mock.new
+    mock.expect :foo, nil do |a1, a2, a3|
+      a1 == arg1 &&
+      a2 == arg2 &&
+      a3 == arg3
+    end
+
+    mock.foo arg1, arg2, arg3
+
+    assert mock.verify
+  end
+
+  def test_verify_fails_when_mock_block_returns_false
+    mock = MiniTest::Mock.new
+    mock.expect :foo, nil do
+      false
+    end
+
+    e = assert_raises(MockExpectationError) { mock.foo }
+    exp = "mocked method :foo failed block w/ []"
+
+    assert_equal exp, e.message
+  end
+
+  def test_mock_block_throws_if_args_passed
+    mock = MiniTest::Mock.new
+
+    e = assert_raises(ArgumentError) do
+      mock.expect :foo, nil, [:a, :b, :c] do
+        true
+      end
+    end
+
+    exp = "args ignored when block given"
+
+    assert_equal exp, e.message
+  end
+
+  def test_mock_returns_retval_when_called_with_block
+    mock = MiniTest::Mock.new
+    mock.expect(:foo, 32) do
+      true
+    end
+
+    rs = mock.foo
+
+    assert_equal rs, 32
+  end
+
   def util_verify_bad exp
     e = assert_raises MockExpectationError do
       @mock.verify
