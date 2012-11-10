@@ -302,6 +302,37 @@ minitest_tu_shim       :: minitest_tu_shim bridges between test/unit and minites
 mongoid-minitest       :: MiniTest matchers for Mongoid.
 pry-rescue             :: A pry plugin w/ minitest support. See pry-rescue/minitest.rb.
 
+== Unknown Extensions:
+
+Authors... Please send me a pull request with a description of your minitest extension.
+
+* assay-minitest
+* capybara_minitest_spec
+* detroit-minitest
+* em-minitest-spec
+* flexmock-minitest
+* guard-minitest
+* guard-minitest-decisiv
+* minitest-activemodel
+* minitest-ar-assertions
+* minitest-around
+* minitest-capybara-unit
+* minitest-colorer
+* minitest-deluxe
+* minitest-extra-assertions
+* minitest-nc
+* minitest-rails-capybara
+* minitest-rails-shoulda
+* minitest-shouldify
+* minitest-spec
+* minitest-spec-context
+* minitest-spec-rails
+* minitest-spec-should
+* minitest-sugar
+* minitest_should
+* mongoid-minitest
+* spork-minitest
+
 == REQUIREMENTS:
 
 * Ruby 1.8, maybe even 1.6 or lower. No magic is involved.
