@@ -141,7 +141,7 @@ module MiniTest
           if result.empty? then
             klass, klass_of_compared = exp.class, exp.class
 
-            if exp.class.include?(Enumerable) && act.class.include?(Enumerable)
+            if klass.include?(Enumerable)
               exp_a, act_a = exp.to_a.flatten, act.to_a.flatten
               diff = (exp_a | act_a) - (exp_a & act_a)
               klass_of_compared = diff.first.class
