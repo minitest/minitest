@@ -772,11 +772,35 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     o2 = Object.new
 
     msg = "No visible difference in the Object#inspect output.
-           You should look at your implementation of Object#== or the #== method of its members if it is Enumerable.
+           You should look at your implementation of Object#==.
            #<Object:0xXXXXXX>".gsub(/^ +/, "")
 
     util_assert_triggered msg do
       @tc.assert_equal o1, o2
+    end
+  end
+
+  def test_assert_equal_array_of_objects_different_hex_invisible
+    object1 = Object.new
+    object2 = Object.new
+    msg = "No visible difference in the Array#inspect output.
+           You should look at your implementation of Object#==.
+           [#<Object:0xXXXXXX>]".gsub(/^ +/, "")
+    util_assert_triggered msg do
+      @tc.assert_equal [object1], [object2]
+    end
+  end
+
+  def test_assert_equal_hash_of_objects_different_hex_invisible
+    h1, h2 = {}, {}
+    h1[1] = Object.new
+    h2[1] = Object.new
+    msg = "No visible difference in the Hash#inspect output.
+           You should look at your implementation of Object#==.
+           {1=>#<Object:0xXXXXXX>}".gsub(/^ +/, "")
+
+    util_assert_triggered msg do
+      @tc.assert_equal(h1, h2)
     end
   end
 
@@ -798,7 +822,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
 
   def test_assert_equal_different_long_invisible
     msg = "No visible difference in the String#inspect output.
-           You should look at your implementation of String#== or the #== method of its members if it is Enumerable.
+           You should look at your implementation of String#==.
            \"blahblahblahblahblahblahblahblahblahblah\"".gsub(/^ +/, "")
 
     util_assert_triggered msg do

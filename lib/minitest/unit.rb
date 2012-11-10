@@ -139,11 +139,17 @@ module MiniTest
           result.sub!(/^\+\+\+ .+/, "+++ actual")
 
           if result.empty? then
-            klass = exp.class
+            klass, klass_of_compared = exp.class, exp.class
+
+            if exp.class.include?(Enumerable) && act.class.include?(Enumerable)
+              exp_a, act_a = exp.to_a.flatten, act.to_a.flatten
+              diff = (exp_a | act_a) - (exp_a & act_a)
+              klass_of_compared = diff.first.class
+            end
 
             result = [
                       "No visible difference in the #{klass}#inspect output.",
-                      "You should look at your implementation of #{klass}#== or the #== method of its members if it is Enumerable.",
+                      "You should look at your implementation of #{klass_of_compared}#==.",
                       expect
                      ].join "\n"
           end
