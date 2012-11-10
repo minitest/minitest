@@ -24,14 +24,18 @@ module MiniTest
     end
 
     ##
-    # Expect that method +name+ is called, optionally with +args+, and returns
-    # +retval+.
+    # Expect that method +name+ is called, optionally with +args+ or a
+    # +blk+, and returns +retval+.
     #
     #   @mock.expect(:meaning_of_life, 42)
     #   @mock.meaning_of_life # => 42
     #
     #   @mock.expect(:do_something_with, true, [some_obj, true])
     #   @mock.do_something_with(some_obj, true) # => true
+    #
+    #   @mock.expect(:do_something_else, true) do |a1, a2|
+    #     a1 == "buggs" && a2 == :bunny
+    #   end
     #
     # +args+ is compared to the expected args using case equality (ie, the
     # '===' operator), allowing for less specific expectations.
@@ -44,9 +48,14 @@ module MiniTest
     #   @mock.uses_one_string("bar") # => true
     #   @mock.verify  # => raises MockExpectationError
 
-    def expect(name, retval, args=[])
-      raise ArgumentError, "args must be an array" unless Array === args
-      @expected_calls[name] << { :retval => retval, :args => args }
+    def expect(name, retval, args=[], &blk)
+      if block_given?
+        raise ArgumentError, "args ignored when block given" unless args.empty?
+        @expected_calls[name] << { :retval => retval, :block => blk }
+      else
+        raise ArgumentError, "args must be an array" unless Array === args
+        @expected_calls[name] << { :retval => retval, :args => args }
+      end
       self
     end
 
@@ -96,7 +105,17 @@ module MiniTest
           [sym, args]
       end
 
-      expected_args, retval = expected_call[:args], expected_call[:retval]
+      expected_args, retval, val_block =
+        expected_call.values_at(:args, :retval, :block)
+
+      if val_block then
+        raise MockExpectationError, "mocked method %p failed block w/ %p" %
+          [sym, args] unless val_block.call(args)
+
+        # keep "verify" happy
+        @actual_calls[sym] << expected_call
+        return retval
+      end
 
       if expected_args.size != args.size then
         raise ArgumentError, "mocked method %p expects %d arguments, got %d" %
