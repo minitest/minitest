@@ -49,6 +49,17 @@ discovery.
 
     -- Piotr Szotkowski
 
+Comparing to rspec:
+
+    rspec is a testing DSL. minitest is ruby.
+
+    -- Adam Hawkins, "Bow Before MiniTest"
+
+minitest doesn't reinvent anything that ruby already provides, like:
+classes, modules, inheritance, methods. This means you only have to
+learn ruby to use minitest and all of your regular OO practices like
+extract-method refactorings still apply.
+
 == FEATURES/PROBLEMS:
 
 * minitest/autorun - the easy and explicit way to run all your tests.
