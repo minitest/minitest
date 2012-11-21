@@ -562,13 +562,28 @@ describe MiniTest::Spec, :subject do
   end
 end
 
+class TestMetaStatic < MiniTest::Unit::TestCase
+  def test_children
+    MiniTest::Spec.children.clear # prevents parallel run
+
+    x = y = z = nil
+    x = describe "top-level thingy" do
+      y = describe "first thingy" do end
+
+      it "top-level-it" do end
+
+      z = describe "second thingy" do end
+    end
+
+    assert_equal [x], MiniTest::Spec.children
+    assert_equal [y, z], x.children
+    assert_equal [], y.children
+    assert_equal [], z.children
+  end
+end
+
 class TestMeta < MiniTest::Unit::TestCase
   parallelize_me!
-
-  def test_setup
-    srand 42
-    MiniTest::Unit::TestCase.reset
-  end
 
   def util_structure
     x = y = z = nil
@@ -665,24 +680,6 @@ class TestMeta < MiniTest::Unit::TestCase
 
     assert_equal [1, 2, 3], before_list
     assert_equal [3, 2, 1], after_list
-  end
-
-  def test_children
-    MiniTest::Spec.children.clear
-
-    x = y = z = nil
-    x = describe "top-level thingy" do
-      y = describe "first thingy" do end
-
-      it "top-level-it" do end
-
-      z = describe "second thingy" do end
-    end
-
-    assert_equal [x], MiniTest::Spec.children
-    assert_equal [y, z], x.children
-    assert_equal [], y.children
-    assert_equal [], z.children
   end
 
   def test_describe_first_structure
