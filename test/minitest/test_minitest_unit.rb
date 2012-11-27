@@ -737,6 +737,30 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     @tc.assert_equal 1, 1
   end
 
+  def test_assert_equal_different_collection_array_hex_invisible
+    object1 = Object.new
+    object2 = Object.new
+    msg = "No visible difference in the Array#inspect output.
+           You should look at the implementation of #== on Array or its members.
+           [#<Object:0xXXXXXX>]".gsub(/^ +/, "")
+    util_assert_triggered msg do
+      @tc.assert_equal [object1], [object2]
+    end
+  end
+
+  def test_assert_equal_different_collection_hash_hex_invisible
+    h1, h2 = {}, {}
+    h1[1] = Object.new
+    h2[1] = Object.new
+    msg = "No visible difference in the Hash#inspect output.
+           You should look at the implementation of #== on Hash or its members.
+           {1=>#<Object:0xXXXXXX>}".gsub(/^ +/, "")
+
+    util_assert_triggered msg do
+      @tc.assert_equal h1, h2
+    end
+  end
+
   def test_assert_equal_different_diff_deactivated
     without_diff do
       util_assert_triggered util_msg("haha" * 10, "blah" * 10) do
@@ -772,7 +796,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     o2 = Object.new
 
     msg = "No visible difference in the Object#inspect output.
-           You should look at your implementation of Object#==.
+           You should look at the implementation of #== on Object or its members.
            #<Object:0xXXXXXX>".gsub(/^ +/, "")
 
     util_assert_triggered msg do
@@ -798,7 +822,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
 
   def test_assert_equal_different_long_invisible
     msg = "No visible difference in the String#inspect output.
-           You should look at your implementation of String#==.
+           You should look at the implementation of #== on String or its members.
            \"blahblahblahblahblahblahblahblahblahblah\"".gsub(/^ +/, "")
 
     util_assert_triggered msg do
