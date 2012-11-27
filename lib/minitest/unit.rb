@@ -141,10 +141,11 @@ module MiniTest
           if result.empty? then
             klass = exp.class
             result = [
-                      "No visible difference in the #{klass}#inspect output.",
-                      "You should look at your implementation of #{klass}#==.",
-                      expect
-                     ].join "\n"
+                      "No visible difference in the #{klass}#inspect output.\n",
+                      "You should look at the implementation of #== on ",
+                      "#{klass} or its members.\n",
+                      expect,
+                     ].join
           end
         end
       end
