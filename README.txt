@@ -275,6 +275,7 @@ fixture loading:
 
 == Known Extensions:
 
+capybara_minitest_spec  :: Bridge between Capybara RSpec matchers and MiniTest::Spec expectations (e.g. page.must_have_content('Title')).
 minitest-capistrano     :: Assertions and expectations for testing Capistrano recipes
 minitest-capybara       :: Capybara matchers support for minitest unit and spec
 minitest-chef-handler   :: Run Minitest suites as Chef report handlers
@@ -320,7 +321,6 @@ pry-rescue              :: A pry plugin w/ minitest support. See pry-rescue/mini
 Authors... Please send me a pull request with a description of your minitest extension.
 
 * assay-minitest
-* capybara_minitest_spec
 * detroit-minitest
 * em-minitest-spec
 * flexmock-minitest
