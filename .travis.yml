@@ -1,0 +1,25 @@
+language: ruby
+script: rake test
+
+rvm:
+  - ree
+  - "1.8.7"
+  - "1.9.2"
+  - "1.9.3"
+  - jruby-18mode
+  - jruby-19mode
+  - rbx-18mode
+  - rbx-19mode
+  - ruby-head
+
+# Allow failures for these rubies.
+# We'll fix them later, hopefully!
+matrix:
+  allow_failures:
+    - rvm: jruby-18mode
+    - rvm: jruby-19mode
+    - rvm: rbx-18mode
+    - rvm: rbx-19mode
+    - rvm: ruby-head
+
+install: gem install hoe
