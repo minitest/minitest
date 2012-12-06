@@ -221,6 +221,9 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
     end
   end
 
+A note on stubbing: In order to stub a method, the method must
+actually exist prior to stubbing.
+
 === Customizable Test Runner Types:
 
 MiniTest::Unit.runner=(runner) provides an easy way of creating custom
@@ -277,6 +280,7 @@ fixture loading:
 
 capybara_minitest_spec  :: Bridge between Capybara RSpec matchers and MiniTest::Spec expectations (e.g. page.must_have_content('Title')).
 minispec-metadata       :: Metadata for describe/it blocks (e.g. `it 'requires JS driver', js: true do`)
+minitest-around         :: Around block for minitest. An alternative to setup/teardown dance.
 minitest-capistrano     :: Assertions and expectations for testing Capistrano recipes
 minitest-capybara       :: Capybara matchers support for minitest unit and spec
 minitest-chef-handler   :: Run Minitest suites as Chef report handlers
@@ -329,7 +333,6 @@ Authors... Please send me a pull request with a description of your minitest ext
 * guard-minitest-decisiv
 * minitest-activemodel
 * minitest-ar-assertions
-* minitest-around
 * minitest-capybara-unit
 * minitest-colorer
 * minitest-deluxe
