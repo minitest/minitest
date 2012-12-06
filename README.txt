@@ -276,6 +276,7 @@ fixture loading:
 == Known Extensions:
 
 capybara_minitest_spec  :: Bridge between Capybara RSpec matchers and MiniTest::Spec expectations (e.g. page.must_have_content('Title')).
+minispec-metadata       :: Metadata for describe/it blocks (e.g. `it 'requires JS driver', js: true do`)
 minitest-capistrano     :: Assertions and expectations for testing Capistrano recipes
 minitest-capybara       :: Capybara matchers support for minitest unit and spec
 minitest-chef-handler   :: Run Minitest suites as Chef report handlers
