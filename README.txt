@@ -222,7 +222,12 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
   end
 
 A note on stubbing: In order to stub a method, the method must
-actually exist prior to stubbing.
+actually exist prior to stubbing. Use a singleton method to create a
+new non-existing method:
+
+  def obj_under_test.fake_method
+    ...
+  end
 
 === Customizable Test Runner Types:
 
