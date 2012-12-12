@@ -207,13 +207,22 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   ##
   # Essentially, define an accessor for +name+ with +block+.
   #
-  # Why use let instead of def? I honestly don't know.
+  # basically the same as def but saves a few lines when doing 1-liners + has caching build-in
 
   def self.let name, &block
     define_method name do
       @_memoized ||= {}
       @_memoized.fetch(name) { |k| @_memoized[k] = instance_eval(&block) }
     end
+  end
+
+  ##
+  # same as let but is auto-executed before each example
+  #
+
+  def self.let! name, &block
+    let(name, &block)
+    before{ send(name) }
   end
 
   ##
