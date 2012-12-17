@@ -1,4 +1,4 @@
-class Minitest::Unit::TestCase
+class Minitest::Unit::TestCase # :nodoc:
   class << self
     alias :old_test_order :test_order
 

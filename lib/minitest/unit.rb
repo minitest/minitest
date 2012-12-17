@@ -33,6 +33,9 @@ module MiniTest
   class Skip < Assertion; end
 
   class << self
+    ##
+    # Filter object for backtraces.
+
     attr_accessor :backtrace_filter
   end
 

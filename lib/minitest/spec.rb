@@ -179,7 +179,7 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   ##
   # Define an expectation with name +desc+. Name gets morphed to a
   # proper test method name. For some freakish reason, people who
-  # write specs don't like class inheritence, so this goes way out of
+  # write specs don't like class inheritance, so this goes way out of
   # its way to make sure that expectations aren't inherited.
   #
   # This is also aliased to #specify and doesn't require a +desc+ arg.
