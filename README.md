@@ -394,6 +394,10 @@ Gem.find_files and many other things (gem which, gem contents, etc).
 
 Just install minitest as a gem for real and you'll be happier.
 
+## CHANGELOG:
+
+To see what has changed in recent versions, see the [CHANGELOG](https://github.com/seattlerb/minitest/blob/master/CHANGELOG.md).
+
 ## LICENSE:
 
 Released under the MIT License. See the [LICENSE](https://github.com/seattlerb/minitest/blob/master/LICENSE.md) file for further details.
