@@ -1,22 +1,22 @@
-=== 4.3.3 / 2012-12-06
+### 4.3.3 / 2012-12-06
 
 * 1 bug fix:
 
   * Updated information about stubbing. (daviddavis)
 
-=== 4.3.2 / 2012-11-27
+### 4.3.2 / 2012-11-27
 
 * 1 minor enhancement:
 
   * Improved assert_equals error message to point you at #== of member objects. (kcurtin)
 
-=== 4.3.1 / 2012-11-23
+### 4.3.1 / 2012-11-23
 
 * 1 bug fix:
 
   * Moved test_children to serial testcase to prevent random failures.
 
-=== 4.3.0 / 2012-11-17
+### 4.3.0 / 2012-11-17
 
 * 4 minor enhancements:
 
@@ -25,7 +25,7 @@
   * Gave some much needed love to assert_raises.
   * Mock#expect can take a block to custom-validate args. (gmoothart)
 
-=== 4.2.0 / 2012-11-02
+### 4.2.0 / 2012-11-02
 
 * 4 major enhancements:
 
@@ -41,7 +41,7 @@
   * Added TestCase.parallelize_me!
   * Lock on capture_io for thread safety (tenderlove)
 
-=== 4.1.0 / 2012-10-05
+### 4.1.0 / 2012-10-05
 
 * 2 minor enhancements:
 
@@ -52,7 +52,7 @@
 
   * OMG I'm so dumb. Fixed access to deprecated hook class methods. I hate ruby modules. (route)
 
-=== 4.0.0 / 2012-09-28
+### 4.0.0 / 2012-09-28
 
 * 1 major enhancement:
 
@@ -68,20 +68,20 @@
   * Fixed use of minitest/pride with --help. (zw963)
   * Made 'No visible difference.' message more clear. (ckrailo)
 
-=== 3.5.0 / 2012-09-21
+### 3.5.0 / 2012-09-21
 
 * 1 minor enhancement:
 
   * Added #capture_subprocess_io. (route)
 
-=== 3.4.0 / 2012-09-05
+### 3.4.0 / 2012-09-05
 
 * 2 minor enhancements:
 
   * assert_output can now take regexps for expected values. (suggested by stomar)
   * Clarified that ruby 1.9/2.0's phony gems cause serious confusion for rubygems.
 
-=== 3.3.0 / 2012-07-26
+### 3.3.0 / 2012-07-26
 
 * 1 major enhancement:
 
@@ -99,7 +99,7 @@
   * Fixed #passed? when used against a test that called flunk. (floehopper)
   * Fixed rdoc bug preventing doco for some expectations. (stomar).
 
-=== 3.2.0 / 2012-06-26
+### 3.2.0 / 2012-06-26
 
 * 1 minor enhancement:
 
@@ -109,20 +109,20 @@
 
   * Fixed verbose test that only fails when run in verbose mode. mmmm irony.
 
-=== 3.1.0 / 2012-06-13
+### 3.1.0 / 2012-06-13
 
 * 2 minor enhancements:
 
   * Removed LONG deprecated Unit.out accessor
   * Removed generated method name munging from minitest/spec. (ordinaryzelig/tenderlove)
 
-=== 3.0.1 / 2012-05-24
+### 3.0.1 / 2012-05-24
 
 * 1 bug fix:
 
   * I'm a dumbass and refactored into Mock#call. Renamed to #__call so you can mock #call. (mschuerig)
 
-=== 3.0.0 / 2012-05-08
+### 3.0.0 / 2012-05-08
 
 * 3 major enhancements:
 
@@ -140,7 +140,7 @@
 
   * Support drive letter on Windows. Patch provided from MRI by Usaku NAKAMURA. (ayumin)
 
-=== 2.12.1 / 2012-04-10
+### 2.12.1 / 2012-04-10
 
 * 1 minor enhancement:
 
@@ -150,7 +150,7 @@
 
   * Rolled my own deprecate msg to allow MT to work with rubygems < 1.7
 
-=== 2.12.0 / 2012-04-03
+### 2.12.0 / 2012-04-03
 
 * 4 minor enhancements:
 
@@ -163,7 +163,7 @@
 
   * Fixed warning in i_suck_and_my_tests_are_order_dependent! (phiggins)
 
-=== 2.11.4 / 2012-03-20
+### 2.11.4 / 2012-03-20
 
 * 2 minor enhancements:
 
@@ -174,14 +174,14 @@
 
   * Fixed MiniTest::Mock example in the readme. (conradwt)
 
-=== 2.11.3 / 2012-02-29
+### 2.11.3 / 2012-02-29
 
 * 2 bug fixes:
 
   * Clarified that assert_raises returns the exception for further testing
   * Fixed assert_in_epsilon when both args are negative. (tamc)
 
-=== 2.11.2 / 2012-02-14
+### 2.11.2 / 2012-02-14
 
 * 1 minor enhancement:
 
@@ -191,7 +191,7 @@
 
   * Fixed MiniTest::Unit.after_tests for Ruby 1.9.3. (ysbaddaden)
 
-=== 2.11.1 / 2012-02-01
+### 2.11.1 / 2012-02-01
 
 * 3 bug fixes:
 
@@ -199,20 +199,20 @@
   * Ensure Mock#expect's expected args is an Array. (mperham)
   * Ensure Mock#verify verifies multiple expects of the same method. (chastell)
 
-=== 2.11.0 / 2012-01-25
+### 2.11.0 / 2012-01-25
 
 * 2 minor enhancements:
 
   * Added before / after hooks for setup and teardown. (tenderlove)
   * Pushed run_setup_hooks down to Spec. (tenderlove)
 
-=== 2.10.1 / 2012-01-17
+### 2.10.1 / 2012-01-17
 
 * 1 bug fix:
 
   * Fixed stupid 1.9 path handling grumble grumble. (graaff)
 
-=== 2.10.0 / 2011-12-20
+### 2.10.0 / 2011-12-20
 
 * 3 minor enhancements:
 
@@ -224,7 +224,7 @@
 
   * Fixed must_be_empty and wont_be_empty argument handling. (mrsimo)
 
-=== 2.9.1 / 2011-12-13
+### 2.9.1 / 2011-12-13
 
 * 4 minor enhancements:
 
@@ -237,7 +237,7 @@
 
   * Fixed error message on specs when 2+ args and custom message provided. (chastell)
 
-=== 2.9.0 / 2011-12-07
+### 2.9.0 / 2011-12-07
 
 * 4 minor enhancements:
 
@@ -246,13 +246,13 @@
   * Holy crap! 100% doco! `rdoc -C` ftw
   * Switch assert_output to test stderr before stdout to possibly improve debugging
 
-=== 2.8.1 / 2011-11-17
+### 2.8.1 / 2011-11-17
 
 * 1 bug fix:
 
   * Ugh. 1.9's test/unit violates my internals. Added const_missing.
 
-=== 2.8.0 / 2011-11-08
+### 2.8.0 / 2011-11-08
 
 * 2 minor enhancements:
 
@@ -264,7 +264,7 @@
   * Fixed 2 typos and 2 doc glitches. (splattael)
   * Remove unused block arguments to avoid creating Proc objects. (k-tsj)
 
-=== 2.7.0 / 2011-10-25
+### 2.7.0 / 2011-10-25
 
 * 2 minor enhancements:
 
@@ -276,7 +276,7 @@
   * Clarified the documentation of minitest/benchmark (eregon)
   * Fixed using expectations in regular unit tests. (sunaku)
 
-=== 2.6.2 / 2011-10-19
+### 2.6.2 / 2011-10-19
 
 * 1 minor enhancement:
 
@@ -287,14 +287,14 @@
   * Force gem activation in hoe minitest plugin
   * Support RUBY_VERSION='2.0.0' (nagachika)
 
-=== 2.6.1 / 2011-09-27
+### 2.6.1 / 2011-09-27
 
 * 2 bug fixes:
 
   * Alias Spec.name from Spec.to_s so it works when @name is nil (nathany)
   * Fixed assert and refute_operator where second object has a bad == method.
 
-=== 2.6.0 / 2011-09-13
+### 2.6.0 / 2011-09-13
 
 * 2 minor enhancements:
 
@@ -305,14 +305,14 @@
 
   * Fixed Mock.respond_to?(var) to work with strings. (holli)
 
-=== 2.5.1 / 2011-08-27 // ruby 1.9.3: p0, p125, p34579
+### 2.5.1 / 2011-08-27 // ruby 1.9.3: p0, p125, p34579
 
 * 2 minor enhancements:
 
   * Added gem activation for minitest in minitest/autoload to help out 1.9 users
   * Extended Spec.register_spec_type to allow for procs instead of just regexps.
 
-=== 2.5.0 / 2011-08-18
+### 2.5.0 / 2011-08-18
 
 * 4 minor enhancements:
 
@@ -325,7 +325,7 @@
 
   * Doc fixes. (chastell)
 
-=== 2.4.0 / 2011-08-09
+### 2.4.0 / 2011-08-09
 
 * 4 minor enhancements:
 
@@ -339,15 +339,15 @@
   * Fix Assertions#mu_pp to deal with immutable encoded strings. (ferrous26)
   * Fix minitest/pride for MacRuby (ferrous26)
   * Made error output less fancy so it is more readable
-  * Mock shouldn't undef === and inspect. (dgraham)
+  * Mock shouldn't undef ### and inspect. (dgraham)
 
-=== 2.3.1 / 2011-06-22
+### 2.3.1 / 2011-06-22
 
 * 1 bug fix:
 
   * Fixed minitest hoe plugin to be a spermy dep and not depend on itself.
 
-=== 2.3.0 / 2011-06-15
+### 2.3.0 / 2011-06-15
 
 * 5 minor enhancements:
 
@@ -362,20 +362,20 @@
   * Fixed TestCase's inherited hook. (dchelimsky/phiggins/jamis, the 'good' neighbor)
   * MiniTest::Assertions#refute_empty should use mu_pp in the default message. (whatthejeff)
 
-=== 2.2.2 / 2011-06-01
+### 2.2.2 / 2011-06-01
 
 * 2 bug fixes:
 
   * Got rid of the trailing period in message for assert_equal. (tenderlove)
   * Windows needs more flushing. (Akio Tajima)
 
-=== 2.2.1 / 2011-05-31
+### 2.2.1 / 2011-05-31
 
 * 1 bug fix:
 
   * My _ONE_ non-rubygems-using minitest user goes to Seattle.rb!
 
-=== 2.2.0 / 2011-05-29
+### 2.2.0 / 2011-05-29
 
 * 6 minor enhancements:
 
@@ -386,7 +386,7 @@
   * Moved minitest hoe-plugin from hoe-seattlerb. (erikh)
   * Skipped tests only output details in verbose mode. (tenderlove+zenspider=xoxo)
 
-=== 2.1.0 / 2011-04-11
+### 2.1.0 / 2011-04-11
 
 * 5 minor enhancements:
 
@@ -402,7 +402,7 @@
   * Fixed a new warning in 1.9.3.
   * Fixed assert_block's message handling. (nobu)
 
-=== 2.0.2 / 2010-12-24
+### 2.0.2 / 2010-12-24
 
 * 1 minor enhancement:
 
@@ -412,7 +412,7 @@
 
   * Benchmarks in specs that didn't call bench_range would die. (zzak).
 
-=== 2.0.1 / 2010-12-15
+### 2.0.1 / 2010-12-15
 
 * 4 minor enhancements:
 
@@ -425,7 +425,7 @@
 
   * Fix bug when ^T is hit before runner start
 
-=== 2.0.0 / 2010-11-11
+### 2.0.0 / 2010-11-11
 
 * 3 major enhancements:
 
@@ -452,7 +452,7 @@
   * Fixes autorun when on windows with ruby install on different drive (larsch)
   * Fixed rdoc output bug in spec.rb
 
-=== 1.7.2 / 2010-09-23
+### 1.7.2 / 2010-09-23
 
 * 3 bug fixes:
 
@@ -460,13 +460,13 @@
   * Fixed test_capture_io on 1.9.3+ (sora_h)
   * assert_raises now lets MiniTest::Skip through. (shyouhei)
 
-=== 1.7.1 / 2010-09-01
+### 1.7.1 / 2010-09-01
 
 * 1 bug fix:
 
   * 1.9.2 fixes for spec tests
 
-=== 1.7.0 / 2010-07-15
+### 1.7.0 / 2010-07-15
 
 * 5 minor enhancements:
 
@@ -476,7 +476,7 @@
   * Added options output at the top of the run, for fatal run debugging (tenderlove)
   * Spec's describe method returns created class
 
-=== 1.6.0 / 2010-03-27 // ruby 1.9.2-p290
+### 1.6.0 / 2010-03-27 // ruby 1.9.2-p290
 
 * 10 minor enhancements:
 
@@ -496,7 +496,7 @@
   * Fixed message on refute_same to be consistent with assert_same.
   * Fixed method randomization to be stable for testing.
 
-=== 1.5.0 / 2010-01-06
+### 1.5.0 / 2010-01-06
 
 * 4 minor enhancements:
 
@@ -511,13 +511,13 @@
   * Using undef_method instead of remove_method to clean out inherited specs.
   * assert_raises was ignoring passed in message.
 
-=== 1.4.2 / 2009-06-25
+### 1.4.2 / 2009-06-25
 
 * 1 bug fix:
 
   * Fixed info handler for systems that don't have siginfo.
 
-=== 1.4.1 / 2009-06-23
+### 1.4.1 / 2009-06-23
 
 * 1 major enhancement:
 
@@ -531,7 +531,7 @@
 
   * Added SIGINFO handler for finding slow tests without verbose
 
-=== 1.4.0 / 2009-06-18
+### 1.4.0 / 2009-06-18
 
 * 5 minor enhancement:
 
@@ -547,7 +547,7 @@
   * Switched to __name__ to avoid common ivar name.
   * Fixed indentation in test file (1.9).
 
-=== 1.3.1 / 2009-01-20 // ruby 1.9.1-p431
+### 1.3.1 / 2009-01-20 // ruby 1.9.1-p431
 
 * 1 minor enhancement:
 
@@ -570,9 +570,9 @@
   * Made describe private. For some reason I thought that an attribute of Kernel.
   * Removed disable_autorun method, added autorun.rb instead.
   * assert_match escapes if passed string for pattern.
-  * instance_of? is different from ===, use instance_of.
+  * instance_of? is different from ###, use instance_of.
 
-=== 1.3.0 / 2008-10-09
+### 1.3.0 / 2008-10-09
 
 * 2 major enhancements:
 
@@ -603,7 +603,7 @@
   * Fixed shadowed variable in mock.rb
   * Fixed stupid muscle memory message bug in assert_send.
 
-=== 1.2.1 / 2008-06-10
+### 1.2.1 / 2008-06-10
 
 * 7 minor enhancements:
 
@@ -615,7 +615,7 @@
   * Removed pp. Tests run 2x faster. :/
   * Renamed deprecation methods and moved to test/unit/deprecate.rb.
 
-=== 1.2.0 / 2008-06-09
+### 1.2.0 / 2008-06-09
 
 * 2 major enhancements:
 
@@ -666,7 +666,7 @@
   * Fixed infect method to work better on 1.9.
   * Fixed all shadowed variable warnings in 1.9.
 
-=== 1.1.0 / 2007-11-08
+### 1.1.0 / 2007-11-08
 
 * 4 major enhancements:
 
@@ -680,9 +680,8 @@
   * Added deny (assert ! test), our favorite extension to test/unit.
   * Added .autotest and fairly complete unit tests. (thanks Chad for help here)
 
-=== 1.0.0 / 2006-10-30
+### 1.0.0 / 2006-10-30
 
 * 1 major enhancement
 
   * Birthday!
-
