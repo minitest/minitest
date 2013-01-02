@@ -215,6 +215,17 @@ class TestMiniTestUnit < MetaMetaMetaTestCase
     assert test.passed?
   end
 
+  def test_passed_eh_teardown_skipped
+    test_class = Class.new MiniTest::Unit::TestCase do
+      def teardown; assert true; end
+      def test_omg; skip "bork"; end
+    end
+
+    test = test_class.new :test_omg
+    test.run @tu
+    assert test.passed?
+  end
+
   def test_passed_eh_teardown_flunked
     test_class = Class.new MiniTest::Unit::TestCase do
       def teardown; flunk;       end
