@@ -172,37 +172,6 @@ class TestMiniTestUnit < MetaMetaMetaTestCase
     assert_instance_of MiniTest::Unit, MiniTest::Unit.runner
   end
 
-  def with_overridden_include
-    Class.class_eval do
-      def inherited_with_hacks klass
-        throw :inherited_hook
-      end
-
-      alias inherited_without_hacks inherited
-      alias inherited               inherited_with_hacks
-      alias IGNORE_ME!              inherited # 1.8 bug. god I love venture bros
-    end
-
-    yield
-  ensure
-    Class.class_eval do
-      alias inherited inherited_without_hacks
-
-      undef_method :inherited_with_hacks
-      undef_method :inherited_without_hacks
-    end
-
-    refute_respond_to Class, :inherited_with_hacks
-    refute_respond_to Class, :inherited_without_hacks
-  end
-
-  def test_inherited_hook_plays_nice_with_others
-    with_overridden_include do
-      assert_throws :inherited_hook do
-        Class.new MiniTest::Unit::TestCase
-      end
-    end
-  end
 
   def test_passed_eh_teardown_good
     test_class = Class.new MiniTest::Unit::TestCase do
@@ -242,6 +211,40 @@ class TestMiniTestUnit < MetaMetaMetaTestCase
       bt.map { |f| (f =~ /^\./) ? File.expand_path(f) : f }
     else
       bt
+    end
+  end
+end
+
+class TestMiniTestUnitInherited < MetaMetaMetaTestCase
+  def with_overridden_include
+    Class.class_eval do
+      def inherited_with_hacks klass
+        throw :inherited_hook
+      end
+
+      alias inherited_without_hacks inherited
+      alias inherited               inherited_with_hacks
+      alias IGNORE_ME!              inherited # 1.8 bug. god I love venture bros
+    end
+
+    yield
+  ensure
+    Class.class_eval do
+      alias inherited inherited_without_hacks
+
+      undef_method :inherited_with_hacks
+      undef_method :inherited_without_hacks
+    end
+
+    refute_respond_to Class, :inherited_with_hacks
+    refute_respond_to Class, :inherited_without_hacks
+  end
+
+  def test_inherited_hook_plays_nice_with_others
+    with_overridden_include do
+      assert_throws :inherited_hook do
+        Class.new MiniTest::Unit::TestCase
+      end
     end
   end
 end
@@ -669,7 +672,9 @@ class TestMiniTestUnitOrder < MetaMetaMetaTestCase
 end
 
 class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
-  parallelize_me!
+  # do not call parallelize_me! - teardown accesses @tc._assertions
+  # which is not threadsafe. Nearly every method in here is an
+  # assertion test so it isn't worth splitting it out further.
 
   RUBY18 = ! defined? Encoding
 
