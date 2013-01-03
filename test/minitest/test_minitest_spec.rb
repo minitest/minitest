@@ -524,7 +524,6 @@ describe MiniTest::Spec, :let do
 
   let :count do
     $let_count += 1
-    $let_count
   end
 
   it "is evaluated once per example" do
@@ -545,6 +544,35 @@ describe MiniTest::Spec, :let do
     _count.must_equal 2
   end
 end
+
+describe MiniTest::Spec, :let! do
+  i_suck_and_my_tests_are_order_dependent!
+
+  def _count
+    $let_count2 ||= 0
+  end
+
+  let! :count do
+    $let_count2 ||= 0
+    $let_count2 += 1
+  end
+
+  it "is auto-evaluated once per example" do
+    _count.must_equal 1
+    count.must_equal 1
+    _count.must_equal 1
+  end
+
+  it "is REALLY auto-evaluated once per example" do
+    _count.must_equal 2
+
+    count.must_equal 2
+    count.must_equal 2
+
+    _count.must_equal 2
+  end
+end
+
 
 describe MiniTest::Spec, :subject do
   attr_reader :subject_evaluation_count
