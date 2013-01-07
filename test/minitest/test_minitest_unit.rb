@@ -1418,6 +1418,36 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     assert_equal "blah2.",         @tc.message("")      { "blah2" }.call
     assert_equal "blah1.\nblah2.", @tc.message(:blah1)  { "blah2" }.call
     assert_equal "blah1.\nblah2.", @tc.message("blah1") { "blah2" }.call
+
+    message = proc { "blah1" }
+    assert_equal "blah1.\nblah2.", @tc.message(message) { "blah2" }.call
+
+    message = @tc.message { "blah1" }
+    assert_equal "blah1.\nblah2.", @tc.message(message) { "blah2" }.call
+  end
+
+  def test_message_message
+    util_assert_triggered "whoops.\nExpected: 1\n  Actual: 2" do
+      @tc.assert_equal 1, 2, message { "whoops" }
+    end
+  end
+
+  def test_message_lambda
+    util_assert_triggered "whoops.\nExpected: 1\n  Actual: 2" do
+      @tc.assert_equal 1, 2, lambda { "whoops" }
+    end
+  end
+
+  def test_message_deferred
+    @assertion_count, var = 0, nil
+
+    msg = message { var = "blah" }
+
+    assert_nil var
+
+    msg.call
+
+    assert_equal "blah", var
   end
 
   def test_pass
