@@ -319,6 +319,7 @@ minitest-reporters      :: Create customizable MiniTest output formats
 minitest-rg             :: redgreen minitest
 minitest-shouldify      :: Adding all manner of shoulds to MiniTest (bad idea)
 minitest-spec-magic     :: Minitest::Spec extensions for Rails and beyond
+minitest-spec-rails     :: Drop in MiniTest::Spec superclass for ActiveSupport::TestCase.
 minitest-tags           :: add tags for minitest
 minitest-wscolor        :: Yet another test colorizer.
 minitest_owrapper       :: Get tests results as a TestResult object.
@@ -347,7 +348,6 @@ Authors... Please send me a pull request with a description of your minitest ext
 * minitest-rails-shoulda
 * minitest-spec
 * minitest-spec-context
-* minitest-spec-rails
 * minitest-spec-should
 * minitest-sugar
 * minitest_should
