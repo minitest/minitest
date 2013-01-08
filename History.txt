@@ -1,3 +1,15 @@
+=== 4.4.0 / 2013-01-07
+
+* 3 minor enhancements:
+
+  * Added fit_logarithic and assert_performance_logarithmic. (ktheory)
+  * Merge processed options so others can mess with defaults. (tenderlove)
+  * TestCase#message can now take another proc to defer custom message cost. (ordinaryzelig/bhenderson)
+
+* 1 bug fix:
+
+  * TestCase#passed? now true if test is skipped. (qanhd)
+
 === 4.3.3 / 2012-12-06
 
 * 1 bug fix:
