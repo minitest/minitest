@@ -1297,15 +1297,13 @@ module MiniTest
           self.after_setup
           self.run_test self.__name__
           result = "." unless io?
-          time = Time.now - start_time
-          runner.record self.class, self.__name__, self._assertions, time, nil
+          capture_exception = nil
           @passed = true
         rescue *PASSTHROUGH_EXCEPTIONS
           raise
         rescue Exception => e
           @passed = Skip === e
-          time = Time.now - start_time
-          runner.record self.class, self.__name__, self._assertions, time, e
+          captured_exception = e
           result = runner.puke self.class, self.__name__, e
         ensure
           %w{ before_teardown teardown after_teardown }.each do |hook|
@@ -1315,11 +1313,14 @@ module MiniTest
               raise
             rescue Exception => e
               @passed = false
+              captured_exception = e
               result = runner.puke self.class, self.__name__, e
             end
           end
           trap 'INFO', 'DEFAULT' if SUPPORTS_INFO_SIGNAL
         end
+        time = Time.now - start_time
+        runner.record self.class, self.__name__, self._assertions, time, captured_exception
         result
       end
 

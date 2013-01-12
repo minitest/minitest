@@ -1816,7 +1816,7 @@ class TestMiniTestUnitRecording < MetaMetaMetaTestCase
     end
 
     with_recording do |recording|
-      assert_nil recording.fetch("test_something")
+      assert_instance_of RuntimeError, recording["test_something"]
     end
   end
 
