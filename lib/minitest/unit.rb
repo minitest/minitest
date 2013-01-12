@@ -1313,7 +1313,7 @@ module MiniTest
               raise
             rescue Exception => e
               @passed = false
-              captured_exception = e
+              captured_exception ||= e
               result = runner.puke self.class, self.__name__, e
             end
           end

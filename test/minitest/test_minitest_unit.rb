@@ -1820,6 +1820,22 @@ class TestMiniTestUnitRecording < MetaMetaMetaTestCase
     end
   end
 
+  def test_record_error_in_test_trumps_error_in_teardown
+    Class.new MiniTest::Unit::TestCase do
+      def test_error
+        raise AnError
+      end
+
+      def teardown
+        raise "unhandled exception"
+      end
+    end
+
+    with_recording do |recording|
+      assert_instance_of AnError, recording["test_error"]
+    end
+  end
+
   def test_record_skip
     Class.new MiniTest::Unit::TestCase do
       def test_skip
