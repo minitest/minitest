@@ -1742,3 +1742,136 @@ class TestMiniTestGuard < MiniTest::Unit::TestCase
     assert self.windows? "mswin"
   end
 end
+
+class TestMiniTestUnitRecording < MetaMetaMetaTestCase
+  # do not parallelize this suite... it just can't handle it.
+
+  def setup
+    super
+    @recorder = Class.new MiniTest::Unit do
+      def record suite, method, assertions, time, error
+        recording[method] = error
+      end
+
+      def recording
+        @recording ||= {}
+      end
+    end.new
+    MiniTest::Unit.runner = @recorder
+  end
+
+  def with_recording
+    with_output do
+      @tu.run
+    end
+
+    yield @recorder.recording
+  end
+
+  def test_record_passing
+    Class.new MiniTest::Unit::TestCase do
+      def test_something
+        assert true
+      end
+    end
+
+    with_recording do |recording|
+      assert_nil recording.fetch("test_something")
+    end
+  end
+
+  def test_record_failing
+    Class.new MiniTest::Unit::TestCase do
+      def test_failure
+        assert false
+      end
+    end
+
+    with_recording do |recording|
+      assert_instance_of MiniTest::Assertion, recording["test_failure"]
+    end
+  end
+
+  def test_record_error
+    Class.new MiniTest::Unit::TestCase do
+      def test_error
+        raise "unhandled exception"
+      end
+    end
+
+    with_recording do |recording|
+      assert_instance_of RuntimeError, recording["test_error"]
+    end
+  end
+
+  def test_record_error_teardown
+    Class.new MiniTest::Unit::TestCase do
+      def test_something
+        assert true
+      end
+
+      def teardown
+        raise "unhandled exception"
+      end
+    end
+
+    with_recording do |recording|
+      assert_instance_of RuntimeError, recording["test_something"]
+    end
+  end
+
+  def test_record_error_in_test_trumps_error_in_teardown
+    Class.new MiniTest::Unit::TestCase do
+      def test_error
+        raise AnError
+      end
+
+      def teardown
+        raise "unhandled exception"
+      end
+    end
+
+    with_recording do |recording|
+      assert_instance_of AnError, recording["test_error"]
+    end
+  end
+
+  def test_record_skip
+    Class.new MiniTest::Unit::TestCase do
+      def test_skip
+        skip "not yet"
+      end
+    end
+
+    with_recording do |recording|
+      assert_instance_of MiniTest::Skip, recording["test_skip"]
+    end
+  end
+
+  def test_record_every_test
+    Class.new MiniTest::Unit::TestCase do
+      def test_something
+        assert true
+      end
+
+      def test_failure
+        assert false
+      end
+
+      def test_error
+        raise "unhandled exception"
+      end
+
+      def test_skip
+        skip "not yet"
+      end
+    end
+
+    with_recording do |recording|
+      assert_nil recording.fetch("test_something")
+      assert_instance_of MiniTest::Assertion, recording["test_failure"]
+      assert_instance_of RuntimeError, recording["test_error"]
+      assert_instance_of MiniTest::Skip, recording["test_skip"]
+    end
+  end
+end
