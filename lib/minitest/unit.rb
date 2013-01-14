@@ -154,6 +154,8 @@ module MiniTest
       end
 
       result
+    rescue
+      "Expected: #{mu_pp exp}\n  Actual: #{mu_pp act}"
     end
 
     ##

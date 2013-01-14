@@ -797,6 +797,14 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     end
   end
 
+  def test_assert_equal_different_diff_raises
+    MiniTest::Assertions.stub(:diff, lambda { raise Errno::ENOENT }) do
+      util_assert_triggered "Expected: 1\n  Actual: 2" do
+        @tc.assert_equal 1, 2
+      end
+    end
+  end
+
   def test_assert_equal_different_hex
     c = Class.new do
       def initialize s; @name = s; end
