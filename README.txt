@@ -317,6 +317,7 @@ minitest-rails          :: MiniTest integration for Rails 3.x
 minitest-rails-capybara :: Capybara integration for MiniTest::Rails
 minitest-reporters      :: Create customizable MiniTest output formats
 minitest-rg             :: redgreen minitest
+minitest-should_syntax  :: RSpec-style +x.should == y+ assertions for MiniTest
 minitest-shouldify      :: Adding all manner of shoulds to MiniTest (bad idea)
 minitest-spec-magic     :: Minitest::Spec extensions for Rails and beyond
 minitest-spec-rails     :: Drop in MiniTest::Spec superclass for ActiveSupport::TestCase.
