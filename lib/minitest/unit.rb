@@ -1315,6 +1315,7 @@ module MiniTest
               raise
             rescue Exception => e
               @passed = false
+              runner.record self.class, self.__name__, self._assertions, time, e
               result = runner.puke self.class, self.__name__, e
             end
           end
