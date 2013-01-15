@@ -312,6 +312,7 @@ minitest-matchers       :: Adds support for RSpec-style matchers to minitest.
 minitest-metadata       :: Annotate tests with metadata (key-value).
 minitest-mongoid        :: Mongoid assertion matchers for MiniTest
 minitest-must_not       :: Provides must_not as an alias for wont in MiniTest
+minitest-nc             :: Test notifier for minitest via Mountain Lion's Notification Center
 minitest-predicates     :: Adds support for .predicate? methods
 minitest-rails          :: MiniTest integration for Rails 3.x
 minitest-rails-capybara :: Capybara integration for MiniTest::Rails
@@ -345,7 +346,6 @@ Authors... Please send me a pull request with a description of your minitest ext
 * minitest-colorer
 * minitest-deluxe
 * minitest-extra-assertions
-* minitest-nc
 * minitest-rails-shoulda
 * minitest-spec
 * minitest-spec-context
