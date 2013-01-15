@@ -1742,3 +1742,85 @@ class TestMiniTestGuard < MiniTest::Unit::TestCase
     assert self.windows? "mswin"
   end
 end
+
+class TestMiniTestUnitRecording < MetaMetaMetaTestCase
+  # do not parallelize this suite... it just can't handle it.
+
+  def assert_run_record(*expected, &block)
+    def @tu.record suite, method, assertions, time, error
+      recording[method] << error
+    end
+
+    def @tu.recording
+      @recording ||= Hash.new { |h,k| h[k] = [] }
+    end
+
+    MiniTest::Unit.runner = @tu
+
+    Class.new MiniTest::Unit::TestCase, &block
+
+    with_output do
+      @tu.run
+    end
+
+    recorded = @tu.recording.fetch("test_method").map(&:class)
+
+    assert_equal expected, recorded
+  end
+
+  def test_record_passing
+    assert_run_record NilClass do
+      def test_method
+        assert true
+      end
+    end
+  end
+
+  def test_record_failing
+    assert_run_record MiniTest::Assertion do
+      def test_method
+        assert false
+      end
+    end
+  end
+
+  def test_record_error
+    assert_run_record RuntimeError do
+      def test_method
+        raise "unhandled exception"
+      end
+    end
+  end
+
+  def test_record_error_teardown
+    assert_run_record NilClass, RuntimeError do
+      def test_method
+        assert true
+      end
+
+      def teardown
+        raise "unhandled exception"
+      end
+    end
+  end
+
+  def test_record_error_in_test_and_teardown
+    assert_run_record AnError, RuntimeError do
+      def test_method
+        raise AnError
+      end
+
+      def teardown
+        raise "unhandled exception"
+      end
+    end
+  end
+
+  def test_record_skip
+    assert_run_record MiniTest::Skip do
+      def test_method
+        skip "not yet"
+      end
+    end
+  end
+end
