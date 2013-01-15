@@ -83,16 +83,15 @@ module MiniTest
     # figure out what diff to use.
 
     def self.diff
-      @diff = if RbConfig::CONFIG['host_os'] =~ /mswin|mingw/ then
+      @diff = if (RbConfig::CONFIG['host_os'] =~ /mswin|mingw/ &&
+                  system("diff.exe", __FILE__, __FILE__)) then
                 "diff.exe -u"
+              elsif system("gdiff", __FILE__, __FILE__)
+                "gdiff -u" # solaris and kin suck
+              elsif system("diff", __FILE__, __FILE__)
+                "diff -u"
               else
-                if system("gdiff", __FILE__, __FILE__)
-                  "gdiff -u" # solaris and kin suck
-                elsif system("diff", __FILE__, __FILE__)
-                  "diff -u"
-                else
-                  nil
-                end
+                nil
               end unless defined? @diff
 
       @diff
