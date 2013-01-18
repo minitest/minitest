@@ -191,6 +191,8 @@ describe MiniTest::Spec do
   end
 
   it "needs to verify floats outside a delta" do
+    skip "float output is different in maglev" if maglev?
+
     @assertion_count += 1 # extra test
 
     24.wont_be_close_to(42).must_equal false
@@ -209,6 +211,8 @@ describe MiniTest::Spec do
   end
 
   it "needs to verify floats outside an epsilon" do
+    skip "float output is different in maglev" if maglev?
+
     @assertion_count += 1 # extra test
 
     24.wont_be_within_epsilon(42).must_equal false
@@ -227,6 +231,8 @@ describe MiniTest::Spec do
   end
 
   it "needs to verify floats within a delta" do
+    skip "float output is different in maglev" if maglev?
+
     @assertion_count += 1 # extra test
 
     (6.0 * 7).must_be_close_to(42.0).must_equal true
