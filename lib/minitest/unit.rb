@@ -719,7 +719,12 @@ module MiniTest
 
     def skip msg = nil, bt = caller
       msg ||= "Skipped, no message given"
+      @skip = true
       raise MiniTest::Skip, msg, bt
+    end
+
+    def skipped?
+      defined?(@skip) and @skip
     end
 
     ##
