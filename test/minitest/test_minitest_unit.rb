@@ -288,6 +288,8 @@ class TestMiniTestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_error
+    skip "https://github.com/MagLev/maglev/issues/204" if maglev?
+
     Class.new MiniTest::Unit::TestCase do
       def test_something
         assert true
@@ -315,6 +317,8 @@ class TestMiniTestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_error_teardown
+    skip "https://github.com/MagLev/maglev/issues/204" if maglev?
+
     Class.new MiniTest::Unit::TestCase do
       def test_something
         assert true
@@ -342,6 +346,8 @@ class TestMiniTestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_failing
+    skip "https://github.com/MagLev/maglev/issues/204" if maglev?
+
     Class.new MiniTest::Unit::TestCase do
       def test_something
         assert true
@@ -430,6 +436,8 @@ class TestMiniTestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_skip_verbose
+    skip "https://github.com/MagLev/maglev/issues/204" if maglev?
+
     Class.new MiniTest::Unit::TestCase do
       def test_something
         assert true
@@ -516,6 +524,8 @@ class TestMiniTestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_parallel
+    skip "I don't have ParallelEach debugged yet" if maglev?
+
     test_count = 2
     test_latch = Latch.new test_count
     main_latch = Latch.new
@@ -721,6 +731,8 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_assert_block
+    skip "capture_io is not working on maglev" if maglev?
+
     exp = ["NOTE: MiniTest::Unit::TestCase#assert_block is deprecated,",
            "use assert. It will be removed on 2013-01-01."].join " "
 
@@ -787,6 +799,8 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_assert_equal_different_diff_deactivated
+    skip "Something is wrong with setting civars on maglev" if maglev?
+
     without_diff do
       util_assert_triggered util_msg("haha" * 10, "blah" * 10) do
         o1 = "haha" * 10
@@ -900,6 +914,8 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_assert_in_delta_triggered
+    skip "float output is different in maglev" if maglev?
+
     util_assert_triggered 'Expected |0.0 - 0.001| (0.001) to be < 1.0e-06.' do
       @tc.assert_in_delta 0.0, 1.0 / 1000, 0.000001
     end
@@ -929,6 +945,8 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_assert_in_epsilon_triggered_negative_case
+    skip "float output is different in maglev" if maglev?
+
     x = RUBY18 ? "0.1" : "0.10000000000000009"
     util_assert_triggered "Expected |-1.1 - -1| (#{x}) to be < 0.1." do
       @tc.assert_in_epsilon(-1.1, -1, 0.1)
@@ -1330,6 +1348,8 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_capture_io
+    skip "capture_io is not working on maglev" if maglev?
+
     @assertion_count = 0
 
     non_verbose do
@@ -1472,10 +1492,14 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_refute_in_delta
+    skip "float output is different in maglev" if maglev?
+
     @tc.refute_in_delta 0.0, 1.0 / 1000, 0.000001
   end
 
   def test_refute_in_delta_triggered
+    skip "float output is different in maglev" if maglev?
+
     util_assert_triggered 'Expected |0.0 - 0.001| (0.001) to not be < 0.1.' do
       @tc.refute_in_delta 0.0, 1.0 / 1000, 0.1
     end
@@ -1634,7 +1658,12 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     end
 
     srand 42
-    expected = %w(test_test2 test_test1 test_test3)
+    expected = case
+               when maglev? then
+                 %w(test_test2 test_test3 test_test1)
+               else
+                 %w(test_test2 test_test1 test_test3)
+               end
     assert_equal expected, sample_test_case.test_methods
   end
 
