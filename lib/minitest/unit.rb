@@ -1096,6 +1096,15 @@ module MiniTest
       ##
       # Is this running on mri?
 
+      def maglev? platform = defined?(RUBY_ENGINE) && RUBY_ENGINE
+        "maglev" == platform
+      end
+
+      module_function :maglev?
+
+      ##
+      # Is this running on mri?
+
       def mri? platform = RUBY_DESCRIPTION
         /^ruby/ =~ platform
       end
