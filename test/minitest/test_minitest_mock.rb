@@ -1,7 +1,4 @@
-require 'minitest/mock'
-require 'minitest/unit'
-
-MiniTest::Unit.autorun
+require 'minitest/autorun'
 
 class TestMiniTestMock < MiniTest::Unit::TestCase
   parallelize_me!
