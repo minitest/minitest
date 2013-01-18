@@ -28,7 +28,7 @@ describe MiniTest::Spec do
   end
 
   after do
-    self._assertions.must_equal @assertion_count
+    self._assertions.must_equal @assertion_count if passed? and not skipped?
   end
 
   it "needs to be able to catch a MiniTest::Assertion exception" do
@@ -726,6 +726,51 @@ class TestMeta < MiniTest::Unit::TestCase
       ensure
         MiniTest::Unit.output = STDOUT
       end
+    end
+  end
+end
+
+require "minitest/metametameta"
+
+class TestSpecInTestCase < MetaMetaMetaTestCase
+  def setup
+    super
+
+    @tc = MiniTest::Unit::TestCase.new 'fake tc'
+    @assertion_count = 1
+  end
+
+  def util_assert_triggered expected, klass = MiniTest::Assertion # REFACTOR
+    e = assert_raises klass do
+      yield
+    end
+
+    msg = e.message.sub(/(---Backtrace---).*/m, '\1')
+    msg.gsub!(/\(oid=[-0-9]+\)/, '(oid=N)')
+
+    assert_equal expected, msg
+  end
+
+  def teardown # REFACTOR
+    assert_equal(@assertion_count, @tc._assertions,
+                 "expected #{@assertion_count} assertions to be fired during the test, not #{@tc._assertions}") if @tc.passed?
+  end
+
+  def test_expectation
+    @assertion_count = 2
+
+    @tc.assert_equal true, 1.must_equal(1)
+  end
+
+  def test_expectation_triggered
+    util_assert_triggered "Expected: 2\n  Actual: 1" do
+      1.must_equal 2
+    end
+  end
+
+  def test_expectation_with_a_message
+    util_assert_triggered "Expected: 2\n  Actual: 1" do
+      1.must_equal 2, ''
     end
   end
 end

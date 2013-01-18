@@ -644,12 +644,12 @@ class TestMiniTestUnitOrder < MetaMetaMetaTestCase
   def test_setup_and_teardown_survive_inheritance
     call_order = []
 
-    parent = Class.new MiniTest::Spec do
-      before do
+    parent = Class.new MiniTest::Unit::TestCase do
+      define_method :setup do
         call_order << :setup_method
       end
 
-      after do
+      define_method :teardown do
         call_order << :teardown_method
       end
 
@@ -690,7 +690,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
 
   def teardown
     assert_equal(@assertion_count, @tc._assertions,
-                 "expected #{@assertion_count} assertions to be fired during the test, not #{@tc._assertions}") if @tc._assertions
+                 "expected #{@assertion_count} assertions to be fired during the test, not #{@tc._assertions}") if @tc.passed?
   end
 
   def non_verbose
@@ -1379,24 +1379,6 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
 
     assert_empty refutes.map { |n| n.sub(/^refute/, 'assert') } - asserts
     assert_empty asserts.map { |n| n.sub(/^assert/, 'refute') } - refutes
-  end
-
-  def test_expectation
-    @assertion_count = 2
-
-    @tc.assert_equal true, 1.must_equal(1)
-  end
-
-  def test_expectation_triggered
-    util_assert_triggered "Expected: 2\n  Actual: 1" do
-      1.must_equal 2
-    end
-  end
-
-  def test_expectation_with_a_message
-    util_assert_triggered "Expected: 2\n  Actual: 1" do
-      1.must_equal 2, ''
-    end
   end
 
   def test_flunk
