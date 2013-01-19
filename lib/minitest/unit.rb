@@ -1,7 +1,5 @@
-require 'optparse'
-require 'rbconfig'
-require 'thread' # required for 1.8
-require 'minitest/parallel_each'
+require "optparse"
+require "rbconfig"
 
 ##
 # Minimal (mostly drop-in) replacement for test-unit.
@@ -891,15 +889,13 @@ module MiniTest
     end
 
     ##
-    # Runs all the +suites+ for a given +type+. Runs suites declaring
-    # a test_order of +:parallel+ in parallel, and everything else
-    # serial.
+    # Runs all the +suites+ for a given +type+.
+    #
+    # NOTE: this method is redefined in parallel_each.rb, which is
+    # loaded if a test-suite calls parallelize_me!.
 
     def _run_suites suites, type
-      parallel, serial = suites.partition { |s| s.test_order == :parallel }
-
-      ParallelEach.new(parallel).map { |suite| _run_suite suite, type } +
-        serial.map { |suite| _run_suite suite, type }
+      suites.map { |suite| _run_suite suite, type }
     end
 
     ##
@@ -981,11 +977,15 @@ module MiniTest
       @report = []
       @errors = @failures = @skips = 0
       @verbose = false
-      @mutex = Mutex.new
+      @mutex = Mutex.new if defined?(Mutex)
     end
 
     def synchronize # :nodoc:
-      @mutex.synchronize { yield }
+      if @mutex then
+        @mutex.synchronize { yield }
+      else
+        yield
+      end
     end
 
     def process_args args = [] # :nodoc:
@@ -1405,6 +1405,8 @@ module MiniTest
       # and your tests are awesome.
 
       def self.parallelize_me!
+        require "minitest/parallel_each"
+
         class << self
           undef_method :test_order if method_defined? :test_order
           define_method :test_order do :parallel end
