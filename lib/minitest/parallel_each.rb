@@ -48,3 +48,19 @@ class ParallelEach
   end
 end
 end
+
+class MiniTest::Unit
+  alias _old_run_suites _run_suites
+
+  ##
+  # Runs all the +suites+ for a given +type+. Runs suites declaring
+  # a test_order of +:parallel+ in parallel, and everything else
+  # serial.
+
+  def _run_suites suites, type
+    parallel, serial = suites.partition { |s| s.test_order == :parallel }
+
+    ParallelEach.new(parallel).map { |suite| _run_suite suite, type } +
+     serial.map { |suite| _run_suite suite, type }
+  end
+end
