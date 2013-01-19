@@ -4,10 +4,6 @@
 # so all the goodies come along (tho not all are wrapped yet to
 # return another ParallelEach instance).
 
-
-if defined?(RUBY_ENGINE) && RUBY_ENGINE == "maglev" then # HACK - need to debug
-  class ParallelEach < Array; end
-else
 class ParallelEach
   require 'thread'
   include Enumerable
@@ -46,7 +42,6 @@ class ParallelEach
     }
     threads.map(&:join)
   end
-end
 end
 
 class MiniTest::Unit
