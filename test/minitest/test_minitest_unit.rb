@@ -288,8 +288,6 @@ class TestMiniTestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_error
-    skip "https://github.com/MagLev/maglev/issues/204" if maglev?
-
     Class.new MiniTest::Unit::TestCase do
       def test_something
         assert true
@@ -317,8 +315,6 @@ class TestMiniTestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_error_teardown
-    skip "https://github.com/MagLev/maglev/issues/204" if maglev?
-
     Class.new MiniTest::Unit::TestCase do
       def test_something
         assert true
@@ -346,8 +342,6 @@ class TestMiniTestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_failing
-    skip "https://github.com/MagLev/maglev/issues/204" if maglev?
-
     Class.new MiniTest::Unit::TestCase do
       def test_something
         assert true
@@ -436,8 +430,6 @@ class TestMiniTestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_skip_verbose
-    skip "https://github.com/MagLev/maglev/issues/204" if maglev?
-
     Class.new MiniTest::Unit::TestCase do
       def test_something
         assert true
@@ -731,8 +723,6 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_assert_block
-    skip "capture_io is not working on maglev" if maglev?
-
     exp = ["NOTE: MiniTest::Unit::TestCase#assert_block is deprecated,",
            "use assert. It will be removed on 2013-01-01."].join " "
 
@@ -799,7 +789,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_assert_equal_different_diff_deactivated
-    skip "Something is wrong with setting civars on maglev" if maglev?
+    skip "https://github.com/MagLev/maglev/issues/209" if maglev?
 
     without_diff do
       util_assert_triggered util_msg("haha" * 10, "blah" * 10) do
@@ -914,9 +904,8 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_assert_in_delta_triggered
-    skip "float output is different in maglev" if maglev?
-
-    util_assert_triggered 'Expected |0.0 - 0.001| (0.001) to be < 1.0e-06.' do
+    x = maglev? ? "9.9999999999999995e-07" : "1.0e-06"
+    util_assert_triggered "Expected |0.0 - 0.001| (0.001) to be < #{x}." do
       @tc.assert_in_delta 0.0, 1.0 / 1000, 0.000001
     end
   end
@@ -945,10 +934,9 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_assert_in_epsilon_triggered_negative_case
-    skip "float output is different in maglev" if maglev?
-
-    x = RUBY18 ? "0.1" : "0.10000000000000009"
-    util_assert_triggered "Expected |-1.1 - -1| (#{x}) to be < 0.1." do
+    x = (RUBY18 and not maglev?) ? "0.1" : "0.10000000000000009"
+    y = maglev? ? "0.10000000000000001" : "0.1"
+    util_assert_triggered "Expected |-1.1 - -1| (#{x}) to be < #{y}." do
       @tc.assert_in_epsilon(-1.1, -1, 0.1)
     end
   end
@@ -1348,14 +1336,12 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_capture_io
-    skip "capture_io is not working on maglev" if maglev?
-
     @assertion_count = 0
 
     non_verbose do
       out, err = capture_io do
         puts 'hi'
-        warn 'bye!'
+        $stderr.puts 'bye!'
       end
 
       assert_equal "hi\n", out
@@ -1492,15 +1478,12 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_refute_in_delta
-    skip "float output is different in maglev" if maglev?
-
     @tc.refute_in_delta 0.0, 1.0 / 1000, 0.000001
   end
 
   def test_refute_in_delta_triggered
-    skip "float output is different in maglev" if maglev?
-
-    util_assert_triggered 'Expected |0.0 - 0.001| (0.001) to not be < 0.1.' do
+    x = maglev? ? "0.10000000000000001" : "0.1"
+    util_assert_triggered "Expected |0.0 - 0.001| (0.001) to not be < #{x}." do
       @tc.refute_in_delta 0.0, 1.0 / 1000, 0.1
     end
   end

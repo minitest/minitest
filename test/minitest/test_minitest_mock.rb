@@ -64,6 +64,8 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
   end
 
   def test_mock_args_does_not_raise
+    skip "non-opaque use of ==" if maglev?
+
     arg = MiniTest::Mock.new
     mock = MiniTest::Mock.new
     mock.expect(:foo, nil, [arg])
