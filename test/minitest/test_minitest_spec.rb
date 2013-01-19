@@ -191,8 +191,6 @@ describe MiniTest::Spec do
   end
 
   it "needs to verify floats outside a delta" do
-    # skip "float output is different in maglev" if maglev?
-
     @assertion_count += 1 # extra test
 
     24.wont_be_close_to(42).must_equal false
@@ -201,38 +199,37 @@ describe MiniTest::Spec do
       (6 * 7.0).wont_be_close_to 42
     end
 
-    assert_triggered "Expected |42 - 42.0| (0.0) to not be < 1.0e-05." do
+    x = maglev? ? "1.0000000000000001e-05" : "1.0e-05"
+    assert_triggered "Expected |42 - 42.0| (0.0) to not be < #{x}." do
       (6 * 7.0).wont_be_close_to 42, 0.00001
     end
 
-    assert_triggered "msg.\nExpected |42 - 42.0| (0.0) to not be < 1.0e-05." do
+    assert_triggered "msg.\nExpected |42 - 42.0| (0.0) to not be < #{x}." do
       (6 * 7.0).wont_be_close_to 42, 0.00001, "msg"
     end
   end
 
   it "needs to verify floats outside an epsilon" do
-    # skip "float output is different in maglev" if maglev?
-
     @assertion_count += 1 # extra test
 
     24.wont_be_within_epsilon(42).must_equal false
 
-    assert_triggered "Expected |42 - 42.0| (0.0) to not be < 0.042." do
+    x = maglev? ? "0.042000000000000003" : "0.042"
+    assert_triggered "Expected |42 - 42.0| (0.0) to not be < #{x}." do
       (6 * 7.0).wont_be_within_epsilon 42
     end
 
-    assert_triggered "Expected |42 - 42.0| (0.0) to not be < 0.00042." do
+    x = maglev? ? "0.00042000000000000002" : "0.00042"
+    assert_triggered "Expected |42 - 42.0| (0.0) to not be < #{x}." do
       (6 * 7.0).wont_be_within_epsilon 42, 0.00001
     end
 
-    assert_triggered "msg.\nExpected |42 - 42.0| (0.0) to not be < 0.00042." do
+    assert_triggered "msg.\nExpected |42 - 42.0| (0.0) to not be < #{x}." do
       (6 * 7.0).wont_be_within_epsilon 42, 0.00001, "msg"
     end
   end
 
   it "needs to verify floats within a delta" do
-    # skip "float output is different in maglev" if maglev?
-
     @assertion_count += 1 # extra test
 
     (6.0 * 7).must_be_close_to(42.0).must_equal true
@@ -241,11 +238,12 @@ describe MiniTest::Spec do
       (1.0 / 100).must_be_close_to 0.0
     end
 
-    assert_triggered "Expected |0.0 - 0.001| (0.001) to be < 1.0e-06." do
+    x = maglev? ? "9.9999999999999995e-07" : "1.0e-06"
+    assert_triggered "Expected |0.0 - 0.001| (0.001) to be < #{x}." do
       (1.0 / 1000).must_be_close_to 0.0, 0.000001
     end
 
-    assert_triggered "msg.\nExpected |0.0 - 0.001| (0.001) to be < 1.0e-06." do
+    assert_triggered "msg.\nExpected |0.0 - 0.001| (0.001) to be < #{x}." do
       (1.0 / 1000).must_be_close_to 0.0, 0.000001, "msg"
     end
   end
