@@ -302,6 +302,7 @@ minitest-emoji          :: Print out emoji for your test passes, fails, and skip
 minitest-excludes       :: Clean API for excluding certain tests you
                            don't want to run under certain conditions.
 minitest-firemock       :: Makes your MiniTest mocks more resilient.
+minitest-great_expectations :: Generally useful additions to minitest's assertions and expectations
 minitest-growl          :: Test notifier for minitest via growl.
 minitest-instrument     :: Instrument ActiveSupport::Notifications when
                            test method is executed
