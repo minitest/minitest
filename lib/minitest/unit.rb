@@ -928,7 +928,7 @@ module MiniTest
     end
 
     ##
-    # Record the result of a single run. Makes it very easy to gather
+    # Record the result of a single test. Makes it very easy to gather
     # information. Eg:
     #
     #   class StatisticsRecorder < MiniTest::Unit
@@ -938,6 +938,11 @@ module MiniTest
     #   end
     #
     #   MiniTest::Unit.runner = StatisticsRecorder.new
+    #
+    # NOTE: record might be sent more than once per test.  It will be
+    # sent once with the results from the test itself.  If there is a
+    # failure or error in teardown, it will be sent again with the
+    # error or failure.
 
     def record suite, method, assertions, time, error
     end
