@@ -1,3 +1,22 @@
+=== 4.5.0 / 2013-01-22
+
+* 1 major enhancement:
+
+  * Rearranged minitest/unit.rb so NO parallelization code is loaded/used until you opt-in.
+
+* 4 minor enhancements:
+
+  * Added TestCase#skipped? for teardown guards
+  * Added maglev? guard
+  * Document that record can be sent twice if teardown fails or errors (randycoulman)
+  * Errors in teardown are now recorded. (randycoulman)
+
+* 3 bug fixes:
+
+  * Added hacks and skips to get clean test runs on maglev
+  * Modified float tests for maglev float output differences. Not sure this is right. Not sure I care.
+  * Test for existance of diff.exe instead of assuming they have devkit. (blowmage/Cumbayah)
+
 === 4.4.0 / 2013-01-07
 
 * 3 minor enhancements:
