@@ -389,6 +389,32 @@ class TestMiniTestRunner < MetaMetaMetaTestCase
     assert_report expected, %w[--name /some|thing/ --seed 42]
   end
 
+  def test_run_filtered_including_suite_name
+    alpha = Class.new MiniTest::Unit::TestCase do
+      def test_something
+        assert false
+      end
+    end
+    self.class.const_set(:Alpha, alpha)
+
+    beta = Class.new MiniTest::Unit::TestCase do
+      def test_something
+        assert true
+      end
+    end
+    self.class.const_set(:Beta, beta)
+
+    expected = clean <<-EOM
+      .
+
+      Finished tests in 0.00
+
+      1 tests, 1 assertions, 0 failures, 0 errors, 0 skips
+    EOM
+
+    assert_report expected, %w[--name /Beta#test_something/ --seed 42]
+  end
+
   def test_run_passing
     Class.new MiniTest::Unit::TestCase do
       def test_something

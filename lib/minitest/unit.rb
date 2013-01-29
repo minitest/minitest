@@ -908,7 +908,9 @@ module MiniTest
       filter = options[:filter] || '/./'
       filter = Regexp.new $1 if filter =~ /\/(.*)\//
 
-      assertions = suite.send("#{type}_methods").grep(filter).map { |method|
+      all_test_methods = suite.send("#{type}_methods")
+      filtered_test_methods = all_test_methods.select { |m| "#{suite}##{m}".match(filter) }
+      assertions = filtered_test_methods.map { |method|
         inst = suite.new method
         inst._assertions = 0
 
