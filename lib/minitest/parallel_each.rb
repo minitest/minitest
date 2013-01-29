@@ -27,6 +27,10 @@ class ParallelEach
     self.class.new super
   end
 
+  def select(&block)
+    self.class.new super
+  end
+
   ##
   # Starts N threads that yield each element to your block. Joins the
   # threads at the end.
