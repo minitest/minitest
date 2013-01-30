@@ -27,6 +27,12 @@ class ParallelEach
     self.class.new super
   end
 
+  def select(&block) # :nodoc:
+    self.class.new super
+  end
+
+  alias find_all select # :nodoc:
+
   ##
   # Starts N threads that yield each element to your block. Joins the
   # threads at the end.
