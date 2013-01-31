@@ -389,21 +389,30 @@ class TestMiniTestRunner < MetaMetaMetaTestCase
     assert_report expected, %w[--name /some|thing/ --seed 42]
   end
 
-  def test_run_filtered_including_suite_name
+  def assert_filtering name, expected, a = false
+    args = %W[--name #{name} --seed 42]
+
     alpha = Class.new MiniTest::Unit::TestCase do
-      def test_something
-        assert false
+      define_method :test_something do
+        assert a
       end
     end
-    self.class.const_set(:Alpha, alpha)
+    Object.const_set(:Alpha, alpha)
 
     beta = Class.new MiniTest::Unit::TestCase do
-      def test_something
+      define_method :test_something do
         assert true
       end
     end
-    self.class.const_set(:Beta, beta)
+    Object.const_set(:Beta, beta)
 
+    assert_report expected, args
+  ensure
+    Object.send :remove_const, :Alpha
+    Object.send :remove_const, :Beta
+  end
+
+  def test_run_filtered_including_suite_name
     expected = clean <<-EOM
       .
 
@@ -412,7 +421,31 @@ class TestMiniTestRunner < MetaMetaMetaTestCase
       1 tests, 1 assertions, 0 failures, 0 errors, 0 skips
     EOM
 
-    assert_report expected, %w[--name /Beta#test_something/ --seed 42]
+    assert_filtering "/Beta#test_something/", expected
+  end
+
+  def test_run_filtered_including_suite_name_string
+    expected = clean <<-EOM
+      .
+
+      Finished tests in 0.00
+
+      1 tests, 1 assertions, 0 failures, 0 errors, 0 skips
+    EOM
+
+    assert_filtering "Beta#test_something", expected
+  end
+
+  def test_run_filtered_string_method_only
+    expected = clean <<-EOM
+      ..
+
+      Finished tests in 0.00
+
+      2 tests, 2 assertions, 0 failures, 0 errors, 0 skips
+    EOM
+
+    assert_filtering "test_something", expected, :pass
   end
 
   def test_run_passing
