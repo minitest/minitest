@@ -173,7 +173,7 @@ module MiniTest
     # uses mu_pp to do the first pass and then cleans it up.
 
     def mu_pp_for_diff obj
-      mu_pp(obj).gsub(/\\n/, "\n").gsub(/:0x[a-f0-9]{4,12}/m, ':0xXXXXXX')
+      mu_pp(obj).gsub(/\\n/, "\n").gsub(/:0x[a-fA-F0-9]{4,}/m, ':0xXXXXXX')
     end
 
     def _assertions= n # :nodoc:
@@ -909,8 +909,9 @@ module MiniTest
       filter = Regexp.new $1 if filter =~ /\/(.*)\//
 
       all_test_methods = suite.send "#{type}_methods"
+
       filtered_test_methods = all_test_methods.find_all { |m|
-        "#{suite}##{m}" =~ filter
+        filter === m || filter === "#{suite}##{m}"
       }
 
       assertions = filtered_test_methods.map { |method|
