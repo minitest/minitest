@@ -198,18 +198,6 @@ module MiniTest
     end
 
     ##
-    # Fails unless the block returns a true value.
-    #
-    # NOTE: This method is deprecated, use assert. It will be removed
-    # on 2013-01-01."
-
-    def assert_block msg = nil
-      warn "NOTE: MiniTest::Unit::TestCase#assert_block is deprecated, use assert. It will be removed on 2013-01-01. Called from #{caller.first}"
-      msg = message(msg) { "Expected block to return true value" }
-      assert yield, msg
-    end
-
-    ##
     # Fails unless +obj+ is empty.
 
     def assert_empty obj, msg = nil
@@ -1206,79 +1194,6 @@ module MiniTest
       def after_teardown; end
     end
 
-    module Deprecated # :nodoc:
-
-      ##
-      # This entire module is deprecated and slated for removal on 2013-01-01.
-
-      module Hooks
-        def run_setup_hooks # :nodoc:
-          _run_hooks self.class.setup_hooks
-        end
-
-        def _run_hooks hooks # :nodoc:
-          hooks.each do |hook|
-            if hook.respond_to?(:arity) && hook.arity == 1
-              hook.call(self)
-            else
-              hook.call
-            end
-          end
-        end
-
-        def run_teardown_hooks # :nodoc:
-          _run_hooks self.class.teardown_hooks.reverse
-        end
-      end
-
-      ##
-      # This entire module is deprecated and slated for removal on 2013-01-01.
-
-      module HooksCM
-        ##
-        # Adds a block of code that will be executed before every
-        # TestCase is run.
-        #
-        # NOTE: This method is deprecated, use before/after_setup. It
-        # will be removed on 2013-01-01.
-
-        def add_setup_hook arg=nil, &block
-          warn "NOTE: MiniTest::Unit::TestCase.add_setup_hook is deprecated, use before/after_setup via a module (and call super!). It will be removed on 2013-01-01. Called from #{caller.first}"
-          hook = arg || block
-          @setup_hooks << hook
-        end
-
-        def setup_hooks # :nodoc:
-          if superclass.respond_to? :setup_hooks then
-            superclass.setup_hooks
-          else
-            []
-          end + @setup_hooks
-        end
-
-        ##
-        # Adds a block of code that will be executed after every
-        # TestCase is run.
-        #
-        # NOTE: This method is deprecated, use before/after_teardown. It
-        # will be removed on 2013-01-01.
-
-        def add_teardown_hook arg=nil, &block
-          warn "NOTE: MiniTest::Unit::TestCase#add_teardown_hook is deprecated, use before/after_teardown. It will be removed on 2013-01-01. Called from #{caller.first}"
-          hook = arg || block
-          @teardown_hooks << hook
-        end
-
-        def teardown_hooks # :nodoc:
-          if superclass.respond_to? :teardown_hooks then
-            superclass.teardown_hooks
-          else
-            []
-          end + @teardown_hooks
-        end
-      end
-    end
-
     ##
     # Subclass TestCase to create your own tests. Typically you'll want a
     # TestCase subclass per implementation class.
@@ -1287,8 +1202,6 @@ module MiniTest
 
     class TestCase
       include LifecycleHooks
-      include Deprecated::Hooks
-      extend  Deprecated::HooksCM # UGH... I can't wait 'til 2013!
       include Guard
       extend Guard
 
@@ -1426,7 +1339,6 @@ module MiniTest
 
       def self.inherited klass # :nodoc:
         @@test_suites[klass] = true
-        klass.reset_setup_teardown_hooks
         super
       end
 
@@ -1473,14 +1385,6 @@ module MiniTest
       # run.
 
       def teardown; end
-
-      def self.reset_setup_teardown_hooks # :nodoc:
-        # also deprecated... believe it.
-        @setup_hooks = []
-        @teardown_hooks = []
-      end
-
-      reset_setup_teardown_hooks
 
       include MiniTest::Assertions
     end # class TestCase
