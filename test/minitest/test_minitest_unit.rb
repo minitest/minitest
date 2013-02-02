@@ -17,23 +17,6 @@ class TestMiniTestUnit < MetaMetaMetaTestCase
                "#{MINITEST_BASE_DIR}/test.rb:139:in `run'",
                "#{MINITEST_BASE_DIR}/test.rb:106:in `run'"]
 
-  def test_wtf
-    $hook_value = nil
-
-    capture_io do # don't care about deprecation
-      MiniTest::Unit::TestCase.add_setup_hook do
-        $hook_value = 42
-      end
-    end
-
-    run_setup_hooks
-
-    assert_equal 42, $hook_value
-    assert_equal [Proc], MiniTest::Unit::TestCase.setup_hooks.map(&:class)
-    MiniTest::Unit::TestCase.reset_setup_teardown_hooks
-    assert_equal [],     MiniTest::Unit::TestCase.setup_hooks.map(&:class)
-  end
-
   def test_class_puke_with_assertion_failed
     exception = MiniTest::Assertion.new "Oh no!"
     exception.set_backtrace ["unhappy"]
@@ -781,30 +764,6 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     end
   end
 
-  def test_assert_block
-    exp = ["NOTE: MiniTest::Unit::TestCase#assert_block is deprecated,",
-           "use assert. It will be removed on 2013-01-01."].join " "
-
-    out, err = capture_io do
-      @tc.assert_block do
-        true
-      end
-    end
-
-    assert_equal "", out
-    assert_match exp, err
-  end
-
-  def test_assert_block_triggered
-    assert_output do
-      util_assert_triggered "blah.\nExpected block to return true value." do
-        @tc.assert_block "blah" do
-          false
-        end
-      end
-    end
-  end
-
   def test_assert_empty
     @assertion_count = 2
 
@@ -1431,7 +1390,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
 
     # These don't have corresponding refutes _on purpose_. They're
     # useless and will never be added, so don't bother.
-    ignores = %w[assert_block assert_output assert_raises assert_send
+    ignores = %w[assert_output assert_raises assert_send
                  assert_silent assert_throws]
 
     # These are test/unit methods. I'm not actually sure why they're still here
