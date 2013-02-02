@@ -988,7 +988,7 @@ module MiniTest
       @report = []
       @errors = @failures = @skips = 0
       @verbose = false
-      @mutex = Mutex.new if defined?(Mutex)
+      @mutex = defined?(Mutex) ? Mutex.new : nil
     end
 
     def synchronize # :nodoc:
