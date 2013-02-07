@@ -1,5 +1,4 @@
-class MockExpectationError < StandardError # :nodoc:
-end # omg... worst bug ever. rdoc doesn't allow 1-liners
+class MockExpectationError < StandardError; end # :nodoc:
 
 ##
 # A simple and clean mock object framework.
