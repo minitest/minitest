@@ -1,3 +1,20 @@
+=== 4.6.0 / 2013-02-07
+
+* 3 major enhancements:
+
+  * Removed ::reset_setup_teardown_hooks
+  * Removed the long deprecated assert_block
+  * Removed the long deprecated lifecycle hooks: add_(setup|teardown)_hook
+
+* 1 minor enhancement:
+
+  * Allow filtering tests by suite name as well as test name. (lazyatom)
+
+* 2 bug fixes:
+
+  * Made hex handling (eg object_ids) in mu_pp_for_diff more specific. (maxim)
+  * nodoc top-level module. (zzak)
+
 === 4.5.0 / 2013-01-22
 
 * 1 major enhancement:
