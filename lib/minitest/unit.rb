@@ -1041,7 +1041,8 @@ module MiniTest
     # Top level driver, controls all output and filtering.
 
     def _run args = []
-      self.options.merge! process_args args
+      args = process_args args # ARGH!! blame test/unit process_args
+      self.options.merge! args
 
       puts "Run options: #{help}"
 
