@@ -1,3 +1,9 @@
+=== 4.6.1 / 2013-02-14
+
+* 1 bug fix:
+
+  * Fixed an option processing bug caused by test/unit's irresponsibly convoluted code. (floehopper)
+
 === 4.6.0 / 2013-02-07
 
 * 3 major enhancements:
