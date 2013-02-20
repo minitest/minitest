@@ -292,6 +292,7 @@ minitest-capistrano     :: Assertions and expectations for testing Capistrano re
 minitest-capybara       :: Capybara matchers support for minitest unit and spec
 minitest-chef-handler   :: Run Minitest suites as Chef report handlers
 minitest-ci             :: CI reporter plugin for MiniTest.
+minitest-colorize       :: Colorize MiniTest output and show failing tests instantly.
 minitest-context        :: Defines contexts for code reuse in MiniTest
                            specs that share common expectations.
 minitest-debugger       :: Wraps assert so failed assertions drop into
