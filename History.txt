@@ -1,3 +1,9 @@
+=== 4.6.2 / 2013-02-27
+
+* 1 minor enhancement:
+
+  * Change error output to match Class#method, making it easier to use -n filter.
+
 === 4.6.1 / 2013-02-14
 
 * 1 bug fix:
