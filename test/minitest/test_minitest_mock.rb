@@ -367,3 +367,42 @@ class TestMiniTestStub < MiniTest::Unit::TestCase
     @tc.assert_equal false, dynamic.found
   end
 end
+
+class TestMiniTestAnyInstanceStub < MiniTest::Unit::TestCase
+  parallelize_me!
+
+  def setup
+    super
+    MiniTest::Unit::TestCase.reset
+
+    @tc = MiniTest::Unit::TestCase.new 'fake tc'
+    @assertion_count = 1
+  end
+
+  def teardown
+    super
+    assert_equal @assertion_count, @tc._assertions
+  end
+
+  def assert_stub val_or_callable
+    @assertion_count += 1
+
+    synchronize do
+      obj = "foo"
+
+      String.stub_any_instance :size, val_or_callable do
+        @tc.assert_equal 42, obj.size
+      end
+
+      @tc.assert_operator obj.size, :==, 3
+    end
+  end
+
+  def test_stub_value
+    assert_stub 42
+  end
+
+  def test_stub_block
+    assert_stub lambda { 42 }
+  end
+end
