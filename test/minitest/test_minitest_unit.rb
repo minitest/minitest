@@ -23,7 +23,7 @@ class TestMiniTestUnit < MetaMetaMetaTestCase
     assert_equal 'F', @tu.puke('SomeClass', 'method_name', exception)
     assert_equal 1, @tu.failures
     assert_match(/^Failure.*Oh no!/m, @tu.report.first)
-    assert_match("method_name(SomeClass) [unhappy]", @tu.report.first)
+    assert_match("SomeClass#method_name [unhappy]", @tu.report.first)
   end
 
   def test_class_puke_with_assertion_failed_and_long_backtrace
@@ -43,7 +43,7 @@ class TestMiniTestUnit < MetaMetaMetaTestCase
     assert_equal 'F', @tu.puke('TestSomeClass', 'test_method_name', exception)
     assert_equal 1, @tu.failures
     assert_match(/^Failure.*Oh no!/m, @tu.report.first)
-    assert_match("test_method_name(TestSomeClass) [#{ex_location}]", @tu.report.first)
+    assert_match("TestSomeClass#test_method_name [#{ex_location}]", @tu.report.first)
   end
 
   def test_class_puke_with_assertion_failed_and_user_defined_assertions
@@ -66,7 +66,7 @@ class TestMiniTestUnit < MetaMetaMetaTestCase
     assert_equal 'F', @tu.puke('TestSomeClass', 'test_method_name', exception)
     assert_equal 1, @tu.failures
     assert_match(/^Failure.*Oh no!/m, @tu.report.first)
-    assert_match("test_method_name(TestSomeClass) [#{ex_location}]", @tu.report.first)
+    assert_match("TestSomeClass#test_method_name [#{ex_location}]", @tu.report.first)
   end
 
   def test_class_puke_with_failure_and_flunk_in_backtrace
@@ -99,7 +99,7 @@ class TestMiniTestUnit < MetaMetaMetaTestCase
     assert_equal 'F', @tu.puke('TestSomeClass', 'test_method_name', exception)
     assert_equal 1, @tu.failures
     assert_match(/^Failure.*Oh no!/m, @tu.report.first)
-    assert_match("test_method_name(TestSomeClass) [#{ex_location}]", @tu.report.first)
+    assert_match("TestSomeClass#test_method_name [#{ex_location}]", @tu.report.first)
   end
 
   def test_class_puke_with_non_failure_exception
@@ -287,7 +287,7 @@ class TestMiniTestRunner < MetaMetaMetaTestCase
       Finished tests in 0.00
 
         1) Error:
-      test_error(#<Class:0xXXX>):
+      #<Class:0xXXX>#test_error:
       RuntimeError: unhandled exception
           FILE:LINE:in \`test_error\'
 
@@ -314,7 +314,7 @@ class TestMiniTestRunner < MetaMetaMetaTestCase
       Finished tests in 0.00
 
         1) Error:
-      test_something(#<Class:0xXXX>):
+      #<Class:0xXXX>#test_something:
       RuntimeError: unhandled exception
           FILE:LINE:in \`teardown\'
 
@@ -341,7 +341,7 @@ class TestMiniTestRunner < MetaMetaMetaTestCase
       Finished tests in 0.00
 
         1) Failure:
-      test_failure(#<Class:0xXXX>) [FILE:LINE]:
+      #<Class:0xXXX>#test_failure [FILE:LINE]:
       Failed assertion, no message given.
 
       2 tests, 2 assertions, 1 failures, 0 errors, 0 skips
@@ -490,7 +490,7 @@ class TestMiniTestRunner < MetaMetaMetaTestCase
       Finished tests in 0.00
 
         1) Skipped:
-      test_skip(#<Class:0xXXX>) [FILE:LINE]:
+      #<Class:0xXXX>#test_skip [FILE:LINE]:
       not yet
 
       2 tests, 1 assertions, 0 failures, 0 errors, 1 skips
