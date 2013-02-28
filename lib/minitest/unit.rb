@@ -959,14 +959,14 @@ module MiniTest
           when MiniTest::Skip then
             @skips += 1
             return "S" unless @verbose
-            "Skipped:\n#{meth}(#{klass}) [#{location e}]:\n#{e.message}\n"
+            "Skipped:\n#{klass}##{meth} [#{location e}]:\n#{e.message}\n"
           when MiniTest::Assertion then
             @failures += 1
-            "Failure:\n#{meth}(#{klass}) [#{location e}]:\n#{e.message}\n"
+            "Failure:\n#{klass}##{meth} [#{location e}]:\n#{e.message}\n"
           else
             @errors += 1
             bt = MiniTest::filter_backtrace(e.backtrace).join "\n    "
-            "Error:\n#{meth}(#{klass}):\n#{e.class}: #{e.message}\n    #{bt}\n"
+            "Error:\n#{klass}##{meth}:\n#{e.class}: #{e.message}\n    #{bt}\n"
           end
       @report << e
       e[0, 1]
