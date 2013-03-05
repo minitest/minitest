@@ -104,7 +104,7 @@ Given that you'd like to test the following class:
     def test_that_it_will_not_blend
       refute_match /^no/i, @meme.will_it_blend?
     end
-    
+
     def test_that_will_be_skipped
       skip "test this later"
     end
@@ -319,7 +319,6 @@ minitest-predicates     :: Adds support for .predicate? methods
 minitest-rails          :: MiniTest integration for Rails 3.x
 minitest-rails-capybara :: Capybara integration for MiniTest::Rails
 minitest-reporters      :: Create customizable MiniTest output formats
-minitest-rg             :: redgreen minitest
 minitest-should_syntax  :: RSpec-style +x.should == y+ assertions for MiniTest
 minitest-shouldify      :: Adding all manner of shoulds to MiniTest (bad idea)
 minitest-spec-magic     :: Minitest::Spec extensions for Rails and beyond
@@ -372,7 +371,7 @@ the gem, but you'll need to activate the gem explicitly to use it:
   require 'rubygems'
   gem 'minitest' # ensures you're using the gem, and not the built in MT
   require 'minitest/autorun'
-  
+
   # ... usual testing stuffs ...
 
 DO NOTE: There is a serious problem with the way that ruby 1.9/2.0
