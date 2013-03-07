@@ -81,6 +81,11 @@ end
 # For a list of expectations, see MiniTest::Expectations.
 
 class MiniTest::Spec < MiniTest::Unit::TestCase
+
+  ##
+  # Oh look! A MiniTest::Spec::DSL module! Eat your heart out DHH.
+
+  module DSL
   ##
   # Contains pairs of matchers and Spec classes to be used to
   # calculate the superclass of a top-level describe. This allows for
@@ -106,7 +111,7 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   #       desc.superclass == ActiveRecord::Base
   #     end
 
-  def self.register_spec_type(*args, &block)
+  def register_spec_type(*args, &block)
     if block then
       matcher, klass = block, args.first
     else
@@ -120,7 +125,7 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   #
   #     spec_type("BlahController") # => MiniTest::Spec::Rails
 
-  def self.spec_type desc
+  def spec_type desc
     TYPES.find { |matcher, klass|
       if matcher.respond_to? :call then
         matcher.call desc
@@ -131,18 +136,18 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   end
 
   @@describe_stack = []
-  def self.describe_stack # :nodoc:
+  def describe_stack # :nodoc:
     @@describe_stack
   end
 
   ##
   # Returns the children of this spec.
 
-  def self.children
+  def children
     @children ||= []
   end
 
-  def self.nuke_test_methods! # :nodoc:
+  def nuke_test_methods! # :nodoc:
     self.public_instance_methods.grep(/^test_/).each do |name|
       self.send :undef_method, name
     end
@@ -155,7 +160,7 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   #
   # Equivalent to MiniTest::Unit::TestCase#setup.
 
-  def self.before type = nil, &block
+  def before type = nil, &block
     define_method :setup do
       super()
       self.instance_eval(&block)
@@ -169,7 +174,7 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   #
   # Equivalent to MiniTest::Unit::TestCase#teardown.
 
-  def self.after type = nil, &block
+  def after type = nil, &block
     define_method :teardown do
       self.instance_eval(&block)
       super()
@@ -187,7 +192,7 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   # Hint: If you _do_ want inheritence, use minitest/unit. You can mix
   # and match between assertions and expectations as much as you want.
 
-  def self.it desc = "anonymous", &block
+  def it desc = "anonymous", &block
     block ||= proc { skip "(no tests defined)" }
 
     @specs ||= 0
@@ -209,7 +214,7 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   #
   # Why use let instead of def? I honestly don't know.
 
-  def self.let name, &block
+  def let name, &block
     define_method name do
       @_memoized ||= {}
       @_memoized.fetch(name) { |k| @_memoized[k] = instance_eval(&block) }
@@ -220,11 +225,11 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   # Another lazy man's accessor generator. Made even more lazy by
   # setting the name for you to +subject+.
 
-  def self.subject &block
+  def subject &block
     let :subject, &block
   end
 
-  def self.create name, desc # :nodoc:
+  def create name, desc # :nodoc:
     cls = Class.new(self) do
       @name = name
       @desc = desc
@@ -237,17 +242,20 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
     cls
   end
 
-  def self.to_s # :nodoc:
-    defined?(@name) ? @name : super
-  end
-
   # :stopdoc:
-  class << self
     attr_reader :desc
     alias :specify :it
     alias :name :to_s
-  end
   # :startdoc:
+  end
+
+  extend DSL
+
+  TYPES = DSL::TYPES
+
+  def self.to_s # :nodoc:
+    defined?(@name) ? @name : super
+  end
 end
 
 ##
