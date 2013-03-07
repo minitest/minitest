@@ -220,7 +220,7 @@ module MiniTest
 
     def assert_equal exp, act, msg = nil
       msg = message(msg, "") { diff exp, act }
-      assert(exp == act, msg)
+      assert exp == act, msg
     end
 
     ##
