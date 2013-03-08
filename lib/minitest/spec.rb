@@ -59,7 +59,7 @@ module Kernel # :nodoc:
   def describe desc, additional_desc = nil, &block # :doc:
     stack = MiniTest::Spec.describe_stack
     name  = [stack.last, desc, additional_desc].compact.join("::")
-    sclas = stack.last || if Class === self && self < MiniTest::Spec then
+    sclas = stack.last || if Class === self && is_a?(MiniTest::Spec::DSL) then
                             self
                           else
                             MiniTest::Spec.spec_type desc
