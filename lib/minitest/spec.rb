@@ -242,20 +242,24 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
       cls
     end
 
+    def name # :nodoc:
+      defined?(@name) ? @name : super
+    end
+
+    # Can't alias due to 1.8.7, not sure why
+    def to_s # :nodoc:
+      name
+    end
+
     # :stopdoc:
     attr_reader :desc
     alias :specify :it
-    alias :name :to_s
     # :startdoc:
   end
 
   extend DSL
 
   TYPES = DSL::TYPES
-
-  def self.to_s # :nodoc:
-    defined?(@name) ? @name : super
-  end
 end
 
 ##
