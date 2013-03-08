@@ -242,6 +242,10 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
       cls
     end
 
+    def to_s # :nodoc:
+      defined?(@name) ? @name : super
+    end
+
     # :stopdoc:
     attr_reader :desc
     alias :specify :it
@@ -252,10 +256,6 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   extend DSL
 
   TYPES = DSL::TYPES
-
-  def self.to_s # :nodoc:
-    defined?(@name) ? @name : super
-  end
 end
 
 ##
