@@ -736,6 +736,17 @@ module MiniTest
     attr_writer   :options                            # :nodoc:
 
     ##
+    # :attr:
+    #
+    # if true, installs an "INFO" signal handler (only available to BSD and
+    # OS X users) which prints diagnostic information about the test run.
+    #
+    # This is auto-detected by default but may be overridden by custom
+    # runners.
+
+    attr_accessor :set_info_signal
+
+    ##
     # Lazy accessor for options.
 
     def options
@@ -977,6 +988,7 @@ module MiniTest
       @errors = @failures = @skips = 0
       @verbose = false
       @mutex = defined?(Mutex) ? Mutex.new : nil
+      @set_info_signal = Signal.list['INFO']
     end
 
     def synchronize # :nodoc:
@@ -1211,8 +1223,6 @@ module MiniTest
       PASSTHROUGH_EXCEPTIONS = [NoMemoryError, SignalException,
                                 Interrupt, SystemExit] # :nodoc:
 
-      SUPPORTS_INFO_SIGNAL = Signal.list['INFO'] # :nodoc:
-
       ##
       # Runs the tests reporting the status to +runner+
 
@@ -1225,7 +1235,7 @@ module MiniTest
           time = runner.start_time ? Time.now - runner.start_time : 0
           warn "Current Test: %s#%s %.2fs" % [self.class, self.__name__, time]
           runner.status $stderr
-        end if SUPPORTS_INFO_SIGNAL
+        end if runner.set_info_signal
 
         start_time = Time.now
 
@@ -1259,7 +1269,7 @@ module MiniTest
               result = runner.puke self.class, self.__name__, e
             end
           end
-          trap 'INFO', 'DEFAULT' if SUPPORTS_INFO_SIGNAL
+          trap 'INFO', 'DEFAULT' if runner.set_info_signal
         end
         result
       end
