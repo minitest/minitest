@@ -650,6 +650,14 @@ class TestMeta < MiniTest::Unit::TestCase
     MiniTest::Spec::TYPES.replace original_types
   end
 
+  def test_name
+    spec_a = describe ExampleA do; end
+    spec_b = describe ExampleB, :random_method do; end
+
+    assert_equal "ExampleA", spec_a.name
+    assert_equal "ExampleB::random_method", spec_b.name
+  end
+
   def test_structure
     x, y, z, * = util_structure
 
