@@ -6,6 +6,8 @@ class MiniSpecA < MiniTest::Spec; end
 class MiniSpecB < MiniTest::Spec; end
 class ExampleA; end
 class ExampleB < ExampleA; end
+class DslExampleA; extend MiniTest::Spec::DSL; end
+class DslExampleB < DslExampleA; end
 
 describe MiniTest::Spec do
   # do not parallelize this suite... it just can"t handle it.
@@ -656,6 +658,11 @@ class TestMeta < MiniTest::Unit::TestCase
 
     assert_equal "ExampleA", spec_a.name
     assert_equal "ExampleB::random_method", spec_b.name
+  end
+
+  def test_dsl_name
+    assert_equal "DslExampleA", DslExampleA.name
+    assert_equal "DslExampleB", DslExampleB.name
   end
 
   def test_structure

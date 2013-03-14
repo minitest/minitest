@@ -243,13 +243,16 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
     end
 
     def to_s # :nodoc:
-      defined?(@name) ? @name : (super rescue "dunno") # rescue is a 1.8 oddity
+      defined?(@name) ? @name : super
+    end
+
+    def name # :nodoc:
+      defined?(@name) ? @name : super
     end
 
     # :stopdoc:
     attr_reader :desc
     alias :specify :it
-    alias :name :to_s
     # :startdoc:
   end
 
