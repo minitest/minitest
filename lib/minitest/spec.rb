@@ -242,14 +242,17 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
       cls
     end
 
+    def name # :nodoc:
+      defined?(@name) ? @name : super
+    end
+
     def to_s # :nodoc:
-      defined?(@name) ? @name : (super rescue "dunno") # rescue is a 1.8 oddity
+      name # Can't alias due to 1.8.7, not sure why
     end
 
     # :stopdoc:
     attr_reader :desc
     alias :specify :it
-    alias :name :to_s
     # :startdoc:
   end
 
