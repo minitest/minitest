@@ -1,3 +1,13 @@
+=== 4.7.0 / 2013-03-18
+
+* 1 major enhancement:
+
+  * Refactored MiniTest::Spec into MiniTest::Spec::DSL.
+
+* 1 bug fix:
+
+  * Removed $DEBUG handler that detected when test/unit and minitest were both loaded. (tenderlove)
+
 === 4.6.2 / 2013-02-27
 
 * 1 minor enhancement:
