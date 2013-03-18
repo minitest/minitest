@@ -1393,16 +1393,3 @@ module MiniTest
 end # module MiniTest
 
 Minitest = MiniTest # :nodoc: because ugh... I typo this all the time
-
-if $DEBUG then
-  module Test                # :nodoc:
-    module Unit              # :nodoc:
-      class TestCase         # :nodoc:
-        def self.inherited x # :nodoc:
-          # this helps me ferret out porting issues
-          raise "Using minitest and test/unit in the same process: #{x}"
-        end
-      end
-    end
-  end
-end
