@@ -3,7 +3,11 @@ require "minitest/autorun"
 require "stringio"
 
 class MiniSpecA < MiniTest::Spec; end
-class MiniSpecB < MiniTest::Spec; end
+class MiniSpecB < MiniTest::Unit::TestCase; extend MiniTest::Spec::DSL; end
+class MiniSpecC < MiniSpecB; end
+class NamedExampleA < MiniSpecA; end
+class NamedExampleB < MiniSpecB; end
+class NamedExampleC < MiniSpecC; end
 class ExampleA; end
 class ExampleB < ExampleA; end
 
@@ -651,6 +655,18 @@ class TestMeta < MiniTest::Unit::TestCase
   end
 
   def test_name
+    spec_a = describe ExampleA do; end
+    spec_b = describe ExampleB, :random_method do; end
+
+    assert_equal "ExampleA", spec_a.name
+    assert_equal "ExampleB::random_method", spec_b.name
+  end
+
+  def test_name2
+    assert_equal "NamedExampleA", NamedExampleA.name
+    assert_equal "NamedExampleB", NamedExampleB.name
+    assert_equal "NamedExampleC", NamedExampleC.name
+
     spec_a = describe ExampleA do; end
     spec_b = describe ExampleB, :random_method do; end
 
