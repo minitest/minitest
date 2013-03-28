@@ -729,7 +729,8 @@ module MiniTest
     VERSION = "4.7.0" # :nodoc:
 
     attr_accessor :report, :failures, :errors, :skips # :nodoc:
-    attr_accessor :test_count, :assertion_count       # :nodoc:
+    attr_accessor :assertion_count                    # :nodoc:
+    attr_writer   :test_count                         # :nodoc:
     attr_accessor :start_time                         # :nodoc:
     attr_accessor :help                               # :nodoc:
     attr_accessor :verbose                            # :nodoc:
@@ -834,6 +835,10 @@ module MiniTest
 
     def print *a # :nodoc:
       output.print(*a)
+    end
+
+    def test_count # :nodoc:
+      @test_count ||= 0
     end
 
     ##
@@ -1051,7 +1056,7 @@ module MiniTest
         break unless report.empty?
       end
 
-      return failures + errors if @test_count > 0 # or return nil...
+      return failures + errors if self.test_count > 0 # or return nil...
     rescue Interrupt
       abort 'Interrupted'
     end
