@@ -350,6 +350,11 @@ class TestMiniTestRunner < MetaMetaMetaTestCase
     assert_report expected
   end
 
+  def test_no_test_cases_runs_nothing
+    # no tests cases here
+    assert_report_without_running_test_header ""
+  end
+
   def test_run_failing_filtered
     Class.new MiniTest::Unit::TestCase do
       def test_something

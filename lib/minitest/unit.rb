@@ -840,6 +840,8 @@ module MiniTest
     # Runner for a given +type+ (eg, test vs bench).
 
     def _run_anything type
+      @test_count, @assertion_count = 0, 0
+
       suites = TestCase.send "#{type}_suites"
       return if suites.empty?
 
@@ -849,7 +851,6 @@ module MiniTest
       puts "# Running #{type}s:"
       puts
 
-      @test_count, @assertion_count = 0, 0
       sync = output.respond_to? :"sync=" # stupid emacs
       old_sync, output.sync = output.sync, true if sync
 
