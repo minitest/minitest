@@ -16,7 +16,10 @@ class MetaMetaMetaTestCase < MiniTest::Unit::TestCase
       # Running tests:
 
     EOM
+    assert_report_with_header expected, header, flags
+  end
 
+  def assert_report_with_header expected, header, flags = %w[--seed 42]
     with_output do
       @tu.run flags
     end

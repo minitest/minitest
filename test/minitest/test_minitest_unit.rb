@@ -350,6 +350,19 @@ class TestMiniTestRunner < MetaMetaMetaTestCase
     assert_report expected
   end
 
+  def test_no_test_cases_runs_nothing
+
+    # no tests cases here
+
+    flags = %w[--seed 42]
+
+    header = clean <<-EOM
+      Run options: #{flags.map { |s| s =~ /\|/ ? s.inspect : s }.join " "}
+    EOM
+
+    assert_report_with_header "", header, flags
+  end
+
   def test_run_failing_filtered
     Class.new MiniTest::Unit::TestCase do
       def test_something
