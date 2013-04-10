@@ -921,6 +921,12 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     @tc.assert_in_delta 0.0, 1.0 / 1000, 0.1
   end
 
+  def test_assert_in_delta_triggered_for_equal_delta
+    util_assert_triggered "Expected |6.0 - 5.0| (1.0) to be < 1.0." do
+      @tc.assert_in_delta 6.0, 5.0, 1.0
+    end
+  end
+
   def test_assert_in_delta_triggered
     x = maglev? ? "9.9999999999999995e-07" : "1.0e-06"
     util_assert_triggered "Expected |0.0 - 0.001| (0.001) to be < #{x}." do
