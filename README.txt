@@ -281,6 +281,54 @@ fixture loading:
 
   MiniTest::Unit.runner = MiniTestWithTransactions::Unit.new
 
+== FAQ
+
+=== How to test SimpleDelegates?
+
+The following implementation and test:
+
+    class Worker < SimpleDelegator
+      def work
+      end
+    end
+
+    describe Worker do
+      before do
+        @worker = Worker.new(Object.new)
+      end
+
+      it "must respond to work" do
+        @worker.must_respond_to :work
+      end
+    end
+
+outputs a failure:
+
+      1) Failure:
+    Worker#test_0001_must respond to work [bug11.rb:16]:
+    Expected #<Object:0x007f9e7184f0a0> (Object) to respond to #work.
+
+Worker is a SimpleDelegate which in 1.9+ is a subclass of BasicObject.
+Expectations are put on Object (one level down) so the Worker
+(SimpleDelegate) hits `method_missing` and delegates down to the
+`Object.new` instance. That object doesn't respond to work so the test
+fails.
+
+You can bypass `SimpleDelegate#method_missing` by extending the worker
+with `MiniTest::Expectations`. You can either do that in your setup at
+the instance level, like:
+
+    before do
+      @worker = Worker.new(Object.new)
+      @worker.extend MiniTest::Expectations
+    end
+
+or you can extend the Worker class (within the test file!), like:
+
+    class Worker
+      include ::MiniTest::Expectations
+    end
+
 == Known Extensions:
 
 capybara_minitest_spec      :: Bridge between Capybara RSpec matchers and MiniTest::Spec expectations (e.g. page.must_have_content('Title')).
