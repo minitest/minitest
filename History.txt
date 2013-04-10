@@ -1,3 +1,13 @@
+=== 4.7.1 / 2013-04-09
+
+* 1 minor enhancement:
+
+  * Added FAQ section to README
+
+* 1 bug fix:
+
+  * Fixed bug where guard runs tests bypassing minitest/autorun and an ivar isn't set right. (darrencauthon)
+
 === 4.7.0 / 2013-03-18
 
 * 1 major enhancement:
