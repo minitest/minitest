@@ -921,9 +921,17 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     @tc.assert_in_delta 0.0, 1.0 / 1000, 0.1
   end
 
+  def test_delta_consistency
+    @tc.assert_in_delta 0, 1, 1
+
+    util_assert_triggered "Expected |0 - 1| (1) to not be <= 1." do
+      @tc.refute_in_delta 0, 1, 1
+    end
+  end
+
   def test_assert_in_delta_triggered
-    x = maglev? ? "9.9999999999999995e-07" : "1.0e-06"
-    util_assert_triggered "Expected |0.0 - 0.001| (0.001) to be < #{x}." do
+    x = maglev? ? "9.999999xxxe-07" : "1.0e-06"
+    util_assert_triggered "Expected |0.0 - 0.001| (0.001) to be <= #{x}." do
       @tc.assert_in_delta 0.0, 1.0 / 1000, 0.000001
     end
   end
@@ -945,16 +953,25 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
     @tc.assert_in_epsilon(-10000, -9991)
   end
 
+  def test_epsilon_consistency
+    @tc.assert_in_epsilon 1.0, 1.001
+
+    msg = "Expected |1.0 - 1.001| (0.000999xxx) to not be <= 0.001."
+    util_assert_triggered msg do
+      @tc.refute_in_epsilon 1.0, 1.001
+    end
+  end
+
   def test_assert_in_epsilon_triggered
-    util_assert_triggered 'Expected |10000 - 9990| (10) to be < 9.99.' do
+    util_assert_triggered 'Expected |10000 - 9990| (10) to be <= 9.99.' do
       @tc.assert_in_epsilon 10000, 9990
     end
   end
 
   def test_assert_in_epsilon_triggered_negative_case
-    x = (RUBY18 and not maglev?) ? "0.1" : "0.10000000000000009"
-    y = maglev? ? "0.10000000000000001" : "0.1"
-    util_assert_triggered "Expected |-1.1 - -1| (#{x}) to be < #{y}." do
+    x = (RUBY18 and not maglev?) ? "0.1" : "0.100000xxx"
+    y = maglev? ? "0.100000xxx" : "0.1"
+    util_assert_triggered "Expected |-1.1 - -1| (#{x}) to be <= #{y}." do
       @tc.assert_in_epsilon(-1.1, -1, 0.1)
     end
   end
@@ -1500,19 +1517,19 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 
   def test_refute_in_delta_triggered
-    x = maglev? ? "0.10000000000000001" : "0.1"
-    util_assert_triggered "Expected |0.0 - 0.001| (0.001) to not be < #{x}." do
+    x = maglev? ? "0.100000xxx" : "0.1"
+    util_assert_triggered "Expected |0.0 - 0.001| (0.001) to not be <= #{x}." do
       @tc.refute_in_delta 0.0, 1.0 / 1000, 0.1
     end
   end
 
   def test_refute_in_epsilon
-    @tc.refute_in_epsilon 10000, 9990
+    @tc.refute_in_epsilon 10000, 9990-1
   end
 
   def test_refute_in_epsilon_triggered
-    util_assert_triggered 'Expected |10000 - 9991| (9) to not be < 10.0.' do
-      @tc.refute_in_epsilon 10000, 9991
+    util_assert_triggered 'Expected |10000 - 9990| (10) to not be <= 10.0.' do
+      @tc.refute_in_epsilon 10000, 9990
       fail
     end
   end
@@ -1711,6 +1728,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
 
     msg = e.message.sub(/(---Backtrace---).*/m, '\1')
     msg.gsub!(/\(oid=[-0-9]+\)/, '(oid=N)')
+    msg.gsub!(/(\d\.\d{6})\d+/, '\1xxx') # normalize: ruby version, impl, platform
 
     assert_equal expected, msg
   end

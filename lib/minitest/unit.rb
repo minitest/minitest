@@ -231,7 +231,9 @@ module MiniTest
 
     def assert_in_delta exp, act, delta = 0.001, msg = nil
       n = (exp - act).abs
-      msg = message(msg) { "Expected |#{exp} - #{act}| (#{n}) to be < #{delta}"}
+      msg = message(msg) {
+        "Expected |#{exp} - #{act}| (#{n}) to be <= #{delta}"
+      }
       assert delta >= n, msg
     end
 
@@ -595,9 +597,9 @@ module MiniTest
     def refute_in_delta exp, act, delta = 0.001, msg = nil
       n = (exp - act).abs
       msg = message(msg) {
-        "Expected |#{exp} - #{act}| (#{n}) to not be < #{delta}"
+        "Expected |#{exp} - #{act}| (#{n}) to not be <= #{delta}"
       }
-      refute delta > n, msg
+      refute delta >= n, msg
     end
 
     ##
