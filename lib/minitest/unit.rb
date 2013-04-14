@@ -713,6 +713,9 @@ module MiniTest
       raise MiniTest::Skip, msg, bt
     end
 
+    ##
+    # Was this testcase skipped? Meant for #teardown.
+
     def skipped?
       defined?(@skip) and @skip
     end

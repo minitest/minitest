@@ -258,7 +258,7 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
 
   extend DSL
 
-  TYPES = DSL::TYPES
+  TYPES = DSL::TYPES # :nodoc:
 end
 
 ##
