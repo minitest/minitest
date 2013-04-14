@@ -914,7 +914,7 @@ module MiniTest
       test_method = line_vs_method.sort.reverse.detect do |line, method|
         line <= line_number
       end.last
-      test_method ? "/#{test_method.owner}##{test_method.name}/" : nil
+      test_method ? "#{test_method.owner}##{test_method.name}" : nil
     end
 
     ##
