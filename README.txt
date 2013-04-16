@@ -347,6 +347,7 @@ minitest-debugger           :: Wraps assert so failed assertions drop into
                                the ruby debugger.
 minitest-display            :: Patches MiniTest to allow for an easily configurable output.
 minitest-emoji              :: Print out emoji for your test passes, fails, and skips.
+minitest-english            :: Semantically symmetric aliases for assertions and expectations.
 minitest-excludes           :: Clean API for excluding certain tests you
                                don't want to run under certain conditions.
 minitest-firemock           :: Makes your MiniTest mocks more resilient.
