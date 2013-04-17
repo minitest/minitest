@@ -300,6 +300,18 @@ class TestMiniTestStub < MiniTest::Unit::TestCase
     end
   end
 
+  def test_stub_module
+    @assertion_count += 1
+
+    t0 = Time.now
+
+    Kernel.stub :sleep, nil do
+      @tc.assert_nil sleep(10)
+    end
+
+    @tc.assert_operator Time.now - t0, :<=, 1
+  end
+
   def test_stub_value
     assert_stub 42
   end

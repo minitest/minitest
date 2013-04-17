@@ -166,7 +166,7 @@ class Object # :nodoc:
   def stub name, val_or_callable, &block
     new_name = "__minitest_stub__#{name}"
 
-    metaclass = class << self; self; end
+    metaclass = self.class == Module ? self : class << self; self; end
 
     if respond_to? name and not methods.map(&:to_s).include? name.to_s then
       metaclass.send :define_method, name do |*args|
