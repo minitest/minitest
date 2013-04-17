@@ -3,7 +3,8 @@ History.txt
 Manifest.txt
 README.txt
 Rakefile
-design_rationale.rb
+examples/design_rationale.rb
+examples/minispec.rb
 lib/hoe/minitest.rb
 lib/minitest/autorun.rb
 lib/minitest/benchmark.rb
