@@ -259,6 +259,26 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
     assert_equal rs, 32
   end
 
+  def test_mock_respects_public_send
+    mock = MiniTest::Mock.new
+    mock.expect(:foo, 13, [42])
+
+    rs = mock.public_send(:foo, 42)
+
+    assert_equal rs, 13
+    assert mock.verify
+  end
+
+  def test_mock_respects_send
+    mock = MiniTest::Mock.new
+    mock.expect(:foo, 13, [42])
+
+    rs = mock.send(:foo, 42)
+
+    assert_equal rs, 13
+    assert mock.verify
+  end
+
   def util_verify_bad exp
     e = assert_raises MockExpectationError do
       @mock.verify
