@@ -300,16 +300,38 @@ class TestMiniTestStub < MiniTest::Unit::TestCase
     end
   end
 
-  def test_stub_module
+  def test_stub_private_module_method
     @assertion_count += 1
 
     t0 = Time.now
 
-    Kernel.stub :sleep, nil do
+    self.stub :sleep, nil do
       @tc.assert_nil sleep(10)
     end
 
     @tc.assert_operator Time.now - t0, :<=, 1
+  end
+
+  def test_stub_private_module_method_indirect
+    @assertion_count += 1
+
+    slow_clapper = Class.new do
+      def slow_clap
+        sleep 3
+        :clap
+      end
+    end.new
+
+    slow_clapper.stub :sleep, nil do |fast_clapper|
+      @tc.assert_equal :clap, fast_clapper.slow_clap # either form works
+      @tc.assert_equal :clap, slow_clapper.slow_clap # yay closures
+    end
+  end
+
+  def test_stub_public_module_method
+    Math.stub(:log10, 42.0) do
+      @tc.assert_in_delta 42.0, Math.log10(1000)
+    end
   end
 
   def test_stub_value
