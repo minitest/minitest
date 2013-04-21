@@ -315,16 +315,16 @@ class TestMiniTestStub < MiniTest::Unit::TestCase
   def test_stub_private_module_method_indirect
     @assertion_count += 1
 
-    slow_clapper = Class.new do
-      def slow_clap
-        sleep 3
+    fail_clapper = Class.new do
+      def fail_clap
+        fail
         :clap
       end
     end.new
 
-    slow_clapper.stub :sleep, nil do |fast_clapper|
-      @tc.assert_equal :clap, fast_clapper.slow_clap # either form works
-      @tc.assert_equal :clap, slow_clapper.slow_clap # yay closures
+    fail_clapper.stub :fail, nil do |safe_clapper|
+      @tc.assert_equal :clap, safe_clapper.fail_clap # either form works
+      @tc.assert_equal :clap, fail_clapper.fail_clap # yay closures
     end
   end
 
