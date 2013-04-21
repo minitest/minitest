@@ -329,8 +329,8 @@ class TestMiniTestStub < MiniTest::Unit::TestCase
   end
 
   def test_stub_public_module_method
-    Math.stub(:log10, 42.0) do
-      @tc.assert_in_delta 42.0, Math.log10(1000)
+    Math.stub :log10, :stubbed do
+      @tc.assert_equal :stubbed, Math.log10(1000)
     end
   end
 
