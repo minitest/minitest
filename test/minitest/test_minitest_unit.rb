@@ -372,6 +372,29 @@ class TestMiniTestRunner < MetaMetaMetaTestCase
     assert_report expected, %w[--name /some|thing/ --seed 42]
   end
 
+  def test_run_failing_filtered_by_line_number
+    test_case = Class.new MiniTest::Unit::TestCase do
+      def test_something
+        assert true
+      end
+
+      def test_failure
+        assert false
+      end
+    end
+
+    expected = clean <<-EOM
+      .
+
+      Finished tests in 0.00
+
+      1 tests, 1 assertions, 0 failures, 0 errors, 0 skips
+    EOM
+
+    line_number = test_case.instance_method(:test_something).source_location[1]
+    assert_report expected, ["--line", (line_number + 1).to_s, "--seed", "42"]
+  end
+
   def assert_filtering name, expected, a = false
     args = %W[--name #{name} --seed 42]
 

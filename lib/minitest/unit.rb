@@ -853,6 +853,10 @@ module MiniTest
       suites = TestCase.send "#{type}_suites"
       return if suites.empty?
 
+      if options[:line] && filter = line_number_based_test_filter(suites, options[:line])
+        options[:filter] = filter
+      end
+
       start = Time.now
 
       puts
@@ -884,6 +888,33 @@ module MiniTest
       puts
 
       status
+    end
+
+    ##
+    # Builds a test filter based on the line number.
+    #
+    # NOTE: Assumes line number refers to file in which
+    # first test method is found. Intended for use in running
+    # a single file as when running focussed test from editor.
+
+    def line_number_based_test_filter(suites, line_number)
+      chosen_file = nil
+      line_vs_method = {}
+      suites.each do |suite|
+        suite.test_methods.each do |method_name|
+          test_method = suite.instance_method(method_name)
+          file, line = test_method.source_location
+          normalized_file = File.expand_path(file)
+          chosen_file ||= normalized_file
+          if normalized_file == chosen_file
+            line_vs_method[line] = test_method
+          end
+        end
+      end
+      test_method = line_vs_method.sort.reverse.detect do |line, method|
+        line <= line_number
+      end.last
+      test_method ? "#{test_method.owner}##{test_method.name}" : nil
     end
 
     ##
@@ -1020,6 +1051,10 @@ module MiniTest
 
         opts.on '-n', '--name PATTERN', "Filter test names on pattern (e.g. /foo/)" do |a|
           options[:filter] = a
+        end
+
+        opts.on '-l', '--line LINENUMBER', "Run test at line number" do |l|
+          options[:line] = l.to_i
         end
 
         opts.parse! args
