@@ -23,10 +23,6 @@ class ParallelEach
     N.times { @queue << nil }
   end
 
-  def grep pattern # :nodoc:
-    self.class.new super
-  end
-
   def select(&block) # :nodoc:
     self.class.new super
   end
@@ -50,18 +46,29 @@ class ParallelEach
   end
 end
 
-class MiniTest::Unit
-  alias _old_run_suites _run_suites
+module Minitest
+  class << self
+    remove_method :__run
+  end
+
+  class Test
+    @mutex = Mutex.new
+  end
+
+  class Reporter
+    @mutex = Mutex.new
+  end
 
   ##
   # Runs all the +suites+ for a given +type+. Runs suites declaring
   # a test_order of +:parallel+ in parallel, and everything else
   # serial.
 
-  def _run_suites suites, type
+  def self.__run reporter, options
+    suites = Runnable.runnables
     parallel, serial = suites.partition { |s| s.test_order == :parallel }
 
-    ParallelEach.new(parallel).map { |suite| _run_suite suite, type } +
-     serial.map { |suite| _run_suite suite, type }
+    ParallelEach.new(parallel).map { |suite| suite.run reporter, options } +
+     serial.map { |suite| suite.run reporter, options }
   end
 end

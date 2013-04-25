@@ -5,28 +5,28 @@ require 'minitest/benchmark'
 # Used to verify data:
 # http://www.wolframalpha.com/examples/RegressionAnalysis.html
 
-class TestMiniTestBenchmark < MiniTest::Unit::TestCase
+class TestMinitestBenchmark < Minitest::Test
   def test_cls_bench_exp
-    assert_equal [2, 4, 8, 16, 32], self.class.bench_exp(2, 32, 2)
+    assert_equal [2, 4, 8, 16, 32], Minitest::Benchmark.bench_exp(2, 32, 2)
   end
 
   def test_cls_bench_linear
-    assert_equal [2, 4, 6, 8, 10], self.class.bench_linear(2, 10, 2)
+    assert_equal [2, 4, 6, 8, 10], Minitest::Benchmark.bench_linear(2, 10, 2)
   end
 
-  def test_cls_benchmark_methods
-    assert_equal [], self.class.benchmark_methods
+  def test_cls_runnable_methods
+    assert_equal [], Minitest::Benchmark.runnable_methods
 
-    c = Class.new(MiniTest::Unit::TestCase) do
+    c = Class.new(Minitest::Benchmark) do
       def bench_blah
       end
     end
 
-    assert_equal ["bench_blah"], c.benchmark_methods
+    assert_equal ["bench_blah"], c.runnable_methods
   end
 
   def test_cls_bench_range
-    assert_equal [1, 10, 100, 1_000, 10_000], self.class.bench_range
+    assert_equal [1, 10, 100, 1_000, 10_000], Minitest::Benchmark.bench_range
   end
 
   def test_fit_exponential_clean
@@ -119,7 +119,9 @@ class TestMiniTestBenchmark < MiniTest::Unit::TestCase
   end
 
   def assert_fit msg, x, y, fit, exp_a, exp_b
-    a, b, rr = send "fit_#{msg}", x, y
+    bench = Minitest::Benchmark.new :blah
+
+    a, b, rr = bench.send "fit_#{msg}", x, y
 
     assert_operator rr, :>=, fit if fit
     assert_in_delta exp_a, a

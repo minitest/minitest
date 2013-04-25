@@ -1,11 +1,10 @@
 class MockExpectationError < StandardError; end # :nodoc:
 
-##
-# A simple and clean mock object framework.
-
-module MiniTest # :nodoc:
+module Minitest # :nodoc:
 
   ##
+  # A simple and clean mock object framework.
+  #
   # All mock objects are an instance of Mock
 
   class Mock

@@ -2,27 +2,49 @@ require 'tempfile'
 require 'stringio'
 require 'minitest/autorun'
 
-class MiniTest::Unit::TestCase
+class Minitest::Test
   def clean s
     s.gsub(/^ {6}/, '')
   end
 end
 
-class MetaMetaMetaTestCase < MiniTest::Unit::TestCase
+class MetaMetaMetaTestCase < Minitest::Test
+  attr_accessor :reporter, :output, :tu
+
+  def run_tu_with_fresh_reporter flags = %w[--seed 42]
+    options = Minitest.process_args flags
+
+    @output = StringIO.new("")
+    self.reporter = Minitest::Reporter.new @output, options
+    reporter.start
+
+    @tus ||= [@tu]
+    @tus.each do |tu|
+      Minitest::Runnable.runnables.delete tu
+
+      tu.run reporter, options
+    end
+
+    reporter.report
+  end
+
   def assert_report expected, flags = %w[--seed 42]
     header = clean <<-EOM
       Run options: #{flags.map { |s| s =~ /\|/ ? s.inspect : s }.join " "}
 
-      # Running tests:
+      # Running:
 
     EOM
 
-    with_output do
-      @tu.run flags
-    end
+    run_tu_with_fresh_reporter flags
 
-    output = @output.string.dup
-    output.sub!(/Finished tests in .*/, "Finished tests in 0.00")
+    output = normalize_output @output.string.dup
+
+    assert_equal header + expected, output
+  end
+
+  def normalize_output output
+    output.sub!(/Finished in .*/, "Finished in 0.00")
     output.sub!(/Loaded suite .*/, 'Loaded suite blah')
 
     output.gsub!(/ = \d+.\d\d s = /, ' = 0.00 s = ')
@@ -36,32 +58,13 @@ class MetaMetaMetaTestCase < MiniTest::Unit::TestCase
       output.gsub!(/^(\s+)[^:]+:\d+:in/, '\1FILE:LINE:in')
     end
 
-    assert_equal header + expected, output
+    output
   end
 
   def setup
     super
     srand 42
-    MiniTest::Unit::TestCase.reset
-    @tu = MiniTest::Unit.new
-
-    MiniTest::Unit.runner = nil # protect the outer runner from the inner tests
-  end
-
-  def teardown
-    super
-  end
-
-  def with_output
-    synchronize do
-      begin
-        @output = StringIO.new("")
-        MiniTest::Unit.output = @output
-
-        yield
-      ensure
-        MiniTest::Unit.output = STDOUT
-      end
-    end
+    Minitest::Test.reset
+    @tu = nil
   end
 end

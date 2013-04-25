@@ -1,16 +1,32 @@
 require 'minitest/unit'
 require 'minitest/spec'
 
-class MiniTest::Unit # :nodoc:
-  def run_benchmarks # :nodoc:
-    _run_anything :benchmark
-  end
+module Minitest
+  ##
+  # Subclass Benchmark to create your own benchmark runs. Methods
+  # starting with "bench_" get executed on a per-class.
+  #
+  # See Minitest::Assertions
 
-  def benchmark_suite_header suite # :nodoc:
-    "\n#{suite}\t#{suite.bench_range.join("\t")}"
-  end
+  class Benchmark < Test
+    def self.io # :nodoc:
+      @io
+    end
 
-  class TestCase
+    def io # :nodoc:
+      self.class.io
+    end
+
+    def self.run reporter, options = {} # :nodoc:
+      # NOTE: this is truly horrible... but I don't see a way around this ATM.
+      @io = reporter.reporters.first.io
+      super
+    end
+
+    def self.runnable_methods # :nodoc:
+      methods_matching(/^bench_/)
+    end
+
     ##
     # Returns a set of ranges stepped exponentially from +min+ to
     # +max+ by powers of +base+. Eg:
@@ -34,21 +50,6 @@ class MiniTest::Unit # :nodoc:
       (min..max).step(step).to_a
     rescue LocalJumpError # 1.8.6
       r = []; (min..max).step(step) { |n| r << n }; r
-    end
-
-    ##
-    # Returns the benchmark methods (methods that start with bench_)
-    # for that class.
-
-    def self.benchmark_methods # :nodoc:
-      public_instance_methods(true).grep(/^bench_/).map { |m| m.to_s }.sort
-    end
-
-    ##
-    # Returns all test suites that have benchmark methods.
-
-    def self.benchmark_suites
-      TestCase.test_suites.reject { |s| s.benchmark_methods.empty? }
     end
 
     ##
@@ -83,7 +84,7 @@ class MiniTest::Unit # :nodoc:
     def assert_performance validation, &work
       range = self.class.bench_range
 
-      io.print "#{__name__}"
+      io.print "#{self.name}"
 
       times = []
 
@@ -341,76 +342,82 @@ class MiniTest::Unit # :nodoc:
   end
 end
 
-class MiniTest::Spec
-  ##
-  # This is used to define a new benchmark method. You usually don't
-  # use this directly and is intended for those needing to write new
-  # performance curve fits (eg: you need a specific polynomial fit).
-  #
-  # See ::bench_performance_linear for an example of how to use this.
+module Minitest
+  class BenchSpec < Benchmark
+    extend Minitest::Spec::DSL
 
-  def self.bench name, &block
-    define_method "bench_#{name.gsub(/\W+/, '_')}", &block
-  end
+    ##
+    # This is used to define a new benchmark method. You usually don't
+    # use this directly and is intended for those needing to write new
+    # performance curve fits (eg: you need a specific polynomial fit).
+    #
+    # See ::bench_performance_linear for an example of how to use this.
 
-  ##
-  # Specifies the ranges used for benchmarking for that class.
-  #
-  #   bench_range do
-  #     bench_exp(2, 16, 2)
-  #   end
-  #
-  # See Unit::TestCase.bench_range for more details.
+    def self.bench name, &block
+      define_method "bench_#{name.gsub(/\W+/, '_')}", &block
+    end
 
-  def self.bench_range &block
-    return super unless block
+    ##
+    # Specifies the ranges used for benchmarking for that class.
+    #
+    #   bench_range do
+    #     bench_exp(2, 16, 2)
+    #   end
+    #
+    # See Minitest::Benchmark#bench_range for more details.
 
-    meta = (class << self; self; end)
-    meta.send :define_method, "bench_range", &block
-  end
+    def self.bench_range &block
+      return super unless block
 
-  ##
-  # Create a benchmark that verifies that the performance is linear.
-  #
-  #   describe "my class" do
-  #     bench_performance_linear "fast_algorithm", 0.9999 do |n|
-  #       @obj.fast_algorithm(n)
-  #     end
-  #   end
+      meta = (class << self; self; end)
+      meta.send :define_method, "bench_range", &block
+    end
 
-  def self.bench_performance_linear name, threshold = 0.99, &work
-    bench name do
-      assert_performance_linear threshold, &work
+    ##
+    # Create a benchmark that verifies that the performance is linear.
+    #
+    #   describe "my class" do
+    #     bench_performance_linear "fast_algorithm", 0.9999 do |n|
+    #       @obj.fast_algorithm(n)
+    #     end
+    #   end
+
+    def self.bench_performance_linear name, threshold = 0.99, &work
+      bench name do
+        assert_performance_linear threshold, &work
+      end
+    end
+
+    ##
+    # Create a benchmark that verifies that the performance is constant.
+    #
+    #   describe "my class" do
+    #     bench_performance_constant "zoom_algorithm!" do |n|
+    #       @obj.zoom_algorithm!(n)
+    #     end
+    #   end
+
+    def self.bench_performance_constant name, threshold = 0.99, &work
+      bench name do
+        assert_performance_constant threshold, &work
+      end
+    end
+
+    ##
+    # Create a benchmark that verifies that the performance is exponential.
+    #
+    #   describe "my class" do
+    #     bench_performance_exponential "algorithm" do |n|
+    #       @obj.algorithm(n)
+    #     end
+    #   end
+
+    def self.bench_performance_exponential name, threshold = 0.99, &work
+      bench name do
+        assert_performance_exponential threshold, &work
+      end
     end
   end
 
-  ##
-  # Create a benchmark that verifies that the performance is constant.
-  #
-  #   describe "my class" do
-  #     bench_performance_constant "zoom_algorithm!" do |n|
-  #       @obj.zoom_algorithm!(n)
-  #     end
-  #   end
-
-  def self.bench_performance_constant name, threshold = 0.99, &work
-    bench name do
-      assert_performance_constant threshold, &work
-    end
-  end
-
-  ##
-  # Create a benchmark that verifies that the performance is exponential.
-  #
-  #   describe "my class" do
-  #     bench_performance_exponential "algorithm" do |n|
-  #       @obj.algorithm(n)
-  #     end
-  #   end
-
-  def self.bench_performance_exponential name, threshold = 0.99, &work
-    bench name do
-      assert_performance_exponential threshold, &work
-    end
-  end
+  Minitest::Spec.register_spec_type(/Bench(mark)?$/, Minitest::BenchSpec)
 end

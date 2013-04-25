@@ -92,7 +92,7 @@ Given that you'd like to test the following class:
 
   require 'minitest/autorun'
 
-  class TestMeme < MiniTest::Unit::TestCase
+  class TestMeme < Minitest::Test
     def setup
       @meme = Meme.new
     end
@@ -138,31 +138,16 @@ https://github.com/zenspider/minitest-matchers
 
 === Benchmarks
 
-Add benchmarks to your regular unit tests. If the unit tests fail, the
-benchmarks won't run.
+Add benchmarks to your tests.
 
   # optionally run benchmarks, good for CI-only work!
   require 'minitest/benchmark' if ENV["BENCH"]
 
-  class TestMeme < MiniTest::Unit::TestCase
+  class TestMeme < Minitest::Benchmark
     # Override self.bench_range or default range is [1, 10, 100, 1_000, 10_000]
     def bench_my_algorithm
       assert_performance_linear 0.9999 do |n| # n is a range value
         @obj.my_algorithm(n)
-      end
-    end
-  end
-
-Or add them to your specs. If you make benchmarks optional, you'll
-need to wrap your benchmarks in a conditional since the methods won't
-be defined.
-
-  describe Meme do
-    if ENV["BENCH"] then
-      bench_performance_linear "my_algorithm", 0.9999 do |n|
-        100.times do
-          @obj.my_algorithm(n)
-        end
       end
     end
   end
@@ -229,57 +214,30 @@ new non-existing method:
     ...
   end
 
-=== Customizable Test Runner Types:
+== Writing Extensions
 
-MiniTest::Unit.runner=(runner) provides an easy way of creating custom
-test runners for specialized needs. Justin Weiss provides the
-following real-world example to create an alternative to regular
-fixture loading:
+To define a plugin, add a file named minitest/XXX_plugin.rb to your
+project/gem. Minitest will find and require that file using
+Gem.find_files. It will then try to call plugin_XXX_init during
+startup. The option processor will also try to call plugin_XXX_options
+passing the OptionParser instance and the current options hash. This
+lets you register your own command-line options. Here's a totally
+bogus example:
 
-  class MiniTestWithHooks::Unit < MiniTest::Unit
-    def before_suites
-    end
+    # minitest/bogus_plugin.rb:
 
-    def after_suites
-    end
-
-    def _run_suites(suites, type)
-      begin
-        before_suites
-        super(suites, type)
-      ensure
-        after_suites
-      end
-    end
-
-    def _run_suite(suite, type)
-      begin
-        suite.before_suite
-        super(suite, type)
-      ensure
-        suite.after_suite
-      end
-    end
-  end
-
-  module MiniTestWithTransactions
-    class Unit < MiniTestWithHooks::Unit
-      include TestSetupHelper
-
-      def before_suites
-        super
-        setup_nested_transactions
-        # load any data we want available for all tests
+    module Minitest
+      def self.plugin_bogus_options(opts, options)
+        opts.on "--myci", "Report results to my CI" do
+          options[:myci] = true
+        end
       end
 
-      def after_suites
-        teardown_nested_transactions
-        super
+      def self.plugin_bogus_init
+        ARGV << "-p" # all pride, all the time
+        self.reporter << MyCI.new if options[:myci]
       end
     end
-  end
-
-  MiniTest::Unit.runner = MiniTestWithTransactions::Unit.new
 
 == FAQ
 

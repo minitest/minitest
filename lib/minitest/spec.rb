@@ -9,25 +9,14 @@ class Module # :nodoc:
       def #{new_name} *args
         case
         when Proc === self then
-          MiniTest::Spec.current.#{meth}(*args, &self)
+          Minitest::Spec.current.#{meth}(*args, &self)
         when #{!!dont_flip} then
-          MiniTest::Spec.current.#{meth}(self, *args)
+          Minitest::Spec.current.#{meth}(self, *args)
         else
-          MiniTest::Spec.current.#{meth}(args.first, self, *args[1..-1])
+          Minitest::Spec.current.#{meth}(args.first, self, *args[1..-1])
         end
       end
     EOM
-  end
-
-  ##
-  # infect_with_assertions has been removed due to excessive clever.
-  # Use infect_an_assertion directly instead.
-
-  def infect_with_assertions(pos_prefix, neg_prefix,
-                             skip_re,
-                             dont_flip_re = /\c0/,
-                             map = {})
-    abort "infect_with_assertions is dead. Use infect_an_assertion directly"
   end
 end
 
@@ -35,13 +24,11 @@ module Kernel # :nodoc:
   ##
   # Describe a series of expectations for a given target +desc+.
   #
-  # TODO: find good tutorial url.
-  #
-  # Defines a test class subclassing from either MiniTest::Spec or
+  # Defines a test class subclassing from either Minitest::Spec or
   # from the surrounding describe's class. The surrounding class may
-  # subclass MiniTest::Spec manually in order to easily share code:
+  # subclass Minitest::Spec manually in order to easily share code:
   #
-  #     class MySpec < MiniTest::Spec
+  #     class MySpec < Minitest::Spec
   #       # ... shared code ...
   #     end
   #
@@ -55,14 +42,26 @@ module Kernel # :nodoc:
   #         end
   #       end
   #     end
+  #
+  # For more information on getting started with writing specs, see:
+  #
+  # http://www.rubyinside.com/a-minitestspec-tutorial-elegant-spec-style-testing-that-comes-with-ruby-5354.html
+  #
+  # For some suggestions on how to improve your specs, try:
+  #
+  # http://betterspecs.org
+  #
+  # but do note that several items there are debatable or specific to
+  # rspec.
+
 
   def describe desc, additional_desc = nil, &block # :doc:
-    stack = MiniTest::Spec.describe_stack
+    stack = Minitest::Spec.describe_stack
     name  = [stack.last, desc, additional_desc].compact.join("::")
-    sclas = stack.last || if Class === self && is_a?(MiniTest::Spec::DSL) then
+    sclas = stack.last || if Class === self && is_a?(Minitest::Spec::DSL) then
                             self
                           else
-                            MiniTest::Spec.spec_type desc
+                            Minitest::Spec.spec_type desc
                           end
 
     cls = sclas.create name, desc
@@ -76,14 +75,23 @@ module Kernel # :nodoc:
 end
 
 ##
-# MiniTest::Spec -- The faster, better, less-magical spec framework!
+# Minitest::Spec -- The faster, better, less-magical spec framework!
 #
-# For a list of expectations, see MiniTest::Expectations.
+# For a list of expectations, see Minitest::Expectations.
 
-class MiniTest::Spec < MiniTest::Unit::TestCase
+class Minitest::Spec < Minitest::Test
+
+  def self.current # :nodoc:
+    Thread.current[:current_spec]
+  end
+
+  def initialize name # :nodoc:
+    super
+    Thread.current[:current_spec] = self
+  end
 
   ##
-  # Oh look! A MiniTest::Spec::DSL module! Eat your heart out DHH.
+  # Oh look! A Minitest::Spec::DSL module! Eat your heart out DHH.
 
   module DSL
     ##
@@ -93,7 +101,7 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
     #
     # See: register_spec_type and spec_type
 
-    TYPES = [[//, MiniTest::Spec]]
+    TYPES = [[//, Minitest::Spec]]
 
     ##
     # Register a new type of spec that matches the spec's description.
@@ -103,11 +111,11 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
     #
     # Eg:
     #
-    #     register_spec_type(/Controller$/, MiniTest::Spec::Rails)
+    #     register_spec_type(/Controller$/, Minitest::Spec::Rails)
     #
     # or:
     #
-    #     register_spec_type(MiniTest::Spec::RailsModel) do |desc|
+    #     register_spec_type(Minitest::Spec::RailsModel) do |desc|
     #       desc.superclass == ActiveRecord::Base
     #     end
 
@@ -123,7 +131,7 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
     ##
     # Figure out the spec class to use based on a spec's description. Eg:
     #
-    #     spec_type("BlahController") # => MiniTest::Spec::Rails
+    #     spec_type("BlahController") # => Minitest::Spec::Rails
 
     def spec_type desc
       TYPES.find { |matcher, klass|
@@ -158,7 +166,7 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
     #
     # NOTE: +type+ is ignored and is only there to make porting easier.
     #
-    # Equivalent to MiniTest::Unit::TestCase#setup.
+    # Equivalent to Minitest::Test#setup.
 
     def before type = nil, &block
       define_method :setup do
@@ -172,7 +180,7 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
     #
     # NOTE: +type+ is ignored and is only there to make porting easier.
     #
-    # Equivalent to MiniTest::Unit::TestCase#teardown.
+    # Equivalent to Minitest::Test#teardown.
 
     def after type = nil, &block
       define_method :teardown do
@@ -261,285 +269,8 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   TYPES = DSL::TYPES # :nodoc:
 end
 
-##
-# It's where you hide your "assertions".
-
-module MiniTest::Expectations
-  ##
-  # See MiniTest::Assertions#assert_empty.
-  #
-  #    collection.must_be_empty
-  #
-  # :method: must_be_empty
-
-  infect_an_assertion :assert_empty, :must_be_empty, :unary
-
-  ##
-  # See MiniTest::Assertions#assert_equal
-  #
-  #    a.must_equal b
-  #
-  # :method: must_equal
-
-  infect_an_assertion :assert_equal, :must_equal
-
-  ##
-  # See MiniTest::Assertions#assert_in_delta
-  #
-  #    n.must_be_close_to m [, delta]
-  #
-  # :method: must_be_close_to
-
-  infect_an_assertion :assert_in_delta, :must_be_close_to
-
-  alias :must_be_within_delta :must_be_close_to # :nodoc:
-
-  ##
-  # See MiniTest::Assertions#assert_in_epsilon
-  #
-  #    n.must_be_within_epsilon m [, epsilon]
-  #
-  # :method: must_be_within_epsilon
-
-  infect_an_assertion :assert_in_epsilon, :must_be_within_epsilon
-
-  ##
-  # See MiniTest::Assertions#assert_includes
-  #
-  #    collection.must_include obj
-  #
-  # :method: must_include
-
-  infect_an_assertion :assert_includes, :must_include, :reverse
-
-  ##
-  # See MiniTest::Assertions#assert_instance_of
-  #
-  #    obj.must_be_instance_of klass
-  #
-  # :method: must_be_instance_of
-
-  infect_an_assertion :assert_instance_of, :must_be_instance_of
-
-  ##
-  # See MiniTest::Assertions#assert_kind_of
-  #
-  #    obj.must_be_kind_of mod
-  #
-  # :method: must_be_kind_of
-
-  infect_an_assertion :assert_kind_of, :must_be_kind_of
-
-  ##
-  # See MiniTest::Assertions#assert_match
-  #
-  #    a.must_match b
-  #
-  # :method: must_match
-
-  infect_an_assertion :assert_match, :must_match
-
-  ##
-  # See MiniTest::Assertions#assert_nil
-  #
-  #    obj.must_be_nil
-  #
-  # :method: must_be_nil
-
-  infect_an_assertion :assert_nil, :must_be_nil, :unary
-
-  ##
-  # See MiniTest::Assertions#assert_operator
-  #
-  #    n.must_be :<=, 42
-  #
-  # This can also do predicates:
-  #
-  #    str.must_be :empty?
-  #
-  # :method: must_be
-
-  infect_an_assertion :assert_operator, :must_be, :reverse
-
-  ##
-  # See MiniTest::Assertions#assert_output
-  #
-  #    proc { ... }.must_output out_or_nil [, err]
-  #
-  # :method: must_output
-
-  infect_an_assertion :assert_output, :must_output
-
-  ##
-  # See MiniTest::Assertions#assert_raises
-  #
-  #    proc { ... }.must_raise exception
-  #
-  # :method: must_raise
-
-  infect_an_assertion :assert_raises, :must_raise
-
-  ##
-  # See MiniTest::Assertions#assert_respond_to
-  #
-  #    obj.must_respond_to msg
-  #
-  # :method: must_respond_to
-
-  infect_an_assertion :assert_respond_to, :must_respond_to, :reverse
-
-  ##
-  # See MiniTest::Assertions#assert_same
-  #
-  #    a.must_be_same_as b
-  #
-  # :method: must_be_same_as
-
-  infect_an_assertion :assert_same, :must_be_same_as
-
-  ##
-  # See MiniTest::Assertions#assert_send
-  # TODO: remove me
-  #
-  #    a.must_send
-  #
-  # :method: must_send
-
-  infect_an_assertion :assert_send, :must_send
-
-  ##
-  # See MiniTest::Assertions#assert_silent
-  #
-  #    proc { ... }.must_be_silent
-  #
-  # :method: must_be_silent
-
-  infect_an_assertion :assert_silent, :must_be_silent
-
-  ##
-  # See MiniTest::Assertions#assert_throws
-  #
-  #    proc { ... }.must_throw sym
-  #
-  # :method: must_throw
-
-  infect_an_assertion :assert_throws, :must_throw
-
-  ##
-  # See MiniTest::Assertions#refute_empty
-  #
-  #    collection.wont_be_empty
-  #
-  # :method: wont_be_empty
-
-  infect_an_assertion :refute_empty, :wont_be_empty, :unary
-
-  ##
-  # See MiniTest::Assertions#refute_equal
-  #
-  #    a.wont_equal b
-  #
-  # :method: wont_equal
-
-  infect_an_assertion :refute_equal, :wont_equal
-
-  ##
-  # See MiniTest::Assertions#refute_in_delta
-  #
-  #    n.wont_be_close_to m [, delta]
-  #
-  # :method: wont_be_close_to
-
-  infect_an_assertion :refute_in_delta, :wont_be_close_to
-
-  alias :wont_be_within_delta :wont_be_close_to # :nodoc:
-
-  ##
-  # See MiniTest::Assertions#refute_in_epsilon
-  #
-  #    n.wont_be_within_epsilon m [, epsilon]
-  #
-  # :method: wont_be_within_epsilon
-
-  infect_an_assertion :refute_in_epsilon, :wont_be_within_epsilon
-
-  ##
-  # See MiniTest::Assertions#refute_includes
-  #
-  #    collection.wont_include obj
-  #
-  # :method: wont_include
-
-  infect_an_assertion :refute_includes, :wont_include, :reverse
-
-  ##
-  # See MiniTest::Assertions#refute_instance_of
-  #
-  #    obj.wont_be_instance_of klass
-  #
-  # :method: wont_be_instance_of
-
-  infect_an_assertion :refute_instance_of, :wont_be_instance_of
-
-  ##
-  # See MiniTest::Assertions#refute_kind_of
-  #
-  #    obj.wont_be_kind_of mod
-  #
-  # :method: wont_be_kind_of
-
-  infect_an_assertion :refute_kind_of, :wont_be_kind_of
-
-  ##
-  # See MiniTest::Assertions#refute_match
-  #
-  #    a.wont_match b
-  #
-  # :method: wont_match
-
-  infect_an_assertion :refute_match, :wont_match
-
-  ##
-  # See MiniTest::Assertions#refute_nil
-  #
-  #    obj.wont_be_nil
-  #
-  # :method: wont_be_nil
-
-  infect_an_assertion :refute_nil, :wont_be_nil, :unary
-
-  ##
-  # See MiniTest::Assertions#refute_operator
-  #
-  #    n.wont_be :<=, 42
-  #
-  # This can also do predicates:
-  #
-  #    str.wont_be :empty?
-  #
-  # :method: wont_be
-
-  infect_an_assertion :refute_operator, :wont_be, :reverse
-
-  ##
-  # See MiniTest::Assertions#refute_respond_to
-  #
-  #    obj.wont_respond_to msg
-  #
-  # :method: wont_respond_to
-
-  infect_an_assertion :refute_respond_to, :wont_respond_to, :reverse
-
-  ##
-  # See MiniTest::Assertions#refute_same
-  #
-  #    a.wont_be_same_as b
-  #
-  # :method: wont_be_same_as
-
-  infect_an_assertion :refute_same, :wont_be_same_as
-end
+require "minitest/expectations"
 
 class Object # :nodoc:
-  include MiniTest::Expectations unless ENV["MT_NO_EXPECTATIONS"]
+  include Minitest::Expectations unless ENV["MT_NO_EXPECTATIONS"]
 end

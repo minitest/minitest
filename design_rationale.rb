@@ -1,6 +1,6 @@
 # Specs:                               # Equivalent Unit Tests:
 ###############################################################################
-describe Thingy do                     # class TestThingy < MiniTest::Unit::TestCase
+describe Thingy do                     # class TestThingy < Minitest::Test
   before do                            #   def setup
     do_some_setup                      #     super
   end                                  #     do_some_setup

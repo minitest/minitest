@@ -6,10 +6,10 @@ end
 module Hoe::Minitest
   def initialize_minitest
     gem "minitest"
-    require 'minitest/unit'
-    version = MiniTest::Unit::VERSION.split(/\./).first(2).join(".")
+    require "minitest"
+    version = Minitest::VERSION.split(/\./).first(2).join(".")
 
-    dependency 'minitest', "~> #{version}", :development unless
+    dependency "minitest", "~> #{version}", :development unless
       self.name == "minitest"
   end
 

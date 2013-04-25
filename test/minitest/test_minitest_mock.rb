@@ -1,10 +1,10 @@
 require 'minitest/autorun'
 
-class TestMiniTestMock < MiniTest::Unit::TestCase
+class TestMinitestMock < Minitest::Test
   parallelize_me!
 
   def setup
-    @mock = MiniTest::Mock.new.expect(:foo, nil)
+    @mock = Minitest::Mock.new.expect(:foo, nil)
     @mock.expect(:meaning_of_life, 42)
   end
 
@@ -55,8 +55,8 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
   end
 
   def test_return_mock_does_not_raise
-    retval = MiniTest::Mock.new
-    mock = MiniTest::Mock.new
+    retval = Minitest::Mock.new
+    mock = Minitest::Mock.new
     mock.expect(:foo, retval)
     mock.foo
 
@@ -66,8 +66,8 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
   def test_mock_args_does_not_raise
     skip "non-opaque use of ==" if maglev?
 
-    arg = MiniTest::Mock.new
-    mock = MiniTest::Mock.new
+    arg = Minitest::Mock.new
+    mock = Minitest::Mock.new
     mock.expect(:foo, nil, [arg])
     mock.foo(arg)
 
@@ -113,8 +113,8 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
   end
 
   def test_assign_per_mock_return_values
-    a = MiniTest::Mock.new
-    b = MiniTest::Mock.new
+    a = Minitest::Mock.new
+    b = Minitest::Mock.new
 
     a.expect(:foo, :a)
     b.expect(:foo, :b)
@@ -124,10 +124,10 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
   end
 
   def test_do_not_create_stub_method_on_new_mocks
-    a = MiniTest::Mock.new
+    a = Minitest::Mock.new
     a.expect(:foo, :a)
 
-    assert !MiniTest::Mock.new.respond_to?(:foo)
+    assert !Minitest::Mock.new.respond_to?(:foo)
   end
 
   def test_mock_is_a_blank_slate
@@ -139,7 +139,7 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
   end
 
   def test_verify_allows_called_args_to_be_loosely_specified
-    mock = MiniTest::Mock.new
+    mock = Minitest::Mock.new
     mock.expect :loose_expectation, true, [Integer]
     mock.loose_expectation 1
 
@@ -147,7 +147,7 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
   end
 
   def test_verify_raises_with_strict_args
-    mock = MiniTest::Mock.new
+    mock = Minitest::Mock.new
     mock.expect :strict_expectation, true, [2]
 
     e = assert_raises MockExpectationError do
@@ -159,7 +159,7 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
   end
 
   def test_method_missing_empty
-    mock = MiniTest::Mock.new
+    mock = Minitest::Mock.new
 
     mock.expect :a, nil
 
@@ -173,7 +173,7 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
   end
 
   def test_same_method_expects_are_verified_when_all_called
-    mock = MiniTest::Mock.new
+    mock = Minitest::Mock.new
     mock.expect :foo, nil, [:bar]
     mock.expect :foo, nil, [:baz]
 
@@ -184,7 +184,7 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
   end
 
   def test_same_method_expects_blow_up_when_not_all_called
-    mock = MiniTest::Mock.new
+    mock = Minitest::Mock.new
     mock.expect :foo, nil, [:bar]
     mock.expect :foo, nil, [:baz]
 
@@ -198,7 +198,7 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
   end
 
   def test_verify_passes_when_mock_block_returns_true
-    mock = MiniTest::Mock.new
+    mock = Minitest::Mock.new
     mock.expect :foo, nil do
       true
     end
@@ -210,7 +210,7 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
 
   def test_mock_block_is_passed_function_params
     arg1, arg2, arg3 = :bar, [1,2,3], {:a => 'a'}
-    mock = MiniTest::Mock.new
+    mock = Minitest::Mock.new
     mock.expect :foo, nil do |a1, a2, a3|
       a1 == arg1 &&
       a2 == arg2 &&
@@ -223,7 +223,7 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
   end
 
   def test_verify_fails_when_mock_block_returns_false
-    mock = MiniTest::Mock.new
+    mock = Minitest::Mock.new
     mock.expect :foo, nil do
       false
     end
@@ -235,7 +235,7 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
   end
 
   def test_mock_block_throws_if_args_passed
-    mock = MiniTest::Mock.new
+    mock = Minitest::Mock.new
 
     e = assert_raises(ArgumentError) do
       mock.expect :foo, nil, [:a, :b, :c] do
@@ -249,7 +249,7 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
   end
 
   def test_mock_returns_retval_when_called_with_block
-    mock = MiniTest::Mock.new
+    mock = Minitest::Mock.new
     mock.expect(:foo, 32) do
       true
     end
@@ -270,20 +270,20 @@ end
 
 require "minitest/metametameta"
 
-class TestMiniTestStub < MiniTest::Unit::TestCase
+class TestMinitestStub < Minitest::Test
   parallelize_me!
 
   def setup
     super
-    MiniTest::Unit::TestCase.reset
+    Minitest::Test.reset
 
-    @tc = MiniTest::Unit::TestCase.new 'fake tc'
+    @tc = Minitest::Test.new 'fake tc'
     @assertion_count = 1
   end
 
   def teardown
     super
-    assert_equal @assertion_count, @tc._assertions
+    assert_equal @assertion_count, @tc.assertions
   end
 
   def assert_stub val_or_callable

@@ -1,13 +1,11 @@
 require "minitest/parallel_each"
 
-# :stopdoc:
-class Minitest::Unit::TestCase
+class Minitest::Test
   class << self
-    alias :old_test_order :test_order
+    alias :old_test_order :test_order # :nodoc:
 
-    def test_order
+    def test_order # :nodoc:
       :parallel
     end
   end
 end
-# :startdoc:

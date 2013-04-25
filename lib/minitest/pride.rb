@@ -33,6 +33,8 @@ class PrideIO
       io.print pride o
     when "E", "F" then
       io.print "#{ESC}41m#{ESC}37m#{o}#{NND}"
+    when "S" then
+      io.print pride o
     else
       io.print o
     end
@@ -108,5 +110,4 @@ class PrideLOL < PrideIO
   end
 end
 
-klass = ENV['TERM'] =~ /^xterm|-256color$/ ? PrideLOL : PrideIO
-MiniTest::Unit.output = klass.new(MiniTest::Unit.output)
+ARGV.unshift "-p"
