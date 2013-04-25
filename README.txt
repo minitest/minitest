@@ -152,6 +152,21 @@ Add benchmarks to your tests.
     end
   end
 
+Or add them to your specs. If you make benchmarks optional, you'll
+need to wrap your benchmarks in a conditional since the methods won't
+be defined. In minitest 5, the describe name needs to match
+/Bench(mark)?$/.
+
+  describe "Meme Benchmark" do
+    if ENV["BENCH"] then
+      bench_performance_linear "my_algorithm", 0.9999 do |n|
+        100.times do
+          @obj.my_algorithm(n)
+        end
+      end
+    end
+  end
+
 outputs something like:
 
   # Running benchmarks:
