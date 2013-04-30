@@ -29,6 +29,12 @@ module Minitest
       warn "MiniTest::Unit.autorun is now Minitest.autorun. From #{from}"
       Minitest.autorun
     end
+
+    def self.after_tests(&b)
+      from = caller.first
+      warn "MiniTest::Unit.after_tests is now Minitest.after_run. From #{from}"
+      Minitest.after_run(&b)
+    end
   end
 end
 
