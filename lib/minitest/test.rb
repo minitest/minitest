@@ -119,78 +119,86 @@ module Minitest
     end
 
     ##
-    # Runs before every test, before setup. This hook is meant for
-    # libraries to extend minitest. It is not meant to be used by
-    # test developers.
-    #
-    # As a simplistic example:
-    #
-    #   module MyMinitestPlugin
-    #     def before_setup
-    #       super
-    #       # ... stuff to do before setup is run
-    #     end
-    #
-    #     def after_setup
-    #       # ... stuff to do after setup is run
-    #       super
-    #     end
-    #
-    #     def before_teardown
-    #       super
-    #       # ... stuff to do before teardown is run
-    #     end
-    #
-    #     def after_teardown
-    #       # ... stuff to do after teardown is run
-    #       super
-    #     end
-    #   end
-    #
-    #   class MiniTest::Test
-    #     include MyMinitestPlugin
-    #   end
+    # Provides before/after hooks for setup and teardown. These are
+    # meant for library writers, NOT for regular test authors. See
+    # #before_setup for an example.
 
-    def before_setup; end
+    module LifecycleHooks
 
-    ##
-    # Runs before every test. Use this to set up before each test
-    # run.
+      ##
+      # Runs before every test, before setup. This hook is meant for
+      # libraries to extend minitest. It is not meant to be used by
+      # test developers.
+      #
+      # As a simplistic example:
+      #
+      #   module MyMinitestPlugin
+      #     def before_setup
+      #       super
+      #       # ... stuff to do before setup is run
+      #     end
+      #
+      #     def after_setup
+      #       # ... stuff to do after setup is run
+      #       super
+      #     end
+      #
+      #     def before_teardown
+      #       super
+      #       # ... stuff to do before teardown is run
+      #     end
+      #
+      #     def after_teardown
+      #       # ... stuff to do after teardown is run
+      #       super
+      #     end
+      #   end
+      #
+      #   class MiniTest::Test
+      #     include MyMinitestPlugin
+      #   end
 
-    def setup; end
+      def before_setup; end
 
-    ##
-    # Runs before every test, after setup. This hook is meant for
-    # libraries to extend minitest. It is not meant to be used by
-    # test developers.
-    #
-    # See #before_setup for an example.
+      ##
+      # Runs before every test. Use this to set up before each test
+      # run.
 
-    def after_setup; end
+      def setup; end
 
-    ##
-    # Runs after every test, before teardown. This hook is meant for
-    # libraries to extend minitest. It is not meant to be used by
-    # test developers.
-    #
-    # See #before_setup for an example.
+      ##
+      # Runs before every test, after setup. This hook is meant for
+      # libraries to extend minitest. It is not meant to be used by
+      # test developers.
+      #
+      # See #before_setup for an example.
 
-    def before_teardown; end
+      def after_setup; end
 
-    ##
-    # Runs after every test. Use this to clean up after each test
-    # run.
+      ##
+      # Runs after every test, before teardown. This hook is meant for
+      # libraries to extend minitest. It is not meant to be used by
+      # test developers.
+      #
+      # See #before_setup for an example.
 
-    def teardown; end
+      def before_teardown; end
 
-    ##
-    # Runs after every test, after teardown. This hook is meant for
-    # libraries to extend minitest. It is not meant to be used by
-    # test developers.
-    #
-    # See #before_setup for an example.
+      ##
+      # Runs after every test. Use this to clean up after each test
+      # run.
 
-    def after_teardown; end
+      def teardown; end
+
+      ##
+      # Runs after every test, after teardown. This hook is meant for
+      # libraries to extend minitest. It is not meant to be used by
+      # test developers.
+      #
+      # See #before_setup for an example.
+
+      def after_teardown; end
+    end # LifecycleHooks
 
     def capture_exceptions # :nodoc:
       begin
@@ -274,7 +282,8 @@ module Minitest
       trap "INFO", "DEFAULT" if supports_info_signal
     end
 
+    include LifecycleHooks
     include Guard
     extend Guard
-  end
+  end # Test
 end
