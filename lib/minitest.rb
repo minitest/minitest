@@ -40,7 +40,7 @@ module Minitest
 
       at_exit {
         @@after_run.reverse_each(&:call)
-        exit false if exit_code && exit_code != 0
+        exit exit_code
       }
 
       exit_code = Minitest.run ARGV
@@ -350,7 +350,7 @@ module Minitest
     # Did this run pass?
 
     def passed?
-      results.empty?
+      results.all?(&:skipped?)
     end
 
     ##
