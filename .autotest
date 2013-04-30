@@ -4,7 +4,7 @@ require 'autotest/restart'
 require 'autotest/rcov' if ENV['RCOV']
 
 Autotest.add_hook :initialize do |at|
-  at.testlib = 'minitest/unit'
+  at.testlib = 'minitest/autorun'
 
   at.extra_class_map["MiniTest::Spec"]           = "test/test_minitest_spec.rb"
   at.extra_class_map["TestMeta"]                 = "test/test_minitest_spec.rb"
@@ -18,4 +18,3 @@ end
 
 # require 'autotest/rcov'
 # Autotest::RCov.command = 'rcov_info'
-
