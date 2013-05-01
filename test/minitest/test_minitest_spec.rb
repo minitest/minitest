@@ -589,7 +589,9 @@ class TestMetaStatic < Minitest::Test
   end
 end
 
-class TestMeta < Minitest::Test
+require "minitest/metametameta"
+
+class TestMeta < MetaMetaMetaTestCase
   parallelize_me!
 
   def util_structure
@@ -695,20 +697,15 @@ class TestMeta < Minitest::Test
   end
 
   def test_setup_teardown_behavior
-    skip "not yet"
-
     _, _, z, before_list, after_list = util_structure
 
-    @tu = Minitest::Unit.new
-    Minitest::Unit.runner = nil # protect the outer runner from the inner tests
+    @tu = z
 
-    with_output do
-      tc = z.new :test_0002_anonymous
-      tc.run @tu
-    end
+    run_tu_with_fresh_reporter
 
-    assert_equal [1, 2, 3], before_list
-    assert_equal [3, 2, 1], after_list
+    size = z.runnable_methods.size
+    assert_equal [1, 2, 3] * size, before_list
+    assert_equal [3, 2, 1] * size, after_list
   end
 
   def test_describe_first_structure
@@ -745,8 +742,6 @@ class TestMeta < Minitest::Test
     assert_respond_to z.new(nil), "xyz"
   end
 end
-
-require "minitest/metametameta"
 
 class TestSpecInTestCase < MetaMetaMetaTestCase
   def setup
