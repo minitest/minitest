@@ -169,10 +169,14 @@ class Minitest::Spec < Minitest::Test
     # Equivalent to Minitest::Test#setup.
 
     def before type = nil, &block
-      define_method :setup do
-        super()
-        self.instance_eval(&block)
+      before = Module.new do
+        define_method :setup do
+          super()
+          self.instance_eval(&block)
+        end
       end
+
+      include before
     end
 
     ##
@@ -183,10 +187,14 @@ class Minitest::Spec < Minitest::Test
     # Equivalent to Minitest::Test#teardown.
 
     def after type = nil, &block
-      define_method :teardown do
-        self.instance_eval(&block)
-        super()
+      after = Module.new do
+        define_method :teardown do
+          self.instance_eval(&block)
+          super()
+        end
       end
+
+      include after
     end
 
     ##

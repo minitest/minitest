@@ -612,6 +612,10 @@ class TestMeta < MetaMetaMetaTestCase
         z = describe "very inner thingy" do
           before { before_list << 3 }
           after  { after_list  << 3 }
+          before { before_list << 4 }
+          after  { after_list  << 4 }
+          before { before_list << 5 }
+          after  { after_list  << 5 }
           it "inner-it" do end
 
           it      {} # ignore me
@@ -686,8 +690,8 @@ class TestMeta < MetaMetaMetaTestCase
     assert_equal "inner thingy",      y.desc
     assert_equal "very inner thingy", z.desc
 
-    top_methods = %w(setup teardown test_0001_top-level-it)
-    inner_methods1 = %w(setup teardown test_0001_inner-it)
+    top_methods = %w(test_0001_top-level-it)
+    inner_methods1 = %w(test_0001_inner-it)
     inner_methods2 = inner_methods1 +
       %w(test_0002_anonymous test_0003_anonymous)
 
@@ -707,8 +711,8 @@ class TestMeta < MetaMetaMetaTestCase
 
     run_tu_with_fresh_reporter
 
-    assert_equal [1, 2, 3], before_list
-    assert_equal [3, 2, 1], after_list
+    assert_equal [1, 2, 3, 4, 5], before_list
+    assert_equal [5, 4, 3, 2, 1], after_list
   end
 
   def test_describe_first_structure
