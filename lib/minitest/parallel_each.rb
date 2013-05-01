@@ -44,6 +44,8 @@ class ParallelEach
     }
     threads.map(&:join)
   end
+
+  alias_method :size, :count
 end
 
 module Minitest
