@@ -589,7 +589,9 @@ class TestMetaStatic < Minitest::Test
   end
 end
 
-class TestMeta < Minitest::Test
+require "minitest/metametameta"
+
+class TestMeta < MetaMetaMetaTestCase
   parallelize_me!
 
   def util_structure
@@ -610,6 +612,10 @@ class TestMeta < Minitest::Test
         z = describe "very inner thingy" do
           before { before_list << 3 }
           after  { after_list  << 3 }
+          before { before_list << 4 }
+          after  { after_list  << 4 }
+          before { before_list << 5 }
+          after  { after_list  << 5 }
           it "inner-it" do end
 
           it      {} # ignore me
@@ -684,8 +690,8 @@ class TestMeta < Minitest::Test
     assert_equal "inner thingy",      y.desc
     assert_equal "very inner thingy", z.desc
 
-    top_methods = %w(setup teardown test_0001_top-level-it)
-    inner_methods1 = %w(setup teardown test_0001_inner-it)
+    top_methods = %w(test_0001_top-level-it)
+    inner_methods1 = %w(test_0001_inner-it)
     inner_methods2 = inner_methods1 +
       %w(test_0002_anonymous test_0003_anonymous)
 
@@ -695,20 +701,18 @@ class TestMeta < Minitest::Test
   end
 
   def test_setup_teardown_behavior
-    skip "not yet"
-
     _, _, z, before_list, after_list = util_structure
 
-    @tu = Minitest::Unit.new
-    Minitest::Unit.runner = nil # protect the outer runner from the inner tests
+    @tu = z
 
-    with_output do
-      tc = z.new :test_0002_anonymous
-      tc.run @tu
-    end
+    # ZOMG GROSS
+    m = z.runnable_methods.first
+    z.define_singleton_method(:runnable_methods) { [m] }
 
-    assert_equal [1, 2, 3], before_list
-    assert_equal [3, 2, 1], after_list
+    run_tu_with_fresh_reporter
+
+    assert_equal [1, 2, 3, 4, 5], before_list
+    assert_equal [5, 4, 3, 2, 1], after_list
   end
 
   def test_describe_first_structure
@@ -745,8 +749,6 @@ class TestMeta < Minitest::Test
     assert_respond_to z.new(nil), "xyz"
   end
 end
-
-require "minitest/metametameta"
 
 class TestSpecInTestCase < MetaMetaMetaTestCase
   def setup
