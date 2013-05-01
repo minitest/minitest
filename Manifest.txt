@@ -14,6 +14,7 @@ lib/minitest/hell.rb
 lib/minitest/mock.rb
 lib/minitest/parallel_each.rb
 lib/minitest/pride.rb
+lib/minitest/pride_plugin.rb
 lib/minitest/spec.rb
 lib/minitest/test.rb
 lib/minitest/unit.rb

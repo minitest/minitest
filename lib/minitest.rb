@@ -58,14 +58,16 @@ module Minitest
     @@after_run << block
   end
 
-  def self.init_plugins # :nodoc:
+  def self.init_plugins options # :nodoc:
     self.extensions.each do |name|
       msg = "plugin_#{name}_init"
-      send msg if self.respond_to? msg
+      send msg, options if self.respond_to? msg
     end
   end
 
   def self.load_plugins # :nodoc:
+    return unless self.extensions.empty?
+
     Gem.find_files("minitest/*_plugin.rb").each do |plugin_path|
       require plugin_path
       name = File.basename plugin_path, "_plugin.rb"
@@ -97,7 +99,7 @@ module Minitest
     reporter << Reporter.new(options[:io], options)
 
     self.reporter = reporter # this makes it available to plugins
-    self.init_plugins
+    self.init_plugins options
     self.reporter = nil # runnables shouldn't depend on the reporter, ever
 
     reporter.run_and_report do
@@ -141,12 +143,6 @@ module Minitest
 
       opts.on "-v", "--verbose", "Verbose. Show progress processing files." do
         options[:verbose] = true
-      end
-
-      opts.on "-p", "--pride", "Pride. Show your testing pride!" do
-        require "minitest/pride"
-        klass = ENV["TERM"] =~ /^xterm|-256color$/ ? PrideLOL : PrideIO
-        options[:io] = klass.new(options[:io])
       end
 
       opts.on "-n", "--name PATTERN", "Filter method names on pattern (e.g. /foo/)" do |a|
