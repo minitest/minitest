@@ -20,7 +20,7 @@ module Minitest
       @diff = if (RbConfig::CONFIG['host_os'] =~ /mswin|mingw/ &&
                   system("diff.exe", __FILE__, __FILE__)) then
                 "diff.exe -u"
-              elsif Minitest::Guard.maglev? then
+              elsif Minitest::Test.maglev? then
                 "diff -u"
               elsif system("gdiff", __FILE__, __FILE__)
                 "gdiff -u" # solaris and kin suck

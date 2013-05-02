@@ -145,7 +145,7 @@ module Minitest
         options[:verbose] = true
       end
 
-      opts.on "-n", "--name PATTERN", "Filter method names on pattern (e.g. /foo/)" do |a|
+      opts.on "-n", "--name PATTERN","Filter run on /pattern/ or string." do |a|
         options[:filter] = a
       end
 
@@ -564,8 +564,6 @@ module Minitest
     def maglev? platform = defined?(RUBY_ENGINE) && RUBY_ENGINE
       "maglev" == platform
     end
-
-    module_function :maglev?
 
     ##
     # Is this running on mri?
