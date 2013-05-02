@@ -90,7 +90,7 @@ Given that you'd like to test the following class:
 
 === Unit tests
 
-  require 'minitest/autorun'
+  require "minitest/autorun"
 
   class TestMeme < Minitest::Test
     def setup
@@ -112,7 +112,7 @@ Given that you'd like to test the following class:
 
 === Specs
 
-  require 'minitest/autorun'
+  require "minitest/autorun"
 
   describe Meme do
     before do
@@ -141,7 +141,7 @@ https://github.com/zenspider/minitest-matchers
 Add benchmarks to your tests.
 
   # optionally run benchmarks, good for CI-only work!
-  require 'minitest/benchmark' if ENV["BENCH"]
+  require "minitest/benchmark" if ENV["BENCH"]
 
   class TestMeme < Minitest::Benchmark
     # Override self.bench_range or default range is [1, 10, 100, 1_000, 10_000]
@@ -190,7 +190,7 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
     end
   end
 
-  require 'minitest/autorun'
+  require "minitest/autorun"
 
   describe MemeAsker do
     before do
@@ -304,9 +304,9 @@ or you can extend the Worker class (within the test file!), like:
 
 == Known Extensions:
 
-capybara_minitest_spec      :: Bridge between Capybara RSpec matchers and MiniTest::Spec expectations (e.g. page.must_have_content('Title')).
+capybara_minitest_spec      :: Bridge between Capybara RSpec matchers and MiniTest::Spec expectations (e.g. page.must_have_content("Title")).
 minispec-metadata           :: Metadata for describe/it blocks
-                               (e.g. `it 'requires JS driver', js: true do`)
+                               (e.g. `it "requires JS driver", js: true do`)
 minitest-ansi               :: Colorize minitest output with ANSI colors.
 minitest-around             :: Around block for minitest. An alternative to setup/teardown dance.
 minitest-capistrano         :: Assertions and expectations for testing Capistrano recipes
@@ -389,11 +389,11 @@ Authors... Please send me a pull request with a description of your minitest ext
   sudo gem install minitest
 
 On 1.9, you already have it. To get newer candy you can still install
-the gem, but you'll need to activate the gem explicitly to use it:
+the gem, and then requiring "minitest/autorun" should automatically
+pull it in. If not, you'll need to do it yourself:
 
-  require 'rubygems'
-  gem 'minitest' # ensures you're using the gem, and not the built in MT
-  require 'minitest/autorun'
+  gem "minitest"     # ensures you"re using the gem, and not the built-in MT
+  require "minitest/autorun"
 
   # ... usual testing stuffs ...
 
