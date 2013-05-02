@@ -278,10 +278,27 @@ module Minitest
     end
 
     ##
+    # Did this run pass?
+    #
+    # Note: skipped runs are not considered passing, but they don't
+    # cause the process to exit non-zero.
+
+    def passed?
+      raise NotImplementedError, "subclass responsibility"
+    end
+
+    ##
     # Returns a single character string to print based on the result
     # of the run. Eg ".", "F", or "E".
 
     def result_code
+      raise NotImplementedError, "subclass responsibility"
+    end
+
+    ##
+    # Was this run skipped? See #passed? for more information.
+
+    def skipped?
       raise NotImplementedError, "subclass responsibility"
     end
   end
