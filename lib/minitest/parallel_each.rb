@@ -59,10 +59,50 @@ module Minitest
 
   class Test
     @mutex = Mutex.new
+
+    def self.synchronize # :nodoc:
+      if @mutex then # see parallel_each.rb
+        @mutex.synchronize { yield }
+      else
+        yield
+      end
+    end
+
+    alias :simple_capture_io :capture_io
+
+    def capture_io(&b)
+      Test.synchronize do
+        simple_capture_io(&b)
+      end
+    end
+
+    alias :simple_capture_subprocess_io :capture_subprocess_io
+
+    def capture_subprocess_io(&b)
+      Test.synchronize do
+        simple_capture_subprocess_io(&b)
+      end
+    end
   end
 
   class Reporter
     @mutex = Mutex.new
+
+    def self.synchronize # :nodoc:
+      if @mutex then # see parallel_each.rb
+        @mutex.synchronize { yield }
+      else
+        yield
+      end
+    end
+
+    alias :simple_record :record
+
+    def record result
+      Reporter.synchronize do
+        simple_record result
+      end
+    end
   end
 
   ##

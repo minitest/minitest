@@ -322,16 +322,6 @@ module Minitest
 
     attr_accessor :sync, :old_sync # :nodoc:
 
-    @mutex = nil
-
-    def self.synchronize # :nodoc:
-      if @mutex then # see parallel_each.rb
-        @mutex.synchronize { yield }
-      else
-        yield
-      end
-    end
-
     def initialize io = $stdout, options = {} # :nodoc:
       self.io      = io
       self.options = options
@@ -381,17 +371,15 @@ module Minitest
     # result of the run if the run did not pass.
 
     def record result
-      Reporter.synchronize do
-        self.count += 1
-        self.assertions += result.assertions
+      self.count += 1
+      self.assertions += result.assertions
 
-        io.print "%s#%s = %.2f s = " % [result.class, result.name, result.time] if
-          options[:verbose]
-        io.print result.result_code
-        io.puts if options[:verbose]
+      io.print "%s#%s = %.2f s = " % [result.class, result.name, result.time] if
+      options[:verbose]
+      io.print result.result_code
+      io.puts if options[:verbose]
 
-        results << result if not result.passed? or result.skipped?
-      end
+      results << result if not result.passed? or result.skipped?
     end
 
     ##

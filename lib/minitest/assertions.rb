@@ -391,19 +391,15 @@ module Minitest
 
       captured_stdout, captured_stderr = StringIO.new, StringIO.new
 
-      synchronize do
-        orig_stdout, orig_stderr = $stdout, $stderr
-        $stdout, $stderr         = captured_stdout, captured_stderr
+      orig_stdout, orig_stderr = $stdout, $stderr
+      $stdout, $stderr         = captured_stdout, captured_stderr
 
-        begin
-          yield
-        ensure
-          $stdout = orig_stdout
-          $stderr = orig_stderr
-        end
-      end
+      yield
 
       return captured_stdout.string, captured_stderr.string
+    ensure
+      $stdout = orig_stdout
+      $stderr = orig_stderr
     end
 
     ##
@@ -426,25 +422,21 @@ module Minitest
 
       captured_stdout, captured_stderr = Tempfile.new("out"), Tempfile.new("err")
 
-      synchronize do
-        orig_stdout, orig_stderr = $stdout.dup, $stderr.dup
-        $stdout.reopen captured_stdout
-        $stderr.reopen captured_stderr
+      orig_stdout, orig_stderr = $stdout.dup, $stderr.dup
+      $stdout.reopen captured_stdout
+      $stderr.reopen captured_stderr
 
-        begin
-          yield
+      yield
 
-          $stdout.rewind
-          $stderr.rewind
+      $stdout.rewind
+      $stderr.rewind
 
-          [captured_stdout.read, captured_stderr.read]
-        ensure
-          captured_stdout.unlink
-          captured_stderr.unlink
-          $stdout.reopen orig_stdout
-          $stderr.reopen orig_stderr
-        end
-      end
+      return captured_stdout.read, captured_stderr.read
+    ensure
+      captured_stdout.unlink
+      captured_stderr.unlink
+      $stdout.reopen orig_stdout
+      $stderr.reopen orig_stderr
     end
 
     ##
@@ -646,15 +638,6 @@ module Minitest
 
     def skipped?
       defined?(@skip) and @skip
-    end
-
-    ##
-    # Takes a block and wraps it with the runner's shared mutex.
-
-    def synchronize
-      Minitest::Test.synchronize do
-        yield
-      end
     end
   end
 end

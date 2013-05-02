@@ -289,7 +289,7 @@ class TestMinitestStub < Minitest::Test
   def assert_stub val_or_callable
     @assertion_count += 1
 
-    synchronize do
+    Minitest::Test.synchronize do
       t = Time.now.to_i
 
       Time.stub :now, val_or_callable do
@@ -345,7 +345,7 @@ class TestMinitestStub < Minitest::Test
   def test_stub_block_args
     @assertion_count += 1
 
-    synchronize do
+    Minitest::Test.synchronize do
       t = Time.now.to_i
 
       Time.stub :now,  lambda { |n| n * 2 } do

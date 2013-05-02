@@ -12,8 +12,6 @@ module Minitest
     PASSTHROUGH_EXCEPTIONS = [NoMemoryError, SignalException, # :nodoc:
                               Interrupt, SystemExit]
 
-    @mutex = nil
-
     ##
     # Call this at the top of your tests when you absolutely
     # positively need to have ordered tests. In doing so, you're
@@ -73,14 +71,6 @@ module Minitest
         methods.sort
       else
         raise "Unknown test_order: #{self.test_order.inspect}"
-      end
-    end
-
-    def self.synchronize # :nodoc:
-      if @mutex then # see parallel_each.rb
-        @mutex.synchronize { yield }
-      else
-        yield
       end
     end
 
