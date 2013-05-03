@@ -635,6 +635,27 @@ class TestMinitestUnitOrder < MetaMetaMetaTestCase
   end
 end
 
+class TestMinitestRunnable < Minitest::Test
+  def test_dup
+    tc = Minitest::Test.new "whatever"
+    tc.assertions = 42
+    tc.failures << "a failure"
+
+    def tc.setup
+      @blah = "blah"
+    end
+    tc.setup
+
+    new_tc = tc.dup
+
+    ivars = new_tc.instance_variables.map(&:to_s).sort
+    assert_equal %w(@NAME @assertions @failures), ivars
+    assert_equal "whatever",                      new_tc.name
+    assert_equal 42,                              new_tc.assertions
+    assert_equal ["a failure"],                   new_tc.failures
+  end
+end
+
 class TestMinitestUnitTestCase < Minitest::Test
   # do not call parallelize_me! - teardown accesses @tc._assertions
   # which is not threadsafe. Nearly every method in here is an

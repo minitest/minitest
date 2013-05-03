@@ -276,6 +276,16 @@ module Minitest
       @@runnables
     end
 
+    def dup # :nodoc:
+      obj = self.class.new self.name
+
+      obj.name       = self.name.dup
+      obj.failures   = self.failures.dup
+      obj.assertions = self.assertions
+
+      obj
+    end
+
     def failure # :nodoc:
       self.failures.first
     end
