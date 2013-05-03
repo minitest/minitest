@@ -4,7 +4,7 @@
 # so all the goodies come along (tho not all are wrapped yet to
 # return another ParallelEach instance).
 
-class ParallelEach
+class Minitest::ParallelEach
   require 'thread'
   include Enumerable
 

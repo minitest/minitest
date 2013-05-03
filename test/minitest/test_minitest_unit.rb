@@ -477,7 +477,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
   end
 
   def test_parallel_each_size
-    assert_equal 0, ParallelEach.new([]).size
+    assert_equal 0, Minitest::ParallelEach.new([]).size
   end
 
   def test_run_parallel
