@@ -212,7 +212,16 @@ module Minitest
     ##
     # Name of the run.
 
-    attr_accessor :name
+    def name
+      @NAME
+    end
+
+    ##
+    # Set the name of the run.
+
+    def name= o
+      @NAME = o
+    end
 
     def self.inherited klass # :nodoc:
       self.runnables << klass
