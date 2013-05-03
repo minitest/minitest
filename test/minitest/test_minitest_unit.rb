@@ -636,23 +636,49 @@ class TestMinitestUnitOrder < MetaMetaMetaTestCase
 end
 
 class TestMinitestRunnable < Minitest::Test
-  def test_dup
-    tc = Minitest::Test.new "whatever"
+  def setup_dup klass
+    tc = klass.new "whatever"
     tc.assertions = 42
     tc.failures << "a failure"
+
+    yield tc if block_given?
 
     def tc.setup
       @blah = "blah"
     end
     tc.setup
 
-    new_tc = tc.dup
+    @tc = tc
+  end
+
+  def assert_dup expected_ivars
+    new_tc = @tc.dup
 
     ivars = new_tc.instance_variables.map(&:to_s).sort
-    assert_equal %w(@NAME @assertions @failures), ivars
-    assert_equal "whatever",                      new_tc.name
-    assert_equal 42,                              new_tc.assertions
-    assert_equal ["a failure"],                   new_tc.failures
+    assert_equal expected_ivars, ivars
+    assert_equal "whatever",     new_tc.name
+    assert_equal 42,             new_tc.assertions
+    assert_equal ["a failure"],  new_tc.failures
+
+    yield new_tc if block_given?
+  end
+
+  def test_dup
+    setup_dup Minitest::Runnable
+
+    assert_dup %w(@NAME @assertions @failures)
+  end
+end
+
+class TestMinitestTest < TestMinitestRunnable
+  def test_dup
+    setup_dup Minitest::Test do |tc|
+      tc.time = 3.14
+    end
+
+    assert_dup %w(@NAME @assertions @failures @time) do |new_tc|
+      assert_in_epsilon 3.14, new_tc.time
+    end
   end
 end
 

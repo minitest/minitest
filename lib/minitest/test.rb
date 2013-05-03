@@ -87,6 +87,12 @@ module Minitest
 
     attr_accessor :time
 
+    def dup # :nodoc:
+      obj = super
+      obj.time = self.time
+      obj
+    end
+
     ##
     # Runs a single test with setup/teardown hooks.
 
