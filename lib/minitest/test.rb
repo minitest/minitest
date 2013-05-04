@@ -112,6 +112,8 @@ module Minitest
           end
         end
       end
+
+      self # per contract
     end
 
     ##

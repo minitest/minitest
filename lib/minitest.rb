@@ -255,9 +255,9 @@ module Minitest
       }
 
       filtered_methods.each do |method_name|
-        runnable = self.new(method_name)
-        runnable.run
-        reporter.record runnable
+        result = self.new(method_name).run
+        raise "#{self}#run _must_ return self" unless self === result
+        reporter.record result
       end
     end
 
@@ -294,6 +294,13 @@ module Minitest
       self.name       = name
       self.failures   = []
       self.assertions = 0
+    end
+
+    ##
+    # Runs a single method. Needs to return self.
+
+    def run
+      raise NotImplementedError, "subclass responsibility"
     end
 
     ##

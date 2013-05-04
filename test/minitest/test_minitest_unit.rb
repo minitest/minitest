@@ -162,6 +162,8 @@ class TestMinitestRunner < MetaMetaMetaTestCase
         @foo = "hi mom!"
         super
         @foo = "okay"
+
+        self # per contract
       end
 
       def test_something
