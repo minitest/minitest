@@ -92,7 +92,7 @@ Given that you'd like to test the following class:
 
   require "minitest/autorun"
 
-  class TestMeme < Minitest::Test
+  class TestMeme < Minitest::Unit::TestCase
     def setup
       @meme = Meme.new
     end
@@ -141,13 +141,15 @@ https://github.com/zenspider/minitest-matchers
 Add benchmarks to your tests.
 
   # optionally run benchmarks, good for CI-only work!
-  require "minitest/benchmark" if ENV["BENCH"]
-
-  class TestMeme < Minitest::Benchmark
+  require 'minitest/benchmark' if ENV["BENCH"]
+  
+  class TestMeme < MiniTest::Unit::TestCase
     # Override self.bench_range or default range is [1, 10, 100, 1_000, 10_000]
     def bench_my_algorithm
       assert_performance_linear 0.9999 do |n| # n is a range value
-        @obj.my_algorithm(n)
+        n.times do
+          @obj.my_algorithm
+        end
       end
     end
   end
