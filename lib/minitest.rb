@@ -279,7 +279,7 @@ module Minitest
     def dup # :nodoc:
       obj = self.class.new self.name
 
-      obj.name       = self.name.dup
+      obj.name       = self.name
       obj.failures   = self.failures.dup
       obj.assertions = self.assertions
 
