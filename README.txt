@@ -302,6 +302,30 @@ or you can extend the Worker class (within the test file!), like:
       include ::MiniTest::Expectations
     end
 
+=== How to share code across test classes?
+
+Use a module. That's exactly what they're for:
+
+    module UsefulStuff
+      def useful_method
+        # ...
+      end
+    end
+
+    describe Blah do
+      include UsefulStuff
+
+      def test_whatever
+        # useful_method available here
+      end
+    end
+
+Remember, `describe` simply creates test classes. It's just ruby at
+the end of the day and all your normal Good Ruby Rules (tm) apply. If
+you want to extend your test using setup/teardown via a module, just
+make sure you ALWAYS call super. before/after automatically call super
+for you, so make sure you don't do it twice.
+
 == Known Extensions:
 
 capybara_minitest_spec      :: Bridge between Capybara RSpec matchers and MiniTest::Spec expectations (e.g. page.must_have_content("Title")).
