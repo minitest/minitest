@@ -45,11 +45,11 @@ class Minitest::ParallelEach
     threads.map(&:join)
   end
 
-  def count
+  def count # :nodoc:
     [@queue.size - N, 0].max
   end
 
-  alias_method :size, :count
+  alias_method :size, :count # :nodoc:
 end
 
 module Minitest
