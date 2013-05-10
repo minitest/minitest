@@ -1,3 +1,76 @@
+=== 5.0.0 / 2013-05-10
+
+Oh god... here we go...
+
+Minitest 5:
+
+Deaths in the family:
+
+* MiniTest.runner is dead. No more manager objects.
+* MiniTest::Unit#record is dead. Use a Reporter instance instead.
+* MiniTest::Unit._run_* is dead. Runnable things are responsible for their own runs.
+* MiniTest::Unit.output is dead. No more centralized IO.
+
+Major (oft incompatible) changes:
+
+* Renamed MiniTest to Minitest. Your pinkies will thank me. (aliased to MiniTest)
+* Removed MiniTest::Unit entirely. No more manager objects.
+* Added Minitest::Runnable. Everything minitest can run subclasses this.
+* Renamed MiniTest::Unit::TestCase to Minitest::Test (subclassing Runnable).
+* Added Minitest::Benchmark.
+  * Your benchmarks need to move to their own subclass.
+  * Benchmarks using the spec DSL have to have "Bench" somewhere in their describe.
+* MiniTest::Unit.after_tests moved to Minitest.after_tests
+* MiniTest::Unit.autorun is now Minitest.autorun. Just require minitest/autorun pls.
+* Removed ParallelEach#grep since it isn't used anywhere.
+* Renamed Runnable#__name__ to Runnable#name (but uses @NAME internally).
+* Runnable#run needs to return self. Allows for swapping of results as needed.
+
+Minor moves:
+
+* Moved Assertions module to minitest/assertions.rb
+* Moved Expectations module to minitest/expectations.rb
+* Moved Test to minitest/test.rb
+* Moved everything else in minitest/unit.rb to minitest.rb
+* minitest/unit.rb is now just a small (user-test only) compatibility layer.
+* Moved most of minitest/pride into minitest/pride_plugin.
+* minitest/pride now just activates pride.
+* Moved ParallelEach under Minitest.
+
+Additions:
+
+* Added a plugin system that can extend command-line options.
+* Added Minitest.extensions.
+* Added Minitest.reporter (only available during startup).
+* Added Minitest.run(args). This is the very top of any Minitest run.
+* Added Minitest::Reporter. Everything minitest can report goes through here.
+  * Minitest.reporter is a composite so you can add your own.
+* Added Minitest::CompositeReporter. Much easier to extend with your own reporters.
+* Added UnexpectedError, an Assertion subclass, to wrap up errors.
+* Minitest::Test#run is now freakin' beautiful. 47 -> 17 loc
+
+Other:
+
+* Removed Object.infect_with_assertions (it was already dead code).
+* Runnables are responsible for knowing their result_code (eg "." or "F").
+* Minitest.autorun now returns boolean, not exit code.
+* Added FAQ entry for extending via modules. (phiggins)
+* Implement Runnable#dup to cleanse state back to test results. Helps with serialization. pair:tenderlove
+* Moved ParallelEach under Minitest.
+* Runnable#run needs to return self. Allows for swapping of results as needed.
+* Minitest.init_plugins passes down options.
+* Minitest.load_plugins only loads once.
+* Fixed minitest/pride to work with rake test loader again. (tmiller)
+* Added count/size to ParallelEach to fix use w/in stdlib's test/unit. :( (btaitelb)
+
+Voodoo:
+
+* Removed mutex from minitest.rb (phiggins)
+* Removed mutex from test.rb (phiggins)
+* Removed Minitest::Reporter.synchronize (phiggins)
+* Removed Minitest::Test.synchronize (phiggins)
+* Upon loading minitest/parallel_each, record, capture_io and capture_subprocess_io are doped with synchronization code. (phiggins)
+
 === 4.7.3 / 2013-04-20
 
 * 1 bug fix:
