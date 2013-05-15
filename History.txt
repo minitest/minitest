@@ -1,3 +1,10 @@
+=== 5.0.1 / 2013-05-14
+
+* 2 bug fixes:
+
+  * Documented Assertions' need for @assertions to be defined by the includer.
+  * Only load one plugin version per name. Tries for latest.
+
 === 5.0.0 / 2013-05-10
 
 Oh god... here we go...
