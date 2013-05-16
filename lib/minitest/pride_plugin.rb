@@ -81,7 +81,7 @@ module Minitest
         }
       }
 
-      super
+      io.puts(*o)
     end
 
     ##
