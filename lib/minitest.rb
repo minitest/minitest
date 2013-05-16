@@ -70,7 +70,7 @@ module Minitest
 
     seen = {}
 
-    Gem.find_files("minitest/*_plugin.rb").reverse.each do |plugin_path|
+    Gem.find_files("minitest/*_plugin.rb").each do |plugin_path|
       name = File.basename plugin_path, "_plugin.rb"
 
       next if seen[name]
