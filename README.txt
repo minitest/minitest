@@ -248,7 +248,7 @@ bogus example:
         end
       end
 
-      def self.plugin_bogus_init
+      def self.plugin_bogus_init(options)
         ARGV << "-p" # all pride, all the time
         self.reporter << MyCI.new if options[:myci]
       end
