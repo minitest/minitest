@@ -369,6 +369,7 @@ minitest-reporters          :: Create customizable MiniTest output formats
 minitest-should_syntax      :: RSpec-style +x.should == y+ assertions for MiniTest
 minitest-shouldify          :: Adding all manner of shoulds to MiniTest (bad idea)
 minitest-spec-context       :: Provides rspec-ish context method to MiniTest::Spec
+minitest-spec-expect        :: Expect syntax for MiniTest::Spec - expect(sequences).to_include :celery_man
 minitest-spec-magic         :: Minitest::Spec extensions for Rails and beyond
 minitest-spec-rails         :: Drop in MiniTest::Spec superclass for ActiveSupport::TestCase.
 minitest-stub-const         :: Stub constants for the duration of a block
