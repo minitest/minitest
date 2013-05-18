@@ -270,14 +270,15 @@ module Minitest
 
       t0 = Time.now
 
-      trap "INFO" do
+      old_trap = trap("INFO") do
         warn ""
+        old_trap.call if old_trap
         warn "Current: %s#%s %.2fs" % [self.class, self.name, Time.now - t0]
       end if supports_info_signal
 
       yield
     ensure
-      trap "INFO", "DEFAULT" if supports_info_signal
+      trap "INFO", old_trap if supports_info_signal
     end
 
     include LifecycleHooks
