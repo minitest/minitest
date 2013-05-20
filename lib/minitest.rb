@@ -282,14 +282,12 @@ module Minitest
       @@runnables
     end
 
-    def dup # :nodoc:
-      obj = self.class.new self.name
+    def marshal_dump
+      [self.name, self.failures, self.assertions]
+    end
 
-      obj.name       = self.name
-      obj.failures   = self.failures.dup
-      obj.assertions = self.assertions
-
-      obj
+    def marshal_load ary
+      self.name, self.failures, self.assertions = ary
     end
 
     def failure # :nodoc:

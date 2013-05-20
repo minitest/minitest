@@ -87,10 +87,13 @@ module Minitest
 
     attr_accessor :time
 
-    def dup # :nodoc:
-      obj = super
-      obj.time = self.time
-      obj
+    def marshal_dump
+      super << self.time
+    end
+
+    def marshal_load ary
+      self.time = ary.pop
+      super
     end
 
     ##

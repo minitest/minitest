@@ -638,7 +638,7 @@ class TestMinitestUnitOrder < MetaMetaMetaTestCase
 end
 
 class TestMinitestRunnable < Minitest::Test
-  def setup_dup klass
+  def setup_marshal klass
     tc = klass.new "whatever"
     tc.assertions = 42
     tc.failures << "a failure"
@@ -653,8 +653,8 @@ class TestMinitestRunnable < Minitest::Test
     @tc = tc
   end
 
-  def assert_dup expected_ivars
-    new_tc = @tc.dup
+  def assert_marshal expected_ivars
+    new_tc = Marshal.load Marshal.dump @tc
 
     ivars = new_tc.instance_variables.map(&:to_s).sort
     assert_equal expected_ivars, ivars
@@ -665,20 +665,20 @@ class TestMinitestRunnable < Minitest::Test
     yield new_tc if block_given?
   end
 
-  def test_dup
-    setup_dup Minitest::Runnable
+  def test_marshal
+    setup_marshal Minitest::Runnable
 
-    assert_dup %w(@NAME @assertions @failures)
+    assert_marshal %w(@NAME @assertions @failures)
   end
 end
 
 class TestMinitestTest < TestMinitestRunnable
   def test_dup
-    setup_dup Minitest::Test do |tc|
+    setup_marshal Minitest::Test do |tc|
       tc.time = 3.14
     end
 
-    assert_dup %w(@NAME @assertions @failures @time) do |new_tc|
+    assert_marshal %w(@NAME @assertions @failures @time) do |new_tc|
       assert_in_epsilon 3.14, new_tc.time
     end
   end
