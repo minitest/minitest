@@ -253,6 +253,7 @@ module Minitest
     # reporter to record.
 
     def self.run reporter, options = {}
+      reporter.before_suite self
       filter = options[:filter] || '/./'
       filter = Regexp.new $1 if filter =~ /\/(.*)\//
 
@@ -261,10 +262,14 @@ module Minitest
       }
 
       filtered_methods.each do |method_name|
-        result = self.new(method_name).run
+        test = self.new(method_name)
+        reporter.before_test test
+        result = test.run
         raise "#{self}#run _must_ return self" unless self === result
         reporter.record result
       end
+    ensure
+      reporter.after_suite self
     end
 
     ##
@@ -463,6 +468,15 @@ module Minitest
 
       io.sync = self.old_sync if self.sync
     end
+
+    def before_suite suite
+    end
+
+    def after_suite suite
+    end
+
+    def before_test test
+    end
   end
 
   ##
@@ -501,6 +515,24 @@ module Minitest
 
     def report # :nodoc:
       self.reporters.each(&:report)
+    end
+
+    def before_suite suite # :nodoc:
+      self.reporters.each do |reporter|
+        reporter.before_suite suite
+      end
+    end
+
+    def after_suite suite # :nodoc:
+      self.reporters.each do |reporter|
+        reporter.after_suite suite
+      end
+    end
+
+    def before_test test # :nodoc:
+      self.reporters.each do |reporter|
+        reporter.before_test test
+      end
     end
   end
 
