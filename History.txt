@@ -1,3 +1,11 @@
+=== 5.0.2 / 2013-05-20
+
+* 3 bug fixes:
+
+  * Gem.find_files is smarter than I remember... cause I wrote it that way. *sigh* I'm getting old.
+  * Pride wasn't doing puts through its #io. (tmiller/tenderlove)
+  * Replaced Runnable#dup and Test#dup with marshal_dump/load. Too many problems cropping up on untested rails code. (tenderlove/rubys)
+
 === 5.0.1 / 2013-05-14
 
 * 2 bug fixes:

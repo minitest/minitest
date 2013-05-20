@@ -4,7 +4,7 @@ require "optparse"
 # :include: README.txt
 
 module Minitest
-  VERSION = "5.0.1" # :nodoc:
+  VERSION = "5.0.2" # :nodoc:
 
   @@installed_at_exit ||= false
   @@after_run = []
