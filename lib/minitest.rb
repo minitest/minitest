@@ -260,11 +260,27 @@ module Minitest
         filter === m || filter === "#{self}##{m}"
       }
 
-      filtered_methods.each do |method_name|
-        result = self.new(method_name).run
-        raise "#{self}#run _must_ return self" unless self === result
-        reporter.record result
+      with_info_handler(reporter) do
+        filtered_methods.each do |method_name|
+          result = self.new(method_name).run
+          raise "#{self}#run _must_ return self" unless self === result
+          reporter.record result
+        end
       end
+    end
+
+    def self.with_info_handler reporter # :nodoc:
+      supports_info_signal = Signal.list["INFO"]
+
+      old_trap = trap("INFO") do
+        if reporter.reporters.any? { |reporter| reporter.results.any? }
+          reporter.report
+        end
+      end if supports_info_signal
+
+      yield
+    ensure
+      trap "INFO", old_trap if supports_info_signal
     end
 
     ##
