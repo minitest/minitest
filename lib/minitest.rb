@@ -254,11 +254,14 @@ module Minitest
 
     def self.run reporter, options = {}
       filtered_methods(options).each do |method_name|
-        result = self.new(method_name).run
+        result = init_runnable(method_name, options).run
         raise "#{self}#run _must_ return self" unless self === result
         reporter.record result
       end
     end
+
+    ##
+    # Responsible for detecting all runnable methods in a given class.
 
     def self.filtered_methods options = {}
       filter = options[:filter] || '/./'
@@ -267,6 +270,15 @@ module Minitest
       self.runnable_methods.find_all { |m|
         filter === m || filter === "#{self}##{m}"
       }
+    end
+
+    ##
+    # Responsible for initializing the runnable instances.
+    # This method receives the options hash to allow
+    # extensions to use them.
+
+    def self.init_runnable method_name, options = {}
+      self.new(method_name)
     end
 
     ##
