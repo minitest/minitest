@@ -395,6 +395,7 @@ module Minitest
 
       yield
 
+      io.sync = self.old_sync if self.sync
       report
     end
 
@@ -422,7 +423,7 @@ module Minitest
       self.assertions += result.assertions
 
       io.print "%s#%s = %.2f s = " % [result.class, result.name, result.time] if
-      options[:verbose]
+        options[:verbose]
       io.print result.result_code
       io.puts if options[:verbose]
 
@@ -449,17 +450,18 @@ module Minitest
       format = "%d runs, %d assertions, %d failures, %d errors, %d skips"
       summary = format % [count, self.assertions, f, e, s]
 
+      io.print self
+      io.puts
+      io.puts summary
+    end
+
+    def to_s
       filtered_results = results.dup
       filtered_results.reject!(&:skipped?) unless options[:verbose]
 
-      filtered_results.each_with_index do |result, i|
-        io.puts "\n%3d) %s" % [i+1, result]
-      end
-
-      io.puts
-      io.puts summary
-
-      io.sync = self.old_sync if self.sync
+      filtered_results.each_with_index.map do |result, i|
+        "\n%3d) %s" % [i+1, result]
+      end.join "\n"
     end
   end
 
