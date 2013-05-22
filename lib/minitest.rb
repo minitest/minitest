@@ -260,11 +260,39 @@ module Minitest
         filter === m || filter === "#{self}##{m}"
       }
 
-      filtered_methods.each do |method_name|
-        result = self.new(method_name).run
-        raise "#{self}#run _must_ return self" unless self === result
-        reporter.record result
+      with_info_handler reporter do
+        filtered_methods.each do |method_name|
+          result = self.new(method_name).run
+          raise "#{self}#run _must_ return self" unless self === result
+          reporter.record result
+        end
       end
+    end
+
+    def self.with_info_handler reporter, &block # :nodoc:
+      handler = lambda do
+        unless reporter.passed? then
+          warn "Current results:"
+          warn ""
+          warn reporter.reporters.first
+          warn ""
+        end
+      end
+
+      on_signal "INFO", handler, &block
+    end
+
+    def self.on_signal name, action # :nodoc:
+      supported = Signal.list[name]
+
+      old_trap = trap name do
+        old_trap.call if old_trap.respond_to? :call
+        action.call
+      end if supported
+
+      yield
+    ensure
+      trap name, old_trap if supported
     end
 
     ##
@@ -282,11 +310,11 @@ module Minitest
       @@runnables
     end
 
-    def marshal_dump
+    def marshal_dump # :nodoc:
       [self.name, self.failures, self.assertions]
     end
 
-    def marshal_load ary
+    def marshal_load ary # :nodoc:
       self.name, self.failures, self.assertions = ary
     end
 
@@ -455,7 +483,7 @@ module Minitest
       io.puts summary
     end
 
-    def to_s
+    def to_s # :nodoc:
       filtered_results = results.dup
       filtered_results.reject!(&:skipped?) unless options[:verbose]
 
