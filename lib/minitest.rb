@@ -342,9 +342,9 @@ module Minitest
     end
 
     ##
-    # If there was unexpected error during test run.
+    # Did this run error?
 
-    def error_occurred?
+    def error?
       raise NotImplementedError, "subclass responsibility"
     end
   end
@@ -450,7 +450,7 @@ module Minitest
 
     def report
       f = results.count(&:failed?)
-      e = results.count(&:error_occurred?)
+      e = results.count(&:error?)
       s = results.count(&:skipped?)
       t = Time.now - start_time
 

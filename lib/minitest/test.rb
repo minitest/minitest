@@ -253,14 +253,7 @@ module Minitest
     # Was this run failed due to assertion?
 
     def failed?
-      not (passed? or skipped? or error_occurred?)
-    end
-
-    ##
-    # If there was unexpected error during test run.
-
-    def error_occurred?
-      self.failure and UnexpectedError === self.failure
+      not (passed? or skipped? or error?)
     end
 
     def time_it # :nodoc:
