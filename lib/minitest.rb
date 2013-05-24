@@ -359,6 +359,20 @@ module Minitest
     def skipped?
       raise NotImplementedError, "subclass responsibility"
     end
+
+    ##
+    # Was this run failed due to assertion?
+
+    def failed?
+      raise NotImplementedError, "subclass responsibility"
+    end
+
+    ##
+    # Did this run error?
+
+    def error?
+      raise NotImplementedError, "subclass responsibility"
+    end
   end
 
   ##
@@ -462,12 +476,9 @@ module Minitest
     # Outputs the summary of the run.
 
     def report
-      aggregate = results.group_by { |r| r.failure.class }
-      aggregate.default = [] # dumb. group_by should provide this
-
-      f = aggregate[Assertion].size
-      e = aggregate[UnexpectedError].size
-      s = aggregate[Skip].size
+      f = results.count(&:failed?)
+      e = results.count(&:error?)
+      s = results.count(&:skipped?)
       t = Time.now - start_time
 
       io.puts # finish the dots

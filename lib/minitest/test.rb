@@ -252,6 +252,13 @@ module Minitest
       self.failure and Skip === self.failure
     end
 
+    ##
+    # Was this run failed due to assertion?
+
+    def failed?
+      not (passed? or skipped? or error?)
+    end
+
     def time_it # :nodoc:
       t0 = Time.now
 
