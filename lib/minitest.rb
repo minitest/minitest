@@ -436,6 +436,15 @@ module Minitest
 
       self.start_time = Time.now
 
+      print_start
+    end
+
+    ##
+    # Outputs the start of the report.
+    # This method is meant to be overriden by plugins
+    # that want to show the start output in a different fashion.
+
+    def print_start
       io.puts "Run options: #{options[:args]}"
       io.puts
       io.puts "# Running:"
@@ -450,12 +459,21 @@ module Minitest
       self.count += 1
       self.assertions += result.assertions
 
+      print_record result
+
+      results << result if not result.passed? or result.skipped?
+    end
+
+    ##
+    # Outputs the Runnable#result_code.
+    # This method is meant to be overriden by plugins
+    # that want to show the recorded result in a different fashion.
+
+    def print_record result
       io.print "%s#%s = %.2f s = " % [result.class, result.name, result.time] if
         options[:verbose]
       io.print result.result_code
       io.puts if options[:verbose]
-
-      results << result if not result.passed? or result.skipped?
     end
 
     ##
@@ -465,18 +483,27 @@ module Minitest
       aggregate = results.group_by { |r| r.failure.class }
       aggregate.default = [] # dumb. group_by should provide this
 
-      f = aggregate[Assertion].size
-      e = aggregate[UnexpectedError].size
-      s = aggregate[Skip].size
-      t = Time.now - start_time
+      failures = aggregate[Assertion].size
+      errors   = aggregate[UnexpectedError].size
+      skips    = aggregate[Skip].size
+      time     = Time.now - start_time
 
-      io.puts # finish the dots
+      print_report time, failures, errors, skips
+    end
+
+    ##
+    # Outputs the summary of the run.
+    # This method is meant to be overriden by plugins
+    # that want to show the results in a different fashion.
+
+    def print_report time, failures, errors, skips
+      io.puts # finish the dot
       io.puts
       io.puts "Finished in %.6fs, %.4f runs/s, %.4f assertions/s." %
-        [t, count / t, self.assertions / t]
+        [time, count / time, self.assertions / time]
 
       format = "%d runs, %d assertions, %d failures, %d errors, %d skips"
-      summary = format % [count, self.assertions, f, e, s]
+      summary = format % [count, self.assertions, failures, errors, skips]
 
       io.print self
       io.puts
