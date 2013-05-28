@@ -254,6 +254,50 @@ bogus example:
       end
     end
 
+=== Adding custom reporters
+
+Minitest uses a chainable reporter to output test results.
+To add custom reporters to the chain, you can agregate
+them inside Minitest's reporter instance.
+Here's the previous example again with only the part that we're
+interested in:
+
+    # minitest/bogus_plugin.rb
+
+    module Minitest
+      def self.plugin_bogus_init(options)
+        self.reporter << MyCI.new
+      end
+    end
+
+There are three methods that you can override to modify your custom
+reporter's output:
+
+1. print_start:  Shows output messages before your tests start.
+2. print_record: Shows output messages each time a test runs.
+3. print_report: Shows output messages after your tests finish.
+
+Here's the MyCI class implementation:
+
+    # minitest/bogus_plugin.rb
+
+    module Minitest
+      class MyCI < Reporter
+        def print_start
+          io.puts "Bogus plugin: starting tests."
+        end
+
+        def print_record(result)
+          io.puts "Bogus test #{result.name} - result: #{result.result_code}"
+        end
+
+        def print_report(time, failures, errors, skips)
+          io.puts "Bogus plugin: tests finished in %.6fs:" % [time]
+          io.puts "With %d failures, %d errors and %d skips" % [failures, errors, skips]
+        end
+      end
+    end
+
 == FAQ
 
 === How to test SimpleDelegates?
