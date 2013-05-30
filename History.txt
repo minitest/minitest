@@ -1,3 +1,12 @@
+=== 5.0.3 / 2013-05-29
+
+* 4 minor enhancements:
+
+  * Added Runnable.with_info_handler and Runnable.on_signal.
+  * Moved io.sync restore to Reporter#run_and_report.
+  * Refactored inner loop of Reporter#report to #to_s. Callable for status updates.
+  * Restored MT4's mid-run report (^t). (tenderlove).
+
 === 5.0.2 / 2013-05-20
 
 * 3 bug fixes:
