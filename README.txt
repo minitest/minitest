@@ -245,12 +245,52 @@ bogus example:
       def self.plugin_bogus_options(opts, options)
         opts.on "--myci", "Report results to my CI" do
           options[:myci] = true
+          options[:myci_addr] = get_myci_addr
+          options[:myci_port] = get_myci_port
         end
       end
 
       def self.plugin_bogus_init(options)
-        ARGV << "-p" # all pride, all the time
-        self.reporter << MyCI.new if options[:myci]
+        self.reporter << MyCI.new(options) if options[:myci]
+      end
+    end
+
+=== Adding custom reporters
+
+Minitest uses composite reporter to output test results using multiple
+reporter instances. You can add new reporters to the composite during
+the init_plugins phase. As we saw in +plugin_bonus_init+ above, you
+simply add your reporter instance to the composite via +<<+.
+
++AbstractReporter+ defines the API for reporters. You may subclass it
+and override any method you want to achieve your desired behavior.
+
+start   :: Called when the run has started.
+record  :: Called for each result, passed or otherwise.
+report  :: Called at the end of the run.
+passed? :: Called to see if you detected any problems.
+
+Using our example above, here is how we might implement MyCI:
+
+    # minitest/bogus_plugin.rb
+
+    module Minitest
+      class MyCI < AbstractReporter
+        attr_accessor :results, :addr, :port
+
+        def initialize options
+          self.results = []
+          self.addr = options[:myci_addr]
+          self.port = options[:myci_port]
+        end
+
+        def record result
+          self.results << result
+        end
+
+        def report
+          CI.connect(addr, port).send_results self.results
+        end
       end
     end
 

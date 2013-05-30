@@ -432,7 +432,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       def self.name; "wacky!" end
 
       def self.before_my_suite
-        @reporter.io.puts "Running #{self.name} tests"
+        @reporter.reporters.first.io.puts "Running #{self.name} tests"
         @@foo = 1
       end
 
@@ -1750,7 +1750,7 @@ class TestMinitestUnitRecording < MetaMetaMetaTestCase
 
     run_tu_with_fresh_reporter
 
-    recorded = reporter.results.map(&:failures).flatten.map { |f| f.error.class }
+    recorded = first_reporter.results.map(&:failures).flatten.map { |f| f.error.class }
 
     assert_equal expected, recorded
   end
@@ -1828,7 +1828,7 @@ class TestMinitestUnitRecording < MetaMetaMetaTestCase
           FILE:LINE:in `teardown'
     "
 
-    assert_equal exp.strip, normalize_output(reporter.results.first.to_s).strip
+    assert_equal exp.strip, normalize_output(first_reporter.results.first.to_s).strip
   end
 
   def test_record_skip

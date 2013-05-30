@@ -15,7 +15,11 @@ class MetaMetaMetaTestCase < Minitest::Test
     options = Minitest.process_args flags
 
     @output = StringIO.new("")
-    self.reporter = Minitest::Reporter.new @output, options
+
+    self.reporter = Minitest::CompositeReporter.new
+    reporter << Minitest::SummaryReporter.new(@output, options)
+    reporter << Minitest::ProgressReporter.new(@output, options)
+
     reporter.start
 
     @tus ||= [@tu]
@@ -26,6 +30,10 @@ class MetaMetaMetaTestCase < Minitest::Test
     end
 
     reporter.report
+  end
+
+  def first_reporter
+    reporter.reporters.first
   end
 
   def assert_report expected, flags = %w[--seed 42]

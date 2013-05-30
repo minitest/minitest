@@ -5,9 +5,33 @@ class TestMinitestReporter < Minitest::Test
 
   attr_accessor :r, :io
 
+  def new_composite_reporter
+    reporter = Minitest::CompositeReporter.new
+    reporter << Minitest::SummaryReporter.new(self.io)
+    reporter << Minitest::ProgressReporter.new(self.io)
+
+    def reporter.first
+      reporters.first
+    end
+
+    def reporter.results
+      first.results
+    end
+
+    def reporter.count
+      first.count
+    end
+
+    def reporter.assertions
+      first.assertions
+    end
+
+    reporter
+  end
+
   def setup
     self.io = StringIO.new("")
-    self.r  = Minitest::Reporter.new io
+    self.r  = new_composite_reporter
   end
 
   def error_test
