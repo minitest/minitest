@@ -5,6 +5,25 @@ class TestMinitestReporter < Minitest::Test
 
   attr_accessor :r, :io
 
+  class ReporterExtension < Minitest::Reporter
+    def print_start
+      io.puts "Extension start with arguments: #{options[:args]}"
+    end
+
+    def print_record result
+      io.puts "Extension record result: #{result.result_code}"
+    end
+
+    def print_report time, failures, errors, skips
+      io.puts "Extension report:"
+      format = "%d runs, %d assertions, %d failures, %d errors, %d skips"
+      summary = format % [count, self.assertions, failures, errors, skips]
+
+      io.puts
+      io.puts summary
+    end
+  end
+
   def setup
     self.io = StringIO.new("")
     self.r  = Minitest::Reporter.new io
@@ -236,6 +255,23 @@ class TestMinitestReporter < Minitest::Test
       S
 
       Finished in 0.00
+
+      1 runs, 0 assertions, 0 failures, 0 errors, 1 skips
+    EOM
+
+    assert_equal exp, normalize_output(io.string)
+  end
+
+  def test_report_extension
+    e = ReporterExtension.new io
+    e.start
+    e.record skip_test
+    e.report
+
+    exp = clean <<-EOM
+      Extension start with arguments:
+      Extension record result: S
+      Extension report:
 
       1 runs, 0 assertions, 0 failures, 0 errors, 1 skips
     EOM
