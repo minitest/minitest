@@ -197,7 +197,7 @@ class Minitest::Spec < Minitest::Test
     #
     # This is also aliased to #specify and doesn't require a +desc+ arg.
     #
-    # Hint: If you _do_ want inheritence, use minitest/unit. You can mix
+    # Hint: If you _do_ want inheritence, use minitest/test. You can mix
     # and match between assertions and expectations as much as you want.
 
     def it desc = "anonymous", &block
