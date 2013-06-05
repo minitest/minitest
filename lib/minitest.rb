@@ -429,9 +429,9 @@ module Minitest
   end
 
   ##
-  # A reporter that gathers statistics about a test run. Does not
-  # do any IO because meant to be used as a parent class for a
-  # reporter that does.
+  # A reporter that gathers statistics about a test run. Does not do
+  # any IO because meant to be used as a parent class for a reporter
+  # that does.
   #
   # If you want to create an entirely different type of output (eg,
   # CI, HTML, etc), this is the place to start.
@@ -477,14 +477,13 @@ module Minitest
     end
 
     def report # :nodoc:
-      self.total_time = Time.now - start_time
-
       aggregate = results.group_by { |r| r.failure.class }
       aggregate.default = [] # dumb. group_by should provide this
 
-      self.failures  = aggregate[Assertion].size
-      self.errors = aggregate[UnexpectedError].size
-      self.skips  = aggregate[Skip].size
+      self.total_time = Time.now - start_time
+      self.failures   = aggregate[Assertion].size
+      self.errors     = aggregate[UnexpectedError].size
+      self.skips      = aggregate[Skip].size
     end
   end
 
