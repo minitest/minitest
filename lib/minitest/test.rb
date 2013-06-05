@@ -25,8 +25,8 @@ module Minitest
     end
 
     ##
-    # Make diffs for this TestCase use #pretty_inspect so that diff
-    # in assert_equal can be more details. NOTE: this is much slower
+    # Make diffs for this Test use #pretty_inspect so that diff
+    # in assert_equal can have more details. NOTE: this is much slower
     # than the regular inspect but much more usable for complex
     # objects.
 

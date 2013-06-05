@@ -620,7 +620,7 @@ module Minitest
   ##
   # Provides a simple set of guards that you can use in your tests
   # to skip execution if it is not applicable. These methods are
-  # mixed into TestCase as both instance and class methods so you
+  # mixed into Test as both instance and class methods so you
   # can use them inside or outside of the test methods.
   #
   #   def test_something_for_mri
@@ -642,7 +642,7 @@ module Minitest
     end
 
     ##
-    # Is this running on mri?
+    # Is this running on maglev?
 
     def maglev? platform = defined?(RUBY_ENGINE) && RUBY_ENGINE
       "maglev" == platform
