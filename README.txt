@@ -396,6 +396,7 @@ minitest-instrument         :: Instrument ActiveSupport::Notifications when
 minitest-instrument-db      :: Store information about speed of test
                                execution provided by minitest-instrument in database
 minitest-libnotify          :: Test notifier for minitest via libnotify.
+minitest-line               :: Run test at line number
 minitest-macruby            :: Provides extensions to minitest for macruby UI testing.
 minitest-matchers           :: Adds support for RSpec-style matchers to minitest.
 minitest-metadata           :: Annotate tests with metadata (key-value).
