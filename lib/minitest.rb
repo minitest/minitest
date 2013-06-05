@@ -429,20 +429,23 @@ module Minitest
   end
 
   ##
-  # A reporter that prints the header, summary, and failure details at
-  # the end of the run.
+  # A reporter that gathers statistics about a test run. Does not
+  # do any IO because meant to be used as a parent class for a
+  # reporter that does.
   #
   # If you want to create an entirely different type of output (eg,
   # CI, HTML, etc), this is the place to start.
 
-  class SummaryReporter < Reporter
+  class StatisticsReporter < Reporter
     # :stopdoc:
     attr_accessor :assertions
     attr_accessor :count
     attr_accessor :results
     attr_accessor :start_time
-    attr_accessor :sync
-    attr_accessor :old_sync
+    attr_accessor :total_time
+    attr_accessor :failures
+    attr_accessor :errors
+    attr_accessor :skips
     # :startdoc:
 
     def initialize io = $stdout, options = {} # :nodoc:
@@ -452,6 +455,10 @@ module Minitest
       self.count      = 0
       self.results    = []
       self.start_time = nil
+      self.total_time = nil
+      self.failures   = nil
+      self.errors     = nil
+      self.skips      = nil
     end
 
     def passed? # :nodoc:
@@ -460,14 +467,6 @@ module Minitest
 
     def start # :nodoc:
       self.start_time = Time.now
-
-      io.puts "Run options: #{options[:args]}"
-      io.puts
-      io.puts "# Running:"
-      io.puts
-
-      self.sync = io.respond_to? :"sync=" # stupid emacs
-      self.old_sync, io.sync = io.sync, true if self.sync
     end
 
     def record result # :nodoc:
@@ -478,36 +477,73 @@ module Minitest
     end
 
     def report # :nodoc:
-      io.sync = self.old_sync
+      self.total_time = Time.now - start_time
 
       aggregate = results.group_by { |r| r.failure.class }
       aggregate.default = [] # dumb. group_by should provide this
 
-      f = aggregate[Assertion].size
-      e = aggregate[UnexpectedError].size
-      s = aggregate[Skip].size
-      t = Time.now - start_time
+      self.failures  = aggregate[Assertion].size
+      self.errors = aggregate[UnexpectedError].size
+      self.skips  = aggregate[Skip].size
+    end
+  end
+
+  ##
+  # A reporter that prints the header, summary, and failure details at
+  # the end of the run.
+  #
+  # This is added to the top-level CompositeReporter at the start of
+  # the run. If you want to change the output of minitest via a
+  # plugin, pull this out of the composite and replace it with your
+  # own.
+
+  class SummaryReporter < StatisticsReporter
+    # :stopdoc:
+    attr_accessor :sync
+    attr_accessor :old_sync
+    # :startdoc:
+
+    def start # :nodoc:
+      super
+
+      io.puts "Run options: #{options[:args]}"
+      io.puts
+      io.puts "# Running:"
+      io.puts
+
+      self.sync = io.respond_to? :"sync=" # stupid emacs
+      self.old_sync, io.sync = io.sync, true if self.sync
+    end
+
+    def report # :nodoc:
+      super
+
+      io.sync = self.old_sync
 
       io.puts # finish the dots
       io.puts
-      io.puts "Finished in %.6fs, %.4f runs/s, %.4f assertions/s." %
-        [t, count / t, self.assertions / t]
-
-      format = "%d runs, %d assertions, %d failures, %d errors, %d skips"
-      summary = format % [count, self.assertions, f, e, s]
-
-      io.print self
-      io.puts
+      io.puts statistics
+      io.puts aggregated_results
       io.puts summary
     end
 
-    def to_s # :nodoc:
+    def statistics # :nodoc:
+      "Finished in %.6fs, %.4f runs/s, %.4f assertions/s." %
+        [total_time, count / total_time, assertions / total_time]
+    end
+
+    def aggregated_results # :nodoc:
       filtered_results = results.dup
       filtered_results.reject!(&:skipped?) unless options[:verbose]
 
       filtered_results.each_with_index.map do |result, i|
         "\n%3d) %s" % [i+1, result]
-      end.join "\n"
+      end.join("\n") + "\n"
+    end
+
+    def summary # :nodoc:
+      "%d runs, %d assertions, %d failures, %d errors, %d skips" %
+        [count, assertions, failures, errors, skips]
     end
   end
 
