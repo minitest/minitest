@@ -1,3 +1,13 @@
+=== 5.0.4 / 2013-06-07
+
+* 5 minor enhancements:
+
+  * Added AbstractReporter, defining required Reporter API to quack properly.
+  * Added doco for writing reporters.
+  * Refactored Reporter into ProgressReporter and SummaryReporter. (idea: phiggins, code:me+scotch)
+  * Refactored SummaryReporter pushing up to StatisticsReporter. (phiggins)
+  * Removed Reporter#run_and_report... cleaner, but doesn't "fit" in the API.
+
 === 5.0.3 / 2013-05-29
 
 * 4 minor enhancements:
