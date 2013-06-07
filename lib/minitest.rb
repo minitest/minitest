@@ -94,7 +94,7 @@ module Minitest
   #         Runnable.runnables.each
   #           runnable.run(reporter, options)
   #             self.runnable_methods.each
-  #               self.new.run runnable_method
+  #               self.new(runnable_method).run
 
   def self.run args = []
     self.load_plugins
