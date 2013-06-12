@@ -286,18 +286,22 @@ class TestMinitestStub < Minitest::Test
     assert_equal @assertion_count, @tc.assertions
   end
 
+  class Time
+    def self.now
+      24
+    end
+  end
+
   def assert_stub val_or_callable
     @assertion_count += 1
 
-    Minitest::Test.synchronize do
-      t = Time.now.to_i
+    t = Time.now.to_i
 
-      Time.stub :now, val_or_callable do
-        @tc.assert_equal 42, Time.now
-      end
-
-      @tc.assert_operator Time.now.to_i, :>=, t
+    Time.stub :now, val_or_callable do
+      @tc.assert_equal 42, Time.now
     end
+
+    @tc.assert_operator Time.now.to_i, :>=, t
   end
 
   def test_stub_private_module_method
@@ -345,15 +349,13 @@ class TestMinitestStub < Minitest::Test
   def test_stub_block_args
     @assertion_count += 1
 
-    Minitest::Test.synchronize do
-      t = Time.now.to_i
+    t = Time.now.to_i
 
-      Time.stub :now,  lambda { |n| n * 2 } do
-        @tc.assert_equal 42, Time.now(21)
-      end
-
-      @tc.assert_operator Time.now.to_i, :>=, t
+    Time.stub :now,  lambda { |n| n * 2 } do
+      @tc.assert_equal 42, Time.now(21)
     end
+
+    @tc.assert_operator Time.now.to_i, :>=, t
   end
 
   def test_stub_callable

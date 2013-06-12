@@ -143,9 +143,8 @@ class Minitest::Spec < Minitest::Test
       }.last
     end
 
-    @@describe_stack = []
     def describe_stack # :nodoc:
-      @@describe_stack
+      Thread.current[:describe_stack] ||= []
     end
 
     ##
