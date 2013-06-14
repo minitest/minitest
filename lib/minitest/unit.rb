@@ -767,8 +767,8 @@ module MiniTest
 
     def self.autorun
       at_exit {
-        # don't run if there was a non-exit exception
-        next if $! and not $!.kind_of? SystemExit
+        # don't run if there was a non-exit exception or exit with failure
+        next if $! and (not $!.kind_of? SystemExit or !$!.success?)
 
         # the order here is important. The at_exit handler must be
         # installed before anyone else gets a chance to install their
