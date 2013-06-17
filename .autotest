@@ -6,12 +6,26 @@ require 'autotest/rcov' if ENV['RCOV']
 Autotest.add_hook :initialize do |at|
   at.testlib = 'minitest/autorun'
 
-  at.extra_class_map["MiniTest::Spec"]           = "test/test_minitest_spec.rb"
-  at.extra_class_map["TestMeta"]                 = "test/test_minitest_spec.rb"
-  at.extra_class_map["TestMiniTestUnitTestCase"] = "test/test_minitest_unit.rb"
-  at.extra_class_map["TestMiniTestUnit"]         = "test/test_minitest_unit.rb"
-  at.extra_class_map["TestMiniTestUnitRecording"]= "test/test_minitest_unit.rb"
-  at.extra_class_map["TestMiniTestStub"]         = "test/test_minitest_mock.rb"
+  bench_tests = %w(TestMinitestBenchmark)
+  mock_tests = %w(TestMinitestMock TestMinitestStub)
+  spec_tests = %w(TestMinitestReporter TestMetaStatic TestMeta
+                  TestSpecInTestCase)
+  unit_tests = %w(TestMinitestGuard TestMinitestRunnable
+                  TestMinitestRunner TestMinitestTest TestMinitestUnit
+                  TestMinitestUnitInherited TestMinitestUnitOrder
+                  TestMinitestUnitRecording TestMinitestUnitTestCase)
+
+  {
+    bench_tests => "test/minitest/test_minitest_benchmark.rb",
+    mock_tests  => "test/minitest/test_minitest_mock.rb",
+    spec_tests  => "test/minitest/test_minitest_reporter.rb",
+    unit_tests  => "test/minitest/test_minitest_unit.rb",
+  }.each do |klasses, file|
+    klasses.each do |klass|
+      at.extra_class_map[klass] = file
+    end
+  end
+
   at.add_exception 'coverage.info'
   at.add_exception 'coverage'
 end
