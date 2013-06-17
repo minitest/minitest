@@ -26,7 +26,7 @@ end                                    #     assert_equal 2, 2
 ###############################################################################
 # The specs generate:
 
-class ThingySpec < MiniTest::Spec
+class ThingySpec < Minitest::Spec
   def setup
     super
     do_some_setup
