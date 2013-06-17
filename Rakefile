@@ -38,8 +38,8 @@ task :specs do
     /must_raises/                          => 'must_raise',
   }
 
-  expectations = MiniTest::Expectations.public_instance_methods.map(&:to_s)
-  assertions   = MiniTest::Assertions.public_instance_methods.map(&:to_s)
+  expectations = Minitest::Expectations.public_instance_methods.map(&:to_s)
+  assertions   = Minitest::Assertions.public_instance_methods.map(&:to_s)
 
   assertions.sort.each do |assertion|
     expectation = case assertion
@@ -63,7 +63,7 @@ task :specs do
     puts
     puts "##"
     puts "# :method: #{expectation}"
-    puts "# See MiniTest::Assertions##{assertion}"
+    puts "# See Minitest::Assertions##{assertion}"
     puts
     puts "infect_an_assertion #{args.join ", "}"
   end
