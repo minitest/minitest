@@ -194,7 +194,7 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
 
   describe MemeAsker do
     before do
-      @meme = MiniTest::Mock.new
+      @meme = Minitest::Mock.new
       @meme_asker = MemeAsker.new @meme
     end
 
@@ -328,18 +328,18 @@ Expectations are put on Object (one level down) so the Worker
 fails.
 
 You can bypass `SimpleDelegate#method_missing` by extending the worker
-with `MiniTest::Expectations`. You can either do that in your setup at
+with `Minitest::Expectations`. You can either do that in your setup at
 the instance level, like:
 
     before do
       @worker = Worker.new(Object.new)
-      @worker.extend MiniTest::Expectations
+      @worker.extend Minitest::Expectations
     end
 
 or you can extend the Worker class (within the test file!), like:
 
     class Worker
-      include ::MiniTest::Expectations
+      include ::Minitest::Expectations
     end
 
 === How to share code across test classes?
