@@ -8,12 +8,28 @@ module Minitest # :nodoc:
   # All mock objects are an instance of Mock
 
   class Mock
-    alias :__respond_to? :respond_to?
-
-    skip_methods = %w(object_id respond_to_missing? inspect === to_s)
+    retained_inherited_methods = %w(
+      object_id
+      respond_to_missing?
+      ===
+      inspect
+      to_s
+      send
+      public_send
+    )
 
     instance_methods.each do |m|
-      undef_method m unless skip_methods.include?(m.to_s) || m =~ /^__/
+      undef_method m unless retained_inherited_methods.include?(m.to_s) || m.to_s.index('__') == 0
+    end
+
+    retained_inherited_methods.each do |method_id|
+      define_method(method_id) do |*args|
+        if @expected_calls.has_key?(method_id.to_sym)
+          method_missing(method_id.to_sym, *args)
+        else
+          super(*args)
+        end
+      end
     end
 
     def initialize # :nodoc:
@@ -139,7 +155,7 @@ module Minitest # :nodoc:
 
     def respond_to?(sym, include_private = false) # :nodoc:
       return true if @expected_calls.has_key?(sym.to_sym)
-      return __respond_to?(sym, include_private)
+      return super
     end
   end
 end
