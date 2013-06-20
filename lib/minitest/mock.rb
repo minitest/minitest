@@ -10,10 +10,28 @@ module Minitest # :nodoc:
   class Mock
     alias :__respond_to? :respond_to?
 
-    skip_methods = %w(object_id respond_to_missing? inspect === to_s)
+    overridden_methods = %w(
+      ===
+      inspect
+      object_id
+      public_send
+      respond_to_missing?
+      send
+      to_s
+    )
 
     instance_methods.each do |m|
-      undef_method m unless skip_methods.include?(m.to_s) || m =~ /^__/
+      undef_method m unless overridden_methods.include?(m.to_s) || m =~ /^__/
+    end
+
+    overridden_methods.map(&:to_sym).each do |method_id|
+      define_method method_id do |*args, &b|
+        if @expected_calls.has_key? method_id then
+          method_missing(method_id, *args, &b)
+        else
+          super(*args, &b)
+        end
+      end
     end
 
     def initialize # :nodoc:
@@ -47,6 +65,8 @@ module Minitest # :nodoc:
     #   @mock.verify  # => raises MockExpectationError
 
     def expect(name, retval, args=[], &blk)
+      name = name.to_sym
+
       if block_given?
         raise ArgumentError, "args ignored when block given" unless args.empty?
         @expected_calls[name] << { :retval => retval, :block => blk }
@@ -138,7 +158,7 @@ module Minitest # :nodoc:
     end
 
     def respond_to?(sym, include_private = false) # :nodoc:
-      return true if @expected_calls.has_key?(sym.to_sym)
+      return true if @expected_calls.has_key? sym.to_sym
       return __respond_to?(sym, include_private)
     end
   end

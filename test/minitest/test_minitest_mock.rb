@@ -74,6 +74,49 @@ class TestMinitestMock < Minitest::Test
     assert mock.verify
   end
 
+  def test_set_expectation_on_special_methods
+    mock = Minitest::Mock.new
+
+    mock.expect :object_id, "received object_id"
+    assert_equal "received object_id", mock.object_id
+
+    mock.expect :respond_to_missing?, "received respond_to_missing?"
+    assert_equal "received respond_to_missing?", mock.respond_to_missing?
+
+    mock.expect :===, "received ==="
+    assert_equal "received ===", mock.===
+
+    mock.expect :inspect, "received inspect"
+    assert_equal "received inspect", mock.inspect
+
+    mock.expect :to_s, "received to_s"
+    assert_equal "received to_s", mock.to_s
+
+    mock.expect :public_send, "received public_send"
+    assert_equal "received public_send", mock.public_send
+
+    mock.expect :send, "received send"
+    assert_equal "received send", mock.send
+
+    assert mock.verify
+  end
+
+  def test_expectations_can_be_satisfied_via_send
+    @mock.send :foo
+    @mock.send :meaning_of_life
+
+    assert @mock.verify
+  end
+
+  def test_expectations_can_be_satisfied_via_public_send
+    skip if RUBY_VERSION < "1.9"
+
+    @mock.public_send :foo
+    @mock.public_send :meaning_of_life
+
+    assert @mock.verify
+  end
+
   def test_blow_up_on_wrong_arguments
     @mock.foo
     @mock.meaning_of_life
