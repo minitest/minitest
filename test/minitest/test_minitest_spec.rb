@@ -551,6 +551,12 @@ describe Minitest::Spec, :let do
 
     _count.must_equal 2
   end
+
+  it 'raises an error if the name begins with "test"' do
+    describe "let" do
+      proc { let(:test_value) { true } }.must_raise ArgumentError
+    end
+  end
 end
 
 describe Minitest::Spec, :subject do
