@@ -387,6 +387,7 @@ minitest-emoji              :: Print out emoji for your test passes, fails, and 
 minitest-english            :: Semantically symmetric aliases for assertions and expectations.
 minitest-excludes           :: Clean API for excluding certain tests you
                                don't want to run under certain conditions.
+minitest-filesystem         :: Adds assertion and expectation to help testing filesystem contents.
 minitest-firemock           :: Makes your MiniTest mocks more resilient.
 minitest-great_expectations :: Generally useful additions to minitest's assertions and expectations
 minitest-growl              :: Test notifier for minitest via growl.
