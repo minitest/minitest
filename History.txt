@@ -1,3 +1,14 @@
+=== 5.0.5 / 2013-06-20
+
+* 6 bug fixes:
+
+  * DOH! Fixed the rest of the new casing on Minitest. (splattael)
+  * Fixed typo on minitest/mock rdoc. (mrgilman/guiceolin)
+  * Make Spec::DSL.describe_stack thread local to avoid failing on my own tests.
+  * Make a fake Time.now local to the tests so they won't interfere with real reporter timings.
+  * Make everything mockable by wrapping all 'special' methods in a smarter wrapper. (bestie)
+  * Raise ArgumentError if let name starts with 'test'. (johnmaxwell)
+
 === 5.0.4 / 2013-06-07
 
 * 5 minor enhancements:
