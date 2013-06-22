@@ -175,12 +175,17 @@ class Object # :nodoc:
 
     metaclass.send :alias_method, new_name, name
 
-    metaclass.send :define_method, name do |*args|
-      if val_or_callable.respond_to? :call then
+    metaclass.send :define_method, name do |*args, &blk|
+
+      ret = if val_or_callable.respond_to? :call then
         val_or_callable.call(*args)
       else
         val_or_callable
       end
+
+      blk.call(ret) if blk
+
+      ret
     end
 
     yield self
@@ -189,4 +194,5 @@ class Object # :nodoc:
     metaclass.send :alias_method, name, new_name
     metaclass.send :undef_method, new_name
   end
+
 end
