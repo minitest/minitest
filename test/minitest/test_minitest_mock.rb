@@ -408,7 +408,7 @@ class TestMinitestStub < Minitest::Test
     end
     rs = nil
 
-    File.stub(:open, mock) do
+    File.stub(:open, true, mock) do
       File.open("foo.txt", "r") do |f|
         rs = f.write
       end

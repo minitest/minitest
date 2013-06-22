@@ -150,8 +150,9 @@ class Object # :nodoc:
   # Add a temporary stubbed method replacing +name+ for the duration
   # of the +block+. If +val_or_callable+ responds to #call, then it
   # returns the result of calling it, otherwise returns the value
-  # as-is. Cleans up the stub at the end of the +block+. The method
-  # +name+ must exist before stubbing.
+  # as-is. If stubbed method yields a block, +block_args+ will be
+  # passed along. Cleans up the stub at the end of the +block+. The
+  # method +name+ must exist before stubbing.
   #
   #     def test_stale_eh
   #       obj_under_test = Something.new
@@ -161,8 +162,9 @@ class Object # :nodoc:
   #         assert obj_under_test.stale?
   #       end
   #     end
+  #
 
-  def stub name, val_or_callable, &block
+  def stub name, val_or_callable, *block_args, &block
     new_name = "__minitest_stub__#{name}"
 
     metaclass = class << self; self; end
@@ -183,7 +185,7 @@ class Object # :nodoc:
         val_or_callable
       end
 
-      blk.call(ret) if blk
+      blk.call(*block_args) if blk
 
       ret
     end
