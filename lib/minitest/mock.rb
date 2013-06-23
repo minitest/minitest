@@ -90,6 +90,9 @@ module Minitest # :nodoc:
     end
 
     def method_missing(sym, *args) # :nodoc:
+      if sym == :send then
+        sym = args.shift
+      end
       unless @expected_calls.has_key?(sym) then
         raise NoMethodError, "unmocked method %p, expected one of %p" %
           [sym, @expected_calls.keys.sort_by(&:to_s)]
