@@ -4,8 +4,12 @@ unless defined?(Minitest) then
   # all of this crap is just to avoid circular requires and is only
   # needed if a user requires "minitest/unit" directly instead of
   # "minitest/autorun", so we also warn
-  from = caller.join("\n  ")
-  warn "Warning: you should require 'minitest/autorun' instead.\nFrom #{from}"
+
+  from = caller.reject { |s| s =~ /rubygems/ }.join("\n  ")
+  warn "Warning: you should require 'minitest/autorun' instead."
+  warn %(Warning: or add 'gem "minitest"' before 'require "minitest/autorun"')
+  warn "From:\n  #{from}"
+
   module Minitest; end
   MiniTest = Minitest # prevents minitest.rb from requiring back to us
   require "minitest"
