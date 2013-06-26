@@ -1,5 +1,3 @@
-require 'minitest'
-
 module Minitest
   ##
   # Subclass Test to create your own tests. Typically you'll want a
