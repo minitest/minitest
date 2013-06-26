@@ -445,4 +445,20 @@ class TestMinitestStub < Minitest::Test
     @tc.assert_equal true, val
     @tc.assert_equal false, dynamic.found
   end
+
+  def test_mock_with_yield
+    mock = Minitest::Mock.new
+    mock.expect(:write, true) do
+      true
+    end
+    rs = nil
+
+    File.stub(:open, true, mock) do
+      File.open("foo.txt", "r") do |f|
+        rs = f.write
+      end
+    end
+    @tc.assert_equal true, rs
+  end
+
 end
