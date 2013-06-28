@@ -1,3 +1,15 @@
+=== 5.0.6 / 2013-06-28
+
+* 3 minor enhancements:
+
+  * Allow stub to pass args to blocks. (swindsor)
+  * Improved warning message about minitest/autorun to address 1.9's minitest/autorun.
+  * Made minitest/test require minitest as needed. For lib writers. (erikh)
+
+* 1 bug fix:
+
+  * Fixed missing require in minitest/test. (erikh)
+
 === 5.0.5 / 2013-06-20
 
 * 6 bug fixes:
