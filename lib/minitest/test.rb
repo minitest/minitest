@@ -1,3 +1,5 @@
+require "minitest" unless defined? Minitest::Runnable
+
 module Minitest
   ##
   # Subclass Test to create your own tests. Typically you'll want a
