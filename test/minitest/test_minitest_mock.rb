@@ -309,6 +309,31 @@ class TestMinitestMock < Minitest::Test
 
     assert_equal exp, e.message
   end
+
+  def test_mock_called_via_send
+    mock = Minitest::Mock.new
+    mock.expect(:foo, true)
+
+    mock.send :foo
+    mock.verify
+  end
+
+  def test_mock_called_via___send__
+    mock = Minitest::Mock.new
+    mock.expect(:foo, true)
+
+    mock.__send__ :foo
+    mock.verify
+  end
+
+  def test_mock_called_via_send_with_args
+    mock = Minitest::Mock.new
+    mock.expect(:foo, true, [1,2,3])
+
+    mock.send(:foo, 1, 2, 3)
+    mock.verify
+  end
+
 end
 
 require "minitest/metametameta"
