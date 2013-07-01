@@ -1,7 +1,5 @@
 # -*- ruby -*-
 
-$TESTING_MINIUNIT = true
-
 require 'rubygems'
 require 'hoe'
 
@@ -12,10 +10,6 @@ Hoe.spec 'minitest' do
 
   self.rubyforge_name = "bfts"
   self.testlib = :minitest
-end
-
-def loc dir
-  system "find #{dir} -name \\*.rb | xargs wc -l | tail -1"
 end
 
 desc "Find missing expectations"
@@ -67,28 +61,6 @@ task :specs do
     puts
     puts "infect_an_assertion #{args.join ", "}"
   end
-end
-
-desc "stupid line count"
-task :dickwag do
-  puts
-  puts "miniunit"
-  puts
-  print " lib  loc"; loc "lib"
-  print " test loc"; loc "test"
-  print " totl loc"; loc "lib test"
-  print " flog = "; system "flog -s lib"
-
-  puts
-  puts "test/unit"
-  puts
-  Dir.chdir File.expand_path("~/Work/svn/ruby/ruby_1_8") do
-    print " lib  loc"; loc "lib/test"
-    print " test loc"; loc "test/testunit"
-    print " totl loc"; loc "lib/test test/testunit"
-    print " flog = "; system "flog -s lib/test"
-  end
-  puts
 end
 
 # vim: syntax=Ruby
