@@ -1,7 +1,5 @@
 # -*- ruby -*-
 
-$TESTING_MINIUNIT = true
-
 require 'rubygems'
 require 'hoe'
 
@@ -72,7 +70,7 @@ end
 desc "stupid line count"
 task :dickwag do
   puts
-  puts "miniunit"
+  puts "minitest"
   puts
   print " lib  loc"; loc "lib"
   print " test loc"; loc "test"
