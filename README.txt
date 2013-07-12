@@ -90,6 +90,8 @@ Given that you'd like to test the following class:
 
 === Unit tests
 
+Define your tests as methods beginning with `test_`.
+
   require "minitest/autorun"
 
   class TestMeme < Minitest::Test
