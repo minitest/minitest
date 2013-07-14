@@ -692,14 +692,16 @@ class TestMeta < MetaMetaMetaTestCase
     assert_equal "inner thingy",      y.desc
     assert_equal "very inner thingy", z.desc
 
-    top_methods = %w(setup teardown test_0001_top-level-it)
-    inner_methods1 = %w(setup teardown test_0001_inner-it)
-    inner_methods2 = inner_methods1 +
-      %w(test_0002_anonymous test_0003_anonymous)
+    top_methods = ["setup", "teardown", "test_0001_top-level-it"]
+    inner_methods_1 = ["setup", "teardown", "test_0001_inner thingy inner-it"]
+    inner_methods_2 = ["setup", "teardown",
+                       "test_0001_inner thingy very inner thingy inner-it",
+                       "test_0002_inner thingy very inner thingy anonymous",
+                       "test_0003_inner thingy very inner thingy anonymous"]
 
-    assert_equal top_methods,    x.instance_methods(false).sort.map(&:to_s)
-    assert_equal inner_methods1, y.instance_methods(false).sort.map(&:to_s)
-    assert_equal inner_methods2, z.instance_methods(false).sort.map(&:to_s)
+    assert_equal top_methods,     x.instance_methods(false).sort.map(&:to_s)
+    assert_equal inner_methods_1, y.instance_methods(false).sort.map(&:to_s)
+    assert_equal inner_methods_2, z.instance_methods(false).sort.map(&:to_s)
   end
 
   def test_setup_teardown_behavior

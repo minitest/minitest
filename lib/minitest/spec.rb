@@ -205,7 +205,10 @@ class Minitest::Spec < Minitest::Test
       @specs ||= 0
       @specs += 1
 
-      name = "test_%04d_%s" % [ @specs, desc ]
+      nested_describes = describe_stack.dup.tap { |s| s.shift }
+      name_parts = nested_describes.map { |d| d.desc }
+      name_parts << desc
+      name = "test_%04d_%s" % [ @specs, name_parts.join(" ") ]
 
       define_method name, &block
 
