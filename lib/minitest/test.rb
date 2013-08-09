@@ -14,6 +14,11 @@ module Minitest
     PASSTHROUGH_EXCEPTIONS = [NoMemoryError, SignalException, # :nodoc:
                               Interrupt, SystemExit]
 
+    class << self
+      attr_reader :prove_it
+    end
+    @prove_it = false # for backwards compatibility must be false
+
     ##
     # Call this at the top of your tests when you absolutely
     # positively need to have ordered tests. In doing so, you're
@@ -52,6 +57,15 @@ module Minitest
         undef_method :test_order if method_defined? :test_order
         define_method :test_order do :parallel end
       end
+    end
+    
+    ##
+    # Call this at the top of your tests when you want to force all
+    # tests to prove success (via at least one assertion) rather 
+    # than rely on the absence of failure.
+    
+    def self.prove_it!
+      @prove_it = true
     end
 
     ##
@@ -113,6 +127,12 @@ module Minitest
           %w{ before_teardown teardown after_teardown }.each do |hook|
             capture_exceptions do
               self.send hook
+            end
+          end
+          
+          if self.class.prove_it
+            capture_exceptions do 
+              raise "Absence of failure is not success. Prove it!"  if self.failures.empty? && self.assertions == 0
             end
           end
         end
