@@ -1,5 +1,18 @@
 ##
 # It's where you hide your "assertions".
+#
+# Please note, because of the way that expectations are implemented,
+# all expectations (eg must_equal) are dependent upon a thread local
+# variable +:current_spec+. If your specs rely on mixing threads into
+# the specs themselves, you're better off using assertions. For
+# example:
+#
+#     it "should still work in threads" do
+#       my_threaded_thingy do
+#         (1+1).must_equal 2  # bad
+#         assert_equal 2, 1+1 # good
+#       end
+#     end
 
 module Minitest::Expectations
   ##
