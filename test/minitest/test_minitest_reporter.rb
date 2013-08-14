@@ -65,7 +65,11 @@ class TestMinitestReporter < Minitest::Test
   def skip_test
     unless defined? @st then
       @st = Minitest::Test.new(:woot)
-      @st.failures << Minitest::Skip.new
+      @st.failures << begin
+                        raise Minitest::Skip
+                      rescue Minitest::Assertion => e
+                        e
+                      end
     end
     @st
   end
@@ -80,16 +84,41 @@ class TestMinitestReporter < Minitest::Test
     refute r.passed?
   end
 
+  SKIP_MSG = "\n\nYou have skipped tests. Run with --verbose for details."
+
   def test_passed_eh_error
+    r.start
+
     r.results << error_test
 
     refute r.passed?
+
+    r.report
+
+    refute_match SKIP_MSG, io.string
   end
 
   def test_passed_eh_skipped
+    r.start
     r.results << skip_test
-
     assert r.passed?
+
+    restore_env do
+      r.report
+    end
+
+    assert_match SKIP_MSG, io.string
+  end
+
+  def test_passed_eh_skipped_verbose
+    r.first.options[:verbose] = true
+
+    r.start
+    r.results << skip_test
+    assert r.passed?
+    r.report
+
+    refute_match SKIP_MSG, io.string
   end
 
   def test_start
@@ -247,10 +276,23 @@ class TestMinitestReporter < Minitest::Test
     assert_equal exp, normalize_output(io.string)
   end
 
+  def restore_env
+    old_value = ENV["MT_NO_SKIP_MSG"]
+    ENV.delete "MT_NO_SKIP_MSG"
+    
+    yield
+  ensure
+    ENV["MT_NO_SKIP_MSG"] = old_value
+  end
+
+
   def test_report_skipped
     r.start
     r.record skip_test
-    r.report
+
+    restore_env do
+      r.report
+    end
 
     exp = clean <<-EOM
       Run options:
@@ -262,6 +304,8 @@ class TestMinitestReporter < Minitest::Test
       Finished in 0.00
 
       1 runs, 0 assertions, 0 failures, 0 errors, 1 skips
+
+      You have skipped tests. Run with --verbose for details.
     EOM
 
     assert_equal exp, normalize_output(io.string)
