@@ -519,7 +519,7 @@ module Minitest
 
       io.sync = self.old_sync
 
-      io.puts # finish the dots
+      io.puts unless options[:verbose] # finish the dots
       io.puts
       io.puts statistics
       io.puts aggregated_results
@@ -541,8 +541,13 @@ module Minitest
     end
 
     def summary # :nodoc:
-      "%d runs, %d assertions, %d failures, %d errors, %d skips" %
-        [count, assertions, failures, errors, skips]
+      extra = ""
+
+      extra = "\n\nYou have skipped tests. Run with --verbose for details." if
+        results.any?(&:skipped?) unless options[:verbose] or ENV["MT_NO_SKIP_MSG"]
+
+      "%d runs, %d assertions, %d failures, %d errors, %d skips%s" %
+        [count, assertions, failures, errors, skips, extra]
     end
   end
 
