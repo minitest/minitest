@@ -109,7 +109,7 @@ class TestMinitestMock < Minitest::Test
   end
 
   def test_expectations_can_be_satisfied_via_public_send
-    skip if RUBY_VERSION < "1.9"
+    skip "Doesn't run on 1.8" if RUBY_VERSION < "1.9"
 
     @mock.public_send :foo
     @mock.public_send :meaning_of_life

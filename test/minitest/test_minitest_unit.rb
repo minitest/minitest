@@ -368,6 +368,15 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     assert_report expected
   end
 
+  def restore_env
+    old_value = ENV["MT_NO_SKIP_MSG"]
+    ENV.delete "MT_NO_SKIP_MSG"
+
+    yield
+  ensure
+    ENV["MT_NO_SKIP_MSG"] = old_value
+  end
+
   def test_run_skip
     @tu =
     Class.new Minitest::Test do
@@ -386,9 +395,13 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       Finished in 0.00
 
       2 runs, 1 assertions, 0 failures, 0 errors, 1 skips
+
+      You have skipped tests. Run with --verbose for details.
     EOM
 
-    assert_report expected
+    restore_env do
+      assert_report expected
+    end
   end
 
   def test_run_skip_verbose
@@ -406,7 +419,6 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     expected = clean <<-EOM
       #<Class:0xXXX>#test_skip = 0.00 s = S
       #<Class:0xXXX>#test_something = 0.00 s = .
-
 
       Finished in 0.00
 
@@ -702,8 +714,8 @@ class TestMinitestUnitTestCase < Minitest::Test
   end
 
   def teardown
-    # assert_equal(@assertion_count, @tc._assertions,
-    #              "expected #{@assertion_count} assertions to be fired during the test, not #{@tc._assertions}") if @tc.passed?
+    assert_equal(@assertion_count, @tc.assertions,
+                 "expected #{@assertion_count} assertions to be fired during the test, not #{@tc.assertions}") if @tc.passed?
   end
 
   def non_verbose
@@ -891,6 +903,8 @@ class TestMinitestUnitTestCase < Minitest::Test
   end
 
   def test_delta_consistency
+    @assertion_count = 2
+
     @tc.assert_in_delta 0, 1, 1
 
     util_assert_triggered "Expected |0 - 1| (1) to not be <= 1." do
@@ -923,6 +937,8 @@ class TestMinitestUnitTestCase < Minitest::Test
   end
 
   def test_epsilon_consistency
+    @assertion_count = 2
+
     @tc.assert_in_epsilon 1.0, 1.001
 
     msg = "Expected |1.0 - 1.001| (0.000999xxx) to not be <= 0.001."
@@ -1355,7 +1371,6 @@ class TestMinitestUnitTestCase < Minitest::Test
 
   def test_capture_subprocess_io
     @assertion_count = 0
-    skip "Dunno why but the parallel run of this fails"
 
     non_verbose do
       out, err = capture_subprocess_io do
