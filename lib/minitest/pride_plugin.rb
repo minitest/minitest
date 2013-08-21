@@ -1,4 +1,4 @@
-require "minitest/autorun"
+require "minitest"
 
 module Minitest
   def self.plugin_pride_options opts, options # :nodoc:
