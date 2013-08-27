@@ -119,6 +119,12 @@ class Minitest::Spec < Minitest::Test
     #     register_spec_type(Minitest::Spec::RailsModel) do |desc|
     #       desc.superclass == ActiveRecord::Base
     #     end
+    #
+    # or:
+    #
+    #     register_spec_type(Minitest::Spec::Integration) do |desc, additional_desc|
+    #       additional_desc == "integration"
+    #     end
 
     def register_spec_type(*args, &block)
       if block then
@@ -130,9 +136,15 @@ class Minitest::Spec < Minitest::Test
     end
 
     ##
-    # Figure out the spec class to use based on a spec's description. Eg:
+    # Figure out the spec class to use based on a spec's description.
+    #
+    # Eg:
     #
     #     spec_type("BlahController") # => Minitest::Spec::Rails
+    #
+    # or with a additional description:
+    #
+    #     spec_type("BlahController, "integration") # => Minitest::Spec::Integration
 
     def spec_type desc, additional_desc = nil
       TYPES.find { |matcher, klass|
