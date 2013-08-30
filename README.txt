@@ -366,6 +366,16 @@ you want to extend your test using setup/teardown via a module, just
 make sure you ALWAYS call super. before/after automatically call super
 for you, so make sure you don't do it twice.
 
+== Prominent Projects using Minitest:
+
+* arel
+* journey
+* mime-types
+* nokogiri
+* rails (active_support et al)
+* rake
+* rdoc
+
 == Known Extensions:
 
 capybara_minitest_spec      :: Bridge between Capybara RSpec matchers and MiniTest::Spec expectations (e.g. page.must_have_content("Title")).
