@@ -1,3 +1,15 @@
+=== 5.0.7 / 2013-09-05
+
+* 2 minor enhancements:
+
+  * Added clarification about the use of thread local variables in expectations. (jemc)
+  * Added extra message about skipped tests, if any. Disable globally with $MT_NO_SKIP_MSG.
+
+* 2 bug fixes:
+
+  * Only require minitest, not minitest/autorun in pride_plugin. (judofyr)
+  * Require rubygems in load_plugins in case you're not using minitest/autorun.
+
 === 5.0.6 / 2013-06-28
 
 * 3 minor enhancements:
