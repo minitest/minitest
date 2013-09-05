@@ -375,6 +375,7 @@ for you, so make sure you don't do it twice.
 * rails (active_support et al)
 * rake
 * rdoc
+* ...and of course, everything from seattle.rb...
 
 == Known Extensions:
 
