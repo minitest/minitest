@@ -22,6 +22,13 @@
 
   * Fixed missing require in minitest/test. (erikh)
 
+=== 4.7.5 / 2013-06-21
+
+* 2 bug fixes:
+
+  * Fix Spec#describe_stack to be thread local.
+  * Fix multithreaded test failures by defining Time local to mock test namespace
+
 === 5.0.5 / 2013-06-20
 
 * 6 bug fixes:
@@ -139,6 +146,21 @@ Minitest 5:
   * Removed Minitest::Reporter.synchronize (phiggins)
   * Removed Minitest::Test.synchronize (phiggins)
   * Upon loading minitest/parallel_each, record, capture_io and capture_subprocess_io are doped with synchronization code. (phiggins)
+
+=== 4.7.4 / 2013-05-01
+
+This is probably the last release of the 4.x series. It will be merged
+to ruby and will be put into maintenance mode there.
+
+I'm not set in stone on this, but at this point further development of
+minitest (5+) will be gem-only. It is just too hard to work w/in
+ruby-core w/ test-unit compatibility holding minitest development
+back.
+
+* 2 minor enhancements:
+
+  * Added count/size to ParallelEach to fix use w/in stdlib's test/unit. :( (btaitelb)
+  * Allow disabling of info_signal handler in runner. (erikh)
 
 === 4.7.3 / 2013-04-20
 
