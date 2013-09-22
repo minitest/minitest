@@ -425,6 +425,7 @@ minitest-spec-context       :: Provides rspec-ish context method to MiniTest::Sp
 minitest-spec-expect        :: Expect syntax for MiniTest::Spec - expect(sequences).to_include :celery_man
 minitest-spec-magic         :: Minitest::Spec extensions for Rails and beyond
 minitest-spec-rails         :: Drop in MiniTest::Spec superclass for ActiveSupport::TestCase.
+minitest-stub_any_instance  :: Stub any instance of a method on the given class for the duration of a block
 minitest-stub-const         :: Stub constants for the duration of a block
 minitest-tags               :: add tags for minitest
 minitest-wscolor            :: Yet another test colorizer.
