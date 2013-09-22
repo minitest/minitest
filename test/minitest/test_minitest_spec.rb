@@ -562,16 +562,32 @@ end
 describe Minitest::Spec, :subject do
   attr_reader :subject_evaluation_count
 
-  subject do
-    @subject_evaluation_count ||= 0
-    @subject_evaluation_count  += 1
-    @subject_evaluation_count
+  describe 'un-named subject' do
+    subject do
+      @subject_evaluation_count ||= 0
+      @subject_evaluation_count  += 1
+      @subject_evaluation_count
+    end
+
+    it "is evaluated once per example" do
+      subject.must_equal 1
+      subject.must_equal 1
+      subject_evaluation_count.must_equal 1
+    end
   end
 
-  it "is evaluated once per example" do
-    subject.must_equal 1
-    subject.must_equal 1
-    subject_evaluation_count.must_equal 1
+  describe 'named subject' do
+    subject :random_name do
+      @subject_evaluation_count ||= 0
+      @subject_evaluation_count  += 1
+      @subject_evaluation_count
+    end
+
+    it "is available under the provided name" do
+      random_name.must_equal 1
+      random_name.must_equal 1
+      subject_evaluation_count.must_equal 1
+    end
   end
 end
 

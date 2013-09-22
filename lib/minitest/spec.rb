@@ -234,8 +234,8 @@ class Minitest::Spec < Minitest::Test
     # Another lazy man's accessor generator. Made even more lazy by
     # setting the name for you to +subject+.
 
-    def subject &block
-      let :subject, &block
+    def subject name = :subject, &block
+      let name, &block
     end
 
     def create name, desc # :nodoc:
