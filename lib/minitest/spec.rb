@@ -72,7 +72,8 @@ module Kernel # :nodoc:
     stack.pop
     cls
   end
-  private :describe
+  alias :context :describe
+  private :describe, :context
 end
 
 ##
