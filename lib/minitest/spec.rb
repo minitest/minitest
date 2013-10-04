@@ -149,7 +149,11 @@ class Minitest::Spec < Minitest::Test
     def spec_type desc, additional_desc = nil
       TYPES.find { |matcher, klass|
         if matcher.respond_to? :call then
-          matcher.call desc, additional_desc
+          if additional_desc then
+            matcher.call desc, additional_desc
+          else
+            matcher.call desc
+          end
         else
           matcher === desc.to_s
         end
