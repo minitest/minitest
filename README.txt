@@ -92,7 +92,7 @@ Given that you'd like to test the following class:
 
   require "minitest/autorun"
 
-  class TestMeme < Minitest::Test
+  class MemeTest < Minitest::Test
     def setup
       @meme = Meme.new
     end
