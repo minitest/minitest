@@ -185,8 +185,6 @@ class Object # :nodoc:
   #
 
   def stub name, val_or_callable, *block_args, &block
-    new_name = "__minitest_stub__#{name}"
-
     metaclass = class << self; self; end
 
     if respond_to? name and not methods.map(&:to_s).include? name.to_s then
@@ -195,7 +193,7 @@ class Object # :nodoc:
       end
     end
 
-    metaclass.send :alias_method, new_name, name
+    original = method(name)
 
     metaclass.send :define_method, name do |*args, &blk|
 
@@ -213,8 +211,7 @@ class Object # :nodoc:
     yield self
   ensure
     metaclass.send :undef_method, name
-    metaclass.send :alias_method, name, new_name
-    metaclass.send :undef_method, new_name
+    metaclass.send :define_method, name, original
   end
 
 end
