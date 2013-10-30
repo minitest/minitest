@@ -393,19 +393,23 @@ module Minitest
     # that.
 
     def capture_io
-      require 'stringio'
+      Test.synchronize do
+        begin
+          require 'stringio'
 
-      captured_stdout, captured_stderr = StringIO.new, StringIO.new
+          captured_stdout, captured_stderr = StringIO.new, StringIO.new
 
-      orig_stdout, orig_stderr = $stdout, $stderr
-      $stdout, $stderr         = captured_stdout, captured_stderr
+          orig_stdout, orig_stderr = $stdout, $stderr
+          $stdout, $stderr         = captured_stdout, captured_stderr
 
-      yield
+          yield
 
-      return captured_stdout.string, captured_stderr.string
-    ensure
-      $stdout = orig_stdout
-      $stderr = orig_stderr
+          return captured_stdout.string, captured_stderr.string
+        ensure
+          $stdout = orig_stdout
+          $stderr = orig_stderr
+        end
+      end
     end
 
     ##
@@ -424,25 +428,29 @@ module Minitest
     # only use it when you need to test the output of a subprocess.
 
     def capture_subprocess_io
-      require 'tempfile'
+      Test.synchronize do
+        begin
+          require 'tempfile'
 
-      captured_stdout, captured_stderr = Tempfile.new("out"), Tempfile.new("err")
+          captured_stdout, captured_stderr = Tempfile.new("out"), Tempfile.new("err")
 
-      orig_stdout, orig_stderr = $stdout.dup, $stderr.dup
-      $stdout.reopen captured_stdout
-      $stderr.reopen captured_stderr
+          orig_stdout, orig_stderr = $stdout.dup, $stderr.dup
+          $stdout.reopen captured_stdout
+          $stderr.reopen captured_stderr
 
-      yield
+          yield
 
-      $stdout.rewind
-      $stderr.rewind
+          $stdout.rewind
+          $stderr.rewind
 
-      return captured_stdout.read, captured_stderr.read
-    ensure
-      captured_stdout.unlink
-      captured_stderr.unlink
-      $stdout.reopen orig_stdout
-      $stderr.reopen orig_stderr
+          return captured_stdout.read, captured_stderr.read
+        ensure
+          captured_stdout.unlink
+          captured_stderr.unlink
+          $stdout.reopen orig_stdout
+          $stderr.reopen orig_stderr
+        end
+      end
     end
 
     ##

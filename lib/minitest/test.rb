@@ -14,6 +14,8 @@ module Minitest
     PASSTHROUGH_EXCEPTIONS = [NoMemoryError, SignalException, # :nodoc:
                               Interrupt, SystemExit]
 
+    class << self; attr_accessor :io_lock; end
+
     ##
     # Call this at the top of your tests when you absolutely
     # positively need to have ordered tests. In doing so, you're
@@ -46,11 +48,20 @@ module Minitest
     # and your tests are awesome.
 
     def self.parallelize_me!
-      require "minitest/parallel_each"
-
       class << self
+        define_method(:run_test) do |klass, method_name, reporter|
+          MiniTest.test_queue << [klass, method_name, reporter]
+        end
         undef_method :test_order if method_defined? :test_order
         define_method :test_order do :parallel end
+      end
+    end
+
+    def self.synchronize # :nodoc:
+      if io_lock then
+        io_lock.synchronize { yield }
+      else
+        yield
       end
     end
 
@@ -63,10 +74,7 @@ module Minitest
       methods = methods_matching(/^test_/)
 
       case self.test_order
-      when :parallel
-        max = methods.size
-        ParallelEach.new methods.sort.sort_by { rand max }
-      when :random then
+      when :random, :parallel then
         max = methods.size
         methods.sort.sort_by { rand max }
       when :alpha, :sorted then
