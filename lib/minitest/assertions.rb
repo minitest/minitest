@@ -131,6 +131,10 @@ module Minitest
       true
     end
 
+    def _synchronize # :nodoc:
+      yield
+    end
+
     ##
     # Fails unless +obj+ is empty.
 
@@ -393,7 +397,7 @@ module Minitest
     # that.
 
     def capture_io
-      Test.synchronize do
+      _synchronize do
         begin
           require 'stringio'
 
@@ -428,7 +432,7 @@ module Minitest
     # only use it when you need to test the output of a subprocess.
 
     def capture_subprocess_io
-      Test.synchronize do
+      _synchronize do
         begin
           require 'tempfile'
 

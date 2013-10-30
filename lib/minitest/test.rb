@@ -15,6 +15,7 @@ module Minitest
                               Interrupt, SystemExit]
 
     class << self; attr_accessor :io_lock; end
+    self.io_lock = Mutex.new
 
     ##
     # Call this at the top of your tests when you absolutely
@@ -48,20 +49,16 @@ module Minitest
     # and your tests are awesome.
 
     def self.parallelize_me!
+      self.include Module.new {
+        def _synchronize; Test.io_lock.synchronize { yield }; end
+      }
+
       class << self
         define_method(:run_test) do |klass, method_name, reporter|
           MiniTest.test_queue << [klass, method_name, reporter]
         end
         undef_method :test_order if method_defined? :test_order
         define_method :test_order do :parallel end
-      end
-    end
-
-    def self.synchronize # :nodoc:
-      if io_lock then
-        io_lock.synchronize { yield }
-      else
-        yield
       end
     end
 

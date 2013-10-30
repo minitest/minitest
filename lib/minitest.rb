@@ -165,9 +165,8 @@ module Minitest
     # the serial tests won't lock around Reporter#record. Run the serial tests
     # first, so that after they complete, the parallel tests will lock when
     # recording results.
-    serial_results = serial.map { |suite| suite.run reporter, options }
-    Minitest::Test.io_lock = Mutex.new
-    serial_results + parallel.map { |suite| suite.run reporter, options }
+    serial.map { |suite| suite.run reporter, options } +
+      parallel.map { |suite| suite.run reporter, options }
   end
 
   def self.process_args args = [] # :nodoc:
