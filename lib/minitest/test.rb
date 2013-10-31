@@ -49,7 +49,7 @@ module Minitest
     # and your tests are awesome.
 
     def self.parallelize_me!
-      self.include Module.new {
+      self.send :include, Module.new {
         def _synchronize; Test.io_lock.synchronize { yield }; end
       }
 
