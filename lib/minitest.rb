@@ -1,6 +1,7 @@
 require "optparse"
 require "thread"
 require "mutex_m"
+require "minitest/parallel"
 
 ##
 # :include: README.txt
@@ -15,31 +16,10 @@ module Minitest
   mc = (class << self; self; end)
 
   ##
-  # How many Threads to use to run parallel tests.
+  # Parallel test executor
 
-  mc.send :attr_accessor, :pool_size
-  self.pool_size = (ENV['N'] || 2).to_i
-
-  ##
-  # Queue for consumers to run tests.
-
-  mc.send :attr_accessor, :test_queue
-  self.test_queue = ::Queue.new
-
-  ##
-  # Consumer Pool
-
-  mc.send :attr_accessor, :pool
-  self.pool = pool_size.times.map {
-    Thread.new do
-      Thread.current.abort_on_exception = true
-      while job = Minitest.test_queue.pop
-        _, _, reporter = job
-        result = Minitest.run_test(*job)
-        reporter.synchronize { reporter.record result }
-      end
-    end
-  }
+  mc.send :attr_accessor, :parallel_executor
+  self.parallel_executor = Parallel::Executor.new (ENV['N'] || 2).to_i
 
   ##
   # Filter object for backtraces.
@@ -142,8 +122,7 @@ module Minitest
 
     reporter.start
     __run reporter, options
-    self.pool_size.times { test_queue << nil }
-    self.pool.each(&:join)
+    self.parallel_executor.shutdown
     reporter.report
 
     reporter.passed?

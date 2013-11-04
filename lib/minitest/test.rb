@@ -49,9 +49,8 @@ module Minitest
     # and your tests are awesome.
 
     def self.parallelize_me!
-      require 'minitest/parallel'
-      include Minitest::ParallelTest
-      extend Minitest::ParallelTest::ClassMethods
+      include Minitest::Parallel::Test
+      extend Minitest::Parallel::Test::ClassMethods
     end
 
     ##
