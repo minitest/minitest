@@ -49,17 +49,9 @@ module Minitest
     # and your tests are awesome.
 
     def self.parallelize_me!
-      self.send :include, Module.new {
-        def _synchronize; Test.io_lock.synchronize { yield }; end
-      }
-
-      class << self
-        define_method(:run_test) do |klass, method_name, reporter|
-          MiniTest.test_queue << [klass, method_name, reporter]
-        end
-        undef_method :test_order if method_defined? :test_order
-        define_method :test_order do :parallel end
-      end
+      require 'minitest/parallel'
+      include Minitest::ParallelTest
+      extend Minitest::ParallelTest::ClassMethods
     end
 
     ##
