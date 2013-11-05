@@ -62,7 +62,7 @@ module Minitest
       methods = methods_matching(/^test_/)
 
       case self.test_order
-      when :random then
+      when :random, :parallel then
         max = methods.size
         methods.sort.sort_by { rand max }
       when :alpha, :sorted then
