@@ -394,6 +394,8 @@ minitest-context            :: Defines contexts for code reuse in MiniTest
 minitest-debugger           :: Wraps assert so failed assertions drop into
                                the ruby debugger.
 minitest-display            :: Patches MiniTest to allow for an easily configurable output.
+minitest-doc_reporter       :: Detailed output inspired by rspec's documentation
+                               format.
 minitest-emoji              :: Print out emoji for your test passes, fails, and skips.
 minitest-english            :: Semantically symmetric aliases for assertions and expectations.
 minitest-excludes           :: Clean API for excluding certain tests you
