@@ -12,7 +12,7 @@ lib/minitest/benchmark.rb
 lib/minitest/expectations.rb
 lib/minitest/hell.rb
 lib/minitest/mock.rb
-lib/minitest/parallel_each.rb
+lib/minitest/parallel.rb
 lib/minitest/pride.rb
 lib/minitest/pride_plugin.rb
 lib/minitest/spec.rb

@@ -22,6 +22,8 @@ class MetaMetaMetaTestCase < Minitest::Test
 
     reporter.start
 
+    yield(reporter) if block_given?
+
     @tus ||= [@tu]
     @tus.each do |tu|
       Minitest::Runnable.runnables.delete tu
@@ -36,7 +38,7 @@ class MetaMetaMetaTestCase < Minitest::Test
     reporter.reporters.first
   end
 
-  def assert_report expected, flags = %w[--seed 42]
+  def assert_report expected, flags = %w[--seed 42], &block
     header = clean <<-EOM
       Run options: #{flags.map { |s| s =~ /\|/ ? s.inspect : s }.join " "}
 
@@ -44,7 +46,7 @@ class MetaMetaMetaTestCase < Minitest::Test
 
     EOM
 
-    run_tu_with_fresh_reporter flags
+    run_tu_with_fresh_reporter flags, &block
 
     output = normalize_output @output.string.dup
 

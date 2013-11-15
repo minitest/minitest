@@ -490,15 +490,12 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     end
   end
 
-  def test_parallel_each_size
-    assert_equal 0, Minitest::ParallelEach.new([]).size
-  end
-
   def test_run_parallel
     skip "I don't have ParallelEach debugged yet" if maglev?
 
     test_count = 2
     test_latch = Latch.new test_count
+    wait_latch = Latch.new test_count
     main_latch = Latch.new
 
     thread = Thread.new {
@@ -537,7 +534,19 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       2 runs, 2 assertions, 0 failures, 0 errors, 0 skips
     EOM
 
-    assert_report expected
+    assert_report(expected) do |reporter|
+      reporter.extend(Module.new {
+        define_method("record") do |result|
+          super(result)
+          wait_latch.release
+        end
+
+        define_method("report") do
+          wait_latch.await
+          super()
+        end
+      })
+    end
     assert thread.join
   end
 end
