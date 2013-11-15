@@ -1,4 +1,7 @@
 require "optparse"
+require "thread"
+require "mutex_m"
+require "minitest/parallel"
 
 ##
 # :include: README.txt
@@ -11,6 +14,12 @@ module Minitest
   @extensions = []
 
   mc = (class << self; self; end)
+
+  ##
+  # Parallel test executor
+
+  mc.send :attr_accessor, :parallel_executor
+  self.parallel_executor = Parallel::Executor.new (ENV['N'] || 2).to_i
 
   ##
   # Filter object for backtraces.
@@ -113,6 +122,7 @@ module Minitest
 
     reporter.start
     __run reporter, options
+    self.parallel_executor.shutdown
     reporter.report
 
     reporter.passed?
@@ -126,9 +136,16 @@ module Minitest
   # loaded if a Runnable calls parallelize_me!.
 
   def self.__run reporter, options
-    Runnable.runnables.each do |runnable|
-      runnable.run reporter, options
-    end
+    suites = Runnable.runnables
+    parallel, serial = suites.partition { |s| s.test_order == :parallel }
+
+    # If we run the parallel tests before the serial tests, the parallel tests
+    # could run in parallel with the serial tests. This would be bad because
+    # the serial tests won't lock around Reporter#record. Run the serial tests
+    # first, so that after they complete, the parallel tests will lock when
+    # recording results.
+    serial.map { |suite| suite.run reporter, options } +
+      parallel.map { |suite| suite.run reporter, options }
   end
 
   def self.process_args args = [] # :nodoc:
@@ -265,11 +282,13 @@ module Minitest
 
       with_info_handler reporter do
         filtered_methods.each do |method_name|
-          result = self.new(method_name).run
-          raise "#{self}#run _must_ return self" unless self === result
-          reporter.record result
+          run_test self, method_name, reporter
         end
       end
+    end
+
+    def self.run_test klass, method_name, reporter
+      reporter.record Minitest.run_test(klass, method_name, reporter)
     end
 
     def self.with_info_handler reporter, &block # :nodoc:
@@ -369,6 +388,8 @@ module Minitest
   # you want. Go nuts.
 
   class AbstractReporter
+    include Mutex_m
+
     ##
     # Starts reporting on the run.
 
@@ -408,6 +429,7 @@ module Minitest
     attr_accessor :options
 
     def initialize io = $stdout, options = {} # :nodoc:
+      super()
       self.io      = io
       self.options = options
     end
@@ -565,6 +587,7 @@ module Minitest
     attr_accessor :reporters
 
     def initialize *reporters # :nodoc:
+      super()
       self.reporters = reporters
     end
 
@@ -729,6 +752,12 @@ module Minitest
   end
 
   self.backtrace_filter = BacktraceFilter.new
+
+  def self.run_test klass, method_name, reporter # :nodoc:
+    result = klass.new(method_name).run
+    raise "#{klass}#run _must_ return self" unless klass === result
+    result
+  end
 end
 
 require "minitest/test"

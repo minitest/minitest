@@ -131,6 +131,10 @@ module Minitest
       true
     end
 
+    def _synchronize # :nodoc:
+      yield
+    end
+
     ##
     # Fails unless +obj+ is empty.
 
@@ -393,6 +397,8 @@ module Minitest
     # that.
 
     def capture_io
+      _synchronize do
+        begin
       require 'stringio'
 
       captured_stdout, captured_stderr = StringIO.new, StringIO.new
@@ -406,6 +412,8 @@ module Minitest
     ensure
       $stdout = orig_stdout
       $stderr = orig_stderr
+        end
+      end
     end
 
     ##
@@ -424,6 +432,8 @@ module Minitest
     # only use it when you need to test the output of a subprocess.
 
     def capture_subprocess_io
+      _synchronize do
+        begin
       require 'tempfile'
 
       captured_stdout, captured_stderr = Tempfile.new("out"), Tempfile.new("err")
@@ -443,6 +453,8 @@ module Minitest
       captured_stderr.unlink
       $stdout.reopen orig_stdout
       $stderr.reopen orig_stderr
+        end
+      end
     end
 
     ##
