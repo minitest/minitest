@@ -11,7 +11,7 @@ module Minitest
           Thread.current.abort_on_exception = true
             while job = queue.pop
               klass, method, reporter = job
-              result = Minitest.run_test klass, method, reporter
+              result = Minitest.run_test klass, method
               reporter.synchronize { reporter.record result }
             end
           end

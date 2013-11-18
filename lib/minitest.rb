@@ -105,7 +105,9 @@ module Minitest
   #         Runnable.runnables.each
   #           runnable.run(reporter, options)
   #             self.runnable_methods.each
-  #               self.new(runnable_method).run
+  #               self.run_test(self, runnable_method, reporter)
+  #                 Minitest.run_test(klass, runnable_method, reporter)
+  #                   klass.new(runnable_method).run
 
   def self.run args = []
     self.load_plugins
@@ -288,7 +290,7 @@ module Minitest
     end
 
     def self.run_test klass, method_name, reporter
-      reporter.record Minitest.run_test(klass, method_name, reporter)
+      reporter.record Minitest.run_test(klass, method_name)
     end
 
     def self.with_info_handler reporter, &block # :nodoc:
@@ -753,7 +755,7 @@ module Minitest
 
   self.backtrace_filter = BacktraceFilter.new
 
-  def self.run_test klass, method_name, reporter # :nodoc:
+  def self.run_test klass, method_name # :nodoc:
     result = klass.new(method_name).run
     raise "#{klass}#run _must_ return self" unless klass === result
     result
