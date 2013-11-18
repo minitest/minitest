@@ -11,7 +11,7 @@ module Minitest
           Thread.current.abort_on_exception = true
             while job = queue.pop
               klass, method, reporter = job
-              result = Minitest.run_test klass, method
+              result = Minitest.run_one_method klass, method
               reporter.synchronize { reporter.record result }
             end
           end
@@ -30,7 +30,7 @@ module Minitest
       def _synchronize; Test.io_lock.synchronize { yield }; end
 
       module ClassMethods
-        def run_test klass, method_name, reporter
+        def run_one_method klass, method_name, reporter
           MiniTest.parallel_executor << [klass, method_name, reporter]
         end
         def test_order; :parallel; end
