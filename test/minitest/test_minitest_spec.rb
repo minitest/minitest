@@ -442,6 +442,11 @@ describe Minitest::Spec do
     end
   end
 
+  it "can use expect" do
+    @assertion_count -= 3
+    expect(1 + 1).must_equal 2
+  end
+
   it "needs to verify throw" do
     @assertion_count += 2 # 2 extra tests
 

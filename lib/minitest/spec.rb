@@ -1,18 +1,33 @@
 require "minitest/test"
 
+class Minitest::Expectation # :nodoc:
+  attr_reader :target, :ctx
+
+  def initialize target, ctx
+    @target = target
+    @ctx    = ctx
+  end
+end
+
 class Module # :nodoc:
   def infect_an_assertion meth, new_name, dont_flip = false # :nodoc:
-    # warn "%-22p -> %p %p" % [meth, new_name, dont_flip]
-    self.class_eval <<-EOM
+    Minitest::Expectation.class_eval <<-EOM, __FILE__, __LINE__ + 1
       def #{new_name} *args
         case
         when #{!!dont_flip} then
-          Minitest::Spec.current.#{meth}(self, *args)
-        when Proc === self then
-          Minitest::Spec.current.#{meth}(*args, &self)
+          ctx.#{meth}(target, *args)
+        when Proc === target then
+          ctx.#{meth}(*args, &target)
         else
-          Minitest::Spec.current.#{meth}(args.first, self, *args[1..-1])
+          ctx.#{meth}(args.first, target, *args.drop(1))
         end
+      end
+    EOM
+
+    # warn "%-22p -> %p %p" % [meth, new_name, dont_flip]
+    self.class_eval <<-EOM, __FILE__, __LINE__ + 1
+      def #{new_name} *args
+        Minitest::Expectation.new(self, Minitest::Spec.current).#{new_name}(*args)
       end
     EOM
   end
@@ -87,6 +102,10 @@ class Minitest::Spec < Minitest::Test
   def initialize name # :nodoc:
     super
     Thread.current[:current_spec] = self
+  end
+
+  def expect object
+    Minitest::Expectation.new(object, self)
   end
 
   ##

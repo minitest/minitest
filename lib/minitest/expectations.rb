@@ -9,8 +9,9 @@
 #
 #     it "should still work in threads" do
 #       my_threaded_thingy do
-#         (1+1).must_equal 2  # bad
-#         assert_equal 2, 1+1 # good
+#         (1+1).must_equal 2         # bad
+#         assert_equal 2, 1+1        # good
+#         expect(1 + 1).must_equal 2 # good
 #       end
 #     end
 
