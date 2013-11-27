@@ -1,13 +1,6 @@
 require "minitest/test"
 
-class Minitest::Expectation # :nodoc:
-  attr_reader :target, :ctx
-
-  def initialize target, ctx
-    @target = target
-    @ctx    = ctx
-  end
-end
+Minitest::Expectation = Struct.new :target, :ctx # :nodoc:
 
 class Module # :nodoc:
   def infect_an_assertion meth, new_name, dont_flip = false # :nodoc:
