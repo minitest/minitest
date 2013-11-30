@@ -17,6 +17,7 @@ module Minitest # :nodoc:
       public_send
       respond_to_missing?
       send
+      tap
       to_s
     )
 

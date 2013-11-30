@@ -98,6 +98,9 @@ class TestMinitestMock < Minitest::Test
     mock.expect :send, "received send"
     assert_equal "received send", mock.send
 
+    mock.expect :tap, "received tap"
+    assert_equal "received tap", mock.tap
+
     assert mock.verify
   end
 
