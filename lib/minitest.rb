@@ -7,7 +7,7 @@ require "minitest/parallel"
 # :include: README.txt
 
 module Minitest
-  VERSION = "5.0.8" # :nodoc:
+  VERSION = "5.1.0" # :nodoc:
 
   @@installed_at_exit ||= false
   @@after_run = []
@@ -19,7 +19,7 @@ module Minitest
   # Parallel test executor
 
   mc.send :attr_accessor, :parallel_executor
-  self.parallel_executor = Parallel::Executor.new (ENV['N'] || 2).to_i
+  self.parallel_executor = Parallel::Executor.new((ENV['N'] || 2).to_i)
 
   ##
   # Filter object for backtraces.

@@ -8,7 +8,8 @@ Hoe.plugin :seattlerb
 Hoe.spec 'minitest' do
   developer 'Ryan Davis', 'ryand-ruby@zenspider.com'
 
-  self.rubyforge_name = "bfts"
+  license "MIT"
+
   self.testlib = :minitest
 end
 
