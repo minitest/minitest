@@ -86,6 +86,9 @@ class TestMinitestMock < Minitest::Test
     mock.expect :===, "received ==="
     assert_equal "received ===", mock.===
 
+    mock.expect :equal?, "received equal?"
+    assert_equal "received equal?", mock.equal?
+
     mock.expect :inspect, "received inspect"
     assert_equal "received inspect", mock.inspect
 
@@ -99,6 +102,10 @@ class TestMinitestMock < Minitest::Test
     assert_equal "received send", mock.send
 
     assert mock.verify
+  end
+
+  def test_identity_equality_on_mock
+    assert @mock.equal?(@mock)
   end
 
   def test_expectations_can_be_satisfied_via_send

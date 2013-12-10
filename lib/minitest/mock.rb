@@ -12,6 +12,7 @@ module Minitest # :nodoc:
 
     overridden_methods = %w(
       ===
+      equal?
       inspect
       object_id
       public_send
