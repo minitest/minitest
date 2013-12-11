@@ -8,10 +8,10 @@ class Module # :nodoc:
     self.class_eval <<-EOM
       def #{new_name} *args
         case
-        when Proc === self then
-          Minitest::Spec.current.#{meth}(*args, &self)
         when #{!!dont_flip} then
           Minitest::Spec.current.#{meth}(self, *args)
+        when Proc === self then
+          Minitest::Spec.current.#{meth}(*args, &self)
         else
           Minitest::Spec.current.#{meth}(args.first, self, *args[1..-1])
         end

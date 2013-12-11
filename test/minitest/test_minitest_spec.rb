@@ -557,6 +557,12 @@ describe Minitest::Spec, :let do
       proc { let(:test_value) { true } }.must_raise ArgumentError
     end
   end
+
+  it 'procs come after dont_flip' do
+    p = proc{ }
+    assert_respond_to p, :call
+    p.must_respond_to :call
+  end
 end
 
 describe Minitest::Spec, :subject do
