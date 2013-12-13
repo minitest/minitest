@@ -1,4 +1,4 @@
-require "minitest/parallel_each"
+require "minitest/parallel"
 
 class Minitest::Test
   class << self
