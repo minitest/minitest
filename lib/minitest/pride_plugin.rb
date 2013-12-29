@@ -52,7 +52,6 @@ module Minitest
       @colors ||= (31..36).to_a
       @size   = @colors.size
       @index  = 0
-      # io.sync = true
     end
 
     ##
