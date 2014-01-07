@@ -43,7 +43,7 @@ module Minitest
 
   def self.autorun
     at_exit {
-      next if $! and not $!.kind_of? SystemExit
+      next if $! and not ($!.kind_of? SystemExit and $!.success?)
 
       exit_code = nil
 
