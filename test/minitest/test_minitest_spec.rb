@@ -553,9 +553,11 @@ describe Minitest::Spec, :let do
   end
 
   it 'raises an error if the name begins with "test"' do
-    describe "let" do
-      proc { let(:test_value) { true } }.must_raise ArgumentError
-    end
+    proc { self.class.let(:test_value) { true } }.must_raise ArgumentError
+  end
+
+  it 'raises an error if the name shadows a normal instance method' do
+    proc { self.class.let(:message) { true } }.must_raise ArgumentError
   end
 
   it 'procs come after dont_flip' do

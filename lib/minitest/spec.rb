@@ -223,7 +223,11 @@ class Minitest::Spec < Minitest::Test
     # Why use let instead of def? I honestly don't know.
 
     def let name, &block
-      raise ArgumentError, 'name cannot begin with "test"' if name.to_s =~ /\Atest/
+      name = name.to_s
+      raise ArgumentError, 'name cannot begin with "test"' if name =~ /\Atest/
+      raise ArgumentError, "##{name} cannot be overwritten" if
+        (instance_methods.map(&:to_s) - %w[subject]).include? name
+
       define_method name do
         @_memoized ||= {}
         @_memoized.fetch(name) { |k| @_memoized[k] = instance_eval(&block) }
