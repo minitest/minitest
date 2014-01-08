@@ -439,6 +439,7 @@ minitest_should             :: Shoulda style syntax for minitest test::unit.
 minitest_tu_shim            :: minitest_tu_shim bridges between test/unit and minitest.
 mongoid-minitest            :: MiniTest matchers for Mongoid.
 pry-rescue                  :: A pry plugin w/ minitest support. See pry-rescue/minitest.rb.
+rspec2minitest              :: Easily translate any RSpec matchers to MiniTest assertions and expectations.
 
 == Unknown Extensions:
 
