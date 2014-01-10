@@ -128,3 +128,10 @@ class TestMinitestBenchmark < Minitest::Test
     assert_in_delta exp_b, b
   end
 end
+
+describe "my class Bench" do
+  klass = self
+  it "should provide bench methods" do
+    klass.must_respond_to :bench
+  end
+end
