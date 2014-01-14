@@ -433,6 +433,7 @@ minitest-spec-rails         :: Drop in MiniTest::Spec superclass for ActiveSuppo
 minitest-stub_any_instance  :: Stub any instance of a method on the given class for the duration of a block
 minitest-stub-const         :: Stub constants for the duration of a block
 minitest-tags               :: add tags for minitest
+minitest-vcr                :: Automatic cassette managment with MiniTest::Spec and VCR
 minitest-wscolor            :: Yet another test colorizer.
 minitest_owrapper           :: Get tests results as a TestResult object.
 minitest_should             :: Shoulda style syntax for minitest test::unit.
