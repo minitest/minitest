@@ -290,6 +290,7 @@ module Minitest
     end
 
     def self.run_one_method klass, method_name, reporter
+      reporter.start_one klass, method_name
       reporter.record Minitest.run_one_method(klass, method_name)
     end
 
@@ -399,6 +400,12 @@ module Minitest
     end
 
     ##
+    # Starts reporting on an individual test
+
+    def start_one klass, method_name
+    end
+
+    ##
     # Record a result and output the Runnable#result_code. Stores the
     # result of the run if the run did not pass.
 
@@ -446,9 +453,13 @@ module Minitest
   # own.
 
   class ProgressReporter < Reporter
+
+    def start_one klass, method_name
+      io.print "%s#%s = " % [klass, method_name] if options[:verbose]
+    end
+
     def record result # :nodoc:
-      io.print "%s#%s = %.2f s = " % [result.class, result.name, result.time] if
-        options[:verbose]
+      io.print "%.2f s = " % [result.time] if options[:verbose]
       io.print result.result_code
       io.puts if options[:verbose]
     end
@@ -606,6 +617,12 @@ module Minitest
 
     def start # :nodoc:
       self.reporters.each(&:start)
+    end
+
+    def start_one klass, method_name
+      self.reporters.each do |reporter|
+        reporter.start_one klass, method_name
+      end
     end
 
     def record result # :nodoc:
