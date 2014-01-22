@@ -376,7 +376,7 @@ module Minitest
     ##
     # Create a benchmark that verifies that the performance is linear.
     #
-    #   describe "my class" do
+    #   describe "my class Bench" do
     #     bench_performance_linear "fast_algorithm", 0.9999 do |n|
     #       @obj.fast_algorithm(n)
     #     end
@@ -391,7 +391,7 @@ module Minitest
     ##
     # Create a benchmark that verifies that the performance is constant.
     #
-    #   describe "my class" do
+    #   describe "my class Bench" do
     #     bench_performance_constant "zoom_algorithm!" do |n|
     #       @obj.zoom_algorithm!(n)
     #     end
@@ -406,7 +406,7 @@ module Minitest
     ##
     # Create a benchmark that verifies that the performance is exponential.
     #
-    #   describe "my class" do
+    #   describe "my class Bench" do
     #     bench_performance_exponential "algorithm" do |n|
     #       @obj.algorithm(n)
     #     end
