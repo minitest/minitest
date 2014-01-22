@@ -1,3 +1,13 @@
+=== 5.2.2 / 2014-01-22
+
+* 1 minor enhancement:
+
+  * Spec#let raises ArgumentError if you override _any_ instance method (except subject). (rynr)
+
+* 1 bug fix:
+
+  * Fixed up benchmark spec doco and added a test to demonstrate. (bhenderson)
+
 === 5.2.1 / 2014-01-07
 
 * 1 bug fix:
