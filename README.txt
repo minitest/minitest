@@ -425,6 +425,7 @@ minitest-predicates         :: Adds support for .predicate? methods
 minitest-rails              :: MiniTest integration for Rails 3.x
 minitest-rails-capybara     :: Capybara integration for MiniTest::Rails
 minitest-reporters          :: Create customizable MiniTest output formats
+minitest-rspec_mocks        :: Use RSpec Mocks with Minitest
 minitest-should_syntax      :: RSpec-style +x.should == y+ assertions for MiniTest
 minitest-shouldify          :: Adding all manner of shoulds to MiniTest (bad idea)
 minitest-spec-context       :: Provides rspec-ish context method to MiniTest::Spec
