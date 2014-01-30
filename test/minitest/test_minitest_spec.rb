@@ -560,6 +560,18 @@ describe Minitest::Spec, :let do
     proc { self.class.let(:message) { true } }.must_raise ArgumentError
   end
 
+  it "doesn't raise an error if it is just another let" do
+    proc do
+      describe :outer do
+        let(:bar)
+        describe :inner do
+          let(:bar)
+        end
+      end
+      :good
+    end.call.must_equal :good
+  end
+
   it 'procs come after dont_flip' do
     p = proc{ }
     assert_respond_to p, :call
