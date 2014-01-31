@@ -455,14 +455,13 @@ minitest-spec-rails         :: Drop in Minitest::Spec superclass for
 minitest-stub_any_instance  :: Stub any instance of a method on the given class
                                for the duration of a block.
 minitest-stub-const         :: Stub constants for the duration of a block.
-minitest-tags               :: add tags for minitest.
+minitest-tags               :: Add tags for minitest.
 minitest-vcr                :: Automatic cassette managment with Minitest::Spec
                                and VCR.
 minitest-wscolor            :: Yet another test colorizer.
 minitest_owrapper           :: Get tests results as a TestResult object.
 minitest_should             :: Shoulda style syntax for minitest test::unit.
-minitest_tu_shim            :: minitest_tu_shim bridges between test/unit and
-                               minitest.
+minitest_tu_shim            :: Bridges between test/unit and minitest.
 mongoid-minitest            :: Minitest matchers for Mongoid.
 rspec2minitest              :: Easily translate any RSpec matchers to Minitest
                                assertions and expectations.
