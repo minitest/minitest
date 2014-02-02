@@ -168,11 +168,9 @@ class Minitest::Spec < Minitest::Test
     #
     # Equivalent to Minitest::Test#setup.
 
-    def before type = nil, &block
-      define_method :setup do
-        super()
-        self.instance_eval(&block)
-      end
+
+    def before(type=nil, &block)
+      include Module.new { define_method(:setup) { super(); instance_exec(&block) } }
     end
 
     ##
@@ -183,10 +181,7 @@ class Minitest::Spec < Minitest::Test
     # Equivalent to Minitest::Test#teardown.
 
     def after type = nil, &block
-      define_method :teardown do
-        self.instance_eval(&block)
-        super()
-      end
+      include Module.new { define_method(:teardown) { instance_exec(&block); super() } }
     end
 
     ##
