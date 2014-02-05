@@ -674,9 +674,13 @@ class TestMeta < MetaMetaMetaTestCase
     Minitest::Spec.register_spec_type MiniSpecB do |desc|
       desc.superclass == ExampleA
     end
+    Minitest::Spec.register_spec_type MiniSpecC do |_, additional_desc|
+      additional_desc == ExampleA
+    end
 
     assert_equal MiniSpecA, Minitest::Spec.spec_type(ExampleA)
     assert_equal MiniSpecB, Minitest::Spec.spec_type(ExampleB)
+    assert_equal MiniSpecC, Minitest::Spec.spec_type(nil, ExampleA)
   ensure
     Minitest::Spec::TYPES.replace original_types
   end
