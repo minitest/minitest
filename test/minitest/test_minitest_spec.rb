@@ -632,7 +632,9 @@ class TestMeta < MetaMetaMetaTestCase
 
       y = describe "inner thingy" do
         before { before_list << 2 }
+        before { before_list << 2.5 }
         after  { after_list  << 2 }
+        after  { after_list  << 2.5 }
         it "inner-it" do end
 
         z = describe "very inner thingy" do
@@ -712,8 +714,8 @@ class TestMeta < MetaMetaMetaTestCase
     assert_equal "inner thingy",      y.desc
     assert_equal "very inner thingy", z.desc
 
-    top_methods = %w(setup teardown test_0001_top-level-it)
-    inner_methods1 = %w(setup teardown test_0001_inner-it)
+    top_methods = %w(test_0001_top-level-it)
+    inner_methods1 = %w(test_0001_inner-it)
     inner_methods2 = inner_methods1 +
       %w(test_0002_anonymous test_0003_anonymous)
 
@@ -730,8 +732,8 @@ class TestMeta < MetaMetaMetaTestCase
     run_tu_with_fresh_reporter
 
     size = z.runnable_methods.size
-    assert_equal [1, 2, 3] * size, before_list
-    assert_equal [3, 2, 1] * size, after_list
+    assert_equal [1, 2, 2.5, 3] * size, before_list
+    assert_equal [3, 2.5, 2, 1] * size, after_list
   end
 
   def test_describe_first_structure
