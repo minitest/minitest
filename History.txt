@@ -1,3 +1,9 @@
+=== 5.2.3 / 2014-02-10
+
+* 1 bug fix:
+
+  * Fixed Spec#let check to allow overriding of other lets. (mvz)
+
 === 5.2.2 / 2014-01-22
 
 * 1 minor enhancement:

@@ -7,7 +7,7 @@ require "minitest/parallel"
 # :include: README.txt
 
 module Minitest
-  VERSION = "5.2.2" # :nodoc:
+  VERSION = "5.2.3" # :nodoc:
 
   @@installed_at_exit ||= false
   @@after_run = []
