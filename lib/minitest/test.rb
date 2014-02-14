@@ -19,14 +19,17 @@ module Minitest
 
     ##
     # Call this at the top of your tests when you absolutely
-    # positively need to have ordered tests. In doing so, you're
-    # admitting that you suck and your tests are weak.
+    # positively need to have ordered tests for example integration tests.
 
-    def self.i_suck_and_my_tests_are_order_dependent!
+    def self.tests_are_order_dependent!
       class << self
         undef_method :test_order if method_defined? :test_order
         define_method :test_order do :alpha end
       end
+    end
+
+    class << self
+      alias i_suck_and_my_tests_are_order_dependent! tests_are_order_dependent!
     end
 
     ##
