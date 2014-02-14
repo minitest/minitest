@@ -523,7 +523,7 @@ describe Minitest::Spec do
 end
 
 describe Minitest::Spec, :let do
-  i_suck_and_my_tests_are_order_dependent!
+  tests_are_order_dependent!
 
   def _count
     $let_count ||= 0

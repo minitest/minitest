@@ -1692,26 +1692,36 @@ class TestMinitestUnitTestCase < Minitest::Test
     assert_equal expected, sample_test_case.runnable_methods
   end
 
-  def test_i_suck_and_my_tests_are_order_dependent_bang_sets_test_order_alpha
+  def test_tests_are_order_dependent_bang_sets_test_order_alpha
     @assertion_count = 0
 
-    shitty_test_case = Class.new Minitest::Test
+    intergration_test = Class.new Minitest::Test
 
-    shitty_test_case.i_suck_and_my_tests_are_order_dependent!
+    intergration_test.tests_are_order_dependent!
 
-    assert_equal :alpha, shitty_test_case.test_order
+    assert_equal :alpha, intergration_test.test_order
   end
 
-  def test_i_suck_and_my_tests_are_order_dependent_bang_does_not_warn
+  def test_tests_are_order_dependent_bang_does_not_warn
     @assertion_count = 0
 
-    shitty_test_case = Class.new Minitest::Test
+    intergration_test = Class.new Minitest::Test
 
-    def shitty_test_case.test_order ; :lol end
+    def intergration_test.test_order ; :lol end
 
     assert_silent do
-      shitty_test_case.i_suck_and_my_tests_are_order_dependent!
+      intergration_test.tests_are_order_dependent!
     end
+  end
+
+  def test_i_suck_and_my_tests_are_order_dependent_alias
+    @assertion_count = 0
+
+    intergration_test = Class.new Minitest::Test
+
+    intergration_test.i_suck_and_my_tests_are_order_dependent!
+
+    assert_equal :alpha, intergration_test.test_order
   end
 
   def util_assert_triggered expected, klass = Minitest::Assertion
