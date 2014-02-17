@@ -18,7 +18,9 @@ module Minitest
           return [system.NumberOfProcessors, processors].max
         end
       end
-      raise "can't determine 'number_of_processors' for '#{RUBY_PLATFORM}'"
+
+      #Default back to previously supported number of processors
+      2
     end
 
     class Executor
