@@ -265,6 +265,17 @@ class TestMinitestMock < Minitest::Test
     assert mock.verify
   end
 
+  def test_mock_block_is_passed_function_block
+    mock = MiniTest::Mock.new
+    block = proc { 'bar' }
+    mock.expect :foo, nil do |arg, &blk|
+      arg == 'foo' &&
+      blk == block
+    end
+    mock.foo 'foo', &block
+    assert mock.verify
+  end
+
   def test_verify_fails_when_mock_block_returns_false
     mock = Minitest::Mock.new
     mock.expect :foo, nil do
