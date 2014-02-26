@@ -432,6 +432,30 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     assert_report expected, %w[--seed 42 --verbose]
   end
 
+  def test_run_verbose_with_breaking_output
+    output = nil
+    @tu =
+    Class.new Minitest::Test do
+      define_method :test_something do
+        output.puts "hi"
+        assert true
+      end
+    end
+
+    expected = clean <<-EOM
+      #<Class:0xXXX>#test_something = hi
+      0.00 s = .
+
+      Finished in 0.00
+
+      1 runs, 1 assertions, 0 failures, 0 errors, 0 skips
+    EOM
+
+    assert_report expected, %w[--seed 42 --verbose] do |_, out|
+      output = out
+    end
+  end
+
   def test_run_with_other_runner
     @tu =
     Class.new Minitest::Test do

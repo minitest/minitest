@@ -22,7 +22,7 @@ class MetaMetaMetaTestCase < Minitest::Test
 
     reporter.start
 
-    yield(reporter) if block_given?
+    yield(reporter, @output) if block_given?
 
     @tus ||= [@tu]
     @tus.each do |tu|
