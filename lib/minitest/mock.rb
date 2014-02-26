@@ -109,7 +109,7 @@ module Minitest # :nodoc:
       true
     end
 
-    def method_missing(sym, *args) # :nodoc:
+    def method_missing(sym, *args, &block) # :nodoc:
       unless @expected_calls.has_key?(sym) then
         raise NoMethodError, "unmocked method %p, expected one of %p" %
           [sym, @expected_calls.keys.sort_by(&:to_s)]
@@ -128,7 +128,7 @@ module Minitest # :nodoc:
 
       if val_block then
         raise MockExpectationError, "mocked method %p failed block w/ %p" %
-          [sym, args] unless val_block.call(args)
+          [sym, args] unless val_block.call(*args, &block)
 
         # keep "verify" happy
         @actual_calls[sym] << expected_call
