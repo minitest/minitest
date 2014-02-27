@@ -224,8 +224,8 @@ class Minitest::Spec < Minitest::Test
 
     def let name, &block
       name = name.to_s
-      raise ArgumentError, 'name cannot begin with "test"' if name =~ /\Atest/
-      raise ArgumentError, "##{name} cannot be overridden" if
+      raise ArgumentError, "let cannot define '#{name}' as it begins with 'test'. Please use another name." if name =~ /\Atest/
+      raise ArgumentError, "let cannot define '#{name}' as it would override a method in Minitest::Spec. Please use another name." if
         (Minitest::Spec.instance_methods.map(&:to_s) - %w[subject]).include? name
 
       define_method name do
