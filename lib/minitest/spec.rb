@@ -224,9 +224,12 @@ class Minitest::Spec < Minitest::Test
 
     def let name, &block
       name = name.to_s
-      raise ArgumentError, 'name cannot begin with "test"' if name =~ /\Atest/
-      raise ArgumentError, "##{name} cannot be overridden" if
-        (Minitest::Spec.instance_methods.map(&:to_s) - %w[subject]).include? name
+      pre, post = "let '#{name}' cannot ", ". Please use another name."
+      methods = Minitest::Spec.instance_methods.map(&:to_s) - %w[subject]
+      raise ArgumentError, "#{pre}begin with 'test'#{post}" if
+        name =~ /\Atest/
+      raise ArgumentError, "#{pre}override a method in Minitest::Spec#{post}" if
+        methods.include? name
 
       define_method name do
         @_memoized ||= {}
