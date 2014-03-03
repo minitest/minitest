@@ -106,10 +106,8 @@ module Minitest
             self.send self.name
           end
 
-          %w{ before_teardown teardown after_teardown }.each do |hook|
-            capture_exceptions do
-              self.send hook
-            end
+          capture_exceptions do
+            before_teardown; teardown; after_teardown
           end
         end
       end
