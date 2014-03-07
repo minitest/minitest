@@ -266,7 +266,7 @@ class TestMinitestMock < Minitest::Test
   end
 
   def test_mock_block_is_passed_function_block
-    mock = MiniTest::Mock.new
+    mock = Minitest::Mock.new
     block = proc { 'bar' }
     mock.expect :foo, nil do |arg, &blk|
       arg == 'foo' &&

@@ -31,7 +31,7 @@ module Minitest
 
       module ClassMethods
         def run_one_method klass, method_name, reporter
-          MiniTest.parallel_executor << [klass, method_name, reporter]
+          Minitest.parallel_executor << [klass, method_name, reporter]
         end
         def test_order; :parallel; end
       end
