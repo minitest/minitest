@@ -121,6 +121,12 @@ module Minitest::Expectations
   infect_an_assertion :assert_output, :must_output
 
   ##
+  # :method: must_predicate
+  # See Minitest::Assertions#assert_predicate
+
+  infect_an_assertion :assert_predicate, :must_predicate
+
+  ##
   # See Minitest::Assertions#assert_raises
   #
   #    proc { ... }.must_raise exception
@@ -146,6 +152,12 @@ module Minitest::Expectations
   # :method: must_be_same_as
 
   infect_an_assertion :assert_same, :must_be_same_as
+
+  ##
+  # :method: must_send
+  # See Minitest::Assertions#assert_send
+
+  infect_an_assertion :assert_send, :must_send
 
   ##
   # See Minitest::Assertions#assert_silent
@@ -260,6 +272,12 @@ module Minitest::Expectations
   # :method: wont_be
 
   infect_an_assertion :refute_operator, :wont_be, :reverse
+
+  ##
+  # :method: wont_predicate
+  # See Minitest::Assertions#refute_predicate
+
+  infect_an_assertion :refute_predicate, :wont_predicate
 
   ##
   # See Minitest::Assertions#refute_respond_to

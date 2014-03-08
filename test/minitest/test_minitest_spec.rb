@@ -130,8 +130,10 @@ describe Minitest::Spec do
                         must_include
                         must_match
                         must_output
+                        must_predicate
                         must_raise
                         must_respond_to
+                        must_send
                         must_throw)
 
     bad = %w[not raise throw send output be_silent]
