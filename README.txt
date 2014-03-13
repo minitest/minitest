@@ -382,67 +382,91 @@ for you, so make sure you don't do it twice.
 
 == Known Extensions:
 
-capybara_minitest_spec      :: Bridge between Capybara RSpec matchers and MiniTest::Spec expectations (e.g. page.must_have_content("Title")).
+capybara_minitest_spec      :: Bridge between Capybara RSpec matchers and
+                               Minitest::Spec expectations (e.g.
+                               page.must_have_content("Title")).
 minispec-metadata           :: Metadata for describe/it blocks
                                (e.g. `it "requires JS driver", js: true do`)
 minitest-ansi               :: Colorize minitest output with ANSI colors.
-minitest-around             :: Around block for minitest. An alternative to setup/teardown dance.
-minitest-capistrano         :: Assertions and expectations for testing Capistrano recipes
-minitest-capybara           :: Capybara matchers support for minitest unit and spec
+minitest-around             :: Around block for minitest. An alternative to
+                               setup/teardown dance.
+minitest-capistrano         :: Assertions and expectations for testing
+                               Capistrano recipes.
+minitest-capybara           :: Capybara matchers support for minitest unit and
+                               spec.
 minitest-chef-handler       :: Run Minitest suites as Chef report handlers
-minitest-ci                 :: CI reporter plugin for MiniTest.
-minitest-colorize           :: Colorize MiniTest output and show failing tests instantly.
-minitest-context            :: Defines contexts for code reuse in MiniTest
+minitest-ci                 :: CI reporter plugin for Minitest.
+minitest-colorize           :: Colorize Minitest output and show failing tests
+                               instantly.
+minitest-context            :: Defines contexts for code reuse in Minitest
                                specs that share common expectations.
 minitest-debugger           :: Wraps assert so failed assertions drop into
                                the ruby debugger.
-minitest-display            :: Patches MiniTest to allow for an easily configurable output.
-minitest-documentation      :: Minimal documentation format inspired by rspec's
+minitest-display            :: Patches Minitest to allow for an easily
+                               configurable output.
+minitest-documentation      :: Minimal documentation format inspired by rspec's.
 minitest-doc_reporter       :: Detailed output inspired by rspec's documentation
                                format.
-minitest-emoji              :: Print out emoji for your test passes, fails, and skips.
-minitest-english            :: Semantically symmetric aliases for assertions and expectations.
+minitest-emoji              :: Print out emoji for your test passes, fails, and
+                               skips.
+minitest-english            :: Semantically symmetric aliases for assertions and
+                               expectations.
 minitest-excludes           :: Clean API for excluding certain tests you
                                don't want to run under certain conditions.
-minitest-filesystem         :: Adds assertion and expectation to help testing filesystem contents.
-minitest-firemock           :: Makes your MiniTest mocks more resilient.
-minitest-great_expectations :: Generally useful additions to minitest's assertions and expectations
+minitest-filesystem         :: Adds assertion and expectation to help testing
+                               filesystem contents.
+minitest-firemock           :: Makes your Minitest mocks more resilient.
+minitest-great_expectations :: Generally useful additions to minitest's
+                               assertions and expectations.
 minitest-growl              :: Test notifier for minitest via growl.
 minitest-implicit-subject   :: Implicit declaration of the test subject.
 minitest-instrument         :: Instrument ActiveSupport::Notifications when
-                               test method is executed
-minitest-instrument-db      :: Store information about speed of test
-                               execution provided by minitest-instrument in database
+                               test method is executed.
+minitest-instrument-db      :: Store information about speed of test execution
+                               provided by minitest-instrument in database.
 minitest-libnotify          :: Test notifier for minitest via libnotify.
-minitest-line               :: Run test at line number
-minitest-macruby            :: Provides extensions to minitest for macruby UI testing.
-minitest-matchers           :: Adds support for RSpec-style matchers to minitest.
+minitest-line               :: Run test at line number.
+minitest-macruby            :: Provides extensions to minitest for macruby UI
+                               testing.
+minitest-matchers           :: Adds support for RSpec-style matchers to
+                               minitest.
 minitest-metadata           :: Annotate tests with metadata (key-value).
-minitest-mongoid            :: Mongoid assertion matchers for MiniTest
-minitest-must_not           :: Provides must_not as an alias for wont in MiniTest
-minitest-nc                 :: Test notifier for minitest via Mountain Lion's Notification Center
-minitest-predicates         :: Adds support for .predicate? methods
-minitest-rails              :: MiniTest integration for Rails 3.x
-minitest-rails-capybara     :: Capybara integration for MiniTest::Rails
-minitest-reporters          :: Create customizable MiniTest output formats
-minitest-rspec_mocks        :: Use RSpec Mocks with Minitest
-minitest-should_syntax      :: RSpec-style +x.should == y+ assertions for MiniTest
-minitest-shouldify          :: Adding all manner of shoulds to MiniTest (bad idea)
-minitest-spec-context       :: Provides rspec-ish context method to MiniTest::Spec
-minitest-spec-expect        :: Expect syntax for MiniTest::Spec - expect(sequences).to_include :celery_man
-minitest-spec-magic         :: Minitest::Spec extensions for Rails and beyond
-minitest-spec-rails         :: Drop in MiniTest::Spec superclass for ActiveSupport::TestCase.
-minitest-stub_any_instance  :: Stub any instance of a method on the given class for the duration of a block
-minitest-stub-const         :: Stub constants for the duration of a block
-minitest-tags               :: add tags for minitest
-minitest-vcr                :: Automatic cassette managment with MiniTest::Spec and VCR
+minitest-mongoid            :: Mongoid assertion matchers for Minitest.
+minitest-must_not           :: Provides must_not as an alias for wont in
+                               Minitest.
+minitest-nc                 :: Test notifier for minitest via Mountain Lion's
+                               Notification Center.
+minitest-predicates         :: Adds support for .predicate? methods.
+minitest-rails              :: Minitest integration for Rails 3.x.
+minitest-rails-capybara     :: Capybara integration for Minitest::Rails.
+minitest-reporters          :: Create customizable Minitest output formats.
+minitest-rspec_mocks        :: Use RSpec Mocks with Minitest.
+minitest-should_syntax      :: RSpec-style +x.should == y+ assertions for
+                               Minitest.
+minitest-shouldify          :: Adding all manner of shoulds to Minitest (bad
+                               idea)
+minitest-spec-context       :: Provides rspec-ish context method to
+                               Minitest::Spec.
+minitest-spec-expect        :: Expect syntax for Minitest::Spec (e.g.
+                               expect(sequences).to_include :celery_man).
+minitest-spec-magic         :: Minitest::Spec extensions for Rails and beyond.
+minitest-spec-rails         :: Drop in Minitest::Spec superclass for
+                               ActiveSupport::TestCase.
+minitest-stub_any_instance  :: Stub any instance of a method on the given class
+                               for the duration of a block.
+minitest-stub-const         :: Stub constants for the duration of a block.
+minitest-tags               :: Add tags for minitest.
+minitest-vcr                :: Automatic cassette managment with Minitest::Spec
+                               and VCR.
 minitest-wscolor            :: Yet another test colorizer.
 minitest_owrapper           :: Get tests results as a TestResult object.
 minitest_should             :: Shoulda style syntax for minitest test::unit.
-minitest_tu_shim            :: minitest_tu_shim bridges between test/unit and minitest.
-mongoid-minitest            :: MiniTest matchers for Mongoid.
-pry-rescue                  :: A pry plugin w/ minitest support. See pry-rescue/minitest.rb.
-rspec2minitest              :: Easily translate any RSpec matchers to MiniTest assertions and expectations.
+minitest_tu_shim            :: Bridges between test/unit and minitest.
+mongoid-minitest            :: Minitest matchers for Mongoid.
+pry-rescue                  :: A pry plugin w/ minitest support. See
+                               pry-rescue/minitest.rb.
+rspec2minitest              :: Easily translate any RSpec matchers to Minitest
+                               assertions and expectations.
 
 == Unknown Extensions:
 
