@@ -1,3 +1,13 @@
+=== 5.3.1 / 2014-03-14
+
+* 1 minor enhancement:
+
+  * Modified verbage on bad 'let' names to be more helpful. (Archytaus)
+
+* 1 bug fix:
+
+  * Fixed 2 cases still using MiniTest. (mikesea)
+
 === 5.3.0 / 2014-02-25
 
 * 1 minor enhancement:
