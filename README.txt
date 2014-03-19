@@ -1,5 +1,7 @@
 = minitest/{unit,spec,mock,benchmark}
 
+This file needs to be a text-file. Please don't convert it to markdown.
+
 home :: https://github.com/seattlerb/minitest
 rdoc :: http://docs.seattlerb.org/minitest
 vim  :: https://github.com/sunaku/vim-ruby-minitest
