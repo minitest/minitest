@@ -186,13 +186,14 @@ module Minitest
     ##
     # Fails unless +collection+ includes +obj+.
 
-    def assert_includes collection, obj, msg = nil
+    def assert_include collection, obj, msg = nil
       msg = message(msg) {
         "Expected #{mu_pp(collection)} to include #{mu_pp(obj)}"
       }
       assert_respond_to collection, :include?
       assert collection.include?(obj), msg
     end
+    alias_method :assert_includes, :assert_include
 
     ##
     # Fails unless +obj+ is an instance of +cls+.
@@ -286,7 +287,7 @@ module Minitest
     # Fails unless the block raises one of +exp+. Returns the
     # exception matched so you can check the message, attributes, etc.
 
-    def assert_raises *exp
+    def assert_raise *exp
       msg = "#{exp.pop}.\n" if String === exp.last
 
       begin
@@ -314,6 +315,7 @@ module Minitest
 
       flunk "#{msg}#{mu_pp(exp)} expected but nothing was raised."
     end
+    alias_method :assert_raises, :assert_raise
 
     ##
     # Fails unless +obj+ responds to +meth+.
@@ -362,7 +364,7 @@ module Minitest
     ##
     # Fails unless the block throws +sym+
 
-    def assert_throws sym, msg = nil
+    def assert_throw sym, msg = nil
       default = "Expected #{mu_pp(sym)} to have been thrown"
       caught = true
       catch(sym) do
@@ -380,6 +382,7 @@ module Minitest
 
       assert caught, message(msg) { default }
     end
+    alias_method :assert_throws, :assert_throw
 
     ##
     # Captures $stdout and $stderr into strings:
@@ -550,13 +553,14 @@ module Minitest
     ##
     # Fails if +collection+ includes +obj+.
 
-    def refute_includes collection, obj, msg = nil
+    def refute_include collection, obj, msg = nil
       msg = message(msg) {
         "Expected #{mu_pp(collection)} to not include #{mu_pp(obj)}"
       }
       assert_respond_to collection, :include?
       refute collection.include?(obj), msg
     end
+    alias_method :refute_includes, :refute_include
 
     ##
     # Fails if +obj+ is an instance of +cls+.
