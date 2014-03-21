@@ -54,13 +54,13 @@ module Minitest::Expectations
   infect_an_assertion :assert_in_epsilon, :must_be_within_epsilon
 
   ##
-  # See Minitest::Assertions#assert_includes
+  # See Minitest::Assertions#assert_include
   #
   #    collection.must_include obj
   #
   # :method: must_include
 
-  infect_an_assertion :assert_includes, :must_include, :reverse
+  infect_an_assertion :assert_include, :must_include, :reverse
 
   ##
   # See Minitest::Assertions#assert_instance_of
@@ -121,13 +121,13 @@ module Minitest::Expectations
   infect_an_assertion :assert_output, :must_output
 
   ##
-  # See Minitest::Assertions#assert_raises
+  # See Minitest::Assertions#assert_raise
   #
   #    proc { ... }.must_raise exception
   #
   # :method: must_raise
 
-  infect_an_assertion :assert_raises, :must_raise
+  infect_an_assertion :assert_raise, :must_raise
 
   ##
   # See Minitest::Assertions#assert_respond_to
@@ -157,13 +157,13 @@ module Minitest::Expectations
   infect_an_assertion :assert_silent, :must_be_silent
 
   ##
-  # See Minitest::Assertions#assert_throws
+  # See Minitest::Assertions#assert_throw
   #
   #    proc { ... }.must_throw sym
   #
   # :method: must_throw
 
-  infect_an_assertion :assert_throws, :must_throw
+  infect_an_assertion :assert_throw, :must_throw
 
   ##
   # See Minitest::Assertions#refute_empty
@@ -204,13 +204,13 @@ module Minitest::Expectations
   infect_an_assertion :refute_in_epsilon, :wont_be_within_epsilon
 
   ##
-  # See Minitest::Assertions#refute_includes
+  # See Minitest::Assertions#refute_include
   #
   #    collection.wont_include obj
   #
   # :method: wont_include
 
-  infect_an_assertion :refute_includes, :wont_include, :reverse
+  infect_an_assertion :refute_include, :wont_include, :reverse
 
   ##
   # See Minitest::Assertions#refute_instance_of
