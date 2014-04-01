@@ -6,7 +6,7 @@ module Minitest
   # printed if the assertion fails.
   #
   # Protocol: Nearly everything here boils up to +assert+, which
-  # expects to be able to increment an instance variable named
+  # expects to be able to increment an instance accessor named
   # +assertions+. This is not provided by Assertions and must be
   # provided by the thing including Assertions. See Minitest::Runnable
   # for an example.
