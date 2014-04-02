@@ -1,3 +1,9 @@
+=== 5.3.2 / 2014-04-02
+
+* 1 bug fix:
+
+  * Fixed doco on Assertions.assertions. (xaviershay)
+
 === 5.3.1 / 2014-03-14
 
 * 1 minor enhancement:

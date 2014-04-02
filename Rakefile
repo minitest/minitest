@@ -64,4 +64,8 @@ task :specs do
   end
 end
 
+task :bugs do
+  sh "for f in bug*.rb ; do echo $f; echo; #{Gem.ruby} -Ilib $f && rm $f ; done"
+end
+
 # vim: syntax=Ruby
