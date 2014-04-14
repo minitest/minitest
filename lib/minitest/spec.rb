@@ -267,6 +267,18 @@ class Minitest::Spec < Minitest::Test
     # :stopdoc:
     attr_reader :desc
     alias :specify :it
+
+    module InstanceMethods
+      def before_setup
+        super
+        Thread.current[:current_spec] = self
+      end
+    end
+
+    def self.extended obj
+      obj.send :include, InstanceMethods
+    end
+
     # :startdoc:
   end
 

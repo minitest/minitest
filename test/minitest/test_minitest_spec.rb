@@ -681,6 +681,24 @@ class TestMeta < MetaMetaMetaTestCase
     Minitest::Spec::TYPES.replace original_types
   end
 
+  def test_bug_dsl_expectations
+    spec_class = Class.new MiniSpecB do
+      it "should work" do
+        0.must_equal 0
+      end
+    end
+
+    test_name = spec_class.instance_methods.sort.grep(/test/).first
+
+    spec = spec_class.new test_name
+
+    result = spec.run
+
+    assert spec.passed?
+    assert result.passed?
+    assert_equal 1, result.assertions
+  end
+
   def test_name
     spec_a = describe ExampleA do; end
     spec_b = describe ExampleB, :random_method do; end
