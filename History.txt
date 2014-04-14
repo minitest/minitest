@@ -1,3 +1,9 @@
+=== 5.3.3 / 2014-04-14
+
+* 1 bug fix:
+
+  * Fixed using expectations w/ DSL in Test class w/o describe. (blowmage+others)
+
 === 5.3.2 / 2014-04-02
 
 * 1 bug fix:
