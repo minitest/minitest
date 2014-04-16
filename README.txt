@@ -440,6 +440,7 @@ minitest-predicates         :: Adds support for .predicate? methods.
 minitest-rails              :: Minitest integration for Rails 3.x.
 minitest-rails-capybara     :: Capybara integration for Minitest::Rails.
 minitest-reporters          :: Create customizable Minitest output formats.
+minitest-rg                 :: Colored red/green output for Minitest.
 minitest-rspec_mocks        :: Use RSpec Mocks with Minitest.
 minitest-should_syntax      :: RSpec-style +x.should == y+ assertions for
                                Minitest.
