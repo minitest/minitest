@@ -204,7 +204,7 @@ class Minitest::Spec < Minitest::Test
       @specs ||= 0
       @specs += 1
 
-      name = "test_%04d_%s" % [ @specs, desc ]
+      name = "test_%04d_%s" % [ @specs, desc.gsub(" ", "_") ]
 
       define_method name, &block
 
