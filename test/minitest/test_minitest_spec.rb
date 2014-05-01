@@ -763,7 +763,7 @@ class TestMeta < MetaMetaMetaTestCase
       z = describe "second thingy" do end
     end
 
-    test_methods = ["test_0001_top level it", "test_0002_не латинские буквы-и-спецсимволы&いった α, β, γ, δ, ε hello!!! world"].sort
+    test_methods = ["test_0001_top_level_it", "test_0002_не_латинские_буквы-и-спецсимволы&いった_α,_β,_γ,_δ,_ε_hello!!!_world"].sort
 
     assert_equal test_methods, [x1, x2]
     assert_equal test_methods,
