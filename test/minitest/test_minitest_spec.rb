@@ -791,8 +791,9 @@ class TestSpecInTestCase < MetaMetaMetaTestCase
   def setup
     super
 
+    Thread.current[:current_spec] = self
     @tc = self
-    @assertion_count = 1
+    @assertion_count = 2
   end
 
   def assert_triggered expected, klass = Minitest::Assertion
@@ -824,8 +825,8 @@ class TestSpecInTestCase < MetaMetaMetaTestCase
   end
 
   def test_expectation_with_a_message
-    assert_triggered "Expected: 2\n  Actual: 1" do
-      1.must_equal 2, ""
+    assert_triggered "woot.\nExpected: 2\n  Actual: 1" do
+      1.must_equal 2, "woot"
     end
   end
 end
