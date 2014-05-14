@@ -1,11 +1,11 @@
-= minitest/{unit,spec,mock,benchmark}
+# minitest/{unit,spec,mock,benchmark}
 
 home :: https://github.com/seattlerb/minitest
 rdoc :: http://docs.seattlerb.org/minitest
 vim  :: https://github.com/sunaku/vim-ruby-minitest
 emacs:: https://github.com/arthurnn/minitest-emacs
 
-== DESCRIPTION:
+## DESCRIPTION:
 
 minitest provides a complete suite of testing facilities supporting
 TDD, BDD, mocking, and benchmarking.
@@ -61,7 +61,7 @@ classes, modules, inheritance, methods. This means you only have to
 learn ruby to use minitest and all of your regular OO practices like
 extract-method refactorings still apply.
 
-== FEATURES/PROBLEMS:
+## FEATURES/PROBLEMS:
 
 * minitest/autorun - the easy and explicit way to run all your tests.
 * minitest/unit - a very fast, simple, and clean test system.
@@ -71,11 +71,11 @@ extract-method refactorings still apply.
 * minitest/pride - show your pride in testing!
 * Incredibly small and fast runner, but no bells and whistles.
 
-== RATIONALE:
+## RATIONALE:
 
 See design_rationale.rb to see how specs and tests work in minitest.
 
-== SYNOPSIS:
+## SYNOPSIS:
 
 Given that you'd like to test the following class:
 
@@ -89,7 +89,7 @@ Given that you'd like to test the following class:
     end
   end
 
-=== Unit tests
+### Unit tests
 
 Define your tests as methods beginning with `test_`.
 
@@ -113,7 +113,7 @@ Define your tests as methods beginning with `test_`.
     end
   end
 
-=== Specs
+### Specs
 
   require "minitest/autorun"
 
@@ -139,7 +139,7 @@ For matchers support check out:
 
 https://github.com/zenspider/minitest-matchers
 
-=== Benchmarks
+### Benchmarks
 
 Add benchmarks to your tests.
 
@@ -180,7 +180,7 @@ outputs something like:
 
 Output is tab-delimited to make it easy to paste into a spreadsheet.
 
-=== Mocks
+### Mocks
 
   class MemeAsker
     def initialize(meme)
@@ -212,7 +212,7 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
     end
   end
 
-=== Stubs
+### Stubs
 
   def test_stale_eh
     obj_under_test = Something.new
@@ -232,7 +232,7 @@ new non-existing method:
     ...
   end
 
-== Writing Extensions
+## Writing Extensions
 
 To define a plugin, add a file named minitest/XXX_plugin.rb to your
 project/gem. Minitest will find and require that file using
@@ -258,7 +258,7 @@ bogus example:
       end
     end
 
-=== Adding custom reporters
+### Adding custom reporters
 
 Minitest uses composite reporter to output test results using multiple
 reporter instances. You can add new reporters to the composite during
@@ -297,9 +297,9 @@ Using our example above, here is how we might implement MyCI:
       end
     end
 
-== FAQ
+## FAQ
 
-=== How to test SimpleDelegates?
+### How to test SimpleDelegates?
 
 The following implementation and test:
 
@@ -345,7 +345,7 @@ or you can extend the Worker class (within the test file!), like:
       include ::Minitest::Expectations
     end
 
-=== How to share code across test classes?
+### How to share code across test classes?
 
 Use a module. That's exactly what they're for:
 
@@ -369,7 +369,7 @@ you want to extend your test using setup/teardown via a module, just
 make sure you ALWAYS call super. before/after automatically call super
 for you, so make sure you don't do it twice.
 
-== Prominent Projects using Minitest:
+## Prominent Projects using Minitest:
 
 * arel
 * journey
@@ -380,7 +380,7 @@ for you, so make sure you don't do it twice.
 * rdoc
 * ...and of course, everything from seattle.rb...
 
-== Known Extensions:
+## Known Extensions:
 
 capybara_minitest_spec      :: Bridge between Capybara RSpec matchers and
                                Minitest::Spec expectations (e.g.
@@ -469,7 +469,7 @@ pry-rescue                  :: A pry plugin w/ minitest support. See
 rspec2minitest              :: Easily translate any RSpec matchers to Minitest
                                assertions and expectations.
 
-== Unknown Extensions:
+## Unknown Extensions:
 
 Authors... Please send me a pull request with a description of your minitest extension.
 
@@ -493,11 +493,11 @@ Authors... Please send me a pull request with a description of your minitest ext
 * mongoid-minitest
 * spork-minitest
 
-== REQUIREMENTS:
+## REQUIREMENTS:
 
 * Ruby 1.8, maybe even 1.6 or lower. No magic is involved.
 
-== INSTALL:
+## INSTALL:
 
   sudo gem install minitest
 
@@ -517,7 +517,7 @@ Gem.find_files and many other things (gem which, gem contents, etc).
 
 Just install minitest as a gem for real and you'll be happier.
 
-== LICENSE:
+## LICENSE:
 
 (The MIT License)
 
