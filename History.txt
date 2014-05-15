@@ -1,3 +1,9 @@
+=== 5.3.4 / 2014-05-15
+
+* 1 minor enhancement:
+
+  * Test classes are randomized before running. (judofyr)
+
 === 5.3.3 / 2014-04-14
 
 * 1 bug fix:
