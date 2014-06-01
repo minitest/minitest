@@ -437,6 +437,7 @@ minitest-must_not           :: Provides must_not as an alias for wont in
 minitest-nc                 :: Test notifier for minitest via Mountain Lion's
                                Notification Center.
 minitest-parallel-db        :: Run tests in parallel with a single database.
+minitest-power_assert       :: PowerAssert for Minitest.
 minitest-predicates         :: Adds support for .predicate? methods.
 minitest-rails              :: Minitest integration for Rails 3.x.
 minitest-rails-capybara     :: Capybara integration for Minitest::Rails.
