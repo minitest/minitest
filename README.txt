@@ -1,6 +1,7 @@
 = minitest/{unit,spec,mock,benchmark}
 
 home :: https://github.com/seattlerb/minitest
+bugs :: https://github.com/seattlerb/minitest/issues
 rdoc :: http://docs.seattlerb.org/minitest
 vim  :: https://github.com/sunaku/vim-ruby-minitest
 emacs:: https://github.com/arthurnn/minitest-emacs
@@ -231,6 +232,37 @@ new non-existing method:
   def obj_under_test.fake_method
     ...
   end
+
+=== Running Your Tests
+
+Ideally, you'll use a rake task to run your tests, either piecemeal or
+all at once. Both rake and rails ship with rake tasks for running your
+tests. BUT! You don't have to:
+
+    % ruby -Ilib:test test/minitest/test_minitest_unit.rb 
+    Run options: --seed 37685
+
+    # Running:
+
+    ...................................................................... (etc)
+
+    Finished in 0.107130s, 1446.8403 runs/s, 2959.0217 assertions/s.
+
+    155 runs, 317 assertions, 0 failures, 0 errors, 0 skips
+
+There are runtime options available, both from minitest itself, and also
+provided via plugins. To see them, simply run with `--help`:
+
+    % ruby -Ilib:test test/minitest/test_minitest_unit.rb --help
+    minitest options:
+        -h, --help                       Display this help.
+        -s, --seed SEED                  Sets random seed
+        -v, --verbose                    Verbose. Show progress processing files.
+        -n, --name PATTERN               Filter run on /pattern/ or string.
+
+    Known extensions: pride, autotest
+        -p, --pride                      Pride. Show your testing pride!
+        -a, --autotest                   Connect to autotest server.
 
 == Writing Extensions
 
