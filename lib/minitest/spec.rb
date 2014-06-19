@@ -60,7 +60,7 @@ module Kernel # :nodoc:
     sclas = stack.last || if Class === self && is_a?(Minitest::Spec::DSL) then
                             self
                           else
-                            Minitest::Spec.spec_type desc
+                            Minitest::Spec.spec_type desc, additional_desc
                           end
 
     cls = sclas.create name, desc
@@ -132,10 +132,14 @@ class Minitest::Spec < Minitest::Test
     #
     #     spec_type("BlahController") # => Minitest::Spec::Rails
 
-    def spec_type desc
+    def spec_type desc, additional_desc = nil
       TYPES.find { |matcher, klass|
         if matcher.respond_to? :call then
-          matcher.call desc
+          if additional_desc then
+            matcher.call desc, additional_desc
+          else
+            matcher.call desc
+          end
         else
           matcher === desc.to_s
         end

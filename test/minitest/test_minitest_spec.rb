@@ -659,10 +659,14 @@ class TestMeta < MetaMetaMetaTestCase
     p = lambda do |x| true end
     Minitest::Spec.register_spec_type TestMeta, &p
 
+    q = lambda do |x, y| true end
+    Minitest::Spec.register_spec_type TestMeta, &q
+
     keys = Minitest::Spec::TYPES.map(&:first)
 
     assert_includes keys, /woot/
     assert_includes keys, p
+    assert_includes keys, q
   ensure
     Minitest::Spec::TYPES.replace original_types
   end
@@ -674,9 +678,17 @@ class TestMeta < MetaMetaMetaTestCase
     Minitest::Spec.register_spec_type MiniSpecB do |desc|
       desc.superclass == ExampleA
     end
+    Minitest::Spec.register_spec_type MiniSpecB do |desc, addl|
+      addl == :mini_spec_b
+    end
+    Minitest::Spec.register_spec_type MiniSpecB do |desc, addl|
+      addl.is_a?(Hash) && addl[:mini_spec_b]
+    end
 
     assert_equal MiniSpecA, Minitest::Spec.spec_type(ExampleA)
     assert_equal MiniSpecB, Minitest::Spec.spec_type(ExampleB)
+    assert_equal MiniSpecB, Minitest::Spec.spec_type("Not ExampleB Constant", :mini_spec_b)
+    assert_equal MiniSpecB, Minitest::Spec.spec_type("Not ExampleB Constant", {:mini_spec_b => true})
   ensure
     Minitest::Spec::TYPES.replace original_types
   end
