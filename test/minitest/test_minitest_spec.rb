@@ -674,9 +674,13 @@ class TestMeta < MetaMetaMetaTestCase
     Minitest::Spec.register_spec_type MiniSpecB do |desc|
       desc.superclass == ExampleA
     end
+    Minitest::Spec.register_spec_type MiniSpecC do |desc, *addl|
+      addl.include? :woot
+    end
 
     assert_equal MiniSpecA, Minitest::Spec.spec_type(ExampleA)
     assert_equal MiniSpecB, Minitest::Spec.spec_type(ExampleB)
+    assert_equal MiniSpecC, Minitest::Spec.spec_type(ExampleB, :woot)
   ensure
     Minitest::Spec::TYPES.replace original_types
   end
@@ -702,9 +706,11 @@ class TestMeta < MetaMetaMetaTestCase
   def test_name
     spec_a = describe ExampleA do; end
     spec_b = describe ExampleB, :random_method do; end
+    spec_c = describe ExampleB, :random_method, :addl_context do; end
 
     assert_equal "ExampleA", spec_a.name
     assert_equal "ExampleB::random_method", spec_b.name
+    assert_equal "ExampleB::random_method::addl_context", spec_c.name
   end
 
   def test_name2

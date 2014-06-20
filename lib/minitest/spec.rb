@@ -54,13 +54,13 @@ module Kernel # :nodoc:
   #
   # For more information about expectations, see Minitest::Expectations.
 
-  def describe desc, additional_desc = nil, &block # :doc:
+  def describe desc, *additional_desc, &block # :doc:
     stack = Minitest::Spec.describe_stack
-    name  = [stack.last, desc, additional_desc].compact.join("::")
+    name  = [stack.last, desc, *additional_desc].compact.join("::")
     sclas = stack.last || if Class === self && is_a?(Minitest::Spec::DSL) then
                             self
                           else
-                            Minitest::Spec.spec_type desc
+                            Minitest::Spec.spec_type desc, *additional_desc
                           end
 
     cls = sclas.create name, desc
@@ -132,10 +132,10 @@ class Minitest::Spec < Minitest::Test
     #
     #     spec_type("BlahController") # => Minitest::Spec::Rails
 
-    def spec_type desc
+    def spec_type desc, *additional
       TYPES.find { |matcher, klass|
         if matcher.respond_to? :call then
-          matcher.call desc
+          matcher.call desc, *additional
         else
           matcher === desc.to_s
         end
