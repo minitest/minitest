@@ -763,4 +763,3 @@ module Minitest
 end
 
 require "minitest/test"
-require "minitest/unit" unless defined?(MiniTest) # compatibility layer only

@@ -1,4 +1,4 @@
-require 'minitest/unit'
+require "minitest/test"
 
 class Module # :nodoc:
   def infect_an_assertion meth, new_name, dont_flip = false # :nodoc:

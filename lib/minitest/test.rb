@@ -281,3 +281,5 @@ module Minitest
     extend Guard
   end # Test
 end
+
+require "minitest/unit" unless defined?(MiniTest) # compatibility layer only
