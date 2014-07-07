@@ -1,3 +1,14 @@
+=== 5.4.0 / 2014-07-07
+
+* 2 minor enhancements:
+
+  * Kernel#describe extended to splat additional_desc.
+  * Spec#spec_type extended to take a splat of additional items, passed to matcher procs.
+
+* 1 bug fix:
+
+  * minitest/spec should require minitest/test, not minitest/unit. (doudou)
+
 === 5.3.5 / 2014-06-17
 
 * 1 minor enhancement:
