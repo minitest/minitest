@@ -239,16 +239,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_failing
-    @tu =
-    Class.new Minitest::Test do
-      def test_something
-        assert true
-      end
-
-      def test_failure
-        assert false
-      end
-    end
+    setup_basic_tu
 
     expected = clean <<-EOM
       F.
@@ -265,7 +256,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     assert_report expected
   end
 
-  def test_run_failing_filtered
+  def setup_basic_tu
     @tu =
     Class.new Minitest::Test do
       def test_something
@@ -276,6 +267,10 @@ class TestMinitestRunner < MetaMetaMetaTestCase
         assert false
       end
     end
+  end
+
+  def test_run_failing_filtered
+    setup_basic_tu
 
     expected = clean <<-EOM
       .
@@ -366,15 +361,6 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     EOM
 
     assert_report expected
-  end
-
-  def restore_env
-    old_value = ENV["MT_NO_SKIP_MSG"]
-    ENV.delete "MT_NO_SKIP_MSG"
-
-    yield
-  ensure
-    ENV["MT_NO_SKIP_MSG"] = old_value
   end
 
   def test_run_skip

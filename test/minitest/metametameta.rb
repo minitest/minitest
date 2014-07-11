@@ -59,6 +59,7 @@ class MetaMetaMetaTestCase < Minitest::Test
 
     output.gsub!(/ = \d+.\d\d s = /, ' = 0.00 s = ')
     output.gsub!(/0x[A-Fa-f0-9]+/, '0xXXX')
+    output.gsub!(/ +$/, '')
 
     if windows? then
       output.gsub!(/\[(?:[A-Za-z]:)?[^\]:]+:\d+\]/, '[FILE:LINE]')
@@ -69,6 +70,15 @@ class MetaMetaMetaTestCase < Minitest::Test
     end
 
     output
+  end
+
+  def restore_env
+    old_value = ENV["MT_NO_SKIP_MSG"]
+    ENV.delete "MT_NO_SKIP_MSG"
+
+    yield
+  ensure
+    ENV["MT_NO_SKIP_MSG"] = old_value
   end
 
   def setup

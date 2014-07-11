@@ -1,7 +1,7 @@
 require "minitest/autorun"
 require "minitest/metametameta"
 
-class TestMinitestReporter < Minitest::Test
+class TestMinitestReporter < MetaMetaMetaTestCase
 
   attr_accessor :r, :io
 
@@ -165,25 +165,6 @@ class TestMinitestReporter < Minitest::Test
     assert_equal 0, r.assertions
   end
 
-  def normalize_output output
-    output.sub!(/Finished in .*/, "Finished in 0.00")
-    output.sub!(/Loaded suite .*/, 'Loaded suite blah')
-
-    output.gsub!(/ = \d+.\d\d s = /, ' = 0.00 s = ')
-    output.gsub!(/0x[A-Fa-f0-9]+/, '0xXXX')
-    output.gsub!(/ +$/, '')
-
-    if windows? then
-      output.gsub!(/\[(?:[A-Za-z]:)?[^\]:]+:\d+\]/, '[FILE:LINE]')
-      output.gsub!(/^(\s+)(?:[A-Za-z]:)?[^:]+:\d+:in/, '\1FILE:LINE:in')
-    else
-      output.gsub!(/\[[^\]:]+:\d+\]/, '[FILE:LINE]')
-      output.gsub!(/^(\s+)[^:]+:\d+:in/, '\1FILE:LINE:in')
-    end
-
-    output
-  end
-
   def test_report_empty
     r.start
     r.report
@@ -199,7 +180,6 @@ class TestMinitestReporter < Minitest::Test
 
       0 runs, 0 assertions, 0 failures, 0 errors, 0 skips
     EOM
-
 
     assert_equal exp, normalize_output(io.string)
   end
@@ -220,7 +200,6 @@ class TestMinitestReporter < Minitest::Test
 
       1 runs, 0 assertions, 0 failures, 0 errors, 0 skips
     EOM
-
 
     assert_equal exp, normalize_output(io.string)
   end
@@ -245,7 +224,6 @@ class TestMinitestReporter < Minitest::Test
 
       1 runs, 0 assertions, 1 failures, 0 errors, 0 skips
     EOM
-
 
     assert_equal exp, normalize_output(io.string)
   end
@@ -275,16 +253,6 @@ class TestMinitestReporter < Minitest::Test
 
     assert_equal exp, normalize_output(io.string)
   end
-
-  def restore_env
-    old_value = ENV["MT_NO_SKIP_MSG"]
-    ENV.delete "MT_NO_SKIP_MSG"
-    
-    yield
-  ensure
-    ENV["MT_NO_SKIP_MSG"] = old_value
-  end
-
 
   def test_report_skipped
     r.start
