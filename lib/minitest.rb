@@ -740,14 +740,16 @@ module Minitest
   end
 
   class BacktraceFilter # :nodoc:
+    INTERNALS = /#{Regexp.quote File.dirname(__FILE__)}/o
+
     def filter bt
       return ["No backtrace"] unless bt
 
       return bt.dup if $DEBUG
 
-      new_bt = bt.take_while { |line| line !~ /lib\/minitest/ }
-      new_bt = bt.select     { |line| line !~ /lib\/minitest/ } if new_bt.empty?
-      new_bt = bt.dup                                           if new_bt.empty?
+      new_bt = bt.take_while { |line| line !~ INTERNALS }
+      new_bt = bt.select     { |line| line !~ INTERNALS } if new_bt.empty?
+      new_bt = bt.dup                                     if new_bt.empty?
 
       new_bt
     end
