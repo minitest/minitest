@@ -487,6 +487,7 @@ minitest-spec-expect        :: Expect syntax for Minitest::Spec (e.g.
 minitest-spec-magic         :: Minitest::Spec extensions for Rails and beyond.
 minitest-spec-rails         :: Drop in Minitest::Spec superclass for
                                ActiveSupport::TestCase.
+minitest-stately            :: Find leaking state between tests
 minitest-stub_any_instance  :: Stub any instance of a method on the given class
                                for the duration of a block.
 minitest-stub-const         :: Stub constants for the duration of a block.
