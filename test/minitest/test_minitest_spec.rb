@@ -613,6 +613,40 @@ class TestMetaStatic < Minitest::Test
     assert_equal [], y.children
     assert_equal [], z.children
   end
+
+  def test_it_wont_remove_existing_child_test_methods
+    Minitest::Spec.children.clear # prevents parallel run
+
+    outer = inner = nil
+    outer = describe "outer" do
+      inner = describe "inner" do
+        it do
+          assert true
+        end
+      end
+      it do
+        assert true
+      end
+    end
+
+    assert_equal 1, outer.public_instance_methods.grep(/^test_/).count
+    assert_equal 1, inner.public_instance_methods.grep(/^test_/).count
+  end
+
+  def test_it_wont_add_test_methods_to_children
+    Minitest::Spec.children.clear # prevents parallel run
+
+    outer = inner = nil
+    outer = describe "outer" do
+      inner = describe "inner" do end
+      it do
+        assert true
+      end
+    end
+
+    assert_equal 1, outer.public_instance_methods.grep(/^test_/).count
+    assert_equal 0, inner.public_instance_methods.grep(/^test_/).count
+  end
 end
 
 require "minitest/metametameta"
