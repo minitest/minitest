@@ -780,6 +780,24 @@ class TestMeta < MetaMetaMetaTestCase
     assert_equal inner_methods2, z.instance_methods(false).sort.map(&:to_s)
   end
 
+  def test_structure_postfix_it
+    z = nil
+    y = describe "outer" do
+      # NOT here, below the inner-describe!
+      # it "inner-it" do end
+
+      z = describe "inner" do
+        it "inner-it" do end
+      end
+
+      # defined AFTER inner describe means we'll try to wipe out the inner-it
+      it "inner-it" do end
+    end
+
+    assert_equal %w(test_0001_inner-it), y.instance_methods(false).map(&:to_s)
+    assert_equal %w(test_0001_inner-it), z.instance_methods(false).map(&:to_s)
+  end
+
   def test_setup_teardown_behavior
     _, _, z, before_list, after_list = util_structure
 
@@ -798,12 +816,14 @@ class TestMeta < MetaMetaMetaTestCase
       y = describe "first thingy" do end
 
       x1 = it "top level it" do end
-      x2 = it "не латинские буквы-и-спецсимволы&いった α, β, γ, δ, ε hello!!! world" do end
+      x2 = it "не латинские &いった α, β, γ, δ, ε hello!!! world" do end
 
       z = describe "second thingy" do end
     end
 
-    test_methods = ["test_0001_top level it", "test_0002_не латинские буквы-и-спецсимволы&いった α, β, γ, δ, ε hello!!! world"].sort
+    test_methods = ["test_0001_top level it",
+                    "test_0002_не латинские &いった α, β, γ, δ, ε hello!!! world"
+                   ].sort
 
     assert_equal test_methods, [x1, x2]
     assert_equal test_methods,
