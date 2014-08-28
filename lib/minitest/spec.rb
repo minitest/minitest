@@ -206,14 +206,12 @@ class Minitest::Spec < Minitest::Test
 
       name = "test_%04d_%s" % [ @specs, desc ]
 
-      children_without_test_method = self.children.select do |c|
-        !c.public_method_defined? name
-      end
+      undef_klasses = self.children.reject { |c| c.public_method_defined? name }
 
       define_method name, &block
 
-      children_without_test_method.each do |mod|
-        mod.send :undef_method, name if mod.public_method_defined? name
+      undef_klasses.each do |undef_klass|
+        undef_klass.send :undef_method, name
       end
 
       name
