@@ -94,6 +94,8 @@ module Minitest
       super
     end
 
+    TEARDOWN_METHODS = %w{ before_teardown teardown after_teardown } # :nodoc:
+
     ##
     # Runs a single test with setup/teardown hooks.
 
@@ -106,7 +108,7 @@ module Minitest
             self.send self.name
           end
 
-          %w{ before_teardown teardown after_teardown }.each do |hook|
+          TEARDOWN_METHODS.each do |hook|
             capture_exceptions do
               self.send hook
             end
