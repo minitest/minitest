@@ -122,9 +122,9 @@ module Minitest
     # Fails unless +test+ is truthy.
 
     def assert test, msg = nil
-      msg ||= "Failed assertion, no message given."
       self.assertions += 1
       unless test then
+        msg ||= "Failed assertion, no message given."
         msg = msg.call if Proc === msg
         raise Minitest::Assertion, msg
       end
