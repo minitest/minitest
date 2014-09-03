@@ -306,8 +306,10 @@ module Minitest
       on_signal "INFO", handler, &block
     end
 
+    SIGNALS = Signal.list
+
     def self.on_signal name, action # :nodoc:
-      supported = Signal.list[name]
+      supported = SIGNALS[name]
 
       old_trap = trap name do
         old_trap.call if old_trap.respond_to? :call

@@ -1,4 +1,6 @@
 require "rbconfig"
+require "tempfile"
+require 'stringio'
 
 module Minitest
   ##
@@ -53,19 +55,18 @@ module Minitest
     # comparison between the two.
 
     def diff exp, act
-      require "tempfile"
-
       expect = mu_pp_for_diff exp
       butwas = mu_pp_for_diff act
       result = nil
 
       need_to_diff =
-        Minitest::Assertions.diff &&
         (expect.include?("\n")    ||
          butwas.include?("\n")    ||
          expect.size > 30         ||
          butwas.size > 30         ||
-         expect == butwas)
+         expect == butwas)        &&
+        Minitest::Assertions.diff
+
 
       return "Expected: #{mu_pp exp}\n  Actual: #{mu_pp act}" unless
         need_to_diff
@@ -122,9 +123,9 @@ module Minitest
     # Fails unless +test+ is truthy.
 
     def assert test, msg = nil
-      msg ||= "Failed assertion, no message given."
       self.assertions += 1
       unless test then
+        msg ||= "Failed assertion, no message given."
         msg = msg.call if Proc === msg
         raise Minitest::Assertion, msg
       end
@@ -144,6 +145,8 @@ module Minitest
       assert obj.empty?, msg
     end
 
+    E = ""
+
     ##
     # Fails unless <tt>exp == act</tt> printing the difference between
     # the two, if possible.
@@ -157,7 +160,7 @@ module Minitest
     # See also: Minitest::Assertions.diff
 
     def assert_equal exp, act, msg = nil
-      msg = message(msg, "") { diff exp, act }
+      msg = message(msg, E) { diff exp, act }
       assert exp == act, msg
     end
 
@@ -399,8 +402,6 @@ module Minitest
     def capture_io
       _synchronize do
         begin
-      require 'stringio'
-
       captured_stdout, captured_stderr = StringIO.new, StringIO.new
 
       orig_stdout, orig_stderr = $stdout, $stderr
@@ -482,11 +483,11 @@ module Minitest
     ##
     # Returns a proc that will output +msg+ along with the default message.
 
-    def message msg = nil, ending = ".", &default
+    def message msg = nil, ending = nil, &default
       proc {
         msg = msg.call.chomp(".") if Proc === msg
         custom_message = "#{msg}.\n" unless msg.nil? or msg.to_s.empty?
-        "#{custom_message}#{default.call}#{ending}"
+        "#{custom_message}#{default.call}#{ending || "."}"
       }
     end
 
