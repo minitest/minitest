@@ -77,6 +77,19 @@ module Minitest # :nodoc:
       self
     end
 
+    ##
+    # Removes all expectations from a method +name+.
+    #
+    #   @mock.expect(:meaning_of_life, 42)
+    #   @mock.meaning_of_life # => 42
+    #
+    #   @mock.remove_expectations(:meaning_of_life)
+    #   @mock.meaning_of_life # raises MockExpectationError
+
+    def remove_expectations(name)
+      @expected_calls.delete(name)
+    end
+
     def __call name, data # :nodoc:
       case data
       when Hash then
