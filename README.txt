@@ -424,6 +424,7 @@ minitest-around             :: Around block for minitest. An alternative to
                                setup/teardown dance.
 minitest-bang               :: Adds support for RSpec-style let! to immediately
                                invoke let statements before each test.
+minitest-bisect             :: Helps you isolate and debug random test failures.
 minitest-capistrano         :: Assertions and expectations for testing
                                Capistrano recipes.
 minitest-capybara           :: Capybara matchers support for minitest unit and
