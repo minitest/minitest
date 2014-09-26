@@ -1,3 +1,10 @@
+=== 5.4.2 / 2014-09-26
+
+* 2 minor enhancements:
+
+  * Extract teardown method list.
+  * Thanks to minitest-gcstats got a 5-10% speedup via reduced GC!
+
 === 5.4.1 / 2014-08-28
 
 * 1 bug fix:
