@@ -8,7 +8,7 @@ module Minitest
         @queue = Queue.new
         @pool  = size.times.map {
           Thread.new(@queue) do |queue|
-          Thread.current.abort_on_exception = true
+            Thread.current.abort_on_exception = true
             while job = queue.pop
               klass, method, reporter = job
               result = Minitest.run_one_method klass, method
