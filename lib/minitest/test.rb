@@ -94,6 +94,7 @@ module Minitest
       super
     end
 
+    SETUP_METHODS    = %w{ before_setup setup after_setup } # :nodoc:
     TEARDOWN_METHODS = %w{ before_teardown teardown after_teardown } # :nodoc:
 
     ##
@@ -103,7 +104,7 @@ module Minitest
       with_info_handler do
         time_it do
           capture_exceptions do
-            before_setup; setup; after_setup
+            SETUP_METHODS.each { |hook| send hook }
 
             self.send self.name
           end
