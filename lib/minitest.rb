@@ -550,7 +550,10 @@ module Minitest
       io.puts unless options[:verbose] # finish the dots
       io.puts
       io.puts statistics
-      io.puts aggregated_results
+      filtered_results.each_with_index do |result, i|
+        puts_result result, i
+      end
+      io.puts
       io.puts summary
     end
 
@@ -559,12 +562,37 @@ module Minitest
         [total_time, count / total_time, assertions / total_time]
     end
 
-    def aggregated_results # :nodoc:
-      filtered_results = results.dup
-      filtered_results.reject!(&:skipped?) unless options[:verbose]
+    def filtered_results # :nodoc:
+      filtered = results.dup
+      filtered.reject!(&:skipped?) unless options[:verbose]
+      filtered
+    end
 
+    def format_result result, i # :nodoc:
+      "\n%3d) %s" % [i+1, result]
+    end
+
+    def puts_result result, i # :nodoc:
+      io.puts format_result(result, i)
+    rescue => e
+      msg = fallback_message result, e
+      io.puts format_result(msg , i)
+    end
+
+    def fallback_message result, e # :nodoc:
+      msg  = "Oops:\nMinitest failed writing test results with error:\n"
+      msg += "#{e.class}: #{e.message}\n"
+
+      msg += result.failures.map { |failure|
+        exception = failure.exception
+        "\n#{failure.result_label}:\n#{result.location}:\n#{exception.class}:" +
+        "\n    #{Minitest::filter_backtrace(exception.backtrace).join "\n    "}"
+      }.join "\n"
+    end
+
+    def aggregated_results # :nodoc:
       filtered_results.each_with_index.map do |result, i|
-        "\n%3d) %s" % [i+1, result]
+        format_result result, i
       end.join("\n") + "\n"
     end
 

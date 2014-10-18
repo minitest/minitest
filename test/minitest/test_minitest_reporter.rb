@@ -74,6 +74,20 @@ class TestMinitestReporter < MetaMetaMetaTestCase
     @st
   end
 
+  INVALID_STRING = [106, 199, 95].pack("c*")
+
+  def encoded_test
+    unless defined? @nt then
+      @nt = Minitest::Test.new(:woot)
+      @nt.failures << Minitest::UnexpectedError.new(begin
+                                                      raise INVALID_STRING
+                                                    rescue => e
+                                                      e
+                                                    end)
+    end
+    @nt
+  end
+
   def test_passed_eh_empty
     assert r.passed?
   end
@@ -277,5 +291,28 @@ class TestMinitestReporter < MetaMetaMetaTestCase
     EOM
 
     assert_equal exp, normalize_output(io.string)
+  end
+
+  if defined? ::Encoding
+    ENCODING_WARNING = "\nMinitest failed writing test results with error:"
+
+    def test_report_poorly_encoded
+      # Why a pipe? StringIO doesn't raise encoding exceptions when trying to
+      # write ASCII-8BIT text that happen on a real file descriptor.
+      op, ip = IO.pipe
+      ip.set_encoding(::Encoding::UTF_8)
+
+      self.io = ip
+      self.r  = self.new_composite_reporter
+
+      r.start
+      r.record encoded_test
+      r.report
+
+      ip.close
+      outputs = op.read
+
+      assert_includes outputs, ENCODING_WARNING
+    end
   end
 end
