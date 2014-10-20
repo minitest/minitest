@@ -551,6 +551,7 @@ module Minitest
       io.puts
       io.puts statistics
       io.puts aggregated_results
+      io.puts
       io.puts summary
     end
 
@@ -563,9 +564,9 @@ module Minitest
       filtered_results = results.dup
       filtered_results.reject!(&:skipped?) unless options[:verbose]
 
-      filtered_results.each_with_index.map do |result, i|
+      filtered_results.each_with_index.map { |result, i|
         "\n%3d) %s" % [i+1, result]
-      end.join("\n") + "\n"
+      }.join("\n")
     end
 
     alias to_s aggregated_results
