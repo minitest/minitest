@@ -8,6 +8,7 @@ require "minitest/parallel"
 
 module Minitest
   VERSION = "5.4.2" # :nodoc:
+  ENCS = "".respond_to? :encoding # :nodoc:
 
   @@installed_at_exit ||= false
   @@after_run = []
@@ -551,7 +552,6 @@ module Minitest
       io.puts
       io.puts statistics
       io.puts aggregated_results
-      io.puts
       io.puts summary
     end
 
@@ -564,9 +564,14 @@ module Minitest
       filtered_results = results.dup
       filtered_results.reject!(&:skipped?) unless options[:verbose]
 
-      filtered_results.each_with_index.map { |result, i|
+      s = filtered_results.each_with_index.map { |result, i|
         "\n%3d) %s" % [i+1, result]
-      }.join("\n").force_encoding(io.external_encoding)
+      }.join("\n") + "\n"
+
+      s.force_encoding(io.external_encoding) if
+        ENCS and io.external_encoding and s.encoding != io.external_encoding
+
+      s
     end
 
     alias to_s aggregated_results
