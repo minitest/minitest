@@ -566,7 +566,7 @@ module Minitest
 
       filtered_results.each_with_index.map { |result, i|
         "\n%3d) %s" % [i+1, result]
-      }.join("\n")
+      }.join("\n").force_encoding(io.external_encoding)
     end
 
     alias to_s aggregated_results
