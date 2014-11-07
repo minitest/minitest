@@ -533,7 +533,7 @@ Authors... Please send me a pull request with a description of your minitest ext
 
 == REQUIREMENTS:
 
-* Ruby 1.8, maybe even 1.6 or lower. No magic is involved.
+* Ruby 1.8.7+. No magic is involved. I hope.
 
 == INSTALL:
 
