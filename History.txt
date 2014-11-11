@@ -1,3 +1,10 @@
+=== 5.4.3 / 2014-11-11
+
+* 2 bug fixes:
+
+  * Clarified requirements for ruby are now 1.8.7 or better.
+  * Force encode error output in case mal-encoded exception is raised. (jasonrclark)
+
 === 5.4.2 / 2014-09-26
 
 * 2 minor enhancements:
