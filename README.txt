@@ -96,7 +96,7 @@ Define your tests as methods beginning with `test_`.
 
   require "minitest/autorun"
 
-  class TestMeme < Minitest::Test
+  class TestMeme < Minitest::Unit::TestCase
     def setup
       @meme = Meme.new
     end
