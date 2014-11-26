@@ -238,7 +238,7 @@ Ideally, you'll use a rake task to run your tests, either piecemeal or
 all at once. Both rake and rails ship with rake tasks for running your
 tests. BUT! You don't have to:
 
-    % ruby -Ilib:test test/minitest/test_minitest_unit.rb 
+    % ruby -Ilib:test test/minitest/test_minitest_unit.rb
     Run options: --seed 37685
 
     # Running:
@@ -468,8 +468,7 @@ minitest-metadata           :: Annotate tests with metadata (key-value).
 minitest-mongoid            :: Mongoid assertion matchers for Minitest.
 minitest-must_not           :: Provides must_not as an alias for wont in
                                Minitest.
-minitest-nc                 :: Test notifier for minitest via Mountain Lion's
-                               Notification Center.
+minitest-osx                :: Reporter for the Mac OS X notification center.
 minitest-parallel-db        :: Run tests in parallel with a single database.
 minitest-power_assert       :: PowerAssert for Minitest.
 minitest-predicates         :: Adds support for .predicate? methods.
