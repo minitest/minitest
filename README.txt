@@ -138,8 +138,7 @@ Define your tests as methods beginning with `test_`.
 
 For matchers support check out:
 
-https://github.com/zenspider/minitest-matchers
-
+https://github.com/wojtekmach/minitest-matchers
 === Benchmarks
 
 Add benchmarks to your tests.
