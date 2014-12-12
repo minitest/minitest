@@ -166,7 +166,8 @@ module Minitest
         exit
       end
 
-      opts.on "-s", "--seed SEED", Integer, "Sets random seed" do |m|
+      desc = "Sets random seed. Also via env. Eg: SEED=n rake"
+      opts.on "-s", "--seed SEED", Integer, desc do |m|
         options[:seed] = m.to_i
       end
 
