@@ -1,3 +1,9 @@
+=== 5.5.0 / 2014-12-12
+
+* 1 minor enhancement:
+
+  * Allow seed to be given via ENV for rake test loader sadness: eg rake SEED=42.
+
 === 5.4.3 / 2014-11-11
 
 * 2 bug fixes:
