@@ -1,26 +1,26 @@
-= minitest/{unit,spec,mock,benchmark}
+# minitest/{unit,spec,mock,benchmark}
 
-home :: https://github.com/seattlerb/minitest
-bugs :: https://github.com/seattlerb/minitest/issues
-rdoc :: http://docs.seattlerb.org/minitest
-vim  :: https://github.com/sunaku/vim-ruby-minitest
-emacs:: https://github.com/arthurnn/minitest-emacs
+* home :: https://github.com/seattlerb/minitest
+* bugs :: https://github.com/seattlerb/minitest/issues
+* rdoc :: http://docs.seattlerb.org/minitest
+* vim  :: https://github.com/sunaku/vim-ruby-minitest
+* emacs:: https://github.com/arthurnn/minitest-emacs
 
-== DESCRIPTION:
+## DESCRIPTION:
 
 minitest provides a complete suite of testing facilities supporting
 TDD, BDD, mocking, and benchmarking.
 
-    "I had a class with Jim Weirich on testing last week and we were
-     allowed to choose our testing frameworks. Kirk Haines and I were
-     paired up and we cracked open the code for a few test
-     frameworks...
-
-     I MUST say that minitest is *very* readable / understandable
-     compared to the 'other two' options we looked at. Nicely done and
-     thank you for helping us keep our mental sanity."
-
-    -- Wayne E. Seguin
+>    "I had a class with Jim Weirich on testing last week and we were
+>     allowed to choose our testing frameworks. Kirk Haines and I were
+>     paired up and we cracked open the code for a few test
+>     frameworks...
+>
+>     I MUST say that minitest is *very* readable / understandable
+>     compared to the 'other two' options we looked at. Nicely done and
+>     thank you for helping us keep our mental sanity."
+>
+>    -- Wayne E. Seguin
 
 minitest/unit is a small and incredibly fast unit testing framework.
 It provides a rich set of assertions to make your tests clean and
@@ -46,23 +46,23 @@ implementors that need a minimal set of methods to bootstrap a working
 test suite. For example, there is no magic involved for test-case
 discovery.
 
-    "Again, I can't praise enough the idea of a testing/specing
-     framework that I can actually read in full in one sitting!"
-
-    -- Piotr Szotkowski
+>    "Again, I can't praise enough the idea of a testing/specing
+>     framework that I can actually read in full in one sitting!"
+>
+>    -- Piotr Szotkowski
 
 Comparing to rspec:
 
-    rspec is a testing DSL. minitest is ruby.
-
-    -- Adam Hawkins, "Bow Before MiniTest"
+>    rspec is a testing DSL. minitest is ruby.
+>
+>    -- Adam Hawkins, "Bow Before MiniTest"
 
 minitest doesn't reinvent anything that ruby already provides, like:
 classes, modules, inheritance, methods. This means you only have to
 learn ruby to use minitest and all of your regular OO practices like
 extract-method refactorings still apply.
 
-== FEATURES/PROBLEMS:
+## FEATURES/PROBLEMS:
 
 * minitest/autorun - the easy and explicit way to run all your tests.
 * minitest/unit - a very fast, simple, and clean test system.
@@ -72,14 +72,15 @@ extract-method refactorings still apply.
 * minitest/pride - show your pride in testing!
 * Incredibly small and fast runner, but no bells and whistles.
 
-== RATIONALE:
+## RATIONALE:
 
 See design_rationale.rb to see how specs and tests work in minitest.
 
-== SYNOPSIS:
+## SYNOPSIS:
 
 Given that you'd like to test the following class:
 
+```ruby
   class Meme
     def i_can_has_cheezburger?
       "OHAI!"
@@ -89,11 +90,12 @@ Given that you'd like to test the following class:
       "YES!"
     end
   end
+```
 
-=== Unit tests
+### Unit tests
 
 Define your tests as methods beginning with `test_`.
-
+```ruby
   require "minitest/autorun"
 
   class TestMeme < Minitest::Test
@@ -113,9 +115,10 @@ Define your tests as methods beginning with `test_`.
       skip "test this later"
     end
   end
+```
 
-=== Specs
-
+### Specs
+```ruby
   require "minitest/autorun"
 
   describe Meme do
@@ -135,14 +138,15 @@ Define your tests as methods beginning with `test_`.
       end
     end
   end
+```
 
 For matchers support check out:
 
 https://github.com/wojtekmach/minitest-matchers
-=== Benchmarks
+### Benchmarks
 
 Add benchmarks to your tests.
-
+```ruby
   # optionally run benchmarks, good for CI-only work!
   require "minitest/benchmark" if ENV["BENCH"]
 
@@ -154,12 +158,13 @@ Add benchmarks to your tests.
       end
     end
   end
+```
 
 Or add them to your specs. If you make benchmarks optional, you'll
 need to wrap your benchmarks in a conditional since the methods won't
 be defined. In minitest 5, the describe name needs to match
 /Bench(mark)?$/.
-
+```ruby
   describe "Meme Benchmark" do
     if ENV["BENCH"] then
       bench_performance_linear "my_algorithm", 0.9999 do |n|
@@ -169,19 +174,21 @@ be defined. In minitest 5, the describe name needs to match
       end
     end
   end
+```
 
 outputs something like:
-
+```
   # Running benchmarks:
 
-  TestBlah	100	1000	10000
-  bench_my_algorithm	 0.006167	 0.079279	 0.786993
-  bench_other_algorithm	 0.061679	 0.792797	 7.869932
+  TestBlah  100 1000  10000
+  bench_my_algorithm   0.006167  0.079279  0.786993
+  bench_other_algorithm  0.061679  0.792797  7.869932
+```
 
 Output is tab-delimited to make it easy to paste into a spreadsheet.
 
-=== Mocks
-
+### Mocks
+```ruby
   class MemeAsker
     def initialize(meme)
       @meme = meme
@@ -192,7 +199,8 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
       @meme.__send__(method)
     end
   end
-
+```
+```ruby
   require "minitest/autorun"
 
   describe MemeAsker do
@@ -211,9 +219,10 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
       end
     end
   end
+```
 
-=== Stubs
-
+### Stubs
+```ruby
   def test_stale_eh
     obj_under_test = Something.new
 
@@ -223,16 +232,18 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
       assert obj_under_test.stale?
     end
   end
+```
 
 A note on stubbing: In order to stub a method, the method must
 actually exist prior to stubbing. Use a singleton method to create a
 new non-existing method:
-
+```ruby
   def obj_under_test.fake_method
     ...
   end
+```
 
-=== Running Your Tests
+### Running Your Tests
 
 Ideally, you'll use a rake task to run your tests, either piecemeal or
 all at once. Both rake and rails ship with rake tasks for running your
@@ -263,7 +274,7 @@ provided via plugins. To see them, simply run with `--help`:
         -p, --pride                      Pride. Show your testing pride!
         -a, --autotest                   Connect to autotest server.
 
-== Writing Extensions
+## Writing Extensions
 
 To define a plugin, add a file named minitest/XXX_plugin.rb to your
 project/gem. Minitest will find and require that file using
@@ -273,6 +284,7 @@ passing the OptionParser instance and the current options hash. This
 lets you register your own command-line options. Here's a totally
 bogus example:
 
+```ruby
     # minitest/bogus_plugin.rb:
 
     module Minitest
@@ -288,8 +300,9 @@ bogus example:
         self.reporter << MyCI.new(options) if options[:myci]
       end
     end
+```
 
-=== Adding custom reporters
+### Adding custom reporters
 
 Minitest uses composite reporter to output test results using multiple
 reporter instances. You can add new reporters to the composite during
@@ -306,6 +319,7 @@ passed? :: Called to see if you detected any problems.
 
 Using our example above, here is how we might implement MyCI:
 
+```ruby
     # minitest/bogus_plugin.rb
 
     module Minitest
@@ -327,13 +341,14 @@ Using our example above, here is how we might implement MyCI:
         end
       end
     end
+```
 
-== FAQ
+## FAQ
 
-=== How to test SimpleDelegates?
+### How to test SimpleDelegates?
 
 The following implementation and test:
-
+```ruby
     class Worker < SimpleDelegator
       def work
       end
@@ -348,6 +363,7 @@ The following implementation and test:
         @worker.must_respond_to :work
       end
     end
+```
 
 outputs a failure:
 
@@ -376,7 +392,7 @@ or you can extend the Worker class (within the test file!), like:
       include ::Minitest::Expectations
     end
 
-=== How to share code across test classes?
+### How to share code across test classes?
 
 Use a module. That's exactly what they're for:
 
@@ -400,7 +416,7 @@ you want to extend your test using setup/teardown via a module, just
 make sure you ALWAYS call super. before/after automatically call super
 for you, so make sure you don't do it twice.
 
-== Prominent Projects using Minitest:
+## Prominent Projects using Minitest:
 
 * arel
 * journey
@@ -411,8 +427,8 @@ for you, so make sure you don't do it twice.
 * rdoc
 * ...and of course, everything from seattle.rb...
 
-== Known Extensions:
-
+## Known Extensions:
+```
 capybara_minitest_spec      :: Bridge between Capybara RSpec matchers and
                                Minitest::Spec expectations (e.g.
                                page.must_have_content("Title")).
@@ -477,7 +493,7 @@ minitest-rails-capybara     :: Capybara integration for Minitest::Rails.
 minitest-reporters          :: Create customizable Minitest output formats.
 minitest-rg                 :: Colored red/green output for Minitest.
 minitest-rspec_mocks        :: Use RSpec Mocks with Minitest.
-minitest-should_syntax      :: RSpec-style +x.should == y+ assertions for
+minitest-should_syntax      :: RSpec-style +x.should ## y+ assertions for
                                Minitest.
 minitest-shouldify          :: Adding all manner of shoulds to Minitest (bad
                                idea)
@@ -504,8 +520,9 @@ pry-rescue                  :: A pry plugin w/ minitest support. See
                                pry-rescue/minitest.rb.
 rspec2minitest              :: Easily translate any RSpec matchers to Minitest
                                assertions and expectations.
+```
 
-== Unknown Extensions:
+## Unknown Extensions:
 
 Authors... Please send me a pull request with a description of your minitest extension.
 
@@ -529,22 +546,23 @@ Authors... Please send me a pull request with a description of your minitest ext
 * mongoid-minitest
 * spork-minitest
 
-== REQUIREMENTS:
+## REQUIREMENTS:
 
 * Ruby 1.8.7+. No magic is involved. I hope.
 
-== INSTALL:
-
+## INSTALL:
+```
   sudo gem install minitest
-
+```
 On 1.9, you already have it. To get newer candy you can still install
 the gem, and then requiring "minitest/autorun" should automatically
 pull it in. If not, you'll need to do it yourself:
-
+```
   gem "minitest"     # ensures you"re using the gem, and not the built-in MT
   require "minitest/autorun"
 
   # ... usual testing stuffs ...
+```
 
 DO NOTE: There is a serious problem with the way that ruby 1.9/2.0
 packages their own gems. They install a gem specification file, but
@@ -553,7 +571,7 @@ Gem.find_files and many other things (gem which, gem contents, etc).
 
 Just install minitest as a gem for real and you'll be happier.
 
-== LICENSE:
+## LICENSE:
 
 (The MIT License)
 
