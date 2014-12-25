@@ -145,7 +145,7 @@ module Minitest
       assert obj.empty?, msg
     end
 
-    E = ""
+    E = "" # :nodoc:
 
     ##
     # Fails unless <tt>exp == act</tt> printing the difference between
