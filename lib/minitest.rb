@@ -291,6 +291,12 @@ module Minitest
       end
     end
 
+    ##
+    # Runs a single method and has the reporter record the result.
+    # This was considered internal API but is factored out of run so
+    # that subclasses can specialize the running of an individual
+    # test. See Minitest::ParallelTest::ClassMethods for an example.
+
     def self.run_one_method klass, method_name, reporter
       reporter.record Minitest.run_one_method(klass, method_name)
     end
@@ -308,7 +314,7 @@ module Minitest
       on_signal "INFO", handler, &block
     end
 
-    SIGNALS = Signal.list
+    SIGNALS = Signal.list # :nodoc:
 
     def self.on_signal name, action # :nodoc:
       supported = SIGNALS[name]

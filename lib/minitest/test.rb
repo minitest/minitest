@@ -14,7 +14,7 @@ module Minitest
     PASSTHROUGH_EXCEPTIONS = [NoMemoryError, SignalException, # :nodoc:
                               Interrupt, SystemExit]
 
-    class << self; attr_accessor :io_lock; end
+    class << self; attr_accessor :io_lock; end # :nodoc:
     self.io_lock = Mutex.new
 
     ##

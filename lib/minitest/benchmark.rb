@@ -343,6 +343,9 @@ module Minitest
 end
 
 module Minitest
+  ##
+  # The spec version of Minitest::Benchmark.
+
   class BenchSpec < Benchmark
     extend Minitest::Spec::DSL
 
