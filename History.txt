@@ -1,3 +1,9 @@
+=== 5.5.1 / 2015-01-09
+
+* 1 bug fix:
+
+  * Fixed doco problems. (zzak)
+
 === 5.5.0 / 2014-12-12
 
 * 1 minor enhancement:
