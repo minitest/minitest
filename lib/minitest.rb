@@ -19,8 +19,10 @@ module Minitest
   ##
   # Parallel test executor
 
-  mc.send :attr_accessor, :parallel_executor
-  self.parallel_executor = Parallel::Executor.new((ENV['N'] || 2).to_i)
+  mc.send :attr_writer, :parallel_executor
+  def self.parallel_executor
+    @parallel_executor ||= Parallel::Executor.new((ENV['N'] || 2).to_i)
+  end
 
   ##
   # Filter object for backtraces.
