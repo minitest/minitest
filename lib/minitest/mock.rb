@@ -127,11 +127,12 @@ module Minitest # :nodoc:
         expected_call.values_at(:args, :retval, :block)
 
       if val_block then
+        # keep "verify" happy
+        @actual_calls[sym] << expected_call
+
         raise MockExpectationError, "mocked method %p failed block w/ %p" %
           [sym, args] unless val_block.call(*args, &block)
 
-        # keep "verify" happy
-        @actual_calls[sym] << expected_call
         return retval
       end
 
