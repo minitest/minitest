@@ -18,6 +18,8 @@ module Minitest # :nodoc:
       respond_to_missing?
       send
       to_s
+      instance_variables
+      instance_eval
     )
 
     instance_methods.each do |m|
