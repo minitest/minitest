@@ -60,6 +60,7 @@ class MetaMetaMetaTestCase < Minitest::Test
     output.gsub!(/ = \d+.\d\d s = /, ' = 0.00 s = ')
     output.gsub!(/0x[A-Fa-f0-9]+/, '0xXXX')
     output.gsub!(/ +$/, '')
+    output.gsub!(/^ruby .*?.rb/, 'ruby FILE')
 
     if windows? then
       output.gsub!(/\[(?:[A-Za-z]:)?[^\]:]+:\d+\]/, '[FILE:LINE]')

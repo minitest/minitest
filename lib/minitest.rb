@@ -2,6 +2,7 @@ require "optparse"
 require "thread"
 require "mutex_m"
 require "minitest/parallel"
+require "pathname"
 
 ##
 # :include: README.txt
@@ -560,6 +561,7 @@ module Minitest
       io.puts statistics
       io.puts aggregated_results
       io.puts summary
+      io.puts failed_tests unless passed?
     end
 
     def statistics # :nodoc:
@@ -591,6 +593,23 @@ module Minitest
 
       "%d runs, %d assertions, %d failures, %d errors, %d skips%s" %
         [count, assertions, failures, errors, skips, extra]
+    end
+
+    def failed_tests # :nodoc:
+      lines = [ "\n# Failed tests:\n" ]
+
+      results.reject(&:skipped?).each do |result|
+        file_path = relative_from_pwd(result.failure.location.sub(/:\d+$/, ""))
+        lines << "ruby #{file_path} -n '#{result.class}##{result.name}'"
+      end
+
+      lines.join("\n") + "\n"
+    end
+
+    private
+
+    def relative_from_pwd path # :nodoc:
+      Pathname.new(path).relative_path_from(Pathname.pwd).to_s
     end
   end
 

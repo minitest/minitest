@@ -205,6 +205,10 @@ class TestMinitestRunner < MetaMetaMetaTestCase
           FILE:LINE:in \`test_error\'
 
       2 runs, 1 assertions, 0 failures, 1 errors, 0 skips
+
+      # Failed tests:
+
+      ruby FILE -n '#<Class:0xXXX>#test_error'
     EOM
 
     assert_report expected
@@ -233,6 +237,10 @@ class TestMinitestRunner < MetaMetaMetaTestCase
           FILE:LINE:in \`teardown\'
 
       1 runs, 1 assertions, 0 failures, 1 errors, 0 skips
+
+      # Failed tests:
+
+      ruby FILE -n '#<Class:0xXXX>#test_something'
     EOM
 
     assert_report expected
@@ -251,6 +259,10 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       Failed assertion, no message given.
 
       2 runs, 2 assertions, 1 failures, 0 errors, 0 skips
+
+      # Failed tests:
+
+      ruby FILE -n '#<Class:0xXXX>#test_failure'
     EOM
 
     assert_report expected
