@@ -223,6 +223,10 @@ class TestMinitestReporter < MetaMetaMetaTestCase
       boo
 
       1 runs, 0 assertions, 1 failures, 0 errors, 0 skips
+
+      # Failed tests:
+
+      ruby FILE -n 'Minitest::Test#woot'
     EOM
 
     assert_equal exp, normalize_output(io.string)
@@ -249,6 +253,10 @@ class TestMinitestReporter < MetaMetaMetaTestCase
           FILE:LINE:in `test_report_error'
 
       1 runs, 0 assertions, 0 failures, 1 errors, 0 skips
+
+      # Failed tests:
+
+      ruby FILE -n 'Minitest::Test#woot'
     EOM
 
     assert_equal exp, normalize_output(io.string)
