@@ -265,13 +265,14 @@ provided via plugins. To see them, simply run with `--help`:
 
 == Writing Extensions
 
-To define a plugin, add a file named minitest/XXX_plugin.rb to your
+To define a plugin, add a file called XXX_plugin.rb into a directory
+called minitest under a directory that is on the load path of your
 project/gem. Minitest will find and require that file using
 Gem.find_files. It will then try to call plugin_XXX_init during
 startup. The option processor will also try to call plugin_XXX_options
 passing the OptionParser instance and the current options hash. This
-lets you register your own command-line options. Here's a totally
-bogus example:
+lets you register your own command-line options. Here's a totally bogus
+example:
 
     # minitest/bogus_plugin.rb:
 
@@ -326,6 +327,8 @@ Using our example above, here is how we might implement MyCI:
           CI.connect(addr, port).send_results self.results
         end
       end
+
+      # code from above...
     end
 
 == FAQ
