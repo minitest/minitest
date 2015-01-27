@@ -123,6 +123,7 @@ module Minitest
     self.init_plugins options
     self.reporter = nil # runnables shouldn't depend on the reporter, ever
 
+    self.parallel_executor.start if parallel_executor.respond_to?(:start)
     reporter.start
     __run reporter, options
     self.parallel_executor.shutdown

@@ -17,6 +17,13 @@ module Minitest
       def initialize size
         @size  = size
         @queue = Queue.new
+        @pool  = nil
+      end
+
+      ##
+      # Start the executor
+
+      def start
         @pool  = size.times.map {
           Thread.new(@queue) do |queue|
             Thread.current.abort_on_exception = true
