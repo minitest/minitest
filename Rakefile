@@ -1,12 +1,12 @@
 # -*- ruby -*-
 
-require 'rubygems'
-require 'hoe'
+require "rubygems"
+require "hoe"
 
 Hoe.plugin :seattlerb
 
-Hoe.spec 'minitest' do
-  developer 'Ryan Davis', 'ryand-ruby@zenspider.com'
+Hoe.spec "minitest" do
+  developer "Ryan Davis", "ryand-ruby@zenspider.com"
 
   license "MIT"
 
@@ -25,12 +25,12 @@ task :specs do
 
   map = {
     /(must_throw)s/                        => '\1',
-    /(?!not)_same/                         => '_be_same_as',
-    /_in_/                                 => '_be_within_',
-    /_operator/                            => '_be',
-    /_includes/                            => '_include',
+    /(?!not)_same/                         => "_be_same_as",
+    /_in_/                                 => "_be_within_",
+    /_operator/                            => "_be",
+    /_includes/                            => "_include",
     /(must|wont)_(.*_of|nil|silent|empty)/ => '\1_be_\2',
-    /must_raises/                          => 'must_raise',
+    /must_raises/                          => "must_raise",
   }
 
   expectations = Minitest::Expectations.public_instance_methods.map(&:to_s)

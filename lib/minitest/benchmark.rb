@@ -1,5 +1,5 @@
-require 'minitest/unit'
-require 'minitest/spec'
+require "minitest/unit"
+require "minitest/spec"
 
 module Minitest
   ##
@@ -221,8 +221,8 @@ module Minitest
     # See: http://en.wikipedia.org/wiki/Coefficient_of_determination
 
     def fit_error xys
-      y_bar  = sigma(xys) { |x, y| y } / xys.size.to_f
-      ss_tot = sigma(xys) { |x, y| (y    - y_bar) ** 2 }
+      y_bar  = sigma(xys) { |_, y| y } / xys.size.to_f
+      ss_tot = sigma(xys) { |_, y| (y    - y_bar) ** 2 }
       ss_err = sigma(xys) { |x, y| (yield(x) - y) ** 2 }
 
       1 - (ss_err / ss_tot)
@@ -238,9 +238,9 @@ module Minitest
     def fit_exponential xs, ys
       n     = xs.size
       xys   = xs.zip(ys)
-      sxlny = sigma(xys) { |x,y| x * Math.log(y) }
-      slny  = sigma(xys) { |x,y| Math.log(y)     }
-      sx2   = sigma(xys) { |x,y| x * x           }
+      sxlny = sigma(xys) { |x, y| x * Math.log(y) }
+      slny  = sigma(xys) { |_, y| Math.log(y)     }
+      sx2   = sigma(xys) { |x, _| x * x           }
       sx    = sigma xs
 
       c = n * sx2 - sx ** 2
@@ -260,10 +260,10 @@ module Minitest
     def fit_logarithmic xs, ys
       n     = xs.size
       xys   = xs.zip(ys)
-      slnx2 = sigma(xys) { |x,y| Math.log(x) ** 2 }
-      slnx  = sigma(xys) { |x,y| Math.log(x)      }
-      sylnx = sigma(xys) { |x,y| y * Math.log(x)  }
-      sy    = sigma(xys) { |x,y| y                }
+      slnx2 = sigma(xys) { |x, _| Math.log(x) ** 2 }
+      slnx  = sigma(xys) { |x, _| Math.log(x)      }
+      sylnx = sigma(xys) { |x, y| y * Math.log(x)  }
+      sy    = sigma(xys) { |_, y| y                }
 
       c = n * slnx2 - slnx ** 2
       b = ( n * sylnx - sy * slnx ) / c
@@ -271,7 +271,6 @@ module Minitest
 
       return a, b, fit_error(xys) { |x| a + b * Math.log(x) }
     end
-
 
     ##
     # Fits the functional form: a + bx.
@@ -286,7 +285,7 @@ module Minitest
       sx  = sigma xs
       sy  = sigma ys
       sx2 = sigma(xs)  { |x|   x ** 2 }
-      sxy = sigma(xys) { |x,y| x * y  }
+      sxy = sigma(xys) { |x, y| x * y  }
 
       c = n * sx2 - sx**2
       a = (sy * sx2 - sx * sxy) / c
@@ -310,7 +309,7 @@ module Minitest
       slny    = sigma(ys)  { |   y| Math.log(y)               }
       slnx2   = sigma(xs)  { |x   | Math.log(x) ** 2          }
 
-      b = (n * slnxlny - slnx * slny) / (n * slnx2 - slnx ** 2);
+      b = (n * slnxlny - slnx * slny) / (n * slnx2 - slnx ** 2)
       a = (slny - b * slnx) / n
 
       return Math.exp(a), b, fit_error(xys) { |x| (Math.exp(a) * (x ** b)) }
@@ -357,7 +356,7 @@ module Minitest
     # See ::bench_performance_linear for an example of how to use this.
 
     def self.bench name, &block
-      define_method "bench_#{name.gsub(/\W+/, '_')}", &block
+      define_method "bench_#{name.gsub(/\W+/, "_")}", &block
     end
 
     ##

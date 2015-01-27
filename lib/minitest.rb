@@ -20,7 +20,7 @@ module Minitest
   # Parallel test executor
 
   mc.send :attr_accessor, :parallel_executor
-  self.parallel_executor = Parallel::Executor.new((ENV['N'] || 2).to_i)
+  self.parallel_executor = Parallel::Executor.new((ENV["N"] || 2).to_i)
 
   ##
   # Filter object for backtraces.
@@ -175,13 +175,13 @@ module Minitest
         options[:verbose] = true
       end
 
-      opts.on "-n", "--name PATTERN","Filter run on /pattern/ or string." do |a|
+      opts.on "-n", "--name PATTERN", "Filter run on /regexp/ or string." do |a|
         options[:filter] = a
       end
 
       unless extensions.empty?
         opts.separator ""
-        opts.separator "Known extensions: #{extensions.join(', ')}"
+        opts.separator "Known extensions: #{extensions.join(", ")}"
 
         extensions.each do |meth|
           msg = "plugin_#{meth}_options"
@@ -277,8 +277,8 @@ module Minitest
     # reporter to record.
 
     def self.run reporter, options = {}
-      filter = options[:filter] || '/./'
-      filter = Regexp.new $1 if filter =~ /\/(.*)\//
+      filter = options[:filter] || "/./"
+      filter = Regexp.new $1 if filter =~ %r%/(.*)/%
 
       filtered_methods = self.runnable_methods.find_all { |m|
         filter === m || filter === "#{self}##{m}"
@@ -692,7 +692,7 @@ module Minitest
     end
 
     def message # :nodoc:
-      bt = Minitest::filter_backtrace(self.backtrace).join "\n    "
+      bt = Minitest.filter_backtrace(self.backtrace).join "\n    "
       "#{self.exception.class}: #{self.exception.message}\n    #{bt}"
     end
 

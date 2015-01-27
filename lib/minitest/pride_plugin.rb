@@ -1,7 +1,7 @@
 require "minitest"
 
 module Minitest
-  def self.plugin_pride_options opts, options # :nodoc:
+  def self.plugin_pride_options opts, _options # :nodoc:
     opts.on "-p", "--pride", "Pride. Show your testing pride!" do
       PrideIO.pride!
     end
@@ -74,7 +74,7 @@ module Minitest
       o.map! { |s|
         s.to_s.sub(/Finished/) {
           @index = 0
-          'Fabulous run'.split(//).map { |c|
+          "Fabulous run".split(//).map { |c|
             pride(c)
           }.join
         }

@@ -94,7 +94,7 @@ module Minitest
       super
     end
 
-    TEARDOWN_METHODS = %w{ before_teardown teardown after_teardown } # :nodoc:
+    TEARDOWN_METHODS = %w[ before_teardown teardown after_teardown ] # :nodoc:
 
     ##
     # Runs a single test with setup/teardown hooks.
@@ -202,15 +202,13 @@ module Minitest
     end # LifecycleHooks
 
     def capture_exceptions # :nodoc:
-      begin
-        yield
-      rescue *PASSTHROUGH_EXCEPTIONS
-        raise
-      rescue Assertion => e
-        self.failures << e
-      rescue Exception => e
-        self.failures << UnexpectedError.new(e)
-      end
+      yield
+    rescue *PASSTHROUGH_EXCEPTIONS
+      raise
+    rescue Assertion => e
+      self.failures << e
+    rescue Exception => e
+      self.failures << UnexpectedError.new(e)
     end
 
     ##

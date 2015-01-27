@@ -1,6 +1,6 @@
 require "rbconfig"
 require "tempfile"
-require 'stringio'
+require "stringio"
 
 module Minitest
   ##
@@ -25,7 +25,7 @@ module Minitest
     # figure out what diff to use.
 
     def self.diff
-      @diff = if (RbConfig::CONFIG['host_os'] =~ /mswin|mingw/ &&
+      @diff = if (RbConfig::CONFIG["host_os"] =~ /mswin|mingw/ &&
                   system("diff.exe", __FILE__, __FILE__)) then
                 "diff.exe -u"
               elsif Minitest::Test.maglev? then
@@ -66,7 +66,6 @@ module Minitest
          butwas.size > 30         ||
          expect == butwas)        &&
         Minitest::Assertions.diff
-
 
       return "Expected: #{mu_pp exp}\n  Actual: #{mu_pp act}" unless
         need_to_diff
@@ -116,7 +115,7 @@ module Minitest
     # uses mu_pp to do the first pass and then cleans it up.
 
     def mu_pp_for_diff obj
-      mu_pp(obj).gsub(/\\n/, "\n").gsub(/:0x[a-fA-F0-9]{4,}/m, ':0xXXXXXX')
+      mu_pp(obj).gsub(/\\n/, "\n").gsub(/:0x[a-fA-F0-9]{4,}/m, ":0xXXXXXX")
     end
 
     ##
@@ -435,25 +434,25 @@ module Minitest
     def capture_subprocess_io
       _synchronize do
         begin
-      require 'tempfile'
+          require "tempfile"
 
-      captured_stdout, captured_stderr = Tempfile.new("out"), Tempfile.new("err")
+          captured_stdout, captured_stderr = Tempfile.new("out"), Tempfile.new("err")
 
-      orig_stdout, orig_stderr = $stdout.dup, $stderr.dup
-      $stdout.reopen captured_stdout
-      $stderr.reopen captured_stderr
+          orig_stdout, orig_stderr = $stdout.dup, $stderr.dup
+          $stdout.reopen captured_stdout
+          $stderr.reopen captured_stderr
 
-      yield
+          yield
 
-      $stdout.rewind
-      $stderr.rewind
+          $stdout.rewind
+          $stderr.rewind
 
-      return captured_stdout.read, captured_stderr.read
-    ensure
-      captured_stdout.unlink
-      captured_stderr.unlink
-      $stdout.reopen orig_stdout
-      $stderr.reopen orig_stderr
+          return captured_stdout.read, captured_stderr.read
+        ensure
+          captured_stdout.unlink
+          captured_stderr.unlink
+          $stdout.reopen orig_stdout
+          $stderr.reopen orig_stderr
         end
       end
     end
@@ -467,7 +466,7 @@ module Minitest
        "Class: <#{e.class}>",
        "Message: <#{e.message.inspect}>",
        "---Backtrace---",
-       "#{Minitest::filter_backtrace(e.backtrace).join("\n")}",
+       "#{Minitest.filter_backtrace(e.backtrace).join("\n")}",
        "---------------",
       ].join "\n"
     end
@@ -494,7 +493,7 @@ module Minitest
     ##
     # used for counting assertions
 
-    def pass msg = nil
+    def pass _msg = nil
       assert true
     end
 
@@ -503,7 +502,7 @@ module Minitest
 
     def refute test, msg = nil
       msg ||= "Failed refutation, no message given"
-      not assert(! test, msg)
+      not assert !test, msg
     end
 
     ##
@@ -581,7 +580,7 @@ module Minitest
     # Fails if +matcher+ <tt>=~</tt> +obj+.
 
     def refute_match matcher, obj, msg = nil
-      msg = message(msg) {"Expected #{mu_pp matcher} to not match #{mu_pp obj}"}
+      msg = message(msg) { "Expected #{mu_pp matcher} to not match #{mu_pp obj}" }
       assert_respond_to matcher, :"=~"
       matcher = Regexp.new Regexp.escape matcher if String === matcher
       refute matcher =~ obj, msg
@@ -603,7 +602,7 @@ module Minitest
 
     def refute_operator o1, op, o2 = UNDEFINED, msg = nil
       return refute_predicate o1, op, msg if UNDEFINED == o2
-      msg = message(msg) { "Expected #{mu_pp(o1)} to not be #{op} #{mu_pp(o2)}"}
+      msg = message(msg) { "Expected #{mu_pp(o1)} to not be #{op} #{mu_pp(o2)}" }
       refute o1.__send__(op, o2), msg
     end
 

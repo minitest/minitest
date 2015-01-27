@@ -1,5 +1,5 @@
-require 'pathname'
-require 'minitest/metametameta'
+require "pathname"
+require "minitest/metametameta"
 
 module MyModule; end
 class AnError < StandardError; include MyModule; end
@@ -9,7 +9,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
   parallelize_me!
 
   pwd = Pathname.new File.expand_path Dir.pwd
-  basedir = Pathname.new(File.expand_path "lib/minitest") + 'mini'
+  basedir = Pathname.new(File.expand_path "lib/minitest") + "mini"
   basedir = basedir.relative_path_from(pwd).to_s
   MINITEST_BASE_DIR = basedir[/\A\./] ? basedir : "./#{basedir}"
   BT_MIDDLE = ["#{MINITEST_BASE_DIR}/test.rb:161:in `each'",
@@ -32,7 +32,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
           "test/test_autotest.rb:62:in `test_add_exception'"]
     ex = util_expand_bt ex
 
-    fu = Minitest::filter_backtrace(bt)
+    fu = Minitest.filter_backtrace(bt)
 
     assert_equal ex, fu
   end
@@ -42,7 +42,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
           BT_MIDDLE +
           ["#{MINITEST_BASE_DIR}/test.rb:29"])
     ex = bt.clone
-    fu = Minitest::filter_backtrace(bt)
+    fu = Minitest.filter_backtrace(bt)
     assert_equal ex, fu
   end
 
@@ -55,7 +55,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
     bt = util_expand_bt bt
 
     ex = ["-e:1"]
-    fu = Minitest::filter_backtrace bt
+    fu = Minitest.filter_backtrace bt
     assert_equal ex, fu
   end
 
@@ -99,7 +99,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
   end
 
   def util_expand_bt bt
-    if RUBY_VERSION >= '1.9.0' then
+    if RUBY_VERSION >= "1.9.0" then
       bt.map { |f| (f =~ /^\./) ? File.expand_path(f) : f }
     else
       bt
@@ -110,7 +110,7 @@ end
 class TestMinitestUnitInherited < MetaMetaMetaTestCase
   def with_overridden_include
     Class.class_eval do
-      def inherited_with_hacks klass
+      def inherited_with_hacks _klass
         throw :inherited_hook
       end
 
@@ -455,7 +455,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     assert_report expected
   end
 
-  require 'monitor'
+  require "monitor"
 
   class Latch
     def initialize count = 1
@@ -675,7 +675,7 @@ class TestMinitestRunnable < Minitest::Test
   def test_marshal
     setup_marshal Minitest::Runnable
 
-    assert_marshal %w(@NAME @assertions @failures)
+    assert_marshal %w[@NAME @assertions @failures]
   end
 end
 
@@ -685,7 +685,7 @@ class TestMinitestTest < TestMinitestRunnable
       tc.time = 3.14
     end
 
-    assert_marshal %w(@NAME @assertions @failures @time) do |new_tc|
+    assert_marshal %w[@NAME @assertions @failures @time] do |new_tc|
       assert_in_epsilon 3.14, new_tc.time
     end
   end
@@ -696,14 +696,14 @@ class TestMinitestUnitTestCase < Minitest::Test
   # which is not threadsafe. Nearly every method in here is an
   # assertion test so it isn't worth splitting it out further.
 
-  RUBY18 = ! defined? Encoding
+  RUBY18 = !defined? Encoding
 
   def setup
     super
 
     Minitest::Test.reset
 
-    @tc = Minitest::Test.new 'fake tc'
+    @tc = Minitest::Test.new "fake tc"
     @zomg = "zomg ponies!"
     @assertion_count = 1
   end
@@ -851,7 +851,7 @@ class TestMinitestUnitTestCase < Minitest::Test
     util_assert_triggered msg do
       o1 = "blah" * 10
       o2 = "blah" * 10
-      def o1.== o
+      def o1.== _
         false
       end
       @tc.assert_equal o1, o2
@@ -917,18 +917,18 @@ class TestMinitestUnitTestCase < Minitest::Test
   def test_assert_in_epsilon
     @assertion_count = 10
 
-    @tc.assert_in_epsilon 10000, 9991
-    @tc.assert_in_epsilon 9991, 10000
+    @tc.assert_in_epsilon 10_000, 9991
+    @tc.assert_in_epsilon 9991, 10_000
     @tc.assert_in_epsilon 1.0, 1.001
     @tc.assert_in_epsilon 1.001, 1.0
 
-    @tc.assert_in_epsilon 10000, 9999.1, 0.0001
-    @tc.assert_in_epsilon 9999.1, 10000, 0.0001
+    @tc.assert_in_epsilon 10_000, 9999.1, 0.0001
+    @tc.assert_in_epsilon 9999.1, 10_000, 0.0001
     @tc.assert_in_epsilon 1.0, 1.0001, 0.0001
     @tc.assert_in_epsilon 1.0001, 1.0, 0.0001
 
     @tc.assert_in_epsilon(-1, -1)
-    @tc.assert_in_epsilon(-10000, -9991)
+    @tc.assert_in_epsilon(-10_000, -9991)
   end
 
   def test_epsilon_consistency
@@ -943,8 +943,8 @@ class TestMinitestUnitTestCase < Minitest::Test
   end
 
   def test_assert_in_epsilon_triggered
-    util_assert_triggered 'Expected |10000 - 9990| (10) to be <= 9.99.' do
-      @tc.assert_in_epsilon 10000, 9990
+    util_assert_triggered "Expected |10000 - 9990| (10) to be <= 9.99." do
+      @tc.assert_in_epsilon 10_000, 9990
     end
   end
 
@@ -1002,7 +1002,7 @@ class TestMinitestUnitTestCase < Minitest::Test
     @assertion_count = 2
 
     pattern = Object.new
-    def pattern.=~(other) true end
+    def pattern.=~(_) true end
 
     @tc.assert_match pattern, 5
   end
@@ -1020,10 +1020,10 @@ class TestMinitestUnitTestCase < Minitest::Test
     @assertion_count = 2
 
     pattern = Object.new
-    def pattern.=~(other) false end
+    def pattern.=~(_) false end
     def pattern.inspect; "[Object]" end
 
-    util_assert_triggered 'Expected [Object] to match 5.' do
+    util_assert_triggered "Expected [Object] to match 5." do
       @tc.assert_match pattern, 5
     end
   end
@@ -1040,7 +1040,7 @@ class TestMinitestUnitTestCase < Minitest::Test
   end
 
   def test_assert_nil_triggered
-    util_assert_triggered 'Expected 42 to be nil.' do
+    util_assert_triggered "Expected 42 to be nil." do
       @tc.assert_nil 42
     end
   end
@@ -1051,7 +1051,7 @@ class TestMinitestUnitTestCase < Minitest::Test
 
   def test_assert_operator_bad_object
     bad = Object.new
-    def bad.==(other) true end
+    def bad.==(_) true end
 
     @tc.assert_operator bad, :equal?, bad
   end
@@ -1183,8 +1183,8 @@ class TestMinitestUnitTestCase < Minitest::Test
       ---------------
     EOM
 
-    actual = e.message.gsub(/^.+:\d+/, 'FILE:LINE')
-    actual.gsub!(/block \(\d+ levels\) in /, '') if RUBY_VERSION >= '1.9.0'
+    actual = e.message.gsub(/^.+:\d+/, "FILE:LINE")
+    actual.gsub!(/block \(\d+ levels\) in /, "") if RUBY_VERSION >= "1.9.0"
 
     assert_equal expected, actual
   end
@@ -1206,8 +1206,8 @@ class TestMinitestUnitTestCase < Minitest::Test
       ---------------
     EOM
 
-    actual = e.message.gsub(/^.+:\d+/, 'FILE:LINE')
-    actual.gsub!(/block \(\d+ levels\) in /, '') if RUBY_VERSION >= '1.9.0'
+    actual = e.message.gsub(/^.+:\d+/, "FILE:LINE")
+    actual.gsub!(/block \(\d+ levels\) in /, "") if RUBY_VERSION >= "1.9.0"
 
     assert_equal expected.chomp, actual
   end
@@ -1252,8 +1252,8 @@ class TestMinitestUnitTestCase < Minitest::Test
       ---------------
     EOM
 
-    actual = e.message.gsub(/^.+:\d+/, 'FILE:LINE')
-    actual.gsub!(/block \(\d+ levels\) in /, '') if RUBY_VERSION >= '1.9.0'
+    actual = e.message.gsub(/^.+:\d+/, "FILE:LINE")
+    actual.gsub!(/block \(\d+ levels\) in /, "") if RUBY_VERSION >= "1.9.0"
 
     assert_equal expected, actual
   end
@@ -1280,7 +1280,7 @@ class TestMinitestUnitTestCase < Minitest::Test
   def test_assert_same_triggered
     @assertion_count = 2
 
-    util_assert_triggered 'Expected 2 (oid=N) to be the same as 1 (oid=N).' do
+    util_assert_triggered "Expected 2 (oid=N) to be the same as 1 (oid=N)." do
       @tc.assert_same 1, 2
     end
 
@@ -1335,7 +1335,7 @@ class TestMinitestUnitTestCase < Minitest::Test
   end
 
   def test_assert_throws_different
-    util_assert_triggered 'Expected :blah to have been thrown, not :not_blah.' do
+    util_assert_triggered "Expected :blah to have been thrown, not :not_blah." do
       @tc.assert_throws :blah do
         throw :not_blah
       end
@@ -1343,7 +1343,7 @@ class TestMinitestUnitTestCase < Minitest::Test
   end
 
   def test_assert_throws_unthrown
-    util_assert_triggered 'Expected :blah to have been thrown.' do
+    util_assert_triggered "Expected :blah to have been thrown." do
       @tc.assert_throws :blah do
         # do nothing
       end
@@ -1355,8 +1355,8 @@ class TestMinitestUnitTestCase < Minitest::Test
 
     non_verbose do
       out, err = capture_io do
-        puts 'hi'
-        $stderr.puts 'bye!'
+        puts "hi"
+        $stderr.puts "bye!"
       end
 
       assert_equal "hi\n", out
@@ -1382,7 +1382,7 @@ class TestMinitestUnitTestCase < Minitest::Test
     @assertion_count = 0
 
     methods = Minitest::Assertions.public_instance_methods
-    methods.map! { |m| m.to_s } if Symbol === methods.first
+    methods.map!(&:to_s) if Symbol === methods.first
 
     # These don't have corresponding refutes _on purpose_. They're
     # useless and will never be added, so don't bother.
@@ -1397,12 +1397,12 @@ class TestMinitestUnitTestCase < Minitest::Test
     asserts = methods.grep(/^assert/).sort - ignores
     refutes = methods.grep(/^refute/).sort - ignores
 
-    assert_empty refutes.map { |n| n.sub(/^refute/, 'assert') } - asserts
-    assert_empty asserts.map { |n| n.sub(/^assert/, 'refute') } - refutes
+    assert_empty refutes.map { |n| n.sub(/^refute/, "assert") } - asserts
+    assert_empty asserts.map { |n| n.sub(/^assert/, "refute") } - refutes
   end
 
   def test_flunk
-    util_assert_triggered 'Epic Fail!' do
+    util_assert_triggered "Epic Fail!" do
       @tc.flunk
     end
   end
@@ -1458,7 +1458,7 @@ class TestMinitestUnitTestCase < Minitest::Test
 
   def test_prints
     printer = Class.new { extend Minitest::Assertions }
-    @tc.assert_equal '"test"', printer.mu_pp(ImmutableString.new 'test')
+    @tc.assert_equal '"test"', printer.mu_pp(ImmutableString.new "test")
   end
 
   def test_refute
@@ -1503,13 +1503,13 @@ class TestMinitestUnitTestCase < Minitest::Test
   end
 
   def test_refute_in_epsilon
-    @tc.refute_in_epsilon 10000, 9990-1
+    @tc.refute_in_epsilon 10_000, 9990-1
   end
 
   def test_refute_in_epsilon_triggered
-    util_assert_triggered 'Expected |10000 - 9990| (10) to not be <= 10.0.' do
-      @tc.refute_in_epsilon 10000, 9990
-      fail
+    util_assert_triggered "Expected |10000 - 9990| (10) to not be <= 10.0." do
+      @tc.refute_in_epsilon 10_000, 9990
+      flunk
     end
   end
 
@@ -1564,10 +1564,10 @@ class TestMinitestUnitTestCase < Minitest::Test
     @assertion_count = 2
 
     pattern = Object.new
-    def pattern.=~(other) true end
+    def pattern.=~(_) true end
     def pattern.inspect; "[Object]" end
 
-    util_assert_triggered 'Expected [Object] to not match 5.' do
+    util_assert_triggered "Expected [Object] to not match 5." do
       @tc.refute_match pattern, 5
     end
   end
@@ -1584,7 +1584,7 @@ class TestMinitestUnitTestCase < Minitest::Test
   end
 
   def test_refute_nil_triggered
-    util_assert_triggered 'Expected nil to not be nil.' do
+    util_assert_triggered "Expected nil to not be nil." do
       @tc.refute_nil nil
     end
   end
@@ -1605,7 +1605,7 @@ class TestMinitestUnitTestCase < Minitest::Test
 
   def test_refute_operator_bad_object
     bad = Object.new
-    def bad.==(other) true end
+    def bad.==(_) true end
 
     @tc.refute_operator true, :equal?, bad
   end
@@ -1631,7 +1631,7 @@ class TestMinitestUnitTestCase < Minitest::Test
   end
 
   def test_refute_same_triggered
-    util_assert_triggered 'Expected 1 (oid=N) to not be the same as 1 (oid=N).' do
+    util_assert_triggered "Expected 1 (oid=N) to not be the same as 1 (oid=N)." do
       @tc.refute_same 1, 1
     end
   end
@@ -1657,9 +1657,9 @@ class TestMinitestUnitTestCase < Minitest::Test
     srand 42
     expected = case
                when maglev? then
-                 %w(test_test2 test_test3 test_test1)
+                 %w[test_test2 test_test3 test_test1]
                else
-                 %w(test_test2 test_test1 test_test3)
+                 %w[test_test2 test_test1 test_test3]
                end
     assert_equal expected, sample_test_case.runnable_methods
   end
@@ -1674,7 +1674,7 @@ class TestMinitestUnitTestCase < Minitest::Test
       def test_test1; assert "does not matter" end
     end
 
-    expected = %w(test_test1 test_test2 test_test3)
+    expected = %w[test_test1 test_test2 test_test3]
     assert_equal expected, sample_test_case.runnable_methods
   end
 
@@ -1693,7 +1693,7 @@ class TestMinitestUnitTestCase < Minitest::Test
 
     shitty_test_case = Class.new Minitest::Test
 
-    def shitty_test_case.test_order ; :lol end
+    def shitty_test_case.test_order; :lol end
 
     assert_silent do
       shitty_test_case.i_suck_and_my_tests_are_order_dependent!
@@ -1706,7 +1706,7 @@ class TestMinitestUnitTestCase < Minitest::Test
     end
 
     msg = e.message.sub(/(---Backtrace---).*/m, '\1')
-    msg.gsub!(/\(oid=[-0-9]+\)/, '(oid=N)')
+    msg.gsub!(/\(oid=[-0-9]+\)/, "(oid=N)")
     msg.gsub!(/(\d\.\d{6})\d+/, '\1xxx') # normalize: ruby version, impl, platform
 
     assert_equal expected, msg

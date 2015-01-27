@@ -1,4 +1,4 @@
-require 'minitest/autorun'
+require "minitest/autorun"
 
 class TestMinitestMock < Minitest::Test
   parallelize_me!
@@ -141,7 +141,7 @@ class TestMinitestMock < Minitest::Test
   def test_respond_appropriately
     assert @mock.respond_to?(:foo)
     assert @mock.respond_to?(:foo, true)
-    assert @mock.respond_to?('foo')
+    assert @mock.respond_to?("foo")
     assert !@mock.respond_to?(:bar)
   end
 
@@ -252,12 +252,10 @@ class TestMinitestMock < Minitest::Test
   end
 
   def test_mock_block_is_passed_function_params
-    arg1, arg2, arg3 = :bar, [1,2,3], {:a => 'a'}
+    arg1, arg2, arg3 = :bar, [1, 2, 3], { :a => "a" }
     mock = Minitest::Mock.new
     mock.expect :foo, nil do |a1, a2, a3|
-      a1 == arg1 &&
-      a2 == arg2 &&
-      a3 == arg3
+      a1 == arg1 && a2 == arg2 && a3 == arg3
     end
 
     mock.foo arg1, arg2, arg3
@@ -267,12 +265,12 @@ class TestMinitestMock < Minitest::Test
 
   def test_mock_block_is_passed_function_block
     mock = Minitest::Mock.new
-    block = proc { 'bar' }
+    block = proc { "bar" }
     mock.expect :foo, nil do |arg, &blk|
-      arg == 'foo' &&
+      arg == "foo" &&
       blk == block
     end
-    mock.foo 'foo', &block
+    mock.foo "foo", &block
     assert mock.verify
   end
 
@@ -339,7 +337,7 @@ class TestMinitestMock < Minitest::Test
 
   def test_mock_called_via_send_with_args
     mock = Minitest::Mock.new
-    mock.expect(:foo, true, [1,2,3])
+    mock.expect(:foo, true, [1, 2, 3])
 
     mock.send(:foo, 1, 2, 3)
     mock.verify
@@ -356,7 +354,7 @@ class TestMinitestStub < Minitest::Test
     super
     Minitest::Test.reset
 
-    @tc = Minitest::Test.new 'fake tc'
+    @tc = Minitest::Test.new "fake tc"
     @assertion_count = 1
   end
 
@@ -400,12 +398,12 @@ class TestMinitestStub < Minitest::Test
 
     fail_clapper = Class.new do
       def fail_clap
-        fail
+        raise
         :clap
       end
     end.new
 
-    fail_clapper.stub :fail, nil do |safe_clapper|
+    fail_clapper.stub :raise, nil do |safe_clapper|
       @tc.assert_equal :clap, safe_clapper.fail_clap # either form works
       @tc.assert_equal :clap, fail_clapper.fail_clap # yay closures
     end

@@ -1,5 +1,5 @@
-require 'minitest/autorun'
-require 'minitest/benchmark'
+require "minitest/autorun"
+require "minitest/benchmark"
 
 ##
 # Used to verify data:
@@ -111,7 +111,7 @@ class TestMinitestBenchmark < Minitest::Test
 
     # income to % of households below income amount
     # http://library.wolfram.com/infocenter/Conferences/6461/PowerLaws.nb
-    x = [15000, 25000, 35000, 50000, 75000, 100000]
+    x = [15_000, 25_000, 35_000, 50_000, 75_000, 100_000]
     y = [0.154, 0.283, 0.402, 0.55, 0.733, 0.843]
 
     # verified in numbers

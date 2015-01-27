@@ -10,7 +10,7 @@ module Minitest # :nodoc:
   class Mock
     alias :__respond_to? :respond_to?
 
-    overridden_methods = %w(
+    overridden_methods = %w[
       ===
       inspect
       object_id
@@ -18,7 +18,7 @@ module Minitest # :nodoc:
       respond_to_missing?
       send
       to_s
-    )
+    ]
 
     instance_methods.each do |m|
       undef_method m unless overridden_methods.include?(m.to_s) || m =~ /^__/
@@ -26,7 +26,7 @@ module Minitest # :nodoc:
 
     overridden_methods.map(&:to_sym).each do |method_id|
       define_method method_id do |*args, &b|
-        if @expected_calls.has_key? method_id then
+        if @expected_calls.key? method_id then
           method_missing(method_id, *args, &b)
         else
           super(*args, &b)
@@ -64,7 +64,7 @@ module Minitest # :nodoc:
     #   @mock.uses_one_string("bar") # => true
     #   @mock.verify  # => raises MockExpectationError
 
-    def expect(name, retval, args=[], &blk)
+    def expect(name, retval, args = [], &blk)
       name = name.to_sym
 
       if block_given?
@@ -98,11 +98,11 @@ module Minitest # :nodoc:
           msg2 = "#{msg1}, got [#{__call name, @actual_calls[name]}]"
 
           raise MockExpectationError, msg2 if
-            @actual_calls.has_key?(name) and
+            @actual_calls.key?(name) and
             not @actual_calls[name].include?(expected)
 
           raise MockExpectationError, msg1 unless
-            @actual_calls.has_key?(name) and
+            @actual_calls.key?(name) and
             @actual_calls[name].include?(expected)
         end
       end
@@ -110,7 +110,7 @@ module Minitest # :nodoc:
     end
 
     def method_missing(sym, *args, &block) # :nodoc:
-      unless @expected_calls.has_key?(sym) then
+      unless @expected_calls.key?(sym) then
         raise NoMethodError, "unmocked method %p, expected one of %p" %
           [sym, @expected_calls.keys.sort_by(&:to_s)]
       end
@@ -152,15 +152,15 @@ module Minitest # :nodoc:
 
       @actual_calls[sym] << {
         :retval => retval,
-        :args => expected_args.zip(args).map { |mod, a| mod === a ? mod : a }
+        :args => expected_args.zip(args).map { |mod, a| mod === a ? mod : a },
       }
 
       retval
     end
 
     def respond_to?(sym, include_private = false) # :nodoc:
-      return true if @expected_calls.has_key? sym.to_sym
-      return __respond_to?(sym, include_private)
+      return true if @expected_calls.key? sym.to_sym
+      __respond_to?(sym, include_private)
     end
   end
 end
@@ -185,7 +185,7 @@ class Object # :nodoc:
   #     end
   #
 
-  def stub name, val_or_callable, *block_args, &block
+  def stub name, val_or_callable, *block_args
     new_name = "__minitest_stub__#{name}"
 
     metaclass = class << self; self; end
@@ -199,12 +199,11 @@ class Object # :nodoc:
     metaclass.send :alias_method, new_name, name
 
     metaclass.send :define_method, name do |*args, &blk|
-
       ret = if val_or_callable.respond_to? :call then
-        val_or_callable.call(*args)
-      else
-        val_or_callable
-      end
+              val_or_callable.call(*args)
+            else
+              val_or_callable
+            end
 
       blk.call(*block_args) if blk
 
@@ -217,5 +216,4 @@ class Object # :nodoc:
     metaclass.send :alias_method, name, new_name
     metaclass.send :undef_method, new_name
   end
-
 end

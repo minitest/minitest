@@ -20,7 +20,7 @@ module Minitest
         @pool  = size.times.map {
           Thread.new(@queue) do |queue|
             Thread.current.abort_on_exception = true
-            while job = queue.pop
+            while (job = queue.pop)
               klass, method, reporter = job
               result = Minitest.run_one_method klass, method
               reporter.synchronize { reporter.record result }
@@ -52,7 +52,10 @@ module Minitest
         def run_one_method klass, method_name, reporter # :nodoc:
           Minitest.parallel_executor << [klass, method_name, reporter]
         end
-        def test_order; :parallel; end # :nodoc:
+
+        def test_order # :nodoc:
+          :parallel
+        end
       end
     end
   end

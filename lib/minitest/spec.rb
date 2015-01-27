@@ -57,7 +57,7 @@ module Kernel # :nodoc:
   def describe desc, *additional_desc, &block # :doc:
     stack = Minitest::Spec.describe_stack
     name  = [stack.last, desc, *additional_desc].compact.join("::")
-    sclas = stack.last || if Class === self && is_a?(Minitest::Spec::DSL) then
+    sclas = stack.last || if Class === self && kind_of?(Minitest::Spec::DSL) then
                             self
                           else
                             Minitest::Spec.spec_type desc, *additional_desc
@@ -133,7 +133,7 @@ class Minitest::Spec < Minitest::Test
     #     spec_type("BlahController") # => Minitest::Spec::Rails
 
     def spec_type desc, *additional
-      TYPES.find { |matcher, klass|
+      TYPES.find { |matcher, _klass|
         if matcher.respond_to? :call then
           matcher.call desc, *additional
         else
@@ -166,7 +166,7 @@ class Minitest::Spec < Minitest::Test
     #
     # Equivalent to Minitest::Test#setup.
 
-    def before type = nil, &block
+    def before _type = nil, &block
       define_method :setup do
         super()
         self.instance_eval(&block)
@@ -180,7 +180,7 @@ class Minitest::Spec < Minitest::Test
     #
     # Equivalent to Minitest::Test#teardown.
 
-    def after type = nil, &block
+    def after _type = nil, &block
       define_method :teardown do
         self.instance_eval(&block)
         super()

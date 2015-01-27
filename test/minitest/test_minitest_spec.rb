@@ -112,11 +112,11 @@ describe Minitest::Spec do
     @assertion_count = 2
 
     methods = Object.public_instance_methods.find_all { |n| n =~ /^must|^wont/ }
-    methods.map! { |m| m.to_s } if Symbol === methods.first
+    methods.map!(&:to_s) if Symbol === methods.first
 
     musts, wonts = methods.sort.partition { |m| m =~ /^must/ }
 
-    expected_musts = %w(must_be
+    expected_musts = %w[must_be
                         must_be_close_to
                         must_be_empty
                         must_be_instance_of
@@ -132,7 +132,7 @@ describe Minitest::Spec do
                         must_output
                         must_raise
                         must_respond_to
-                        must_throw)
+                        must_throw]
 
     bad = %w[not raise throw send output be_silent]
 
@@ -519,7 +519,6 @@ describe Minitest::Spec do
       42.must_respond_to :clear, "msg"
     end
   end
-
 end
 
 describe Minitest::Spec, :let do
@@ -556,7 +555,7 @@ describe Minitest::Spec, :let do
     proc { self.class.let(:test_value) { true } }.must_raise ArgumentError
   end
 
-  it 'raises an error if the name shadows a normal instance method' do
+  it "raises an error if the name shadows a normal instance method" do
     proc { self.class.let(:message) { true } }.must_raise ArgumentError
   end
 
@@ -572,8 +571,8 @@ describe Minitest::Spec, :let do
     end.call.must_equal :good
   end
 
-  it 'procs come after dont_flip' do
-    p = proc{ }
+  it "procs come after dont_flip" do
+    p = proc { }
     assert_respond_to p, :call
     p.must_respond_to :call
   end
@@ -599,7 +598,7 @@ class TestMetaStatic < Minitest::Test
   def test_children
     Minitest::Spec.children.clear # prevents parallel run
 
-    x = y = z = nil
+    y = z = nil
     x = describe "top-level thingy" do
       y = describe "first thingy" do end
 
@@ -617,7 +616,7 @@ class TestMetaStatic < Minitest::Test
   def test_it_wont_remove_existing_child_test_methods
     Minitest::Spec.children.clear # prevents parallel run
 
-    outer = inner = nil
+    inner = nil
     outer = describe "outer" do
       inner = describe "inner" do
         it do
@@ -636,7 +635,7 @@ class TestMetaStatic < Minitest::Test
   def test_it_wont_add_test_methods_to_children
     Minitest::Spec.children.clear # prevents parallel run
 
-    outer = inner = nil
+    inner = nil
     outer = describe "outer" do
       inner = describe "inner" do end
       it do
@@ -655,7 +654,7 @@ class TestMeta < MetaMetaMetaTestCase
   parallelize_me!
 
   def util_structure
-    x = y = z = nil
+    y = z = nil
     before_list = []
     after_list  = []
     x = describe "top-level thingy" do
@@ -674,8 +673,8 @@ class TestMeta < MetaMetaMetaTestCase
           after  { after_list  << 3 }
           it "inner-it" do end
 
-          it      {} # ignore me
-          specify {} # anonymous it
+          it      { } # ignore me
+          specify { } # anonymous it
         end
       end
     end
@@ -690,7 +689,7 @@ class TestMeta < MetaMetaMetaTestCase
 
     Minitest::Spec.register_spec_type(/woot/, TestMeta)
 
-    p = lambda do |x| true end
+    p = lambda do |_| true end
     Minitest::Spec.register_spec_type TestMeta, &p
 
     keys = Minitest::Spec::TYPES.map(&:first)
@@ -708,7 +707,7 @@ class TestMeta < MetaMetaMetaTestCase
     Minitest::Spec.register_spec_type MiniSpecB do |desc|
       desc.superclass == ExampleA
     end
-    Minitest::Spec.register_spec_type MiniSpecC do |desc, *addl|
+    Minitest::Spec.register_spec_type MiniSpecC do |_desc, *addl|
       addl.include? :woot
     end
 
@@ -770,10 +769,10 @@ class TestMeta < MetaMetaMetaTestCase
     assert_equal "inner thingy",      y.desc
     assert_equal "very inner thingy", z.desc
 
-    top_methods = %w(setup teardown test_0001_top-level-it)
-    inner_methods1 = %w(setup teardown test_0001_inner-it)
+    top_methods = %w[setup teardown test_0001_top-level-it]
+    inner_methods1 = %w[setup teardown test_0001_inner-it]
     inner_methods2 = inner_methods1 +
-      %w(test_0002_anonymous test_0003_anonymous)
+      %w[test_0002_anonymous test_0003_anonymous]
 
     assert_equal top_methods,    x.instance_methods(false).sort.map(&:to_s)
     assert_equal inner_methods1, y.instance_methods(false).sort.map(&:to_s)
@@ -794,8 +793,8 @@ class TestMeta < MetaMetaMetaTestCase
       it "inner-it" do end
     end
 
-    assert_equal %w(test_0001_inner-it), y.instance_methods(false).map(&:to_s)
-    assert_equal %w(test_0001_inner-it), z.instance_methods(false).map(&:to_s)
+    assert_equal %w[test_0001_inner-it], y.instance_methods(false).map(&:to_s)
+    assert_equal %w[test_0001_inner-it], z.instance_methods(false).map(&:to_s)
   end
 
   def test_setup_teardown_behavior
@@ -811,7 +810,7 @@ class TestMeta < MetaMetaMetaTestCase
   end
 
   def test_describe_first_structure
-    x = x1 = x2 = y = z = nil
+    x1 = x2 = y = z = nil
     x = describe "top-level thingy" do
       y = describe "first thingy" do end
 
@@ -822,12 +821,11 @@ class TestMeta < MetaMetaMetaTestCase
     end
 
     test_methods = ["test_0001_top level it",
-                    "test_0002_не латинские &いった α, β, γ, δ, ε hello!!! world"
+                    "test_0002_не латинские &いった α, β, γ, δ, ε hello!!! world",
                    ].sort
 
     assert_equal test_methods, [x1, x2]
-    assert_equal test_methods,
-      x.instance_methods.grep(/^test/).map {|o| o.to_s}.sort
+    assert_equal test_methods, x.instance_methods.grep(/^test/).map(&:to_s).sort
     assert_equal [], y.instance_methods.grep(/^test/)
     assert_equal [], z.instance_methods.grep(/^test/)
   end
@@ -838,7 +836,7 @@ class TestMeta < MetaMetaMetaTestCase
       def xyz; end
     end
     y = Class.new x do
-      z = describe("inner") {}
+      z = describe("inner") { }
     end
 
     assert_respond_to x.new(nil), "xyz"

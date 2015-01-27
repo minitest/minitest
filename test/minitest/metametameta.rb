@@ -1,10 +1,10 @@
-require 'tempfile'
-require 'stringio'
-require 'minitest/autorun'
+require "tempfile"
+require "stringio"
+require "minitest/autorun"
 
 class Minitest::Test
   def clean s
-    s.gsub(/^ {6}/, '')
+    s.gsub(/^ {6}/, "")
   end
 end
 
@@ -55,17 +55,17 @@ class MetaMetaMetaTestCase < Minitest::Test
 
   def normalize_output output
     output.sub!(/Finished in .*/, "Finished in 0.00")
-    output.sub!(/Loaded suite .*/, 'Loaded suite blah')
+    output.sub!(/Loaded suite .*/, "Loaded suite blah")
 
-    output.gsub!(/ = \d+.\d\d s = /, ' = 0.00 s = ')
-    output.gsub!(/0x[A-Fa-f0-9]+/, '0xXXX')
-    output.gsub!(/ +$/, '')
+    output.gsub!(/ = \d+.\d\d s = /, " = 0.00 s = ")
+    output.gsub!(/0x[A-Fa-f0-9]+/, "0xXXX")
+    output.gsub!(/ +$/, "")
 
     if windows? then
-      output.gsub!(/\[(?:[A-Za-z]:)?[^\]:]+:\d+\]/, '[FILE:LINE]')
+      output.gsub!(/\[(?:[A-Za-z]:)?[^\]:]+:\d+\]/, "[FILE:LINE]")
       output.gsub!(/^(\s+)(?:[A-Za-z]:)?[^:]+:\d+:in/, '\1FILE:LINE:in')
     else
-      output.gsub!(/\[[^\]:]+:\d+\]/, '[FILE:LINE]')
+      output.gsub!(/\[[^\]:]+:\d+\]/, "[FILE:LINE]")
       output.gsub!(/^(\s+)[^:]+:\d+:in/, '\1FILE:LINE:in')
     end
 
