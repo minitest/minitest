@@ -400,6 +400,13 @@ you want to extend your test using setup/teardown via a module, just
 make sure you ALWAYS call super. before/after automatically call super
 for you, so make sure you don't do it twice.
 
+=== Why am I seeing `uninitialized constant MiniTest::Test (NameError)`?
+
+Are you running the test with Bundler (e.g. via `bundle exec`)? If so, 
+in order to require minitest, you must first add the `gem 'minitest'`
+to your Gemfile and run `bundle`. Once it's installed, you should be 
+able to require minitest and run your tests.
+
 == Prominent Projects using Minitest:
 
 * arel
