@@ -425,7 +425,6 @@ capybara_minitest_spec      :: Bridge between Capybara RSpec matchers and
                                page.must_have_content("Title")).
 minispec-metadata           :: Metadata for describe/it blocks
                                (e.g. `it "requires JS driver", js: true do`)
-minitest-ansi               :: Colorize minitest output with ANSI colors.
 minitest-around             :: Around block for minitest. An alternative to
                                setup/teardown dance.
 minitest-bang               :: Adds support for RSpec-style let! to immediately
@@ -437,8 +436,6 @@ minitest-capybara           :: Capybara matchers support for minitest unit and
                                spec.
 minitest-chef-handler       :: Run Minitest suites as Chef report handlers
 minitest-ci                 :: CI reporter plugin for Minitest.
-minitest-colorize           :: Colorize Minitest output and show failing tests
-                               instantly.
 minitest-context            :: Defines contexts for code reuse in Minitest
                                specs that share common expectations.
 minitest-debugger           :: Wraps assert so failed assertions drop into
