@@ -195,7 +195,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     end
 
     expected = clean <<-EOM
-      E.
+      .E
 
       Finished in 0.00
 
@@ -242,7 +242,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     setup_basic_tu
 
     expected = clean <<-EOM
-      F.
+      .F
 
       Finished in 0.00
 
@@ -376,7 +376,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     end
 
     expected = clean <<-EOM
-      S.
+      .S
 
       Finished in 0.00
 
@@ -403,8 +403,8 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     end
 
     expected = clean <<-EOM
-      #<Class:0xXXX>#test_skip = 0.00 s = S
       #<Class:0xXXX>#test_something = 0.00 s = .
+      #<Class:0xXXX>#test_skip = 0.00 s = S
 
       Finished in 0.00
 
