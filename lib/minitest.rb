@@ -126,7 +126,6 @@ module Minitest
     self.parallel_executor.start if parallel_executor.respond_to?(:start)
     reporter.start
     __run reporter, options
-    self.parallel_executor.shutdown
     reporter.report
 
     reporter.passed?
@@ -150,6 +149,8 @@ module Minitest
     # recording results.
     serial.map { |suite| suite.run reporter, options } +
       parallel.map { |suite| suite.run reporter, options }
+
+    self.parallel_executor.shutdown
   end
 
   def self.process_args args = [] # :nodoc:
