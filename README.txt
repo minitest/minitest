@@ -483,6 +483,7 @@ minitest-osx                :: Reporter for the Mac OS X notification center.
 minitest-parallel-db        :: Run tests in parallel with a single database.
 minitest-power_assert       :: PowerAssert for Minitest.
 minitest-predicates         :: Adds support for .predicate? methods.
+minitest-profile            :: List the 10 slowest tests in your suite.
 minitest-rails              :: Minitest integration for Rails 3.x.
 minitest-rails-capybara     :: Capybara integration for Minitest::Rails.
 minitest-reporters          :: Create customizable Minitest output formats.
