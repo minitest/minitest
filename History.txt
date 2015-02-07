@@ -4,7 +4,7 @@
 
   * Fixed doco problems. (zzak)
 
-=== 5.5.0 / 2014-12-12
+=== 5.5.0 / 2014-12-12 // mri 2.2.0 (as a real gem)
 
 * 1 minor enhancement:
 
@@ -149,7 +149,7 @@
 
   * Fixed missing require in minitest/test. (erikh)
 
-=== 4.7.5 / 2013-06-21
+=== 4.7.5 / 2013-06-21 // mri 2.1.1
 
 * 2 bug fixes:
 
@@ -388,7 +388,7 @@ back.
 
   * Updated information about stubbing. (daviddavis)
 
-=== 4.3.2 / 2012-11-27
+=== 4.3.2 / 2012-11-27 // mri 2.0.0
 
 * 1 minor enhancement:
 
