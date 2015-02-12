@@ -426,8 +426,9 @@ able to require minitest and run your tests.
 capybara_minitest_spec      :: Bridge between Capybara RSpec matchers and
                                Minitest::Spec expectations (e.g.
                                page.must_have_content("Title")).
-minispec-metadata           :: Metadata for describe/it blocks
-                               (e.g. `it "requires JS driver", js: true do`)
+minispec-metadata           :: Metadata for describe/it blocks & CLI tag filter.
+                               E.g. `it "requires JS driver", js: true do` &
+                               `ruby test.rb --tag js` runs tests tagged :js.
 minitest-ansi               :: Colorize minitest output with ANSI colors.
 minitest-around             :: Around block for minitest. An alternative to
                                setup/teardown dance.
