@@ -1,4 +1,5 @@
-= minitest/{unit,spec,mock,benchmark}
+minitest/{unit,spec,mock,benchmark}
+===================================
 
 home :: https://github.com/seattlerb/minitest
 bugs :: https://github.com/seattlerb/minitest/issues
@@ -6,7 +7,8 @@ rdoc :: http://docs.seattlerb.org/minitest
 vim  :: https://github.com/sunaku/vim-ruby-minitest
 emacs:: https://github.com/arthurnn/minitest-emacs
 
-== DESCRIPTION:
+DESCRIPTION:
+------------
 
 minitest provides a complete suite of testing facilities supporting
 TDD, BDD, mocking, and benchmarking.
@@ -62,7 +64,8 @@ classes, modules, inheritance, methods. This means you only have to
 learn ruby to use minitest and all of your regular OO practices like
 extract-method refactorings still apply.
 
-== FEATURES/PROBLEMS:
+FEATURES/PROBLEMS:
+------------------
 
 * minitest/autorun - the easy and explicit way to run all your tests.
 * minitest/unit - a very fast, simple, and clean test system.
@@ -72,11 +75,13 @@ extract-method refactorings still apply.
 * minitest/pride - show your pride in testing!
 * Incredibly small and fast runner, but no bells and whistles.
 
-== RATIONALE:
+RATIONALE:
+----------
 
 See design_rationale.rb to see how specs and tests work in minitest.
 
-== SYNOPSIS:
+SYNOPSIS:
+---------
 
 Given that you'd like to test the following class:
 
@@ -90,7 +95,7 @@ Given that you'd like to test the following class:
     end
   end
 
-=== Unit tests
+<h3>Unit tests</h3>
 
 Define your tests as methods beginning with `test_`.
 
@@ -114,7 +119,7 @@ Define your tests as methods beginning with `test_`.
     end
   end
 
-=== Specs
+<h3>Specs</h3>
 
   require "minitest/autorun"
 
@@ -139,7 +144,7 @@ Define your tests as methods beginning with `test_`.
 For matchers support check out:
 
 https://github.com/wojtekmach/minitest-matchers
-=== Benchmarks
+<h3>Benchmarks</h3>
 
 Add benchmarks to your tests.
 
@@ -180,7 +185,7 @@ outputs something like:
 
 Output is tab-delimited to make it easy to paste into a spreadsheet.
 
-=== Mocks
+<h3>Mocks</h3>
 
   class MemeAsker
     def initialize(meme)
@@ -212,7 +217,7 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
     end
   end
 
-=== Stubs
+<h3>Stubs</h3>
 
   def test_stale_eh
     obj_under_test = Something.new
@@ -232,7 +237,7 @@ new non-existing method:
     ...
   end
 
-=== Running Your Tests
+<h3>Running Your Tests</h3>
 
 Ideally, you'll use a rake task to run your tests, either piecemeal or
 all at once. Both rake and rails ship with rake tasks for running your
@@ -263,7 +268,8 @@ provided via plugins. To see them, simply run with `--help`:
         -p, --pride                      Pride. Show your testing pride!
         -a, --autotest                   Connect to autotest server.
 
-== Writing Extensions
+Writing Extensions
+------------------
 
 To define a plugin, add a file named minitest/XXX_plugin.rb to your
 project/gem. That file must be discoverable via ruby's LOAD_PATH (via
@@ -290,7 +296,7 @@ bogus example:
       end
     end
 
-=== Adding custom reporters
+<h3>Adding custom reporters</h3>
 
 Minitest uses composite reporter to output test results using multiple
 reporter instances. You can add new reporters to the composite during
@@ -331,9 +337,10 @@ Using our example above, here is how we might implement MyCI:
       # code from above...
     end
 
-== FAQ
+FAQ
+===
 
-=== How to test SimpleDelegates?
+<h3>How to test SimpleDelegates?</h3>
 
 The following implementation and test:
 
@@ -379,7 +386,7 @@ or you can extend the Worker class (within the test file!), like:
       include ::Minitest::Expectations
     end
 
-=== How to share code across test classes?
+<h3>How to share code across test classes?</h3>
 
 Use a module. That's exactly what they're for:
 
@@ -403,14 +410,15 @@ you want to extend your test using setup/teardown via a module, just
 make sure you ALWAYS call super. before/after automatically call super
 for you, so make sure you don't do it twice.
 
-=== Why am I seeing `uninitialized constant MiniTest::Test (NameError)`?
+<h3>Why am I seeing `uninitialized constant MiniTest::Test (NameError)`?</h3>
 
-Are you running the test with Bundler (e.g. via `bundle exec`)? If so, 
+Are you running the test with Bundler (e.g. via `bundle exec`)? If so,
 in order to require minitest, you must first add the `gem 'minitest'`
-to your Gemfile and run `bundle`. Once it's installed, you should be 
+to your Gemfile and run `bundle`. Once it's installed, you should be
 able to require minitest and run your tests.
 
-== Prominent Projects using Minitest:
+Prominent Projects using Minitest:
+----------------------------------
 
 * arel
 * journey
@@ -421,7 +429,8 @@ able to require minitest and run your tests.
 * rdoc
 * ...and of course, everything from seattle.rb...
 
-== Known Extensions:
+Known Extensions:
+-----------------
 
 capybara_minitest_spec      :: Bridge between Capybara RSpec matchers and
                                Minitest::Spec expectations (e.g.
@@ -516,7 +525,8 @@ pry-rescue                  :: A pry plugin w/ minitest support. See
 rspec2minitest              :: Easily translate any RSpec matchers to Minitest
                                assertions and expectations.
 
-== Unknown Extensions:
+Unknown Extensions:
+-------------------
 
 Authors... Please send me a pull request with a description of your minitest extension.
 
@@ -540,11 +550,13 @@ Authors... Please send me a pull request with a description of your minitest ext
 * mongoid-minitest
 * spork-minitest
 
-== REQUIREMENTS:
+REQUIREMENTS:
+-------------
 
 * Ruby 1.8.7+. No magic is involved. I hope.
 
-== INSTALL:
+INSTALL:
+--------
 
   sudo gem install minitest
 
@@ -564,7 +576,8 @@ Gem.find_files and many other things (gem which, gem contents, etc).
 
 Just install minitest as a gem for real and you'll be happier.
 
-== LICENSE:
+LICENSE:
+--------
 
 (The MIT License)
 
