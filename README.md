@@ -1,11 +1,11 @@
 minitest/{unit,spec,mock,benchmark}
 ===================================
 
-home :: https://github.com/seattlerb/minitest
-bugs :: https://github.com/seattlerb/minitest/issues
-rdoc :: http://docs.seattlerb.org/minitest
-vim  :: https://github.com/sunaku/vim-ruby-minitest
-emacs:: https://github.com/arthurnn/minitest-emacs
+home :: https://github.com/seattlerb/minitest  
+bugs :: https://github.com/seattlerb/minitest/issues  
+rdoc :: http://docs.seattlerb.org/minitest  
+vim  :: https://github.com/sunaku/vim-ruby-minitest  
+emacs:: https://github.com/arthurnn/minitest-emacs  
 
 DESCRIPTION:
 ------------
