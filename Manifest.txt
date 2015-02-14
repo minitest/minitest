@@ -1,7 +1,7 @@
 .autotest
-History.txt
+History.rdoc
 Manifest.txt
-README.txt
+README.rdoc
 Rakefile
 design_rationale.rb
 lib/hoe/minitest.rb
