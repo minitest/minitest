@@ -125,7 +125,11 @@ module Minitest
 
     self.parallel_executor.start if parallel_executor.respond_to?(:start)
     reporter.start
-    __run reporter, options
+    begin
+      __run reporter, options
+    rescue Interrupt
+      warn "Interrupted. Exiting..."
+    end
     self.parallel_executor.shutdown
     reporter.report
 
