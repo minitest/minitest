@@ -13,6 +13,8 @@ module Minitest # :nodoc:
     overridden_methods = %w[
       ===
       inspect
+      instance_eval
+      instance_variables
       object_id
       public_send
       respond_to_missing?
