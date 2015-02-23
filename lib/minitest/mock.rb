@@ -167,7 +167,10 @@ module Minitest # :nodoc:
   end
 end
 
-class Object # :nodoc:
+##
+# Object extensions for Minitest::Mock.
+
+class Object
 
   ##
   # Add a temporary stubbed method replacing +name+ for the duration

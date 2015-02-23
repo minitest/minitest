@@ -55,12 +55,12 @@ module Minitest
     module Test
       def _synchronize; Test.io_lock.synchronize { yield }; end # :nodoc:
 
-      module ClassMethods
-        def run_one_method klass, method_name, reporter # :nodoc:
+      module ClassMethods # :nodoc:
+        def run_one_method klass, method_name, reporter
           Minitest.parallel_executor << [klass, method_name, reporter]
         end
 
-        def test_order # :nodoc:
+        def test_order
           :parallel
         end
       end
