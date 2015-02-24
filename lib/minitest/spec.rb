@@ -5,20 +5,25 @@ class Module # :nodoc:
     # warn "%-22p -> %p %p" % [meth, new_name, dont_flip]
     self.class_eval <<-EOM
       def #{new_name} *args
+        ctx = Minitest::Spec.current
+        target = self
         case
         when #{!!dont_flip} then
-          Minitest::Spec.current.#{meth}(self, *args)
-        when Proc === self then
-          Minitest::Spec.current.#{meth}(*args, &self)
+          ctx.#{meth}(target, *args)
+        when Proc === target then
+          ctx.#{meth}(*args, &target)
         else
-          Minitest::Spec.current.#{meth}(args.first, self, *args[1..-1])
+          ctx.#{meth}(args.first, target, *args[1..-1])
         end
       end
     EOM
   end
 end
 
-module Kernel # :nodoc:
+##
+# Kernel extensions for minitest
+
+module Kernel
   ##
   # Describe a series of expectations for a given target +desc+.
   #
@@ -146,10 +151,7 @@ class Minitest::Spec < Minitest::Test
       Thread.current[:describe_stack] ||= []
     end
 
-    ##
-    # Returns the children of this spec.
-
-    def children
+    def children # :nodoc:
       @children ||= []
     end
 
@@ -266,22 +268,19 @@ class Minitest::Spec < Minitest::Test
       name # Can't alias due to 1.8.7, not sure why
     end
 
-    # :stopdoc:
-    attr_reader :desc
+    attr_reader :desc # :nodoc:
     alias :specify :it
 
-    module InstanceMethods
-      def before_setup
+    module InstanceMethods # :nodoc:
+      def before_setup # :nodoc:
         super
         Thread.current[:current_spec] = self
       end
     end
 
-    def self.extended obj
+    def self.extended obj # :nodoc:
       obj.send :include, InstanceMethods
     end
-
-    # :startdoc:
   end
 
   extend DSL
