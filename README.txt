@@ -214,6 +214,14 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
 
 === Stubs
 
+Stubs simulate the behaviors of software components (or modules) that a module undergoing tests depends on. Stubs are defined in the following way:
+
+    Klass_Or_KlassInstance.stub :method, return_value, block_argument do   # stub goes away once the block is done
+      # Assertions go here
+    end
+
+An example of a stub would be:
+
   def test_stale_eh
     obj_under_test = Something.new
 
