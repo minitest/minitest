@@ -139,6 +139,7 @@ Define your tests as methods beginning with `test_`.
 For matchers support check out:
 
 https://github.com/wojtekmach/minitest-matchers
+
 === Benchmarks
 
 Add benchmarks to your tests.
@@ -182,37 +183,50 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
 
 === Mocks
 
+Mocks and stubs defined using terminology by Fowler & Meszaros at
+http://www.martinfowler.com/bliki/TestDouble.html:
+
+"Mocks are pre-programmed with expectations which form a specification
+of the calls they are expected to receive. They can throw an exception
+if they receive a call they don't expect and are checked during
+verification to ensure they got all the calls they were expecting."
+
   class MemeAsker
     def initialize(meme)
       @meme = meme
     end
 
     def ask(question)
-      method = question.tr(" ","_") + "?"
+      method = question.tr(" ", "_") + "?"
       @meme.__send__(method)
     end
   end
 
   require "minitest/autorun"
 
-  describe MemeAsker do
-    before do
-      @meme = Minitest::Mock.new
-      @meme_asker = MemeAsker.new @meme
-    end
+  describe MemeAsker, :ask do
+    describe "when passed an unpunctuated question" do
+      it "should invoke the appropriate predicate method on the meme" do
+        @meme = Minitest::Mock.new
+        @meme_asker = MemeAsker.new @meme
+        @meme.expect :will_it_blend?, :return_value
 
-    describe "#ask" do
-      describe "when passed an unpunctuated question" do
-        it "should invoke the appropriate predicate method on the meme" do
-          @meme.expect :will_it_blend?, :return_value
-          @meme_asker.ask "will it blend"
-          @meme.verify
-        end
+        @meme_asker.ask "will it blend"
+
+        @meme.verify
       end
     end
   end
 
 === Stubs
+
+Mocks and stubs are defined using terminology by Fowler & Meszaros at
+http://www.martinfowler.com/bliki/TestDouble.html:
+
+"Stubs provide canned answers to calls made during the test".
+
+Minitest's stub method overrides a single method for the duration of
+the block.
 
   def test_stale_eh
     obj_under_test = Something.new
