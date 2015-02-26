@@ -507,7 +507,7 @@ module Minitest
     end
 
     def start # :nodoc:
-      self.start_time = Time.now
+      self.start_time = Minitest.clock_time
     end
 
     def record result # :nodoc:
@@ -521,7 +521,7 @@ module Minitest
       aggregate = results.group_by { |r| r.failure.class }
       aggregate.default = [] # dumb. group_by should provide this
 
-      self.total_time = Time.now - start_time
+      self.total_time = Minitest.clock_time - start_time
       self.failures   = aggregate[Assertion].size
       self.errors     = aggregate[UnexpectedError].size
       self.skips      = aggregate[Skip].size
@@ -779,6 +779,16 @@ module Minitest
     result = klass.new(method_name).run
     raise "#{klass}#run _must_ return self" unless klass === result
     result
+  end
+
+  if defined? Process::CLOCK_MONOTONIC
+    def self.clock_time
+      Process.clock_gettime Process::CLOCK_MONOTONIC
+    end
+  else
+    def self.clock_time
+      Time.now
+    end
   end
 end
 
