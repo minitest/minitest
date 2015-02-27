@@ -273,7 +273,8 @@ provided via plugins. To see them, simply run with `--help`:
         -v, --verbose                    Verbose. Show progress processing files.
         -n, --name PATTERN               Filter run on /pattern/ or string.
 
-    Known extensions: pride, autotest
+    Known extensions: color, pride, autotest
+        -c, --color                      Add some color to test output.
         -p, --pride                      Pride. Show your testing pride!
         -a, --autotest                   Connect to autotest server.
 
