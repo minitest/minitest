@@ -32,7 +32,7 @@ describe Minitest::Spec do
   end
 
   after do
-    self.assertions.must_equal @assertion_count if passed? and not skipped?
+    _(self.assertions).must_equal @assertion_count if passed? and not skipped?
   end
 
   it "needs to be able to catch a Minitest::Assertion exception" do
@@ -439,6 +439,30 @@ describe Minitest::Spec do
 
     assert_triggered "msg.\nExpected /\\d+/ to match \"blah\"." do
       "blah".must_match(/\d+/, "msg")
+    end
+  end
+
+  describe "expect" do
+    before do
+      @assertion_count -= 3
+    end
+
+    it "can use expect" do
+      _(1 + 1).must_equal 2
+    end
+
+    it "can use expect with a lambda" do
+      _ { raise "blah" }.must_raise RuntimeError
+    end
+
+    it "can use expect in a thread" do
+      Thread.new { _(1 + 1).must_equal 2 }.join
+    end
+
+    it "can NOT use must_equal in a thread. It must use expect in a thread" do
+      assert_raises NoMethodError do
+        Thread.new { (1 + 1).must_equal 2 }.join
+      end
     end
   end
 

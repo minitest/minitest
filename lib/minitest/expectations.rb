@@ -4,17 +4,44 @@
 # Please note, because of the way that expectations are implemented,
 # all expectations (eg must_equal) are dependent upon a thread local
 # variable +:current_spec+. If your specs rely on mixing threads into
-# the specs themselves, you're better off using assertions. For
-# example:
+# the specs themselves, you're better off using assertions or the new
+# _(value) wrapper. For example:
 #
 #     it "should still work in threads" do
 #       my_threaded_thingy do
-#         (1+1).must_equal 2  # bad
-#         assert_equal 2, 1+1 # good
+#         (1+1).must_equal 2         # bad
+#         assert_equal 2, 1+1        # good
+#         _(1 + 1).must_equal 2      # good
+#         value(1 + 1).must_equal 2  # good, also #expect
 #       end
 #     end
 
 module Minitest::Expectations
+
+  ##
+  # Returns a value monad that has all of Expectations methods
+  # available to it.
+  #
+  # Also aliased to #value and #expect for your aesthetic pleasure:
+  #
+  #         _(1 + 1).must_equal 2
+  #     value(1 + 1).must_equal 2
+  #    expect(1 + 1).must_equal 2
+  #
+  # This method of expectation-based testing is preferable to
+  # straight-expectation methods (on Object) because it stores its
+  # test context, bypassing our hacky use of thread-local variables.
+  #
+  # At some point, the methods on Object will be deprecated and then
+  # removed.
+
+  def _ value = nil, &block
+    Minitest::Expectation.new block || value, self
+  end
+
+  alias value _
+  alias expect _
+
   ##
   # See Minitest::Assertions#assert_empty.
   #

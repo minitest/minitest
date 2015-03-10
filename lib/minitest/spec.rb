@@ -5,8 +5,12 @@ class Module # :nodoc:
     # warn "%-22p -> %p %p" % [meth, new_name, dont_flip]
     self.class_eval <<-EOM
       def #{new_name} *args
-        ctx = Minitest::Spec.current
-        target = self
+        Minitest::Expectation.new(self, Minitest::Spec.current).#{new_name}(*args)
+      end
+    EOM
+
+    Minitest::Expectation.class_eval <<-EOM, __FILE__, __LINE__ + 1
+      def #{new_name} *args
         case
         when #{!!dont_flip} then
           ctx.#{meth}(target, *args)
@@ -19,6 +23,8 @@ class Module # :nodoc:
     EOM
   end
 end
+
+Minitest::Expectation = Struct.new :target, :ctx # :nodoc:
 
 ##
 # Kernel extensions for minitest
