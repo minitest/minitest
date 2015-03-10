@@ -107,7 +107,7 @@ module Minitest
   #           runnable.run(reporter, options)
   #             self.runnable_methods.each
   #               self.run_one_method(self, runnable_method, reporter)
-  #                 Minitest.run_one_method(klass, runnable_method, reporter)
+  #                 Minitest.run_one_method(klass, runnable_method)
   #                   klass.new(runnable_method).run
 
   def self.run args = []
