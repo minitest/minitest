@@ -139,6 +139,7 @@ Define your tests as methods beginning with `test_`.
 For matchers support check out:
 
 https://github.com/wojtekmach/minitest-matchers
+https://github.com/rmm5t/minitest-matchers_vaccine
 
 === Benchmarks
 
@@ -492,6 +493,8 @@ minitest-macruby            :: Provides extensions to minitest for macruby UI
                                testing.
 minitest-matchers           :: Adds support for RSpec-style matchers to
                                minitest.
+minitest-matchers_vaccine   :: Adds assertions that adhere to the matcher spec,
+                               but without any expectation infections.
 minitest-metadata           :: Annotate tests with metadata (key-value).
 minitest-mongoid            :: Mongoid assertion matchers for Minitest.
 minitest-must_not           :: Provides must_not as an alias for wont in
