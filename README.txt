@@ -440,6 +440,8 @@ able to require minitest and run your tests.
 capybara_minitest_spec      :: Bridge between Capybara RSpec matchers and
                                Minitest::Spec expectations (e.g.
                                page.must_have_content("Title")).
+color_pound_spec_reporter   :: Test names print Ruby Object types in color with
+                               your Minitest Spec style tests.
 minispec-metadata           :: Metadata for describe/it blocks & CLI tag filter.
                                E.g. `it "requires JS driver", js: true do` &
                                `ruby test.rb --tag js` runs tests tagged :js.
