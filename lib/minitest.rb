@@ -565,6 +565,7 @@ module Minitest
       io.puts statistics
       io.puts aggregated_results
       io.puts summary
+      io.puts failed_examples if failures > 0
     end
 
     def statistics # :nodoc:
@@ -596,6 +597,14 @@ module Minitest
 
       "%d runs, %d assertions, %d failures, %d errors, %d skips%s" %
         [count, assertions, failures, errors, skips, extra]
+    end
+
+    def failed_examples # :nodoc:
+      failed_tests = results.each.map { |result|
+        "ruby #{result.failure.location.split(":").first} -n #{result.class}##{result.name}"
+      }.join("\n")
+
+      "\nFailed examples:\n\n#{failed_tests}"
     end
   end
 

@@ -251,6 +251,10 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       Failed assertion, no message given.
 
       2 runs, 2 assertions, 1 failures, 0 errors, 0 skips
+
+      Failed examples:
+
+      ruby test/minitest/test_minitest_unit.rb -n #<Class:0xXXX>#test_failure
     EOM
 
     assert_report expected
