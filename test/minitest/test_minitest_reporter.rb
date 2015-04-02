@@ -223,6 +223,10 @@ class TestMinitestReporter < MetaMetaMetaTestCase
       boo
 
       1 runs, 0 assertions, 1 failures, 0 errors, 0 skips
+
+      Failed examples:
+
+      ruby test/minitest/test_minitest_reporter.rb -n Minitest::Test#woot
     EOM
 
     assert_equal exp, normalize_output(io.string)
