@@ -513,6 +513,7 @@ minitest-should_syntax      :: RSpec-style +x.should == y+ assertions for
                                Minitest.
 minitest-shouldify          :: Adding all manner of shoulds to Minitest (bad
                                idea)
+minitest-snail              :: Print a list of tests that take too long
 minitest-spec-context       :: Provides rspec-ish context method to
                                Minitest::Spec.
 minitest-spec-expect        :: Expect syntax for Minitest::Spec (e.g.
