@@ -558,8 +558,6 @@ Authors... Please send me a pull request with a description of your minitest ext
 * minitest-spec
 * minitest-spec-should
 * minitest-sugar
-* minitest_should
-* mongoid-minitest
 * spork-minitest
 
 == REQUIREMENTS:
