@@ -4,7 +4,7 @@ require "mutex_m"
 require "minitest/parallel"
 
 ##
-# :include: README.txt
+# :include: README.rdoc
 
 module Minitest
   VERSION = "5.5.1" # :nodoc:
