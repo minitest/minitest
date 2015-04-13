@@ -1,3 +1,25 @@
+=== 5.6.0 / 2015-04-13
+
+* 4 major enhancements:
+
+  * Added Minitest::Expectation value monad.
+  * Added Minitest::Expectations#_ that returns an Expectation. Aliased to value.
+  * All expectations are added to Minitest::Expectation.
+  * At some point, the methods on Object will be deprecated and then removed.
+
+* 4 minor enhancements:
+
+  * Added a note about bundle exec pitfall in ruby 2.2+. (searls)
+  * Lazily start the parallel executor. (tenderlove)
+  * Make mocks more debugger-friendly (edward)
+  * Print out the current test run on interrupt. (riffraff)
+
+* 3 bug fixes:
+
+  * Fix failing test under Windows. (kimhmadsen)
+  * Record mocked calls before they happen so mocks can raise exceptions easier (tho I'm not a fan). (corecode)
+  * Tried to clarify mocks vs stubs terminology better. (kkirsche)
+
 === 5.5.1 / 2015-01-09
 
 * 1 bug fix:
