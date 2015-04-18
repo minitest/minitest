@@ -478,6 +478,7 @@ minitest-excludes           :: Clean API for excluding certain tests you
 minitest-filesystem         :: Adds assertion and expectation to help testing
                                filesystem contents.
 minitest-firemock           :: Makes your Minitest mocks more resilient.
+minitest-focus              :: Focus on one test at a time.
 minitest-great_expectations :: Generally useful additions to minitest's
                                assertions and expectations.
 minitest-growl              :: Test notifier for minitest via growl.
