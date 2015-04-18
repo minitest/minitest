@@ -449,6 +449,10 @@ minispec-metadata           :: Metadata for describe/it blocks & CLI tag filter.
 minitest-ansi               :: Colorize minitest output with ANSI colors.
 minitest-around             :: Around block for minitest. An alternative to
                                setup/teardown dance.
+minitest-autotest           :: autotest is a continous testing facility meant to
+                               be used during development.
+minitest-bacon              :: minitest-bacon extends minitest with bacon-like
+                               functionality.
 minitest-bang               :: Adds support for RSpec-style let! to immediately
                                invoke let statements before each test.
 minitest-bisect             :: Helps you isolate and debug random test failures.
@@ -479,6 +483,8 @@ minitest-filesystem         :: Adds assertion and expectation to help testing
                                filesystem contents.
 minitest-firemock           :: Makes your Minitest mocks more resilient.
 minitest-focus              :: Focus on one test at a time.
+minitest-gcstats            :: A minitest plugin that adds a report of the top
+                               tests by number of objects allocated.
 minitest-great_expectations :: Generally useful additions to minitest's
                                assertions and expectations.
 minitest-growl              :: Test notifier for minitest via growl.
@@ -510,6 +516,9 @@ minitest-rails-capybara     :: Capybara integration for Minitest::Rails.
 minitest-reporters          :: Create customizable Minitest output formats.
 minitest-rg                 :: Colored red/green output for Minitest.
 minitest-rspec_mocks        :: Use RSpec Mocks with Minitest.
+minitest-server             :: minitest-server provides a client/server setup 
+                               with your minitest process, allowing your test 
+                               run to send its results directly to a handler.
 minitest-should_syntax      :: RSpec-style +x.should == y+ assertions for
                                Minitest.
 minitest-shouldify          :: Adding all manner of shoulds to Minitest (bad
@@ -522,11 +531,15 @@ minitest-spec-expect        :: Expect syntax for Minitest::Spec (e.g.
 minitest-spec-magic         :: Minitest::Spec extensions for Rails and beyond.
 minitest-spec-rails         :: Drop in Minitest::Spec superclass for
                                ActiveSupport::TestCase.
+minitest-sprint             :: Runs (Get it? It's fast!) your tests and makes
+                               it easier to rerun individual failures.
 minitest-stately            :: Find leaking state between tests
 minitest-stub_any_instance  :: Stub any instance of a method on the given class
                                for the duration of a block.
 minitest-stub-const         :: Stub constants for the duration of a block.
 minitest-tags               :: Add tags for minitest.
+minitest-unordered          :: Adds a new assertion to minitest for checking the
+                               contents of a collection, ignoring element order.
 minitest-vcr                :: Automatic cassette managment with Minitest::Spec
                                and VCR.
 minitest-wscolor            :: Yet another test colorizer.
