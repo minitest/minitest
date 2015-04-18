@@ -912,3 +912,26 @@ class TestSpecInTestCase < MetaMetaMetaTestCase
     end
   end
 end
+
+class ValueMonadTest < Minitest::Test
+  attr_accessor :struct
+
+  def setup
+    @struct = { :_ => 'a', :value => 'b', :expect => 'c' }
+    def @struct.method_missing k # think openstruct
+      self[k]
+    end
+  end
+
+  def test_value_monad_method
+    assert_equal 'a', struct._
+  end
+
+  def test_value_monad_value_alias
+    assert_equal 'b', struct.value
+  end
+
+  def test_value_monad_expect_alias
+    assert_equal 'c', struct.expect
+  end
+end

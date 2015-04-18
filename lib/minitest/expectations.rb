@@ -19,30 +19,6 @@
 module Minitest::Expectations
 
   ##
-  # Returns a value monad that has all of Expectations methods
-  # available to it.
-  #
-  # Also aliased to #value and #expect for your aesthetic pleasure:
-  #
-  #         _(1 + 1).must_equal 2
-  #     value(1 + 1).must_equal 2
-  #    expect(1 + 1).must_equal 2
-  #
-  # This method of expectation-based testing is preferable to
-  # straight-expectation methods (on Object) because it stores its
-  # test context, bypassing our hacky use of thread-local variables.
-  #
-  # At some point, the methods on Object will be deprecated and then
-  # removed.
-
-  def _ value = nil, &block
-    Minitest::Expectation.new block || value, self
-  end
-
-  alias value _
-  alias expect _
-
-  ##
   # See Minitest::Assertions#assert_empty.
   #
   #    collection.must_be_empty
