@@ -479,6 +479,8 @@ minitest-english            :: Semantically symmetric aliases for assertions and
                                expectations.
 minitest-excludes           :: Clean API for excluding certain tests you
                                don't want to run under certain conditions.
+minitest-filecontent        :: Support unit tests with expectation results in files.
+                               Differing results will be stored again in files.
 minitest-filesystem         :: Adds assertion and expectation to help testing
                                filesystem contents.
 minitest-firemock           :: Makes your Minitest mocks more resilient.
@@ -496,6 +498,8 @@ minitest-instrument-db      :: Store information about speed of test execution
                                provided by minitest-instrument in database.
 minitest-libnotify          :: Test notifier for minitest via libnotify.
 minitest-line               :: Run test at line number.
+minitest-logger             :: Define assert_log and enable minitest to test log messages.
+                               Supports Logger and Log4r::Logger.
 minitest-macruby            :: Provides extensions to minitest for macruby UI
                                testing.
 minitest-matchers           :: Adds support for RSpec-style matchers to
