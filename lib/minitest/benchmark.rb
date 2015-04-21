@@ -90,9 +90,9 @@ module Minitest
 
       range.each do |x|
         GC.start
-        t0 = Time.now
+        t0 = Minitest.clock_time
         instance_exec(x, &work)
-        t = Time.now - t0
+        t = Minitest.clock_time - t0
 
         io.print "\t%9.6f" % t
         times << t

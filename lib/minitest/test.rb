@@ -251,11 +251,11 @@ module Minitest
     end
 
     def time_it # :nodoc:
-      t0 = Time.now
+      t0 = Minitest.clock_time
 
       yield
     ensure
-      self.time = Time.now - t0
+      self.time = Minitest.clock_time - t0
     end
 
     def to_s # :nodoc:
@@ -267,10 +267,10 @@ module Minitest
     end
 
     def with_info_handler &block # :nodoc:
-      t0 = Time.now
+      t0 = Minitest.clock_time
 
       handler = lambda do
-        warn "\nCurrent: %s#%s %.2fs" % [self.class, self.name, Time.now - t0]
+        warn "\nCurrent: %s#%s %.2fs" % [self.class, self.name, Minitest.clock_time - t0]
       end
 
       self.class.on_signal "INFO", handler, &block
