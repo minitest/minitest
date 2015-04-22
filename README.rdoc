@@ -496,6 +496,7 @@ minitest-instrument         :: Instrument ActiveSupport::Notifications when
                                test method is executed.
 minitest-instrument-db      :: Store information about speed of test execution
                                provided by minitest-instrument in database.
+minitest-junit              :: JUnit-style XML reporter for minitest.
 minitest-libnotify          :: Test notifier for minitest via libnotify.
 minitest-line               :: Run test at line number.
 minitest-logger             :: Define assert_log and enable minitest to test log messages.
