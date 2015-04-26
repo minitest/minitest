@@ -479,6 +479,7 @@ minitest-english            :: Semantically symmetric aliases for assertions and
                                expectations.
 minitest-excludes           :: Clean API for excluding certain tests you
                                don't want to run under certain conditions.
+minitest-fail-fast          :: Reimplements RSpec's "fail fast" feature
 minitest-filecontent        :: Support unit tests with expectation results in files.
                                Differing results will be stored again in files.
 minitest-filesystem         :: Adds assertion and expectation to help testing
