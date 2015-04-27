@@ -1,3 +1,10 @@
+=== 5.6.1 / 2015-04-27
+
+* 2 bug fixes:
+
+  * Added Minitest.clock_time and switched all Time.now to it. (tenderlove)
+  * Moved Minitest::Expectations#_ into Minitest::Spec::DSL.
+
 === 5.6.0 / 2015-04-13
 
 * 4 major enhancements:
