@@ -1236,26 +1236,10 @@ class TestMinitestUnitTestCase < Minitest::Test
     assert_equal expected, e.message
   end
 
-  def test_assert_raises_triggered_subclass
-    e = assert_raises Minitest::Assertion do
-      @tc.assert_raises StandardError do
-        raise AnError
-      end
+  def test_assert_raises_subclass
+    @tc.assert_raises StandardError do
+      raise AnError
     end
-
-    expected = clean <<-EOM.chomp
-      [StandardError] exception expected, not
-      Class: <AnError>
-      Message: <\"AnError\">
-      ---Backtrace---
-      FILE:LINE:in \`test_assert_raises_triggered_subclass\'
-      ---------------
-    EOM
-
-    actual = e.message.gsub(/^.+:\d+/, "FILE:LINE")
-    actual.gsub!(/block \(\d+ levels\) in /, "") if RUBY_VERSION >= "1.9.0"
-
-    assert_equal expected, actual
   end
 
   def test_assert_respond_to

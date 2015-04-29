@@ -298,11 +298,7 @@ module Minitest
         raise e
       rescue Exception => e
         expected = exp.any? { |ex|
-          if ex.instance_of? Module then
-            e.kind_of? ex
-          else
-            e.instance_of? ex
-          end
+          e.kind_of? ex
         }
 
         assert expected, proc {
