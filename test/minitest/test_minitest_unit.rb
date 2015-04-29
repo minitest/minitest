@@ -1141,6 +1141,12 @@ class TestMinitestUnitTestCase < Minitest::Test
     end
   end
 
+  def test_assert_raises_no_arguments
+    @tc.assert_raises do
+      raise StandardError, "blah"
+    end
+  end
+
   def test_assert_raises_module
     @tc.assert_raises MyModule do
       raise AnError
