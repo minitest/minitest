@@ -302,7 +302,6 @@ describe Minitest::Spec do
     assert_triggered "msg.\nExpected 1 to not be equal to 1." do
       1.wont_equal 1, "msg"
     end
-
   end
 
   it "needs to verify instances of a class" do

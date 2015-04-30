@@ -2,12 +2,8 @@ require "minitest/test"
 
 class Module # :nodoc:
   def infect_an_assertion meth, new_name, dont_flip = false # :nodoc:
-    if dont_flip == :block
-      block = true
-      dont_flip = false
-    else
-      block = false
-    end
+    block = dont_flip == :block
+    dont_flip = false if block
 
     # warn "%-22p -> %p %p" % [meth, new_name, dont_flip]
     self.class_eval <<-EOM, __FILE__, __LINE__ + 1
