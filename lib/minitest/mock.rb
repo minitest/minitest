@@ -140,7 +140,8 @@ module Minitest # :nodoc:
           [sym, expected_args.size, args.size]
       end
 
-      fully_matched = expected_args.zip(args).all? { |mod, a|
+      zipped_args = expected_args.zip(args)
+      fully_matched = zipped_args.all? { |mod, a|
         mod === a or mod == a
       }
 
@@ -151,7 +152,7 @@ module Minitest # :nodoc:
 
       @actual_calls[sym] << {
         :retval => retval,
-        :args => expected_args.zip(args).map { |mod, a| mod === a ? mod : a },
+        :args => zipped_args.map! { |mod, a| mod === a ? mod : a },
       }
 
       retval
