@@ -12,6 +12,7 @@ module Minitest # :nodoc:
 
     overridden_methods = %w[
       ===
+      class
       inspect
       instance_eval
       instance_variables
