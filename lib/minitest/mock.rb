@@ -96,14 +96,11 @@ module Minitest # :nodoc:
     def verify
       @expected_calls.each do |name, calls|
         calls.each do |expected|
-          msg1 = "expected #{__call name, expected}"
-          msg2 = "#{msg1}, got [#{__call name, @actual_calls[name]}]"
-
-          raise MockExpectationError, msg2 if
+          raise MockExpectationError, "expected #{__call name, expected}, got [#{__call name, @actual_calls[name]}]" if
             @actual_calls.key?(name) and
             not @actual_calls[name].include?(expected)
 
-          raise MockExpectationError, msg1 unless
+          raise MockExpectationError, "expected #{__call name, expected}" unless
             @actual_calls.key?(name) and
             @actual_calls[name].include?(expected)
         end
