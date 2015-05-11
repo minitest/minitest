@@ -513,6 +513,7 @@ minitest-mongoid            :: Mongoid assertion matchers for Minitest.
 minitest-must_not           :: Provides must_not as an alias for wont in
                                Minitest.
 minitest-osx                :: Reporter for the Mac OS X notification center.
+minitest-parallel_fork      :: Fork-based parallelization
 minitest-parallel-db        :: Run tests in parallel with a single database.
 minitest-power_assert       :: PowerAssert for Minitest.
 minitest-predicates         :: Adds support for .predicate? methods.
