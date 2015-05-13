@@ -526,6 +526,8 @@ minitest-rspec_mocks        :: Use RSpec Mocks with Minitest.
 minitest-server             :: minitest-server provides a client/server setup 
                                with your minitest process, allowing your test 
                                run to send its results directly to a handler.
+minitest-shared_description :: Support for shared specs and shared spec
+                               subclasses
 minitest-should_syntax      :: RSpec-style +x.should == y+ assertions for
                                Minitest.
 minitest-shouldify          :: Adding all manner of shoulds to Minitest (bad
