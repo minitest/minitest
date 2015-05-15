@@ -121,7 +121,7 @@ module Minitest::Expectations
   #
   # :method: must_output
 
-  infect_an_assertion :assert_output, :must_output
+  infect_an_assertion :assert_output, :must_output, :block
 
   ##
   # See Minitest::Assertions#assert_raises
@@ -130,7 +130,7 @@ module Minitest::Expectations
   #
   # :method: must_raise
 
-  infect_an_assertion :assert_raises, :must_raise
+  infect_an_assertion :assert_raises, :must_raise, :block
 
   ##
   # See Minitest::Assertions#assert_respond_to
@@ -157,7 +157,7 @@ module Minitest::Expectations
   #
   # :method: must_be_silent
 
-  infect_an_assertion :assert_silent, :must_be_silent
+  infect_an_assertion :assert_silent, :must_be_silent, :block
 
   ##
   # See Minitest::Assertions#assert_throws
@@ -166,7 +166,7 @@ module Minitest::Expectations
   #
   # :method: must_throw
 
-  infect_an_assertion :assert_throws, :must_throw
+  infect_an_assertion :assert_throws, :must_throw, :block
 
   ##
   # See Minitest::Assertions#refute_empty

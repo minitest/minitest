@@ -2,8 +2,11 @@ require "minitest/test"
 
 class Module # :nodoc:
   def infect_an_assertion meth, new_name, dont_flip = false # :nodoc:
+    block = dont_flip == :block
+    dont_flip = false if block
+
     # warn "%-22p -> %p %p" % [meth, new_name, dont_flip]
-    self.class_eval <<-EOM
+    self.class_eval <<-EOM, __FILE__, __LINE__ + 1
       def #{new_name} *args
         Minitest::Expectation.new(self, Minitest::Spec.current).#{new_name}(*args)
       end
@@ -14,7 +17,7 @@ class Module # :nodoc:
         case
         when #{!!dont_flip} then
           ctx.#{meth}(target, *args)
-        when Proc === target then
+        when #{block} && Proc === target then
           ctx.#{meth}(*args, &target)
         else
           ctx.#{meth}(args.first, target, *args[1..-1])

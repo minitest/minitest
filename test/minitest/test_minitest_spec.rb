@@ -15,7 +15,7 @@ describe Minitest::Spec do
   # do not parallelize this suite... it just can"t handle it.
 
   def assert_triggered expected = "blah", klass = Minitest::Assertion
-    @assertion_count += 2
+    @assertion_count += 1
 
     e = assert_raises(klass) do
       yield
@@ -23,8 +23,22 @@ describe Minitest::Spec do
 
     msg = e.message.sub(/(---Backtrace---).*/m, '\1')
     msg.gsub!(/\(oid=[-0-9]+\)/, "(oid=N)")
+    msg.gsub!(/@.+>/, "@PATH>")
+    msg.gsub!(/(\d\.\d{6})\d+/, '\1xxx') # normalize: ruby version, impl, platform
+    msg.gsub!(/:0x[a-fA-F0-9]{4,}/m, ":0xXXXXXX")
 
-    assert_equal expected, msg
+    if expected
+      @assertion_count += 1
+      case expected
+      when String then
+        assert_equal expected, msg
+      when Regexp then
+        @assertion_count += 1
+        assert_match expected, msg
+      else
+        flunk "Unknown: #{expected.inspect}"
+      end
+    end
   end
 
   before do
@@ -182,6 +196,8 @@ describe Minitest::Spec do
   end
 
   it "needs to verify equality" do
+    @assertion_count += 1
+
     (6 * 7).must_equal(42).must_equal true
 
     assert_triggered "Expected: 42\n  Actual: 54" do
@@ -190,6 +206,10 @@ describe Minitest::Spec do
 
     assert_triggered "msg.\nExpected: 42\n  Actual: 54" do
       (6 * 9).must_equal 42, "msg"
+    end
+
+    assert_triggered(/^-42\n\+#<Proc:0xXXXXXX@PATH>\n/) do
+      proc { 42 }.must_equal 42 # proc isn't called, so expectation fails
     end
   end
 
@@ -282,7 +302,9 @@ describe Minitest::Spec do
   end
 
   it "needs to verify inequality" do
+    @assertion_count += 2
     42.wont_equal(6 * 9).must_equal false
+    proc{}.wont_equal(42).must_equal false
 
     assert_triggered "Expected 1 to not be equal to 1." do
       1.wont_equal 1
@@ -306,7 +328,10 @@ describe Minitest::Spec do
   end
 
   it "needs to verify kinds of a class" do
+    @assertion_count += 2
+
     42.wont_be_kind_of(String).must_equal false
+    proc{}.wont_be_kind_of(String).must_equal false
 
     assert_triggered "Expected 42 to not be a kind of Integer." do
       42.wont_be_kind_of Integer
@@ -318,7 +343,7 @@ describe Minitest::Spec do
   end
 
   it "needs to verify kinds of objects" do
-    @assertion_count += 2 # extra test
+    @assertion_count += 3 # extra test
 
     (6 * 7).must_be_kind_of(Fixnum).must_equal true
     (6 * 7).must_be_kind_of(Numeric).must_equal true
@@ -329,6 +354,11 @@ describe Minitest::Spec do
 
     assert_triggered "msg.\nExpected 42 to be a kind of String, not Fixnum." do
       (6 * 7).must_be_kind_of String, "msg"
+    end
+
+    exp = "Expected #<Proc:0xXXXXXX@PATH> to be a kind of String, not Proc."
+    assert_triggered exp do
+      proc{}.must_be_kind_of String
     end
   end
 
