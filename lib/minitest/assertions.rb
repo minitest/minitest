@@ -302,13 +302,7 @@ module Minitest
         return e if exp.include? Minitest::Skip
         raise e
       rescue Exception => e
-        expected = exp.any? { |ex|
-          if ex.instance_of? Module then
-            e.kind_of? ex
-          else
-            e.instance_of? ex
-          end
-        }
+        expected = exp.any? { |ex| e.kind_of? ex }
 
         assert expected, proc {
           exception_details(e, "#{msg}#{mu_pp(exp)} exception expected, not")
