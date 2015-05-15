@@ -4,6 +4,7 @@ require "minitest/metametameta"
 module MyModule; end
 class AnError < StandardError; include MyModule; end
 class ImmutableString < String; def inspect; super.freeze; end; end
+SomeError = Class.new Exception
 
 class TestMinitestUnit < MetaMetaMetaTestCase
   parallelize_me!
@@ -1139,6 +1140,34 @@ class TestMinitestUnitTestCase < Minitest::Test
     @tc.assert_raises RuntimeError do
       raise "blah"
     end
+  end
+
+  def test_assert_raises_default
+    @tc.assert_raises do
+      raise StandardError, "blah"
+    end
+  end
+
+  def test_assert_raises_default_triggered
+    e = assert_raises Minitest::Assertion do
+      @tc.assert_raises do
+        raise SomeError, "blah"
+      end
+    end
+
+    expected = clean <<-EOM.chomp
+      [StandardError] exception expected, not
+      Class: <SomeError>
+      Message: <\"blah\">
+      ---Backtrace---
+      FILE:LINE:in \`test_assert_raises_default_triggered\'
+      ---------------
+    EOM
+
+    actual = e.message.gsub(/^.+:\d+/, "FILE:LINE")
+    actual.gsub!(/block \(\d+ levels\) in /, "") if RUBY_VERSION >= "1.9.0"
+
+    assert_equal expected, actual
   end
 
   def test_assert_raises_module

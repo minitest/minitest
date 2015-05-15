@@ -287,9 +287,14 @@ module Minitest
     ##
     # Fails unless the block raises one of +exp+. Returns the
     # exception matched so you can check the message, attributes, etc.
+    #
+    # +exp+ takes an optional message on the end to help explain
+    # failures and defaults to StandardError if no exception class is
+    # passed.
 
     def assert_raises *exp
       msg = "#{exp.pop}.\n" if String === exp.last
+      exp << StandardError if exp.empty?
 
       begin
         yield
