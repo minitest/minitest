@@ -684,7 +684,7 @@ module Minitest
     attr_accessor :exception # :nodoc:
 
     def initialize exception # :nodoc:
-      super
+      super "Unexpected exception"
       self.exception = exception
     end
 
