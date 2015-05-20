@@ -97,6 +97,7 @@ module Minitest # :nodoc:
       @expected_calls.each do |name, calls|
         calls.each do |expected|
           raise MockExpectationError, "expected #{__call name, expected}, got [#{__call name, @actual_calls[name]}]" if
+            @actual_calls.key?(name) and
             not @actual_calls[name].include?(expected)
 
           raise MockExpectationError, "expected #{__call name, expected}" unless
