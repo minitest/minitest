@@ -19,7 +19,7 @@ class TestMinitestMock < Minitest::Test
   def test_blow_up_if_not_called
     @mock.foo
 
-    util_verify_bad "expected meaning_of_life() => 42, got []"
+    util_verify_bad "expected meaning_of_life() => 42"
   end
 
   def test_not_blow_up_if_everything_called
@@ -39,7 +39,7 @@ class TestMinitestMock < Minitest::Test
     @mock.meaning_of_life
     @mock.expect(:bar, true)
 
-    util_verify_bad "expected bar() => true, got []"
+    util_verify_bad "expected bar() => true"
   end
 
   def test_blow_up_on_wrong_number_of_arguments
