@@ -1,3 +1,22 @@
+=== 5.7.0 / 2015-05-27
+
+* 1 major enhancement:
+
+  * assert_raises now matches subclasses of the expected exception types. (jeremyevans)
+
+* 3 minor enhancements:
+
+  * Added :block type for minitest/spec's #infect_an_assertion. (jeremyevans)
+  * Inline verification error messages in minitest/mock for GC performance. (zamith)
+  * assert_raises defaults to RuntimeError if not specified. (jeremyevans)
+
+* 4 bug fixes:
+
+  * Added 'class' to minitest/mock's overridden_methods list. (zamith)
+  * Added file/line to infect_an_assertion's class_eval call. (jeremyevans)
+  * Cleared UnexpectedError's mesg w/ generic string.
+  * Fixed non-proc-oriented expectations when used on proc target. (jeremyevans)
+
 === 5.6.1 / 2015-04-27
 
 * 2 bug fixes:
