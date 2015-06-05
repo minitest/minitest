@@ -289,6 +289,8 @@ module Minitest
         filter === m || filter === "#{self}##{m}"
       }
 
+      return if filtered_methods.empty?
+
       with_info_handler reporter do
         filtered_methods.each do |method_name|
           run_one_method self, method_name, reporter
