@@ -37,7 +37,8 @@ module Minitest # :nodoc:
       end
     end
 
-    def initialize # :nodoc:
+    def initialize(delegator = nil) # :nodoc:
+      @delegator = delegator
       @expected_calls = Hash.new { |calls, name| calls[name] = [] }
       @actual_calls   = Hash.new { |calls, name| calls[name] = [] }
     end
@@ -111,8 +112,12 @@ module Minitest # :nodoc:
 
     def method_missing(sym, *args, &block) # :nodoc:
       unless @expected_calls.key?(sym) then
-        raise NoMethodError, "unmocked method %p, expected one of %p" %
-          [sym, @expected_calls.keys.sort_by(&:to_s)]
+        if @delegator && @delegator.respond_to?(sym)
+          return @delegator.public_send(sym, *args, &block)
+        else
+          raise NoMethodError, "unmocked method %p, expected one of %p" %
+            [sym, @expected_calls.keys.sort_by(&:to_s)]
+        end
       end
 
       index = @actual_calls[sym].length
@@ -161,6 +166,7 @@ module Minitest # :nodoc:
 
     def respond_to?(sym, include_private = false) # :nodoc:
       return true if @expected_calls.key? sym.to_sym
+      return true if @delegator && @delegator.respond_to?(sym, include_private)
       __respond_to?(sym, include_private)
     end
   end
