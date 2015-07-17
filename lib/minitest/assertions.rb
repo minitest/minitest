@@ -304,6 +304,8 @@ module Minitest
       rescue Minitest::Skip
         # don't count assertion
         raise
+      rescue SignalException, SystemExit
+        raise
       rescue Exception => e
         flunk proc {
           exception_details(e, "#{msg}#{mu_pp(exp)} exception expected, not")
