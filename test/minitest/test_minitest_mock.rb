@@ -240,6 +240,20 @@ class TestMinitestMock < Minitest::Test
     assert_equal exp, e.message
   end
 
+  def test_same_method_expects_with_same_args_blow_up_when_not_all_called
+    mock = Minitest::Mock.new
+    mock.expect :foo, nil, [:bar]
+    mock.expect :foo, nil, [:bar]
+
+    mock.foo :bar
+
+    e = assert_raises(MockExpectationError) { mock.verify }
+
+    exp = "expected foo(:bar) => nil, got [foo(:bar) => nil]"
+
+    assert_equal exp, e.message
+  end
+
   def test_verify_passes_when_mock_block_returns_true
     mock = Minitest::Mock.new
     mock.expect :foo, nil do
