@@ -65,8 +65,7 @@ module Minitest # :nodoc:
     #   @mock.verify  # => true
     #
     #   @mock.expect(:uses_one_string, true, ["foo"])
-    #   @mock.uses_one_string("bar") # => true
-    #   @mock.verify  # => raises MockExpectationError
+    #   @mock.uses_one_string("bar") # => raises MockExpectationError
 
     def expect(name, retval, args = [], &blk)
       name = name.to_sym
