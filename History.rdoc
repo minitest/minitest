@@ -1,3 +1,14 @@
+=== 5.8.0 / 2015-08-06
+
+* 2 minor enhancements:
+
+  * Add optional delegation mechanism to extend object with a mock. (zamith)
+  * Return early if there are no filtered methods. (jeremyevans)
+
+* 1 bug fix:
+
+  * Don't extend io with pride if io is not a tty. (toy)
+
 === 5.7.0 / 2015-05-27
 
 * 1 major enhancement:

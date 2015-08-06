@@ -7,7 +7,7 @@ require "minitest/parallel"
 # :include: README.rdoc
 
 module Minitest
-  VERSION = "5.7.0" # :nodoc:
+  VERSION = "5.7.1" # :nodoc:
   ENCS = "".respond_to? :encoding # :nodoc:
 
   @@installed_at_exit ||= false
