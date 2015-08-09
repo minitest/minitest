@@ -164,6 +164,18 @@ module Minitest
     end
 
     ##
+    # Fails unless <tt>exp != act</tt> printing both if they are the same.
+    #
+    # See also: Minitest::Assertions.assert_equal
+
+    def assert_not_equal exp, act, msg = nil
+      msg = message(msg) {
+        "Expected #{exp} and #{act} to be not equal"
+      }
+      assert exp != act, msg
+    end
+
+    ##
     # For comparing Floats.  Fails unless +exp+ and +act+ are within +delta+
     # of each other.
     #
