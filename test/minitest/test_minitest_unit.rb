@@ -759,6 +759,10 @@ class TestMinitestUnitTestCase < Minitest::Test
     @tc.assert_equal 1, 1
   end
 
+  def test_assert_not_equal
+    @tc.assert_not_equal 1, 2
+  end
+
   def test_assert_equal_different_collection_array_hex_invisible
     object1 = Object.new
     object2 = Object.new
