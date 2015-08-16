@@ -455,6 +455,7 @@ minitest-bacon              :: minitest-bacon extends minitest with bacon-like
 minitest-bang               :: Adds support for RSpec-style let! to immediately
                                invoke let statements before each test.
 minitest-bisect             :: Helps you isolate and debug random test failures.
+minitest-blink1_reporter    :: Display test results with a Blink1.
 minitest-capistrano         :: Assertions and expectations for testing
                                Capistrano recipes.
 minitest-capybara           :: Capybara matchers support for minitest unit and
