@@ -1293,6 +1293,18 @@ class TestMinitestUnitTestCase < Minitest::Test
     assert_equal expected.chomp, actual
   end
 
+  def test_assert_raises_exit
+    @tc.assert_raises SystemExit do
+      exit 1
+    end
+  end
+
+  def test_assert_raises_signals
+    @tc.assert_raises SignalException do
+      raise SignalException, :INT
+    end
+  end
+
   def test_assert_respond_to
     @tc.assert_respond_to "blah", :empty?
   end

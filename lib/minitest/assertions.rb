@@ -298,17 +298,18 @@ module Minitest
 
       begin
         yield
-      rescue Minitest::Skip => e
-        return e if exp.include? Minitest::Skip
-        raise e
+      rescue *exp => e
+        pass # count assertion
+        return e
+      rescue Minitest::Skip
+        # don't count assertion
+        raise
+      rescue SignalException, SystemExit
+        raise
       rescue Exception => e
-        expected = exp.any? { |ex| e.kind_of? ex }
-
-        assert expected, proc {
+        flunk proc {
           exception_details(e, "#{msg}#{mu_pp(exp)} exception expected, not")
         }
-
-        return e
       end
 
       exp = exp.first if exp.size == 1
