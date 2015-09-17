@@ -395,6 +395,39 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     assert_filtering 'exclude', "test_something", expected, :pass
   end
 
+  def setup_single_tu
+    require 'test/data/file_exclude.rb'
+    single_tu
+  end
+
+  def test_file_excluded_string
+    setup_single_tu
+
+    expected = clean <<-EOM
+
+
+      Finished in 0.00
+
+      0 runs, 0 assertions, 0 failures, 0 errors, 0 skips
+    EOM
+
+    assert_report expected, %w[--exclude-file file_exclude.rb --seed 42]
+  end
+
+  def test_file_excluded_pattern
+    setup_single_tu
+
+    expected = clean <<-EOM
+
+
+      Finished in 0.00
+
+      0 runs, 0 assertions, 0 failures, 0 errors, 0 skips
+    EOM
+
+    assert_report expected, %w[--exclude-file /file_ex/ --seed 42]
+  end
+
   def test_run_passing
     @tu =
     Class.new Minitest::Test do

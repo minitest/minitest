@@ -188,6 +188,10 @@ module Minitest
         options[:exclude] = a
       end
 
+      opts.on "-f", "--exclude-file PATTERN", "Exclude files matching /regexp/ or string from run." do |a|
+        options[:exclude_file] = a
+      end
+
       unless extensions.empty?
         opts.separator ""
         opts.separator "Known extensions: #{extensions.join(", ")}"
@@ -299,6 +303,14 @@ module Minitest
       filtered_methods.delete_if { |m|
         exclude === m || exclude === "#{self}##{m}"
       }
+
+      exclude_file = options[:exclude_file]
+      exclude_file = Regexp.new $1 if exclude_file =~ %r%/(.*)/%
+      
+      filtered_methods.delete_if do |m|
+        fname = File.basename self.new(m).method(m).source_location.first
+        exclude_file === fname
+      end
 
       return if filtered_methods.empty?
 
