@@ -292,7 +292,7 @@ module Minitest
       return if filtered_methods.empty?
 
       with_info_handler reporter do
-        filtered_methods.each do |method_name|
+        method_stream(filtered_methods) do |method_name|
           run_one_method self, method_name, reporter
         end
       end
@@ -306,6 +306,10 @@ module Minitest
 
     def self.run_one_method klass, method_name, reporter
       reporter.record Minitest.run_one_method(klass, method_name)
+    end
+
+    def self.method_stream(methods)
+      methods.each {|m| yield m}
     end
 
     def self.with_info_handler reporter, &block # :nodoc:
