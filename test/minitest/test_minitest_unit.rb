@@ -995,12 +995,12 @@ class TestMinitestUnitTestCase < Minitest::Test
   end
 
   def test_assert_match
-    @assertion_count = 2
+    @assertion_count = 1
     @tc.assert_match(/\w+/, "blah blah blah")
   end
 
   def test_assert_match_matcher_object
-    @assertion_count = 2
+    @assertion_count = 1
 
     pattern = Object.new
     def pattern.=~(_) true end
@@ -1009,7 +1009,7 @@ class TestMinitestUnitTestCase < Minitest::Test
   end
 
   def test_assert_match_matchee_to_str
-    @assertion_count = 2
+    @assertion_count = 1
 
     obj = Object.new
     def obj.to_str; "blah" end
@@ -1018,7 +1018,7 @@ class TestMinitestUnitTestCase < Minitest::Test
   end
 
   def test_assert_match_object_triggered
-    @assertion_count = 2
+    @assertion_count = 1
 
     pattern = Object.new
     def pattern.=~(_) false end
@@ -1030,7 +1030,7 @@ class TestMinitestUnitTestCase < Minitest::Test
   end
 
   def test_assert_match_triggered
-    @assertion_count = 2
+    @assertion_count = 1
     util_assert_triggered 'Expected /\d+/ to match "blah blah blah".' do
       @tc.assert_match(/\d+/, "blah blah blah")
     end
@@ -1073,7 +1073,7 @@ class TestMinitestUnitTestCase < Minitest::Test
   end
 
   def test_assert_output_both_regexps
-    @assertion_count = 4
+    @assertion_count = 2
 
     @tc.assert_output(/y.y/, /bl.h/) do
       print "yay"

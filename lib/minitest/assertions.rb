@@ -222,7 +222,7 @@ module Minitest
 
     def assert_match matcher, obj, msg = nil
       msg = message(msg) { "Expected #{mu_pp matcher} to match #{mu_pp obj}" }
-      assert_respond_to matcher, :"=~"
+      raise Minitest::Assertion, "Expected #{mu_pp(matcher)} (#{matcher.class}) to respond to =~" unless matcher.respond_to? :"=~"
       matcher = Regexp.new Regexp.escape matcher if String === matcher
       assert matcher =~ obj, msg
     end
