@@ -33,7 +33,6 @@ describe Minitest::Spec do
       when String then
         assert_equal expected, msg
       when Regexp then
-        @assertion_count += 1
         assert_match expected, msg
       else
         flunk "Unknown: #{expected.inspect}"
@@ -459,8 +458,6 @@ describe Minitest::Spec do
   end
 
   it "needs to verify regexp matches" do
-    @assertion_count += 3 # must_match is 2 assertions
-
     "blah".must_match(/\w+/).must_equal true
 
     assert_triggered "Expected /\\d+/ to match \"blah\"." do
