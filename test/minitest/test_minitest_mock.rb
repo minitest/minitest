@@ -227,17 +227,13 @@ class TestMinitestMock < Minitest::Test
   end
 
   def test_same_method_expects_blow_up_when_not_all_called
-    mock = Minitest::Mock.new
-    mock.expect :foo, nil, [:bar]
-    mock.expect :foo, nil, [:baz]
+    @mock = Minitest::Mock.new
+    @mock.expect :foo, nil, [:bar]
+    @mock.expect :foo, nil, [:baz]
 
-    mock.foo :bar
+    @mock.foo :bar
 
-    e = assert_raises(MockExpectationError) { mock.verify }
-
-    exp = "expected foo(:baz) => nil, got [foo(:bar) => nil]"
-
-    assert_equal exp, e.message
+    util_verify_bad "expected foo(:baz) => nil, got [foo(:bar) => nil]"
   end
 
   def test_verify_passes_when_mock_block_returns_true
@@ -341,6 +337,30 @@ class TestMinitestMock < Minitest::Test
 
     mock.send(:foo, 1, 2, 3)
     mock.verify
+  end
+
+  def test_mock_was_called_x_times
+    mock = Minitest::Mock.new
+    mock.expect(:foo, true, [], times: 2)
+
+    mock.foo
+    mock.foo
+    mock.verify
+  end
+
+  def test_mock_was_never_called
+    mock = Minitest::Mock.new
+    mock.expect(:foo, true, [], times: 0)
+
+    mock.verify
+  end
+
+  def test_mock_blow_up_when_called_less_times
+    @mock = Minitest::Mock.new
+    @mock.expect(:foo, true, [], times: 2)
+
+    @mock.foo
+    util_verify_bad "expected foo() => true to be called 2 times but was called 1 times"
   end
 
 end

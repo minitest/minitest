@@ -68,15 +68,15 @@ module Minitest # :nodoc:
     #   @mock.uses_one_string("bar") # => true
     #   @mock.verify  # => raises MockExpectationError
 
-    def expect(name, retval, args = [], &blk)
+    def expect(name, retval, args = [], times: nil, &blk)
       name = name.to_sym
 
       if block_given?
         raise ArgumentError, "args ignored when block given" unless args.empty?
-        @expected_calls[name] << { :retval => retval, :block => blk }
+        @expected_calls[name] << { :retval => retval, :times => times, :block => blk }
       else
         raise ArgumentError, "args must be an array" unless Array === args
-        @expected_calls[name] << { :retval => retval, :args => args }
+        @expected_calls[name] << { :retval => retval, :times => times, :args => args }
       end
       self
     end
@@ -98,6 +98,14 @@ module Minitest # :nodoc:
     def verify
       @expected_calls.each do |name, calls|
         calls.each do |expected|
+          if expected[:times]
+            number_of_times_called = (@actual_calls.key?(name) && @actual_calls[name].count{ |call| call == expected }) || 0
+            raise MockExpectationError, "expected #{__call name, expected} to be called #{expected[:times]} times but was called #{number_of_times_called} times" unless
+              number_of_times_called == expected[:times]
+
+            next
+          end
+
           raise MockExpectationError, "expected #{__call name, expected}, got [#{__call name, @actual_calls[name]}]" if
             @actual_calls.key?(name) and
             not @actual_calls[name].include?(expected)
@@ -121,15 +129,16 @@ module Minitest # :nodoc:
       end
 
       index = @actual_calls[sym].length
-      expected_call = @expected_calls[sym][index]
+      number_of_expects = @expected_calls[sym].map { |call| call[:times] || 1 }.inject(&:+)
+      expected_call = @expected_calls[sym][index] || @expected_calls[sym].last
 
-      unless expected_call then
+      unless expected_call && index < number_of_expects then
         raise MockExpectationError, "No more expects available for %p: %p" %
           [sym, args]
       end
 
-      expected_args, retval, val_block =
-        expected_call.values_at(:args, :retval, :block)
+      expected_args, retval, val_block, expected_times =
+        expected_call.values_at(:args, :retval, :block, :times)
 
       if val_block then
         # keep "verify" happy
@@ -159,6 +168,7 @@ module Minitest # :nodoc:
       @actual_calls[sym] << {
         :retval => retval,
         :args => zipped_args.map! { |mod, a| mod === a ? mod : a },
+        :times => expected_times,
       }
 
       retval
