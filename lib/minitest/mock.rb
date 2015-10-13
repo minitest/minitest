@@ -68,15 +68,15 @@ module Minitest # :nodoc:
     #   @mock.uses_one_string("bar") # => true
     #   @mock.verify  # => raises MockExpectationError
 
-    def expect(name, retval, args = [], times: nil, &blk)
+    def expect(name, retval, args = [], opts = {}, &blk)
       name = name.to_sym
 
       if block_given?
         raise ArgumentError, "args ignored when block given" unless args.empty?
-        @expected_calls[name] << { :retval => retval, :times => times, :block => blk }
+        @expected_calls[name] << { :retval => retval, :times => opts[:times], :block => blk }
       else
         raise ArgumentError, "args must be an array" unless Array === args
-        @expected_calls[name] << { :retval => retval, :times => times, :args => args }
+        @expected_calls[name] << { :retval => retval, :times => opts[:times], :args => args }
       end
       self
     end
