@@ -1,4 +1,5 @@
 class MockExpectationError < StandardError; end # :nodoc:
+class MultipleStubError < StandardError; end # :nodoc:
 
 module Minitest # :nodoc:
 
@@ -198,6 +199,10 @@ class Object
   def stub name, val_or_callable, *block_args
     new_name = "__minitest_stub__#{name}"
 
+    if respond_to? new_name
+      raise MultipleStubError, "method :%s was already stubbed" % [name.to_s]
+    end
+
     metaclass = class << self; self; end
 
     if respond_to? name and not methods.map(&:to_s).include? name.to_s then
@@ -222,8 +227,10 @@ class Object
 
     yield self
   ensure
-    metaclass.send :undef_method, name
-    metaclass.send :alias_method, name, new_name
-    metaclass.send :undef_method, new_name
+    unless metaclass.nil?
+      metaclass.send :undef_method, name
+      metaclass.send :alias_method, name, new_name
+      metaclass.send :undef_method, new_name
+    end
   end
 end
