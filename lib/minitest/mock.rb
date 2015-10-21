@@ -1,5 +1,5 @@
 class MockExpectationError < StandardError; end # :nodoc:
-class MultipleStubError < StandardError; end # :nodoc:
+class StubError < StandardError; end # :nodoc:
 
 module Minitest # :nodoc:
 
@@ -200,7 +200,7 @@ class Object
     new_name = "__minitest_stub__#{name}"
 
     if respond_to? new_name
-      raise MultipleStubError, "method :%s was already stubbed" % [name.to_s]
+      raise StubError, "method :%s was already stubbed" % [name.to_s]
     end
 
     metaclass = class << self; self; end

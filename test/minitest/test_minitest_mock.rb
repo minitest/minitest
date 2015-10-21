@@ -497,7 +497,7 @@ class TestMinitestStub < Minitest::Test
 
   def test_blow_up_on_multiple_stub
     h = {}
-    e = assert_raises MultipleStubError do
+    e = assert_raises StubError do
       h.stub(:empty?, false) do
         h.stub(:empty?, true) do
           h.empty?
