@@ -200,7 +200,7 @@ class Object
     new_name = "__minitest_stub__#{name}"
 
     if respond_to? new_name
-      raise StubError, "method :#{name.to_s} was already stubbed"
+      raise StubError, "method :#{name} was already stubbed"
     end
 
     metaclass = class << self; self; end
