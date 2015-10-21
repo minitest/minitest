@@ -199,7 +199,8 @@ class Object
   def stub name, val_or_callable, *block_args
     new_name = "__minitest_stub__#{name}"
 
-    if respond_to? new_name
+    restubbed = respond_to? new_name
+    if restubbed
       raise StubError, "method :#{name} was already stubbed"
     end
 
@@ -227,7 +228,7 @@ class Object
 
     yield self
   ensure
-    unless metaclass.nil?
+    unless restubbed
       metaclass.send :undef_method, name
       metaclass.send :alias_method, name, new_name
       metaclass.send :undef_method, new_name
