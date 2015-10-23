@@ -1,14 +1,14 @@
-= minitest/{unit,spec,mock,benchmark}
+= Minitest/{unit,spec,mock,benchmark}
 
-home :: https://github.com/seattlerb/minitest
-bugs :: https://github.com/seattlerb/minitest/issues
-rdoc :: http://docs.seattlerb.org/minitest
-vim  :: https://github.com/sunaku/vim-ruby-minitest
-emacs:: https://github.com/arthurnn/minitest-emacs
+home :: https://github.com/seattlerb/Minitest
+bugs :: https://github.com/seattlerb/Minitest/issues
+rdoc :: http://docs.seattlerb.org/Minitest
+vim  :: https://github.com/sunaku/vim-ruby-Minitest
+emacs:: https://github.com/arthurnn/Minitest-emacs
 
 == DESCRIPTION:
 
-minitest provides a complete suite of testing facilities supporting
+Minitest provides a complete suite of testing facilities supporting
 TDD, BDD, mocking, and benchmarking.
 
     "I had a class with Jim Weirich on testing last week and we were
@@ -16,32 +16,32 @@ TDD, BDD, mocking, and benchmarking.
      paired up and we cracked open the code for a few test
      frameworks...
 
-     I MUST say that minitest is *very* readable / understandable
+     I MUST say that Minitest is *very* readable / understandable
      compared to the 'other two' options we looked at. Nicely done and
      thank you for helping us keep our mental sanity."
 
     -- Wayne E. Seguin
 
-minitest/unit is a small and incredibly fast unit testing framework.
+Minitest/unit is a small and incredibly fast unit testing framework.
 It provides a rich set of assertions to make your tests clean and
 readable.
 
-minitest/spec is a functionally complete spec engine. It hooks onto
-minitest/unit and seamlessly bridges test assertions over to spec
+Minitest/spec is a functionally complete spec engine. It hooks onto
+Minitest/unit and seamlessly bridges test assertions over to spec
 expectations.
 
-minitest/benchmark is an awesome way to assert the performance of your
+Minitest/benchmark is an awesome way to assert the performance of your
 algorithms in a repeatable manner. Now you can assert that your newb
 co-worker doesn't replace your linear algorithm with an exponential
 one!
 
-minitest/mock by Steven Baker, is a beautifully tiny mock (and stub)
+Minitest/mock by Steven Baker, is a beautifully tiny mock (and stub)
 object framework.
 
-minitest/pride shows pride in testing and adds coloring to your test
+Minitest/pride shows pride in testing and adds coloring to your test
 output. I guess it is an example of how to write IO pipes too. :P
 
-minitest/unit is meant to have a clean implementation for language
+Minitest/unit is meant to have a clean implementation for language
 implementors that need a minimal set of methods to bootstrap a working
 test suite. For example, there is no magic involved for test-case
 discovery.
@@ -53,28 +53,28 @@ discovery.
 
 Comparing to rspec:
 
-    rspec is a testing DSL. minitest is ruby.
+    rspec is a testing DSL. Minitest is ruby.
 
     -- Adam Hawkins, "Bow Before MiniTest"
 
-minitest doesn't reinvent anything that ruby already provides, like:
+Minitest doesn't reinvent anything that ruby already provides, like:
 classes, modules, inheritance, methods. This means you only have to
-learn ruby to use minitest and all of your regular OO practices like
+learn ruby to use Minitest and all of your regular OO practices like
 extract-method refactorings still apply.
 
 == FEATURES/PROBLEMS:
 
-* minitest/autorun - the easy and explicit way to run all your tests.
-* minitest/unit - a very fast, simple, and clean test system.
-* minitest/spec - a very fast, simple, and clean spec system.
-* minitest/mock - a simple and clean mock/stub system.
-* minitest/benchmark - an awesome way to assert your algorithm's performance.
-* minitest/pride - show your pride in testing!
+* Minitest/autorun - the easy and explicit way to run all your tests.
+* Minitest/unit - a very fast, simple, and clean test system.
+* Minitest/spec - a very fast, simple, and clean spec system.
+* Minitest/mock - a simple and clean mock/stub system.
+* Minitest/benchmark - an awesome way to assert your algorithm's performance.
+* Minitest/pride - show your pride in testing!
 * Incredibly small and fast runner, but no bells and whistles.
 
 == RATIONALE:
 
-See design_rationale.rb to see how specs and tests work in minitest.
+See design_rationale.rb to see how specs and tests work in Minitest.
 
 == SYNOPSIS:
 
@@ -94,7 +94,7 @@ Given that you'd like to test the following class:
 
 Define your tests as methods beginning with `test_`.
 
-  require "minitest/autorun"
+  require "Minitest/autorun"
 
   class TestMeme < Minitest::Test
     def setup
@@ -116,7 +116,7 @@ Define your tests as methods beginning with `test_`.
 
 === Specs
 
-  require "minitest/autorun"
+  require "Minitest/autorun"
 
   describe Meme do
     before do
@@ -138,15 +138,15 @@ Define your tests as methods beginning with `test_`.
 
 For matchers support check out:
 
-https://github.com/wojtekmach/minitest-matchers
-https://github.com/rmm5t/minitest-matchers_vaccine
+https://github.com/wojtekmach/Minitest-matchers
+https://github.com/rmm5t/Minitest-matchers_vaccine
 
 === Benchmarks
 
 Add benchmarks to your tests.
 
   # optionally run benchmarks, good for CI-only work!
-  require "minitest/benchmark" if ENV["BENCH"]
+  require "Minitest/benchmark" if ENV["BENCH"]
 
   class TestMeme < Minitest::Benchmark
     # Override self.bench_range or default range is [1, 10, 100, 1_000, 10_000]
@@ -159,7 +159,7 @@ Add benchmarks to your tests.
 
 Or add them to your specs. If you make benchmarks optional, you'll
 need to wrap your benchmarks in a conditional since the methods won't
-be defined. In minitest 5, the describe name needs to match
+be defined. In Minitest 5, the describe name needs to match
 /Bench(mark)?$/.
 
   describe "Meme Benchmark" do
@@ -203,7 +203,7 @@ verification to ensure they got all the calls they were expecting."
     end
   end
 
-  require "minitest/autorun"
+  require "Minitest/autorun"
 
   describe MemeAsker, :ask do
     describe "when passed an unpunctuated question" do
@@ -253,7 +253,7 @@ Ideally, you'll use a rake task to run your tests, either piecemeal or
 all at once. Both rake and rails ship with rake tasks for running your
 tests. BUT! You don't have to:
 
-    % ruby -Ilib:test test/minitest/test_minitest_unit.rb
+    % ruby -Ilib:test test/Minitest/test_Minitest_unit.rb
     Run options: --seed 37685
 
     # Running:
@@ -264,11 +264,11 @@ tests. BUT! You don't have to:
 
     155 runs, 317 assertions, 0 failures, 0 errors, 0 skips
 
-There are runtime options available, both from minitest itself, and also
+There are runtime options available, both from Minitest itself, and also
 provided via plugins. To see them, simply run with `--help`:
 
-    % ruby -Ilib:test test/minitest/test_minitest_unit.rb --help
-    minitest options:
+    % ruby -Ilib:test test/Minitest/test_Minitest_unit.rb --help
+    Minitest options:
         -h, --help                       Display this help.
         -s, --seed SEED                  Sets random seed
         -v, --verbose                    Verbose. Show progress processing files.
@@ -280,7 +280,7 @@ provided via plugins. To see them, simply run with `--help`:
 
 == Writing Extensions
 
-To define a plugin, add a file named minitest/XXX_plugin.rb to your
+To define a plugin, add a file named Minitest/XXX_plugin.rb to your
 project/gem. That file must be discoverable via ruby's LOAD_PATH (via
 rubygems or otherwise). Minitest will find and require that file using
 Gem.find_files. It will then try to call plugin_XXX_init during
@@ -289,7 +289,7 @@ passing the OptionParser instance and the current options hash. This
 lets you register your own command-line options. Here's a totally
 bogus example:
 
-    # minitest/bogus_plugin.rb:
+    # Minitest/bogus_plugin.rb:
 
     module Minitest
       def self.plugin_bogus_options(opts, options)
@@ -322,7 +322,7 @@ passed? :: Called to see if you detected any problems.
 
 Using our example above, here is how we might implement MyCI:
 
-    # minitest/bogus_plugin.rb
+    # Minitest/bogus_plugin.rb
 
     module Minitest
       class MyCI < AbstractReporter
@@ -420,10 +420,10 @@ for you, so make sure you don't do it twice.
 
 === Why am I seeing `uninitialized constant MiniTest::Test (NameError)`?
 
-Are you running the test with Bundler (e.g. via `bundle exec`)? If so, 
-in order to require minitest, you must first add the `gem 'minitest'`
-to your Gemfile and run `bundle`. Once it's installed, you should be 
-able to require minitest and run your tests.
+Are you running the test with Bundler (e.g. via `bundle exec`)? If so,
+in order to require Minitest, you must first add the `gem 'Minitest'`
+to your Gemfile and run `bundle`. Once it's installed, you should be
+able to require Minitest and run your tests.
 
 == Prominent Projects using Minitest:
 
@@ -438,7 +438,7 @@ able to require minitest and run your tests.
 
 == Known Extensions:
 
-capybara_minitest_spec      :: Bridge between Capybara RSpec matchers and
+capybara_Minitest_spec      :: Bridge between Capybara RSpec matchers and
                                Minitest::Spec expectations (e.g.
                                page.must_have_content("Title")).
 color_pound_spec_reporter   :: Test names print Ruby Object types in color with
@@ -446,140 +446,140 @@ color_pound_spec_reporter   :: Test names print Ruby Object types in color with
 minispec-metadata           :: Metadata for describe/it blocks & CLI tag filter.
                                E.g. `it "requires JS driver", js: true do` &
                                `ruby test.rb --tag js` runs tests tagged :js.
-minitest-around             :: Around block for minitest. An alternative to
+Minitest-around             :: Around block for Minitest. An alternative to
                                setup/teardown dance.
-minitest-autotest           :: autotest is a continous testing facility meant to
+Minitest-autotest           :: autotest is a continous testing facility meant to
                                be used during development.
-minitest-bacon              :: minitest-bacon extends minitest with bacon-like
+Minitest-bacon              :: Minitest-bacon extends Minitest with bacon-like
                                functionality.
-minitest-bang               :: Adds support for RSpec-style let! to immediately
+Minitest-bang               :: Adds support for RSpec-style let! to immediately
                                invoke let statements before each test.
-minitest-bisect             :: Helps you isolate and debug random test failures.
-minitest-blink1_reporter    :: Display test results with a Blink1.
-minitest-capistrano         :: Assertions and expectations for testing
+Minitest-bisect             :: Helps you isolate and debug random test failures.
+Minitest-blink1_reporter    :: Display test results with a Blink1.
+Minitest-capistrano         :: Assertions and expectations for testing
                                Capistrano recipes.
-minitest-capybara           :: Capybara matchers support for minitest unit and
+Minitest-capybara           :: Capybara matchers support for Minitest unit and
                                spec.
-minitest-chef-handler       :: Run Minitest suites as Chef report handlers
-minitest-ci                 :: CI reporter plugin for Minitest.
-minitest-context            :: Defines contexts for code reuse in Minitest
+Minitest-chef-handler       :: Run Minitest suites as Chef report handlers
+Minitest-ci                 :: CI reporter plugin for Minitest.
+Minitest-context            :: Defines contexts for code reuse in Minitest
                                specs that share common expectations.
-minitest-debugger           :: Wraps assert so failed assertions drop into
+Minitest-debugger           :: Wraps assert so failed assertions drop into
                                the ruby debugger.
-minitest-display            :: Patches Minitest to allow for an easily
+Minitest-display            :: Patches Minitest to allow for an easily
                                configurable output.
-minitest-documentation      :: Minimal documentation format inspired by rspec's.
-minitest-doc_reporter       :: Detailed output inspired by rspec's documentation
+Minitest-documentation      :: Minimal documentation format inspired by rspec's.
+Minitest-doc_reporter       :: Detailed output inspired by rspec's documentation
                                format.
-minitest-emoji              :: Print out emoji for your test passes, fails, and
+Minitest-emoji              :: Print out emoji for your test passes, fails, and
                                skips.
-minitest-english            :: Semantically symmetric aliases for assertions and
+Minitest-english            :: Semantically symmetric aliases for assertions and
                                expectations.
-minitest-excludes           :: Clean API for excluding certain tests you
+Minitest-excludes           :: Clean API for excluding certain tests you
                                don't want to run under certain conditions.
-minitest-fail-fast          :: Reimplements RSpec's "fail fast" feature
-minitest-filecontent        :: Support unit tests with expectation results in files.
+Minitest-fail-fast          :: Reimplements RSpec's "fail fast" feature
+Minitest-filecontent        :: Support unit tests with expectation results in files.
                                Differing results will be stored again in files.
-minitest-filesystem         :: Adds assertion and expectation to help testing
+Minitest-filesystem         :: Adds assertion and expectation to help testing
                                filesystem contents.
-minitest-firemock           :: Makes your Minitest mocks more resilient.
-minitest-focus              :: Focus on one test at a time.
-minitest-gcstats            :: A minitest plugin that adds a report of the top
+Minitest-firemock           :: Makes your Minitest mocks more resilient.
+Minitest-focus              :: Focus on one test at a time.
+Minitest-gcstats            :: A Minitest plugin that adds a report of the top
                                tests by number of objects allocated.
-minitest-great_expectations :: Generally useful additions to minitest's
+Minitest-great_expectations :: Generally useful additions to Minitest's
                                assertions and expectations.
-minitest-growl              :: Test notifier for minitest via growl.
-minitest-happy              :: GLOBALLY ACTIVATE MINITEST PRIDE! RAWR!
-minitest-hooks              :: Around and before_all/after_all/around_all hooks
-minitest-implicit-subject   :: Implicit declaration of the test subject.
-minitest-instrument         :: Instrument ActiveSupport::Notifications when
+Minitest-growl              :: Test notifier for Minitest via growl.
+Minitest-happy              :: GLOBALLY ACTIVATE MINITEST PRIDE! RAWR!
+Minitest-hooks              :: Around and before_all/after_all/around_all hooks
+Minitest-implicit-subject   :: Implicit declaration of the test subject.
+Minitest-instrument         :: Instrument ActiveSupport::Notifications when
                                test method is executed.
-minitest-instrument-db      :: Store information about speed of test execution
-                               provided by minitest-instrument in database.
-minitest-junit              :: JUnit-style XML reporter for minitest.
-minitest-libnotify          :: Test notifier for minitest via libnotify.
-minitest-line               :: Run test at line number.
-minitest-logger             :: Define assert_log and enable minitest to test log messages.
+Minitest-instrument-db      :: Store information about speed of test execution
+                               provided by Minitest-instrument in database.
+Minitest-junit              :: JUnit-style XML reporter for Minitest.
+Minitest-libnotify          :: Test notifier for Minitest via libnotify.
+Minitest-line               :: Run test at line number.
+Minitest-logger             :: Define assert_log and enable Minitest to test log messages.
                                Supports Logger and Log4r::Logger.
-minitest-macruby            :: Provides extensions to minitest for macruby UI
+Minitest-macruby            :: Provides extensions to Minitest for macruby UI
                                testing.
-minitest-matchers           :: Adds support for RSpec-style matchers to
-                               minitest.
-minitest-matchers_vaccine   :: Adds assertions that adhere to the matcher spec,
+Minitest-matchers           :: Adds support for RSpec-style matchers to
+                               Minitest.
+Minitest-matchers_vaccine   :: Adds assertions that adhere to the matcher spec,
                                but without any expectation infections.
-minitest-metadata           :: Annotate tests with metadata (key-value).
-minitest-mongoid            :: Mongoid assertion matchers for Minitest.
-minitest-must_not           :: Provides must_not as an alias for wont in
+Minitest-metadata           :: Annotate tests with metadata (key-value).
+Minitest-mongoid            :: Mongoid assertion matchers for Minitest.
+Minitest-must_not           :: Provides must_not as an alias for wont in
                                Minitest.
-minitest-osx                :: Reporter for the Mac OS X notification center.
-minitest-parallel_fork      :: Fork-based parallelization
-minitest-parallel-db        :: Run tests in parallel with a single database.
-minitest-power_assert       :: PowerAssert for Minitest.
-minitest-predicates         :: Adds support for .predicate? methods.
-minitest-profile            :: List the 10 slowest tests in your suite.
-minitest-rails              :: Minitest integration for Rails 3.x.
-minitest-rails-capybara     :: Capybara integration for Minitest::Rails.
-minitest-reporters          :: Create customizable Minitest output formats.
-minitest-rg                 :: Colored red/green output for Minitest.
-minitest-rspec_mocks        :: Use RSpec Mocks with Minitest.
-minitest-server             :: minitest-server provides a client/server setup 
-                               with your minitest process, allowing your test 
+Minitest-osx                :: Reporter for the Mac OS X notification center.
+Minitest-parallel_fork      :: Fork-based parallelization
+Minitest-parallel-db        :: Run tests in parallel with a single database.
+Minitest-power_assert       :: PowerAssert for Minitest.
+Minitest-predicates         :: Adds support for .predicate? methods.
+Minitest-profile            :: List the 10 slowest tests in your suite.
+Minitest-rails              :: Minitest integration for Rails 3.x.
+Minitest-rails-capybara     :: Capybara integration for Minitest::Rails.
+Minitest-reporters          :: Create customizable Minitest output formats.
+Minitest-rg                 :: Colored red/green output for Minitest.
+Minitest-rspec_mocks        :: Use RSpec Mocks with Minitest.
+Minitest-server             :: Minitest-server provides a client/server setup
+                               with your Minitest process, allowing your test
                                run to send its results directly to a handler.
-minitest-shared_description :: Support for shared specs and shared spec
+Minitest-shared_description :: Support for shared specs and shared spec
                                subclasses
-minitest-should_syntax      :: RSpec-style +x.should == y+ assertions for
+Minitest-should_syntax      :: RSpec-style +x.should == y+ assertions for
                                Minitest.
-minitest-shouldify          :: Adding all manner of shoulds to Minitest (bad
+Minitest-shouldify          :: Adding all manner of shoulds to Minitest (bad
                                idea)
-minitest-snail              :: Print a list of tests that take too long
-minitest-spec-context       :: Provides rspec-ish context method to
+Minitest-snail              :: Print a list of tests that take too long
+Minitest-spec-context       :: Provides rspec-ish context method to
                                Minitest::Spec.
-minitest-spec-expect        :: Expect syntax for Minitest::Spec (e.g.
+Minitest-spec-expect        :: Expect syntax for Minitest::Spec (e.g.
                                expect(sequences).to_include :celery_man).
-minitest-spec-magic         :: Minitest::Spec extensions for Rails and beyond.
-minitest-spec-rails         :: Drop in Minitest::Spec superclass for
+Minitest-spec-magic         :: Minitest::Spec extensions for Rails and beyond.
+Minitest-spec-rails         :: Drop in Minitest::Spec superclass for
                                ActiveSupport::TestCase.
-minitest-sprint             :: Runs (Get it? It's fast!) your tests and makes
+Minitest-sprint             :: Runs (Get it? It's fast!) your tests and makes
                                it easier to rerun individual failures.
-minitest-stately            :: Find leaking state between tests
-minitest-stub_any_instance  :: Stub any instance of a method on the given class
+Minitest-stately            :: Find leaking state between tests
+Minitest-stub_any_instance  :: Stub any instance of a method on the given class
                                for the duration of a block.
-minitest-stub-const         :: Stub constants for the duration of a block.
-minitest-tags               :: Add tags for minitest.
-minitest-unordered          :: Adds a new assertion to minitest for checking the
+Minitest-stub-const         :: Stub constants for the duration of a block.
+Minitest-tags               :: Add tags for Minitest.
+Minitest-unordered          :: Adds a new assertion to Minitest for checking the
                                contents of a collection, ignoring element order.
-minitest-vcr                :: Automatic cassette managment with Minitest::Spec
+Minitest-vcr                :: Automatic cassette managment with Minitest::Spec
                                and VCR.
-minitest_owrapper           :: Get tests results as a TestResult object.
-minitest_should             :: Shoulda style syntax for minitest test::unit.
-minitest_tu_shim            :: Bridges between test/unit and minitest.
-mongoid-minitest            :: Minitest matchers for Mongoid.
-pry-rescue                  :: A pry plugin w/ minitest support. See
-                               pry-rescue/minitest.rb.
-rspec2minitest              :: Easily translate any RSpec matchers to Minitest
+Minitest_owrapper           :: Get tests results as a TestResult object.
+Minitest_should             :: Shoulda style syntax for Minitest test::unit.
+Minitest_tu_shim            :: Bridges between test/unit and Minitest.
+mongoid-Minitest            :: Minitest matchers for Mongoid.
+pry-rescue                  :: A pry plugin w/ Minitest support. See
+                               pry-rescue/Minitest.rb.
+rspec2Minitest              :: Easily translate any RSpec matchers to Minitest
                                assertions and expectations.
 
 == Unknown Extensions:
 
-Authors... Please send me a pull request with a description of your minitest extension.
+Authors... Please send me a pull request with a description of your Minitest extension.
 
-* assay-minitest
-* detroit-minitest
-* em-minitest-spec
-* flexmock-minitest
-* guard-minitest
-* guard-minitest-decisiv
-* minitest-activemodel
-* minitest-ar-assertions
-* minitest-capybara-unit
-* minitest-colorer
-* minitest-deluxe
-* minitest-extra-assertions
-* minitest-rails-shoulda
-* minitest-spec
-* minitest-spec-should
-* minitest-sugar
-* spork-minitest
+* assay-Minitest
+* detroit-Minitest
+* em-Minitest-spec
+* flexmock-Minitest
+* guard-Minitest
+* guard-Minitest-decisiv
+* Minitest-activemodel
+* Minitest-ar-assertions
+* Minitest-capybara-unit
+* Minitest-colorer
+* Minitest-deluxe
+* Minitest-extra-assertions
+* Minitest-rails-shoulda
+* Minitest-spec
+* Minitest-spec-should
+* Minitest-sugar
+* spork-Minitest
 
 == REQUIREMENTS:
 
@@ -587,14 +587,14 @@ Authors... Please send me a pull request with a description of your minitest ext
 
 == INSTALL:
 
-  sudo gem install minitest
+  sudo gem install Minitest
 
 On 1.9, you already have it. To get newer candy you can still install
-the gem, and then requiring "minitest/autorun" should automatically
+the gem, and then requiring "Minitest/autorun" should automatically
 pull it in. If not, you'll need to do it yourself:
 
-  gem "minitest"     # ensures you"re using the gem, and not the built-in MT
-  require "minitest/autorun"
+  gem "Minitest"     # ensures you"re using the gem, and not the built-in MT
+  require "Minitest/autorun"
 
   # ... usual testing stuffs ...
 
@@ -603,7 +603,7 @@ packages their own gems. They install a gem specification file, but
 don't install the gem contents in the gem path. This messes up
 Gem.find_files and many other things (gem which, gem contents, etc).
 
-Just install minitest as a gem for real and you'll be happier.
+Just install Minitest as a gem for real and you'll be happier.
 
 == LICENSE:
 
