@@ -96,7 +96,7 @@ Define your tests as methods beginning with `test_`.
 
   require "minitest/autorun"
 
-  class TestMeme < Minitest::Test
+  class TestMeme < minitest::Test
     def setup
       @meme = Meme.new
     end
@@ -148,7 +148,7 @@ Add benchmarks to your tests.
   # optionally run benchmarks, good for CI-only work!
   require "minitest/benchmark" if ENV["BENCH"]
 
-  class TestMeme < Minitest::Benchmark
+  class TestMeme < minitest::Benchmark
     # Override self.bench_range or default range is [1, 10, 100, 1_000, 10_000]
     def bench_my_algorithm
       assert_performance_linear 0.9999 do |n| # n is a range value
@@ -208,7 +208,7 @@ verification to ensure they got all the calls they were expecting."
   describe MemeAsker, :ask do
     describe "when passed an unpunctuated question" do
       it "should invoke the appropriate predicate method on the meme" do
-        @meme = Minitest::Mock.new
+        @meme = minitest::Mock.new
         @meme_asker = MemeAsker.new @meme
         @meme.expect :will_it_blend?, :return_value
 
@@ -226,7 +226,7 @@ http://www.martinfowler.com/bliki/TestDouble.html:
 
 "Stubs provide canned answers to calls made during the test".
 
-Minitest's stub method overrides a single method for the duration of
+minitest's stub method overrides a single method for the duration of
 the block.
 
   def test_stale_eh
@@ -282,7 +282,7 @@ provided via plugins. To see them, simply run with `--help`:
 
 To define a plugin, add a file named minitest/XXX_plugin.rb to your
 project/gem. That file must be discoverable via ruby's LOAD_PATH (via
-rubygems or otherwise). Minitest will find and require that file using
+rubygems or otherwise). minitest will find and require that file using
 Gem.find_files. It will then try to call plugin_XXX_init during
 startup. The option processor will also try to call plugin_XXX_options
 passing the OptionParser instance and the current options hash. This
@@ -291,7 +291,7 @@ bogus example:
 
     # minitest/bogus_plugin.rb:
 
-    module Minitest
+    module minitest
       def self.plugin_bogus_options(opts, options)
         opts.on "--myci", "Report results to my CI" do
           options[:myci] = true
@@ -307,7 +307,7 @@ bogus example:
 
 === Adding custom reporters
 
-Minitest uses composite reporter to output test results using multiple
+minitest uses composite reporter to output test results using multiple
 reporter instances. You can add new reporters to the composite during
 the init_plugins phase. As we saw in +plugin_bonus_init+ above, you
 simply add your reporter instance to the composite via +<<+.
@@ -324,7 +324,7 @@ Using our example above, here is how we might implement MyCI:
 
     # minitest/bogus_plugin.rb
 
-    module Minitest
+    module minitest
       class MyCI < AbstractReporter
         attr_accessor :results, :addr, :port
 
@@ -380,18 +380,18 @@ Expectations are put on Object (one level down) so the Worker
 fails.
 
 You can bypass `SimpleDelegate#method_missing` by extending the worker
-with `Minitest::Expectations`. You can either do that in your setup at
+with `minitest::Expectations`. You can either do that in your setup at
 the instance level, like:
 
     before do
       @worker = Worker.new(Object.new)
-      @worker.extend Minitest::Expectations
+      @worker.extend minitest::Expectations
     end
 
 or you can extend the Worker class (within the test file!), like:
 
     class Worker
-      include ::Minitest::Expectations
+      include ::minitest::Expectations
     end
 
 === How to share code across test classes?
@@ -420,12 +420,12 @@ for you, so make sure you don't do it twice.
 
 === Why am I seeing `uninitialized constant MiniTest::Test (NameError)`?
 
-Are you running the test with Bundler (e.g. via `bundle exec`)? If so, 
+Are you running the test with Bundler (e.g. via `bundle exec`)? If so,
 in order to require minitest, you must first add the `gem 'minitest'`
-to your Gemfile and run `bundle`. Once it's installed, you should be 
+to your Gemfile and run `bundle`. Once it's installed, you should be
 able to require minitest and run your tests.
 
-== Prominent Projects using Minitest:
+== Prominent Projects using minitest:
 
 * arel
 * journey
@@ -439,10 +439,10 @@ able to require minitest and run your tests.
 == Known Extensions:
 
 capybara_minitest_spec      :: Bridge between Capybara RSpec matchers and
-                               Minitest::Spec expectations (e.g.
+                               minitest::Spec expectations (e.g.
                                page.must_have_content("Title")).
 color_pound_spec_reporter   :: Test names print Ruby Object types in color with
-                               your Minitest Spec style tests.
+                               your minitest Spec style tests.
 minispec-metadata           :: Metadata for describe/it blocks & CLI tag filter.
                                E.g. `it "requires JS driver", js: true do` &
                                `ruby test.rb --tag js` runs tests tagged :js.
@@ -460,13 +460,13 @@ minitest-capistrano         :: Assertions and expectations for testing
                                Capistrano recipes.
 minitest-capybara           :: Capybara matchers support for minitest unit and
                                spec.
-minitest-chef-handler       :: Run Minitest suites as Chef report handlers
-minitest-ci                 :: CI reporter plugin for Minitest.
-minitest-context            :: Defines contexts for code reuse in Minitest
+minitest-chef-handler       :: Run minitest suites as Chef report handlers
+minitest-ci                 :: CI reporter plugin for minitest.
+minitest-context            :: Defines contexts for code reuse in minitest
                                specs that share common expectations.
 minitest-debugger           :: Wraps assert so failed assertions drop into
                                the ruby debugger.
-minitest-display            :: Patches Minitest to allow for an easily
+minitest-display            :: Patches minitest to allow for an easily
                                configurable output.
 minitest-documentation      :: Minimal documentation format inspired by rspec's.
 minitest-doc_reporter       :: Detailed output inspired by rspec's documentation
@@ -482,7 +482,7 @@ minitest-filecontent        :: Support unit tests with expectation results in fi
                                Differing results will be stored again in files.
 minitest-filesystem         :: Adds assertion and expectation to help testing
                                filesystem contents.
-minitest-firemock           :: Makes your Minitest mocks more resilient.
+minitest-firemock           :: Makes your minitest mocks more resilient.
 minitest-focus              :: Focus on one test at a time.
 minitest-gcstats            :: A minitest plugin that adds a report of the top
                                tests by number of objects allocated.
@@ -508,36 +508,36 @@ minitest-matchers           :: Adds support for RSpec-style matchers to
 minitest-matchers_vaccine   :: Adds assertions that adhere to the matcher spec,
                                but without any expectation infections.
 minitest-metadata           :: Annotate tests with metadata (key-value).
-minitest-mongoid            :: Mongoid assertion matchers for Minitest.
+minitest-mongoid            :: Mongoid assertion matchers for minitest.
 minitest-must_not           :: Provides must_not as an alias for wont in
-                               Minitest.
+                               minitest.
 minitest-osx                :: Reporter for the Mac OS X notification center.
 minitest-parallel_fork      :: Fork-based parallelization
 minitest-parallel-db        :: Run tests in parallel with a single database.
-minitest-power_assert       :: PowerAssert for Minitest.
+minitest-power_assert       :: PowerAssert for minitest.
 minitest-predicates         :: Adds support for .predicate? methods.
 minitest-profile            :: List the 10 slowest tests in your suite.
-minitest-rails              :: Minitest integration for Rails 3.x.
-minitest-rails-capybara     :: Capybara integration for Minitest::Rails.
-minitest-reporters          :: Create customizable Minitest output formats.
-minitest-rg                 :: Colored red/green output for Minitest.
-minitest-rspec_mocks        :: Use RSpec Mocks with Minitest.
-minitest-server             :: minitest-server provides a client/server setup 
-                               with your minitest process, allowing your test 
+minitest-rails              :: minitest integration for Rails 3.x.
+minitest-rails-capybara     :: Capybara integration for minitest::Rails.
+minitest-reporters          :: Create customizable minitest output formats.
+minitest-rg                 :: Colored red/green output for minitest.
+minitest-rspec_mocks        :: Use RSpec Mocks with minitest.
+minitest-server             :: minitest-server provides a client/server setup
+                               with your minitest process, allowing your test
                                run to send its results directly to a handler.
 minitest-shared_description :: Support for shared specs and shared spec
                                subclasses
 minitest-should_syntax      :: RSpec-style +x.should == y+ assertions for
-                               Minitest.
-minitest-shouldify          :: Adding all manner of shoulds to Minitest (bad
+                               minitest.
+minitest-shouldify          :: Adding all manner of shoulds to minitest (bad
                                idea)
 minitest-snail              :: Print a list of tests that take too long
 minitest-spec-context       :: Provides rspec-ish context method to
-                               Minitest::Spec.
-minitest-spec-expect        :: Expect syntax for Minitest::Spec (e.g.
+                               minitest::Spec.
+minitest-spec-expect        :: Expect syntax for minitest::Spec (e.g.
                                expect(sequences).to_include :celery_man).
-minitest-spec-magic         :: Minitest::Spec extensions for Rails and beyond.
-minitest-spec-rails         :: Drop in Minitest::Spec superclass for
+minitest-spec-magic         :: minitest::Spec extensions for Rails and beyond.
+minitest-spec-rails         :: Drop in minitest::Spec superclass for
                                ActiveSupport::TestCase.
 minitest-sprint             :: Runs (Get it? It's fast!) your tests and makes
                                it easier to rerun individual failures.
@@ -548,15 +548,15 @@ minitest-stub-const         :: Stub constants for the duration of a block.
 minitest-tags               :: Add tags for minitest.
 minitest-unordered          :: Adds a new assertion to minitest for checking the
                                contents of a collection, ignoring element order.
-minitest-vcr                :: Automatic cassette managment with Minitest::Spec
+minitest-vcr                :: Automatic cassette managment with minitest::Spec
                                and VCR.
 minitest_owrapper           :: Get tests results as a TestResult object.
 minitest_should             :: Shoulda style syntax for minitest test::unit.
 minitest_tu_shim            :: Bridges between test/unit and minitest.
-mongoid-minitest            :: Minitest matchers for Mongoid.
+mongoid-minitest            :: minitest matchers for Mongoid.
 pry-rescue                  :: A pry plugin w/ minitest support. See
                                pry-rescue/minitest.rb.
-rspec2minitest              :: Easily translate any RSpec matchers to Minitest
+rspec2minitest              :: Easily translate any RSpec matchers to minitest
                                assertions and expectations.
 
 == Unknown Extensions:
