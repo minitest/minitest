@@ -1,3 +1,9 @@
+=== 5.8.2 / 2015-10-26
+
+* 1 bug fix:
+
+  * Fixed using parallelize_me! and capture_io (or any locking io). (arlt/tenderlove)
+
 === 5.8.1 / 2015-09-23
 
 * 1 minor enhancement:
