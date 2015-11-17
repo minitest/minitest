@@ -65,8 +65,7 @@ module Minitest # :nodoc:
     #   @mock.verify  # => true
     #
     #   @mock.expect(:uses_one_string, true, ["foo"])
-    #   @mock.uses_one_string("bar") # => true
-    #   @mock.verify  # => raises MockExpectationError
+    #   @mock.uses_one_string("bar") # => raises MockExpectationError
 
     def expect(name, retval, args = [], &blk)
       name = name.to_sym
@@ -96,16 +95,11 @@ module Minitest # :nodoc:
     # expected.
 
     def verify
-      @expected_calls.each do |name, calls|
-        calls.each do |expected|
-          raise MockExpectationError, "expected #{__call name, expected}, got [#{__call name, @actual_calls[name]}]" if
-            @actual_calls.key?(name) and
-            not @actual_calls[name].include?(expected)
-
-          raise MockExpectationError, "expected #{__call name, expected}" unless
-            @actual_calls.key?(name) and
-            @actual_calls[name].include?(expected)
-        end
+      @expected_calls.each do |name, expected|
+        actual = @actual_calls.fetch(name, nil)
+        raise MockExpectationError, "expected #{__call name, expected[0]}" unless actual
+        raise MockExpectationError, "expected #{__call name, expected[actual.size]}, got [#{__call name, actual}]" if
+          actual.size < expected.size
       end
       true
     end
