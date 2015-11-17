@@ -219,6 +219,20 @@ verification to ensure they got all the calls they were expecting."
     end
   end
 
+**Multi-threading and Mocks**
+
+Minitest mocks do not support multi-threading if it works, fine, if it doesn't
+you can use regular ruby patterns and facilities like local variables. Here's
+an example of asserting that code inside a thread is run:
+
+  def test_called_inside_thread
+    called = false
+    pr = Proc.new { called = true }
+    thread = Thread.new(&pr)
+    thread.join
+    assert called, "proc not called"
+  end
+
 === Stubs
 
 Mocks and stubs are defined using terminology by Fowler & Meszaros at
