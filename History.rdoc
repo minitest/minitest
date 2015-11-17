@@ -1,3 +1,13 @@
+=== 5.8.3 / 2015-11-17
+
+* 1 minor enhancement:
+
+  * Added extra note about mocks and threads to readme. (zamith)
+
+* 1 bug fix:
+
+  * Fixed bug in Mock#verify. (pithub/zamith)
+
 === 5.8.2 / 2015-10-26
 
 * 1 bug fix:
