@@ -506,6 +506,8 @@ minitest-great_expectations :: Generally useful additions to minitest's
                                assertions and expectations.
 minitest-growl              :: Test notifier for minitest via growl.
 minitest-happy              :: GLOBALLY ACTIVATE MINITEST PRIDE! RAWR!
+minitest-have_tag           :: Adds Minitest assertions to test for the existence of 
+                               HTML tags, including contents, within a provided string.
 minitest-hooks              :: Around and before_all/after_all/around_all hooks
 minitest-implicit-subject   :: Implicit declaration of the test subject.
 minitest-instrument         :: Instrument ActiveSupport::Notifications when
