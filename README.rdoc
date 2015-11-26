@@ -462,6 +462,8 @@ minispec-metadata           :: Metadata for describe/it blocks & CLI tag filter.
                                `ruby test.rb --tag js` runs tests tagged :js.
 minitest-around             :: Around block for minitest. An alternative to
                                setup/teardown dance.
+minitest-assert_errors      :: Adds Minitest assertions to test for errors raised
+                               or not raised by Minitest itself.
 minitest-autotest           :: autotest is a continous testing facility meant to
                                be used during development.
 minitest-bacon              :: minitest-bacon extends minitest with bacon-like
