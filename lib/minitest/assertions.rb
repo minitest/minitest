@@ -318,6 +318,19 @@ module Minitest
     end
 
     ##
+    # Fails unless the block raises +err+ with the message +err_msg+.
+
+    def assert_raises_with_message err, err_msg, msg = nil
+      e = assert_raises(err, msg) { yield }
+      if err_msg != e.message
+        flunk message(msg) {
+          diff_message = diff err_msg, e.message
+          "#{e.class} raised with unexpected message\n#{diff_message}"
+        }
+      end
+    end
+
+    ##
     # Fails unless +obj+ responds to +meth+.
 
     def assert_respond_to obj, meth, msg = nil
