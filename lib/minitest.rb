@@ -139,9 +139,6 @@ module Minitest
   ##
   # Internal run method. Responsible for telling all Runnable
   # sub-classes to run.
-  #
-  # NOTE: this method is redefined in parallel_each.rb, which is
-  # loaded if a Runnable calls parallelize_me!.
 
   def self.__run reporter, options
     suites = Runnable.runnables.shuffle
