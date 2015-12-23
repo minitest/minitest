@@ -526,6 +526,7 @@ minitest-metadata           :: Annotate tests with metadata (key-value).
 minitest-mongoid            :: Mongoid assertion matchers for Minitest.
 minitest-must_not           :: Provides must_not as an alias for wont in
                                Minitest.
+minitest-optional_retry     :: Automatically retry failed test to help with flakiness.
 minitest-osx                :: Reporter for the Mac OS X notification center.
 minitest-parallel_fork      :: Fork-based parallelization
 minitest-parallel-db        :: Run tests in parallel with a single database.
