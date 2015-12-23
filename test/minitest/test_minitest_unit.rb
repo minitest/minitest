@@ -284,6 +284,78 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     assert_report expected, %w[--name /some|thing/ --seed 42]
   end
 
+  def test_run_default_order
+    @tu =
+        Class.new Minitest::Test do
+          @order = []
+
+          def self.order
+            instance_variable_get(:@order)
+          end
+
+          def test_some_other_thing
+            self.class.order << :test_some_other_thing
+            assert_equal [:test_some_other_thing], self.class.order
+          end
+
+          def test_something
+            self.class.order << :test_something
+            assert_equal [:test_some_other_thing, :test_something], self.class.order
+          end
+        end
+
+    expected = clean <<-EOM
+      ..
+
+      Finished in 0.00
+
+      2 runs, 2 assertions, 0 failures, 0 errors, 0 skips
+    EOM
+
+    assert_report expected, %w[--seed 42]
+  end
+
+  def test_run_dynamic_order
+    @tu =
+        Class.new Minitest::Test do
+          def self.method_stream(_)
+            ([:test_passes_eventually] * 2).each do |method|
+              yield method
+            end
+          end
+
+          @count = 0
+
+          def self.count
+            instance_variable_get(:@count)
+          end
+
+          def self.count=(c)
+            instance_variable_set(:@count, c)
+          end
+
+          def test_passes_eventually
+            self.class.count = self.class.count + 1
+            assert_equal 2, self.class.count
+          end
+        end
+
+    expected = clean <<-EOM
+      F.
+
+      Finished in 0.00
+
+        1) Failure:
+      #<Class:0xXXX>#test_passes_eventually [FILE:LINE]:
+      Expected: 2
+        Actual: 1
+
+      2 runs, 2 assertions, 1 failures, 0 errors, 0 skips
+    EOM
+
+    assert_report expected, %w[--seed 42]
+  end
+
   def assert_filtering name, expected, a = false
     args = %W[--name #{name} --seed 42]
 
