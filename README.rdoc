@@ -462,6 +462,8 @@ minispec-metadata           :: Metadata for describe/it blocks & CLI tag filter.
                                `ruby test.rb --tag js` runs tests tagged :js.
 minitest-around             :: Around block for minitest. An alternative to
                                setup/teardown dance.
+minitest-assert_errors      :: Adds Minitest assertions to test for errors raised
+                               or not raised by Minitest itself.
 minitest-autotest           :: autotest is a continous testing facility meant to
                                be used during development.
 minitest-bacon              :: minitest-bacon extends minitest with bacon-like
@@ -504,6 +506,8 @@ minitest-great_expectations :: Generally useful additions to minitest's
                                assertions and expectations.
 minitest-growl              :: Test notifier for minitest via growl.
 minitest-happy              :: GLOBALLY ACTIVATE MINITEST PRIDE! RAWR!
+minitest-have_tag           :: Adds Minitest assertions to test for the existence of 
+                               HTML tags, including contents, within a provided string.
 minitest-hooks              :: Around and before_all/after_all/around_all hooks
 minitest-hyper              :: Pretty, single-page HTML reports for your Minitest runs
 minitest-implicit-subject   :: Implicit declaration of the test subject.
@@ -541,6 +545,8 @@ minitest-rspec_mocks        :: Use RSpec Mocks with Minitest.
 minitest-server             :: minitest-server provides a client/server setup 
                                with your minitest process, allowing your test 
                                run to send its results directly to a handler.
+minitest-sequel             :: Minitest assertions to speed-up development and 
+                               testing of Ruby Sequel database setups.
 minitest-shared_description :: Support for shared specs and shared spec
                                subclasses
 minitest-should_syntax      :: RSpec-style +x.should == y+ assertions for
