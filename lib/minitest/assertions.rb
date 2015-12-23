@@ -500,7 +500,7 @@ module Minitest
     # Fails if +test+ is truthy.
 
     def refute test, msg = nil
-      msg ||= "Expected #{mu_pp(test)} to not be truthy"
+      msg ||= message{ "Expected #{mu_pp(test)} to not be truthy" }
       not assert !test, msg
     end
 
