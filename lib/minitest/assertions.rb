@@ -301,7 +301,7 @@ module Minitest
       rescue *exp => e
         pass # count assertion
         return e
-      rescue Minitest::Skip
+      rescue Minitest::Skip, Minitest::Assertion
         # don't count assertion
         raise
       rescue SignalException, SystemExit

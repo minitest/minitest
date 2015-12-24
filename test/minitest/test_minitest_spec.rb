@@ -97,17 +97,17 @@ describe Minitest::Spec do
 
     msg = <<-EOM.gsub(/^ {6}/, "").chomp
       [RuntimeError] exception expected, not
-      Class: <Minitest::Assertion>
-      Message: <"Minitest::Assertion">
+      Class: <StandardError>
+      Message: <"woot">
       ---Backtrace---
     EOM
 
     assert_triggered msg do
-      proc { raise Minitest::Assertion }.must_raise RuntimeError
+      proc { raise StandardError, "woot" }.must_raise RuntimeError
     end
 
     assert_triggered "msg.\n#{msg}" do
-      proc { raise Minitest::Assertion }.must_raise RuntimeError, "msg"
+      proc { raise StandardError, "woot" }.must_raise RuntimeError, "msg"
     end
   end
 
