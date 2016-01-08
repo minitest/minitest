@@ -284,8 +284,8 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     assert_report expected, %w[--name /some|thing/ --seed 42]
   end
 
-  def assert_filtering name, expected, a = false
-    args = %W[--name #{name} --seed 42]
+  def assert_filtering filter, name, expected, a = false
+    args = %W[--#{filter} #{name} --seed 42]
 
     alpha = Class.new Minitest::Test do
       define_method :test_something do
@@ -318,7 +318,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       1 runs, 1 assertions, 0 failures, 0 errors, 0 skips
     EOM
 
-    assert_filtering "/Beta#test_something/", expected
+    assert_filtering 'name', "/Beta#test_something/", expected
   end
 
   def test_run_filtered_including_suite_name_string
@@ -330,7 +330,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       1 runs, 1 assertions, 0 failures, 0 errors, 0 skips
     EOM
 
-    assert_filtering "Beta#test_something", expected
+    assert_filtering 'name', "Beta#test_something", expected
   end
 
   def test_run_filtered_string_method_only
@@ -342,7 +342,57 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       2 runs, 2 assertions, 0 failures, 0 errors, 0 skips
     EOM
 
-    assert_filtering "test_something", expected, :pass
+    assert_filtering 'name', "test_something", expected, :pass
+  end
+
+  def test_run_failing_excluded
+    setup_basic_tu
+
+    expected = clean <<-EOM
+      .
+
+      Finished in 0.00
+
+      1 runs, 1 assertions, 0 failures, 0 errors, 0 skips
+    EOM
+
+    assert_report expected, %w[--exclude /failure/ --seed 42]
+  end
+
+  def test_run_filtered_excluding_suite_name
+    expected = clean <<-EOM
+      .
+
+      Finished in 0.00
+
+      1 runs, 1 assertions, 0 failures, 0 errors, 0 skips
+    EOM
+
+    assert_filtering 'exclude', "/Alpha#test_something/", expected
+  end
+
+  def test_run_filtered_excluding_suite_name_string
+    expected = clean <<-EOM
+      .
+
+      Finished in 0.00
+
+      1 runs, 1 assertions, 0 failures, 0 errors, 0 skips
+    EOM
+
+    assert_filtering 'exclude', "Alpha#test_something", expected
+  end
+
+  def test_run_filtered_excluding_string_method_only
+    expected = clean <<-EOM
+
+
+      Finished in 0.00
+
+      0 runs, 0 assertions, 0 failures, 0 errors, 0 skips
+    EOM
+
+    assert_filtering 'exclude', "test_something", expected, :pass
   end
 
   def test_run_passing
