@@ -71,6 +71,7 @@ extract-method refactorings still apply.
 * minitest/benchmark - an awesome way to assert your algorithm's performance.
 * minitest/pride - show your pride in testing!
 * Incredibly small and fast runner, but no bells and whistles.
+* Written by squishy human beings. Software can never be perfect. We will all eventually die.
 
 == RATIONALE:
 
