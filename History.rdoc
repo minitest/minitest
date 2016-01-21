@@ -1,3 +1,9 @@
+=== 5.8.4 / 2016-01-21
+
+* 1 bug fix:
+
+  * Allow Minitest::Assertion to pass through assert_raises so inner failures are dealt with first.
+
 === 5.8.3 / 2015-11-17
 
 * 1 minor enhancement:
