@@ -1,3 +1,15 @@
+=== 5.8.2 / 2015-10-26
+
+* 1 bug fix:
+
+  * Fixed using parallelize_me! and capture_io (or any locking io). (arlt/tenderlove)
+
+=== 5.8.1 / 2015-09-23
+
+* 1 minor enhancement:
+
+  * Refactor assert_raises to be cleaner and to pass SystemExit and SignalException. (bhenderson)
+
 === 5.8.0 / 2015-08-06
 
 * 2 minor enhancements:
