@@ -287,6 +287,7 @@ provided via plugins. To see them, simply run with `--help`:
         -s, --seed SEED                  Sets random seed
         -v, --verbose                    Verbose. Show progress processing files.
         -n, --name PATTERN               Filter run on /pattern/ or string.
+        -e, --exclude PATTERN            Exclude /regexp/ or string from run.
 
     Known extensions: pride, autotest
         -p, --pride                      Pride. Show your testing pride!

@@ -181,6 +181,10 @@ module Minitest
         options[:filter] = a
       end
 
+      opts.on "-e", "--exclude PATTERN", "Exclude /regexp/ or string from run." do |a|
+        options[:exclude] = a
+      end
+
       unless extensions.empty?
         opts.separator ""
         opts.separator "Known extensions: #{extensions.join(", ")}"
@@ -284,6 +288,13 @@ module Minitest
 
       filtered_methods = self.runnable_methods.find_all { |m|
         filter === m || filter === "#{self}##{m}"
+      }
+
+      exclude = options[:exclude]
+      exclude = Regexp.new $1 if exclude =~ %r%/(.*)/%
+
+      filtered_methods.delete_if { |m|
+        exclude === m || exclude === "#{self}##{m}"
       }
 
       return if filtered_methods.empty?
