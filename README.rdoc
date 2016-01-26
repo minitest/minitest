@@ -93,7 +93,7 @@ Given that you'd like to test the following class:
 
 === Unit tests
 
-Define your tests as methods beginning with `test_`.
+Define your tests as methods beginning with +test_+.
 
   require "minitest/autorun"
 
@@ -161,7 +161,7 @@ Add benchmarks to your tests.
 Or add them to your specs. If you make benchmarks optional, you'll
 need to wrap your benchmarks in a conditional since the methods won't
 be defined. In minitest 5, the describe name needs to match
-/Bench(mark)?$/.
+<tt>/Bench(mark)?$/</tt>.
 
   describe "Meme Benchmark" do
     if ENV["BENCH"] then
@@ -280,7 +280,7 @@ tests. BUT! You don't have to:
     155 runs, 317 assertions, 0 failures, 0 errors, 0 skips
 
 There are runtime options available, both from minitest itself, and also
-provided via plugins. To see them, simply run with `--help`:
+provided via plugins. To see them, simply run with +--help+:
 
     % ruby -Ilib:test test/minitest/test_minitest_unit.rb --help
     minitest options:
@@ -299,8 +299,8 @@ provided via plugins. To see them, simply run with `--help`:
 To define a plugin, add a file named minitest/XXX_plugin.rb to your
 project/gem. That file must be discoverable via ruby's LOAD_PATH (via
 rubygems or otherwise). Minitest will find and require that file using
-Gem.find_files. It will then try to call plugin_XXX_init during
-startup. The option processor will also try to call plugin_XXX_options
+Gem.find_files. It will then try to call +plugin_XXX_init+ during
+startup. The option processor will also try to call +plugin_XXX_options+
 passing the OptionParser instance and the current options hash. This
 lets you register your own command-line options. Here's a totally
 bogus example:
@@ -326,7 +326,7 @@ bogus example:
 Minitest uses composite reporter to output test results using multiple
 reporter instances. You can add new reporters to the composite during
 the init_plugins phase. As we saw in +plugin_bonus_init+ above, you
-simply add your reporter instance to the composite via +<<+.
+simply add your reporter instance to the composite via <tt><<</tt>.
 
 +AbstractReporter+ defines the API for reporters. You may subclass it
 and override any method you want to achieve your desired behavior.
@@ -391,12 +391,12 @@ outputs a failure:
 
 Worker is a SimpleDelegate which in 1.9+ is a subclass of BasicObject.
 Expectations are put on Object (one level down) so the Worker
-(SimpleDelegate) hits `method_missing` and delegates down to the
-`Object.new` instance. That object doesn't respond to work so the test
+(SimpleDelegate) hits +method_missing+ and delegates down to the
++Object.new+ instance. That object doesn't respond to work so the test
 fails.
 
-You can bypass `SimpleDelegate#method_missing` by extending the worker
-with `Minitest::Expectations`. You can either do that in your setup at
+You can bypass <tt>SimpleDelegate#method_missing</tt> by extending the worker
+with <tt>Minitest::Expectations</tt>. You can either do that in your setup at
 the instance level, like:
 
     before do
@@ -428,17 +428,17 @@ Use a module. That's exactly what they're for:
       end
     end
 
-Remember, `describe` simply creates test classes. It's just ruby at
+Remember, +describe+ simply creates test classes. It's just ruby at
 the end of the day and all your normal Good Ruby Rules (tm) apply. If
 you want to extend your test using setup/teardown via a module, just
 make sure you ALWAYS call super. before/after automatically call super
 for you, so make sure you don't do it twice.
 
-=== Why am I seeing `uninitialized constant MiniTest::Test (NameError)`?
+=== Why am I seeing <tt>uninitialized constant MiniTest::Test (NameError)</tt>?
 
-Are you running the test with Bundler (e.g. via `bundle exec`)? If so, 
-in order to require minitest, you must first add the `gem 'minitest'`
-to your Gemfile and run `bundle`. Once it's installed, you should be 
+Are you running the test with Bundler (e.g. via <tt>bundle exec</tt> )? If so, 
+in order to require minitest, you must first add the <tt>gem 'minitest'</tt>
+to your Gemfile and run +bundle+. Once it's installed, you should be 
 able to require minitest and run your tests.
 
 == Prominent Projects using Minitest:
@@ -456,12 +456,12 @@ able to require minitest and run your tests.
 
 capybara_minitest_spec      :: Bridge between Capybara RSpec matchers and
                                Minitest::Spec expectations (e.g.
-                               page.must_have_content("Title")).
+                               <tt>page.must_have_content("Title")</tt>).
 color_pound_spec_reporter   :: Test names print Ruby Object types in color with
                                your Minitest Spec style tests.
 minispec-metadata           :: Metadata for describe/it blocks & CLI tag filter.
-                               E.g. `it "requires JS driver", js: true do` &
-                               `ruby test.rb --tag js` runs tests tagged :js.
+                               E.g. <tt>it "requires JS driver", js: true do</tt> &
+                               <tt>ruby test.rb --tag js</tt> runs tests tagged :js.
 minitest-around             :: Around block for minitest. An alternative to
                                setup/teardown dance.
 minitest-assert_errors      :: Adds Minitest assertions to test for errors raised
@@ -551,7 +551,7 @@ minitest-sequel             :: Minitest assertions to speed-up development and
                                testing of Ruby Sequel database setups.
 minitest-shared_description :: Support for shared specs and shared spec
                                subclasses
-minitest-should_syntax      :: RSpec-style +x.should == y+ assertions for
+minitest-should_syntax      :: RSpec-style <tt>x.should == y</tt> assertions for
                                Minitest.
 minitest-shouldify          :: Adding all manner of shoulds to Minitest (bad
                                idea)
