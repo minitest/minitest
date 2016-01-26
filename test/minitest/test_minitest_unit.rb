@@ -249,7 +249,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
 
         1) Failure:
       #<Class:0xXXX>#test_failure [FILE:LINE]:
-      Failed assertion, no message given.
+      Expected false to be truthy.
 
       2 runs, 2 assertions, 1 failures, 0 errors, 0 skips
     EOM
@@ -780,7 +780,7 @@ class TestMinitestUnitTestCase < Minitest::Test
   end
 
   def test_assert__triggered
-    util_assert_triggered "Failed assertion, no message given." do
+    util_assert_triggered "Expected false to be truthy." do
       @tc.assert false
     end
   end
@@ -1798,6 +1798,7 @@ class TestMinitestUnitTestCase < Minitest::Test
   end
 
   def util_assert_triggered expected, klass = Minitest::Assertion
+    # TODO: rename assert_triggered
     e = assert_raises klass do
       yield
     end

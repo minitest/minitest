@@ -124,7 +124,7 @@ module Minitest
     def assert test, msg = nil
       self.assertions += 1
       unless test then
-        msg ||= "Failed assertion, no message given."
+        msg ||= "Expected #{mu_pp test} to be truthy."
         msg = msg.call if Proc === msg
         raise Minitest::Assertion, msg
       end
@@ -501,7 +501,7 @@ module Minitest
     # Fails if +test+ is truthy.
 
     def refute test, msg = nil
-      msg ||= "Failed refutation, no message given"
+      msg ||= message { "Expected #{mu_pp(test)} to not be truthy" }
       not assert !test, msg
     end
 
