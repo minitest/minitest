@@ -623,6 +623,10 @@ module Minitest
       self.reporters = reporters
     end
 
+    def io # :nodoc:
+      reporters.first.io
+    end
+
     ##
     # Add another reporter to the mix.
 

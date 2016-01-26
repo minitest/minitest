@@ -481,7 +481,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       def self.name; "wacky!" end
 
       def self.before_my_suite
-        @reporter.reporters.first.io.puts "Running #{self.name} tests"
+        @reporter.io.puts "Running #{self.name} tests"
         @@foo = 1
       end
 
