@@ -612,15 +612,15 @@ module Minitest
   ##
   # Dispatch to multiple reporters as one.
 
-  class CompositeReporter < AbstractReporter
+  class CompositeReporter < Reporter
     ##
     # The list of reporters to dispatch to.
 
     attr_accessor :reporters
 
-    def initialize *reporters # :nodoc:
-      super()
-      self.reporters = reporters
+    def initialize *args # :nodoc:
+      super
+      self.reporters = []
     end
 
     ##

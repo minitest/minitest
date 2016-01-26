@@ -16,7 +16,7 @@ class MetaMetaMetaTestCase < Minitest::Test
 
     @output = StringIO.new("")
 
-    self.reporter = Minitest::CompositeReporter.new
+    self.reporter = Minitest::CompositeReporter.new(@output, options)
     reporter << Minitest::SummaryReporter.new(@output, options)
     reporter << Minitest::ProgressReporter.new(@output, options)
 
