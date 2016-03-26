@@ -1226,6 +1226,30 @@ class TestMinitestUnitTestCase < Minitest::Test
     end
   end
 
+  def test_assert_raises_with_message
+    @tc.assert_raises_with_message RuntimeError, "blah" do
+      raise "blah"
+    end
+  end
+
+  def test_assert_raises_with_message_triggered
+    @assertion_count = 2
+    e = assert_raises Minitest::Assertion do
+      @tc.assert_raises_with_message RuntimeError, "blah" do
+        raise "foo"
+      end
+    end
+
+    expected = clean <<-EOM.chomp
+      RuntimeError raised with unexpected message
+      Expected: "blah"
+        Actual: "foo".
+    EOM
+
+    assert_equal expected, e.message
+  end
+
+
   ##
   # *sigh* This is quite an odd scenario, but it is from real (albeit
   # ugly) test code in ruby-core:
@@ -1483,8 +1507,8 @@ class TestMinitestUnitTestCase < Minitest::Test
 
     # These don't have corresponding refutes _on purpose_. They're
     # useless and will never be added, so don't bother.
-    ignores = %w[assert_output assert_raises assert_send
-                 assert_silent assert_throws]
+    ignores = %w[assert_output assert_raises assert_raises_with_message
+                 assert_send assert_silent assert_throws]
 
     # These are test/unit methods. I'm not actually sure why they're still here
     ignores += %w[assert_no_match assert_not_equal assert_not_nil
