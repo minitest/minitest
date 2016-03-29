@@ -152,7 +152,8 @@ module Minitest
     #
     # If there is no visible difference but the assertion fails, you
     # should suspect that your #== is buggy, or your inspect output is
-    # missing crucial details.
+    # missing crucial details.  For nicer structural diffing, set
+    # Minitest::Test.make_my_diffs_pretty!
     #
     # For floats use assert_in_delta.
     #
