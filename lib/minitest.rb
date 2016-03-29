@@ -13,8 +13,11 @@ module Minitest
   @@installed_at_exit ||= false
   @@after_run = []
   @extensions = []
+  @should_shuffle_suites = true
 
   mc = (class << self; self; end)
+
+  mc.send :attr_accessor, :should_shuffle_suites
 
   ##
   # Parallel test executor
@@ -141,7 +144,7 @@ module Minitest
   # sub-classes to run.
 
   def self.__run reporter, options
-    suites = Runnable.runnables.shuffle
+    suites = should_shuffle_suites ? Runnable.runnables.shuffle : Runnable.runnables
     parallel, serial = suites.partition { |s| s.test_order == :parallel }
 
     # If we run the parallel tests before the serial tests, the parallel tests
