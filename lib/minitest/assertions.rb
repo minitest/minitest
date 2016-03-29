@@ -253,6 +253,8 @@ module Minitest
     # "" if you require it to be silent. Pass in a regexp if you want
     # to pattern match.
     #
+    #   assert_output(/hey/) { method_with_output }
+    #
     # NOTE: this uses #capture_io, not #capture_subprocess_io.
     #
     # See also: #assert_silent
