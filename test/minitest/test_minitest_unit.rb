@@ -1484,7 +1484,7 @@ class TestMinitestUnitTestCase < Minitest::Test
     # These don't have corresponding refutes _on purpose_. They're
     # useless and will never be added, so don't bother.
     ignores = %w[assert_output assert_raises assert_send
-                 assert_silent assert_throws]
+                 assert_silent assert_throws assert_mock]
 
     # These are test/unit methods. I'm not actually sure why they're still here
     ignores += %w[assert_no_match assert_not_equal assert_not_nil

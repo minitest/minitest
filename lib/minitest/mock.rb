@@ -166,6 +166,15 @@ module Minitest # :nodoc:
   end
 end
 
+module Minitest::Assertions
+  ##
+  # Assert that the mock verifies correctly.
+
+  def assert_mock mock
+    assert mock.verify
+  end
+end
+
 ##
 # Object extensions for Minitest::Mock.
 
