@@ -265,6 +265,12 @@ module Minitest
     end
 
     ##
+    # The signal to use for dumping information to STDERR. Defaults to "INFO".
+
+    class << self; attr_accessor :info_signal; end
+    self.info_signal = "INFO"
+
+    ##
     # Returns all instance methods matching the pattern +re+.
 
     def self.methods_matching re
@@ -326,7 +332,7 @@ module Minitest
         end
       end
 
-      on_signal "INFO", handler, &block
+      on_signal info_signal, handler, &block
     end
 
     SIGNALS = Signal.list # :nodoc:
