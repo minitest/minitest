@@ -18,12 +18,6 @@ module Minitest
     self.io_lock = Mutex.new
 
     ##
-    # The signal to use for dumping information to STDERR. Defaults to "INFO".
-
-    class << self; attr_accessor :info_signal; end
-    self.info_signal = "INFO"
-
-    ##
     # Call this at the top of your tests when you absolutely
     # positively need to have ordered tests. In doing so, you're
     # admitting that you suck and your tests are weak.
@@ -279,7 +273,7 @@ module Minitest
         warn "\nCurrent: %s#%s %.2fs" % [self.class, self.name, Minitest.clock_time - t0]
       end
 
-      self.class.on_signal info_signal, handler, &block
+      self.class.on_signal ::Minitest.info_signal, handler, &block
     end
 
     include LifecycleHooks
