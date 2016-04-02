@@ -273,7 +273,7 @@ module Minitest
         warn "\nCurrent: %s#%s %.2fs" % [self.class, self.name, Minitest.clock_time - t0]
       end
 
-      self.class.on_signal "INFO", handler, &block
+      self.class.on_signal ::Minitest.info_signal, handler, &block
     end
 
     include LifecycleHooks

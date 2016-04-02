@@ -40,6 +40,12 @@ module Minitest
   mc.send :attr_accessor, :extensions
 
   ##
+  # The signal to use for dumping information to STDERR. Defaults to "INFO".
+
+  mc.send :attr_accessor, :info_signal
+  self.info_signal = "INFO"
+
+  ##
   # Registers Minitest to run at process exit
 
   def self.autorun
@@ -326,7 +332,7 @@ module Minitest
         end
       end
 
-      on_signal "INFO", handler, &block
+      on_signal ::Minitest.info_signal, handler, &block
     end
 
     SIGNALS = Signal.list # :nodoc:
