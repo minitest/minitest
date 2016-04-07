@@ -177,7 +177,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
 
       Finished in 0.00
 
-      1 runs, 1 assertions, 0 failures, 0 errors, 0 skips
+      1 run, 1 assertion, 0 failures, 0 errors, 0 skips
     EOM
 
     assert_report expected
@@ -205,7 +205,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       RuntimeError: unhandled exception
           FILE:LINE:in \`test_error\'
 
-      2 runs, 1 assertions, 0 failures, 1 errors, 0 skips
+      2 runs, 1 assertion, 0 failures, 1 error, 0 skips
     EOM
 
     assert_report expected
@@ -233,7 +233,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       RuntimeError: unhandled exception
           FILE:LINE:in \`teardown\'
 
-      1 runs, 1 assertions, 0 failures, 1 errors, 0 skips
+      1 run, 1 assertion, 0 failures, 1 error, 0 skips
     EOM
 
     assert_report expected
@@ -251,7 +251,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       #<Class:0xXXX>#test_failure [FILE:LINE]:
       Expected false to be truthy.
 
-      2 runs, 2 assertions, 1 failures, 0 errors, 0 skips
+      2 runs, 2 assertions, 1 failure, 0 errors, 0 skips
     EOM
 
     assert_report expected
@@ -278,7 +278,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
 
       Finished in 0.00
 
-      1 runs, 1 assertions, 0 failures, 0 errors, 0 skips
+      1 run, 1 assertion, 0 failures, 0 errors, 0 skips
     EOM
 
     assert_report expected, %w[--name /some|thing/ --seed 42]
@@ -315,7 +315,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
 
       Finished in 0.00
 
-      1 runs, 1 assertions, 0 failures, 0 errors, 0 skips
+      1 run, 1 assertion, 0 failures, 0 errors, 0 skips
     EOM
 
     assert_filtering 'name', "/Beta#test_something/", expected
@@ -327,7 +327,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
 
       Finished in 0.00
 
-      1 runs, 1 assertions, 0 failures, 0 errors, 0 skips
+      1 run, 1 assertion, 0 failures, 0 errors, 0 skips
     EOM
 
     assert_filtering 'name', "Beta#test_something", expected
@@ -353,7 +353,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
 
       Finished in 0.00
 
-      1 runs, 1 assertions, 0 failures, 0 errors, 0 skips
+      1 run, 1 assertion, 0 failures, 0 errors, 0 skips
     EOM
 
     assert_report expected, %w[--exclude /failure/ --seed 42]
@@ -365,7 +365,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
 
       Finished in 0.00
 
-      1 runs, 1 assertions, 0 failures, 0 errors, 0 skips
+      1 run, 1 assertion, 0 failures, 0 errors, 0 skips
     EOM
 
     assert_filtering 'exclude', "/Alpha#test_something/", expected
@@ -377,7 +377,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
 
       Finished in 0.00
 
-      1 runs, 1 assertions, 0 failures, 0 errors, 0 skips
+      1 run, 1 assertion, 0 failures, 0 errors, 0 skips
     EOM
 
     assert_filtering 'exclude', "Alpha#test_something", expected
@@ -408,7 +408,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
 
       Finished in 0.00
 
-      1 runs, 1 assertions, 0 failures, 0 errors, 0 skips
+      1 run, 1 assertion, 0 failures, 0 errors, 0 skips
     EOM
 
     assert_report expected
@@ -431,7 +431,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
 
       Finished in 0.00
 
-      2 runs, 1 assertions, 0 failures, 0 errors, 1 skips
+      2 runs, 1 assertion, 0 failures, 0 errors, 1 skip
 
       You have skipped tests. Run with --verbose for details.
     EOM
@@ -463,7 +463,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       #<Class:0xXXX>#test_skip [FILE:LINE]:
       not yet
 
-      2 runs, 1 assertions, 0 failures, 0 errors, 1 skips
+      2 runs, 1 assertion, 0 failures, 0 errors, 1 skip
     EOM
 
     assert_report expected, %w[--seed 42 --verbose]

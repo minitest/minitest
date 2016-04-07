@@ -198,7 +198,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
 
       Finished in 0.00
 
-      1 runs, 0 assertions, 0 failures, 0 errors, 0 skips
+      1 run, 0 assertions, 0 failures, 0 errors, 0 skips
     EOM
 
     assert_equal exp, normalize_output(io.string)
@@ -222,7 +222,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
       Minitest::Test#woot [FILE:LINE]:
       boo
 
-      1 runs, 0 assertions, 1 failures, 0 errors, 0 skips
+      1 run, 0 assertions, 1 failure, 0 errors, 0 skips
     EOM
 
     assert_equal exp, normalize_output(io.string)
@@ -248,7 +248,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
           FILE:LINE:in `error_test'
           FILE:LINE:in `test_report_error'
 
-      1 runs, 0 assertions, 0 failures, 1 errors, 0 skips
+      1 run, 0 assertions, 0 failures, 1 error, 0 skips
     EOM
 
     assert_equal exp, normalize_output(io.string)
@@ -271,7 +271,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
 
       Finished in 0.00
 
-      1 runs, 0 assertions, 0 failures, 0 errors, 1 skips
+      1 run, 0 assertions, 0 failures, 0 errors, 1 skip
 
       You have skipped tests. Run with --verbose for details.
     EOM

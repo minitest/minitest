@@ -610,9 +610,24 @@ module Minitest
       extra = "\n\nYou have skipped tests. Run with --verbose for details." if
         results.any?(&:skipped?) unless options[:verbose] or ENV["MT_NO_SKIP_MSG"]
 
-      "%d runs, %d assertions, %d failures, %d errors, %d skips%s" %
-        [count, assertions, failures, errors, skips, extra]
+      # list counts for runs, assertions, failures, errors, skips, and extra
+      "%s, %s, %s, %s, %s%s" %
+        [simple_pluralize(count, "run"),
+         simple_pluralize(assertions, "assertion"),
+         simple_pluralize(failures, "failure"),
+         simple_pluralize(errors, "error"),
+         simple_pluralize(skips, "skip"),
+         extra]
     end
+
+    def simple_pluralize(n, singular)
+      if n == 1
+          "1 #{singular}"
+      else
+          "#{n} #{singular}s"
+      end
+    end
+
   end
 
   ##
