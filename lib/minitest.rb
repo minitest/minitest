@@ -620,11 +620,9 @@ module Minitest
          extra]
     end
 
-    def simple_pluralize(n, singular, plural=nil)
+    def simple_pluralize(n, singular)
       if n == 1
           "1 #{singular}"
-      elsif plural
-          "#{n} #{plural}"
       else
           "#{n} #{singular}s"
       end
