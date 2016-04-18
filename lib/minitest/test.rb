@@ -11,8 +11,7 @@ module Minitest
     require "minitest/assertions"
     include Minitest::Assertions
 
-    PASSTHROUGH_EXCEPTIONS = [NoMemoryError, SignalException, # :nodoc:
-                              Interrupt, SystemExit]
+    PASSTHROUGH_EXCEPTIONS = [NoMemoryError, SignalException, SystemExit] # :nodoc:
 
     class << self; attr_accessor :io_lock; end # :nodoc:
     self.io_lock = Mutex.new
