@@ -847,7 +847,7 @@ class TestMinitestUnitTestCase < Minitest::Test
       y = x.b
       @tc.assert_equal x, y
     end
-  end
+  end unless RUBY18
 
   def test_assert_equal_string_encodings_both_different
     msg = <<-EOM.gsub(/^ {10}/, "")
@@ -864,7 +864,7 @@ class TestMinitestUnitTestCase < Minitest::Test
       y = x.b
       @tc.assert_equal x, y
     end
-  end
+  end unless RUBY18
 
   def test_assert_equal_different_diff_deactivated
     skip "https://github.com/MagLev/maglev/issues/209" if maglev?

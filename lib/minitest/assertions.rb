@@ -104,10 +104,13 @@ module Minitest
 
     def mu_pp obj
       s = obj.inspect
-      s = s.encode Encoding.default_external if defined? Encoding
 
-      if String === obj && obj.encoding != Encoding.default_external then
-        s = "# encoding: #{obj.encoding}\n#{s}"
+      if defined? Encoding then
+        s = s.encode Encoding.default_external
+
+        if String === obj && obj.encoding != Encoding.default_external then
+          s = "# encoding: #{obj.encoding}\n#{s}"
+        end
       end
 
       s
