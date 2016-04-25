@@ -833,6 +833,39 @@ class TestMinitestUnitTestCase < Minitest::Test
     end
   end
 
+  def test_assert_equal_string_encodings
+    msg = <<-EOM.gsub(/^ {10}/, "")
+          --- expected
+          +++ actual
+          @@ -1 +1,2 @@
+          +# encoding: ASCII-8BIT
+           "bad-utf8-\\xF1.txt"
+          EOM
+
+    assert_triggered msg do
+      x = "bad-utf8-\xF1.txt"
+      y = x.b
+      @tc.assert_equal x, y
+    end
+  end
+
+  def test_assert_equal_string_encodings_both_different
+    msg = <<-EOM.gsub(/^ {10}/, "")
+          --- expected
+          +++ actual
+          @@ -1,2 +1,2 @@
+          -# encoding: US-ASCII
+          +# encoding: ASCII-8BIT
+           "bad-utf8-\\xF1.txt"
+          EOM
+
+    assert_triggered msg do
+      x = "bad-utf8-\xF1.txt".force_encoding "ASCII"
+      y = x.b
+      @tc.assert_equal x, y
+    end
+  end
+
   def test_assert_equal_different_diff_deactivated
     skip "https://github.com/MagLev/maglev/issues/209" if maglev?
 
