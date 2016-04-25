@@ -9,3 +9,9 @@ class Minitest::Test
     end
   end
 end
+
+begin
+  require "minitest/proveit"
+rescue LoadError
+  # do nothing
+end
