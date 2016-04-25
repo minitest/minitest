@@ -1,4 +1,4 @@
-= minitest/{unit,spec,mock,benchmark}
+= minitest/{test,spec,mock,benchmark}
 
 home :: https://github.com/seattlerb/minitest
 bugs :: https://github.com/seattlerb/minitest/issues
@@ -27,7 +27,7 @@ It provides a rich set of assertions to make your tests clean and
 readable.
 
 minitest/spec is a functionally complete spec engine. It hooks onto
-minitest/unit and seamlessly bridges test assertions over to spec
+minitest/test and seamlessly bridges test assertions over to spec
 expectations.
 
 minitest/benchmark is an awesome way to assert the performance of your
@@ -41,7 +41,7 @@ object framework.
 minitest/pride shows pride in testing and adds coloring to your test
 output. I guess it is an example of how to write IO pipes too. :P
 
-minitest/unit is meant to have a clean implementation for language
+minitest/test is meant to have a clean implementation for language
 implementors that need a minimal set of methods to bootstrap a working
 test suite. For example, there is no magic involved for test-case
 discovery.
@@ -268,7 +268,7 @@ Ideally, you'll use a rake task to run your tests, either piecemeal or
 all at once. Both rake and rails ship with rake tasks for running your
 tests. BUT! You don't have to:
 
-    % ruby -Ilib:test test/minitest/test_minitest_unit.rb
+    % ruby -Ilib:test test/minitest/test_minitest_test.rb
     Run options: --seed 37685
 
     # Running:
@@ -282,7 +282,7 @@ tests. BUT! You don't have to:
 There are runtime options available, both from minitest itself, and also
 provided via plugins. To see them, simply run with +--help+:
 
-    % ruby -Ilib:test test/minitest/test_minitest_unit.rb --help
+    % ruby -Ilib:test test/minitest/test_minitest_test.rb --help
     minitest options:
         -h, --help                       Display this help.
         -s, --seed SEED                  Sets random seed
