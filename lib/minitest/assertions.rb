@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require "rbconfig"
 require "tempfile"
 require "stringio"

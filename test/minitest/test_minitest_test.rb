@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require "pathname"
 require "minitest/metametameta"
 
@@ -844,7 +846,7 @@ class TestMinitestUnitTestCase < Minitest::Test
 
     assert_triggered msg do
       x = "bad-utf8-\xF1.txt"
-      y = x.b
+      y = x.dup.force_encoding "binary" # TODO: switch to .b when 1.9 dropped
       @tc.assert_equal x, y
     end
   end unless RUBY18
@@ -861,7 +863,7 @@ class TestMinitestUnitTestCase < Minitest::Test
 
     assert_triggered msg do
       x = "bad-utf8-\xF1.txt".force_encoding "ASCII"
-      y = x.b
+      y = x.dup.force_encoding "binary" # TODO: switch to .b when 1.9 dropped
       @tc.assert_equal x, y
     end
   end unless RUBY18
