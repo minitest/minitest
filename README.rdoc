@@ -22,7 +22,7 @@ TDD, BDD, mocking, and benchmarking.
 
     -- Wayne E. Seguin
 
-minitest/unit is a small and incredibly fast unit testing framework.
+minitest/test is a small and incredibly fast unit testing framework.
 It provides a rich set of assertions to make your tests clean and
 readable.
 
@@ -65,7 +65,7 @@ extract-method refactorings still apply.
 == FEATURES/PROBLEMS:
 
 * minitest/autorun - the easy and explicit way to run all your tests.
-* minitest/unit - a very fast, simple, and clean test system.
+* minitest/test - a very fast, simple, and clean test system.
 * minitest/spec - a very fast, simple, and clean spec system.
 * minitest/mock - a simple and clean mock/stub system.
 * minitest/benchmark - an awesome way to assert your algorithm's performance.
@@ -608,6 +608,7 @@ Authors... Please send me a pull request with a description of your minitest ext
 == REQUIREMENTS:
 
 * Ruby 1.8.7+. No magic is involved. I hope.
+* NOTE: 1.8 and 1.9 will be dropped in minitest 6+
 
 == INSTALL:
 
