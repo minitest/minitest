@@ -608,7 +608,7 @@ Authors... Please send me a pull request with a description of your minitest ext
 == REQUIREMENTS:
 
 * Ruby 1.8.7+. No magic is involved. I hope.
-* NOTE: 1.8 and 1.9 will be dropped in minitest 6+
+* NOTE: 1.8 and 1.9 will be dropped in minitest 6+.
 
 == INSTALL:
 
