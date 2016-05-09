@@ -1466,6 +1466,22 @@ class TestMinitestUnitTestCase < Minitest::Test
     end
   end
 
+  def test_assert_throws_name_error
+    @tc.assert_raises NameError do
+      @tc.assert_throws :blah do
+        raise NameError
+      end
+    end
+  end
+
+  def test_assert_throws_argument_exception
+    @tc.assert_raises ArgumentError do
+      @tc.assert_throws :blah do
+        raise ArgumentError
+      end
+    end
+  end
+
   def test_assert_throws_different
     assert_triggered "Expected :blah to have been thrown, not :not_blah." do
       @tc.assert_throws :blah do
