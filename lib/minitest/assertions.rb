@@ -170,6 +170,7 @@ module Minitest
     # See also: Minitest::Assertions.diff
 
     def assert_equal exp, act, msg = nil
+      raise ArgumentError, "use assert_nil if expecting nil" if exp.nil?
       msg = message(msg, E) { diff exp, act }
       assert exp == act, msg
     end

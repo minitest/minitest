@@ -20,6 +20,13 @@ class TestMinitestUnit < MetaMetaMetaTestCase
                "#{MINITEST_BASE_DIR}/test.rb:139:in `run'",
                "#{MINITEST_BASE_DIR}/test.rb:106:in `run'"]
 
+  def test_assert_equal_does_not_allow_lhs_nil
+    exp = assert_raises(ArgumentError) do
+      assert_equal nil, Object.new
+    end
+    assert_equal "use assert_nil if expecting nil", exp.message
+  end
+
   def test_filter_backtrace
     # this is a semi-lame mix of relative paths.
     # I cheated by making the autotest parts not have ./
