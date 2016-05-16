@@ -1,3 +1,20 @@
+=== 5.9.0 / 2016-05-16
+
+* 8 minor enhancements:
+
+  * Added Minitest.info_signal accessors to customize signal for test run info. (nate)
+  * Added assert_mock to make it more clear that you're testing w/ them.
+  * Added negative filter by test name. (utilum)
+  * Added warning to README that 1.8 and 1.9 support will be dropped in minitest 6.
+  * Automatically activate minitest/hell if $MT_HELL is defined.
+  * Improved default error messages for assert and refute. (bhenderson)
+  * minitest/hell now tries to require minitest/proveit
+  * mu_pp for strings prints out non-standard encodings to improve assert_equal diffs.
+
+* 1 bug fix:
+
+  * Removed Interrupt from PASSTHROUGH_EXCEPTIONS (already handled). (waldyr)
+
 === 5.8.4 / 2016-01-21
 
 * 1 bug fix:
