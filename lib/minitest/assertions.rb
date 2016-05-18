@@ -386,8 +386,10 @@ module Minitest
         rescue ThreadError => e       # wtf?!? 1.8 + threads == suck
           default += ", not \:#{e.message[/uncaught throw \`(\w+?)\'/, 1]}"
         rescue ArgumentError => e     # 1.9 exception
+          raise e unless e.message.include?("uncaught throw")
           default += ", not #{e.message.split(/ /).last}"
         rescue NameError => e         # 1.8 exception
+          raise e unless e.name == sym
           default += ", not #{e.name.inspect}"
         end
         caught = false
