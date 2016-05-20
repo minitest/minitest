@@ -1,5 +1,5 @@
 module Minitest
-  module Parallel
+  module Parallel #:nodoc:
 
     ##
     # The engine used to run multiple tests in parallel.
