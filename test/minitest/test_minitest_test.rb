@@ -1356,6 +1356,34 @@ class TestMinitestUnitTestCase < Minitest::Test
     end
   end
 
+  def test_assert_raises_with_message_wrong_message
+    e = assert_raises Minitest::Assertion do
+      @tc.assert_raises_with_message StandardError, "test" do
+        raise "txt"
+      end
+    end
+
+    expected = "Expected: \"test\"\n  Actual: \"txt\""
+    assert_equal expected, e.message
+  end
+
+  def test_assert_raises_with_message_wrong_message
+    e = assert_raises Minitest::Assertion do
+      @tc.assert_raises_with_message StandardError, "test" do
+        # do not raise
+      end
+    end
+
+    expected = "StandardError expected but nothing was raised."
+    assert_equal expected, e.message
+  end
+
+  def test_assert_raises_with_message
+    @tc.assert_raises_with_message StandardError, "test" do
+      raise "test"
+    end
+  end
+
   def test_assert_raises_subclass_triggered
     e = assert_raises Minitest::Assertion do
       @tc.assert_raises SomeError do

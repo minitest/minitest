@@ -331,6 +331,33 @@ module Minitest
     end
 
     ##
+    # Fails unless the block raises +exp+ and +exp+'s message is equal to +msg+.
+    #
+    # +exp+ takes an optional message on the end to help explain
+    # failures and defaults to StandardError if no exception class is
+    # passed.
+
+    def assert_raises_with_message exp, exp_msg, msg = nil
+      begin
+        yield
+      rescue exp => e
+        return assert_equal exp_msg, e.message, msg
+      rescue Minitest::Skip, Minitest::Assertion
+        # don't count assertion
+        raise
+      rescue SignalException, SystemExit
+        raise
+      rescue Exception => e
+        flunk proc {
+          exception_details(e, "#{msg}#{mu_pp(exp)} exception expected, not")
+        }
+      end
+
+      flunk "#{msg}#{mu_pp(exp)} expected but nothing was raised."
+    end
+
+
+    ##
     # Fails unless +obj+ responds to +meth+.
 
     def assert_respond_to obj, meth, msg = nil
