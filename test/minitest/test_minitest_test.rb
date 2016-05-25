@@ -1357,17 +1357,18 @@ class TestMinitestUnitTestCase < Minitest::Test
   end
 
   def test_assert_raises_with_message_wrong_message
+    @assertion_count += 2
     e = assert_raises Minitest::Assertion do
       @tc.assert_raises_with_message StandardError, "test" do
         raise "txt"
       end
     end
 
-    expected = "Expected: \"test\"\n  Actual: \"txt\""
+    expected = "Expected /test/ to match \"txt\"."
     assert_equal expected, e.message
   end
 
-  def test_assert_raises_with_message_wrong_message
+  def test_assert_raises_with_message_dont_raise
     e = assert_raises Minitest::Assertion do
       @tc.assert_raises_with_message StandardError, "test" do
         # do not raise
@@ -1379,8 +1380,16 @@ class TestMinitestUnitTestCase < Minitest::Test
   end
 
   def test_assert_raises_with_message
+    @assertion_count += 2
     @tc.assert_raises_with_message StandardError, "test" do
       raise "test"
+    end
+  end
+
+  def test_assert_raises_with_regexp
+    @assertion_count += 2
+    @tc.assert_raises_with_message StandardError, /test/ do
+      raise "this is testability"
     end
   end
 
@@ -1563,7 +1572,8 @@ class TestMinitestUnitTestCase < Minitest::Test
     # These don't have corresponding refutes _on purpose_. They're
     # useless and will never be added, so don't bother.
     ignores = %w[assert_output assert_raises assert_send
-                 assert_silent assert_throws assert_mock]
+                 assert_silent assert_throws assert_mock
+                 assert_raises_with_message]
 
     # These are test/unit methods. I'm not actually sure why they're still here
     ignores += %w[assert_no_match assert_not_equal assert_not_nil

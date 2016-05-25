@@ -338,24 +338,12 @@ module Minitest
     # passed.
 
     def assert_raises_with_message exp, exp_msg, msg = nil
-      begin
+      e = assert_raises exp do
         yield
-      rescue exp => e
-        return assert_equal exp_msg, e.message, msg
-      rescue Minitest::Skip, Minitest::Assertion
-        # don't count assertion
-        raise
-      rescue SignalException, SystemExit
-        raise
-      rescue Exception => e
-        flunk proc {
-          exception_details(e, "#{msg}#{mu_pp(exp)} exception expected, not")
-        }
       end
 
-      flunk "#{msg}#{mu_pp(exp)} expected but nothing was raised."
+      assert_match Regexp.new(exp_msg), e.message, msg
     end
-
 
     ##
     # Fails unless +obj+ responds to +meth+.
