@@ -801,7 +801,9 @@ module Minitest
     result
   end
 
-  if defined? Process::CLOCK_MONOTONIC
+  # :stopdoc:
+
+  if defined? Process::CLOCK_MONOTONIC # :nodoc:
     def self.clock_time
       Process.clock_gettime Process::CLOCK_MONOTONIC
     end
@@ -810,6 +812,8 @@ module Minitest
       Time.now
     end
   end
+
+  # :startdoc:
 end
 
 require "minitest/test"
