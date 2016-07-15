@@ -318,11 +318,11 @@ describe Minitest::Spec do
   it "needs to verify instances of a class" do
     42.wont_be_instance_of(String).must_equal false
 
-    assert_triggered "Expected 42 to not be an instance of Fixnum." do
+    assert_triggered "Expected 42 to not be an instance of #{Fixnum.name}." do
       42.wont_be_instance_of Fixnum
     end
 
-    assert_triggered "msg.\nExpected 42 to not be an instance of Fixnum." do
+    assert_triggered "msg.\nExpected 42 to not be an instance of #{Fixnum.name}." do
       42.wont_be_instance_of Fixnum, "msg"
     end
   end
@@ -348,11 +348,11 @@ describe Minitest::Spec do
     (6 * 7).must_be_kind_of(Fixnum).must_equal true
     (6 * 7).must_be_kind_of(Numeric).must_equal true
 
-    assert_triggered "Expected 42 to be a kind of String, not Fixnum." do
+    assert_triggered "Expected 42 to be a kind of String, not #{Fixnum.name}." do
       (6 * 7).must_be_kind_of String
     end
 
-    assert_triggered "msg.\nExpected 42 to be a kind of String, not Fixnum." do
+    assert_triggered "msg.\nExpected 42 to be a kind of String, not #{Fixnum.name}." do
       (6 * 7).must_be_kind_of String, "msg"
     end
 
@@ -521,7 +521,7 @@ describe Minitest::Spec do
   it "needs to verify types of objects" do
     (6 * 7).must_be_instance_of(Fixnum).must_equal true
 
-    exp = "Expected 42 to be an instance of String, not Fixnum."
+    exp = "Expected 42 to be an instance of String, not #{Fixnum.name}."
 
     assert_triggered exp do
       (6 * 7).must_be_instance_of String
@@ -565,11 +565,11 @@ describe Minitest::Spec do
   it "needs to verify using respond_to" do
     42.must_respond_to(:+).must_equal true
 
-    assert_triggered "Expected 42 (Fixnum) to respond to #clear." do
+    assert_triggered "Expected 42 (#{Fixnum.name}) to respond to #clear." do
       42.must_respond_to :clear
     end
 
-    assert_triggered "msg.\nExpected 42 (Fixnum) to respond to #clear." do
+    assert_triggered "msg.\nExpected 42 (#{Fixnum.name}) to respond to #clear." do
       42.must_respond_to :clear, "msg"
     end
   end
