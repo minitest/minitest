@@ -147,7 +147,13 @@ module Minitest
   # sub-classes to run.
 
   def self.__run reporter, options
-    suites = Runnable.runnables.shuffle
+    suites = case Minitest::Test.test_order
+    when :random, :parallel then
+      Runnable.runnables.shuffle
+    else
+      Runnable.runnables
+    end
+
     parallel, serial = suites.partition { |s| s.test_order == :parallel }
 
     # If we run the parallel tests before the serial tests, the parallel tests
