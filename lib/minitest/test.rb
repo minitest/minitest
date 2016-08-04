@@ -22,10 +22,7 @@ module Minitest
     # admitting that you suck and your tests are weak.
 
     def self.i_suck_and_my_tests_are_order_dependent!
-      class << self
-        undef_method :test_order if method_defined? :test_order
-        define_method :test_order do :alpha end
-      end
+      @test_order = :alpha
     end
 
     ##
@@ -52,6 +49,11 @@ module Minitest
       extend Minitest::Parallel::Test::ClassMethods
     end
 
+    def self.run reporter, options
+      @test_order = options[:order] if options[:order]
+      super
+    end
+
     ##
     # Returns all instance methods starting with "test_". Based on
     # #test_order, the methods are either sorted, randomized
@@ -76,7 +78,7 @@ module Minitest
     # this or use a convenience method to change it for your tests.
 
     def self.test_order
-      :random
+      @test_order ||= :random
     end
 
     ##
