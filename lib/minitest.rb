@@ -158,7 +158,7 @@ module Minitest
     when :random then
       Runnable.runnables.shuffle
     else
-      Runnable.runnables.sort_by { |r| r.name }
+      Runnable.runnables
     end
 
     if Minitest.suite_order == :random
