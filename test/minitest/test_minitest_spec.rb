@@ -828,9 +828,20 @@ class TestMeta < MetaMetaMetaTestCase
     inner_methods2 = inner_methods1 +
       %w[test_0002_anonymous test_0003_anonymous]
 
-    assert_equal top_methods,    x.instance_methods(false).sort.map(&:to_s)
-    assert_equal inner_methods1, y.instance_methods(false).sort.map(&:to_s)
-    assert_equal inner_methods2, z.instance_methods(false).sort.map(&:to_s)
+    assert_defined_methods top_methods, x.instance_methods(false).sort.map(&:to_s)
+
+    assert_defined_methods inner_methods1, y.instance_methods(false).sort.map(&:to_s)
+    assert_defined_methods inner_methods2, z.instance_methods(false).sort.map(&:to_s)
+  end
+
+  def assert_defined_methods expected_methods, actual_methods
+    expected_methods.zip(actual_methods).each do |expected_method, actual_method|
+      if expected_method =~ /^test/
+        assert_match expected_method, actual_method
+      else
+        assert_equal expected_method, actual_method
+      end
+    end
   end
 
   def test_structure_postfix_it
@@ -847,8 +858,8 @@ class TestMeta < MetaMetaMetaTestCase
       it "inner-it" do end
     end
 
-    assert_equal %w[test_0001_inner-it], y.instance_methods(false).map(&:to_s)
-    assert_equal %w[test_0001_inner-it], z.instance_methods(false).map(&:to_s)
+    assert_defined_methods %w[test_0001_inner-it], y.instance_methods(false).map(&:to_s)
+    assert_defined_methods %w[test_0001_inner-it], z.instance_methods(false).map(&:to_s)
   end
 
   def test_setup_teardown_behavior
@@ -878,10 +889,26 @@ class TestMeta < MetaMetaMetaTestCase
                     "test_0002_не латинские &いった α, β, γ, δ, ε hello!!! world",
                    ].sort
 
-    assert_equal test_methods, [x1, x2]
-    assert_equal test_methods, x.instance_methods.grep(/^test/).map(&:to_s).sort
+    assert_defined_methods test_methods, [x1, x2]
+    assert_defined_methods test_methods, x.instance_methods.grep(/^test/).map(&:to_s).sort
     assert_equal [], y.instance_methods.grep(/^test/)
     assert_equal [], z.instance_methods.grep(/^test/)
+  end
+
+  def test_includes_line_number_in_test_name
+    skip "Not on this Ruby" unless (lambda {}).respond_to?(:source_location)
+
+    x1 = x2 = nil
+    x = describe "top-level thingy" do
+      x1 = it "is a test" do
+      end
+      x2 = it "is another test" do
+      end
+    end
+    [x1, x2].each do |method|
+      line_no = x.instance_method(method).source_location[1]
+      assert_match(/L#{line_no}$/, method)
+    end
   end
 
   def test_structure_subclasses

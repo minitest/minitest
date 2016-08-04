@@ -215,7 +215,7 @@ class Minitest::Spec < Minitest::Test
       @specs ||= 0
       @specs += 1
 
-      name = "test_%04d_%s" % [ @specs, desc ]
+      name = make_method_name @specs, desc, block
 
       undef_klasses = self.children.reject { |c| c.public_method_defined? name }
 
@@ -254,6 +254,16 @@ class Minitest::Spec < Minitest::Test
 
     def subject &block
       let :subject, &block
+    end
+
+    if (lambda { }).respond_to?(:source_location)
+      def make_method_name specs, desc, block # :nodoc:
+        "test_%04d_%s_L%d" % [ specs, desc, block.source_location[1] ]
+      end
+    else
+      def make_method_name specs, desc, block # :nodoc:
+        "test_%04d_%s" % [ specs, desc ]
+      end
     end
 
     def create name, desc # :nodoc:
