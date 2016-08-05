@@ -979,6 +979,29 @@ class TestMinitestUnitTestCase < Minitest::Test
     end
   end
 
+  def test_assert_equal_does_not_allow_lhs_nil
+    if Minitest::VERSION =~ /^6/ then
+      warn "Time to strip the MT5 test"
+
+      @assertion_count += 1
+      assert_triggered(/Use assert_nil if expecting nil/) do
+        @tc.assert_equal nil, nil
+      end
+    else
+      err_re = /Use assert_nil if expecting nil from .*test_minitest_test.rb/
+
+      assert_output "", err_re do
+        @tc.assert_equal nil, nil
+      end
+    end
+  end
+
+  def test_assert_equal_does_not_allow_lhs_nil_triggered
+    assert_triggered "Expected: nil\n  Actual: false" do
+      @tc.assert_equal nil, false
+    end
+  end
+
   def test_assert_in_delta
     @tc.assert_in_delta 0.0, 1.0 / 1000, 0.1
   end
@@ -1857,7 +1880,8 @@ class TestMinitestUnitTestCase < Minitest::Test
     msg.gsub!(/\(oid=[-0-9]+\)/, "(oid=N)")
     msg.gsub!(/(\d\.\d{6})\d+/, '\1xxx') # normalize: ruby version, impl, platform
 
-    assert_equal expected, msg
+    assert_msg = Regexp === expected ? :assert_match : :assert_equal
+    self.send assert_msg, expected, msg
   end
 
   def util_msg exp, act, msg = nil

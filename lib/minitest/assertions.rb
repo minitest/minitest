@@ -171,7 +171,15 @@ module Minitest
 
     def assert_equal exp, act, msg = nil
       msg = message(msg, E) { diff exp, act }
-      assert exp == act, msg
+      result = assert exp == act, msg
+
+      if Minitest::VERSION =~ /^6/ then
+        refute_nil exp, "Use assert_nil if expecting nil." if exp.nil?
+      else
+        $stderr.puts "Use assert_nil if expecting nil from #{caller.first}. This will fail in MT6." if exp.nil?
+      end
+
+      result
     end
 
     ##
