@@ -45,6 +45,12 @@ module Minitest
   mc.send :attr_accessor, :info_signal
   self.info_signal = "INFO"
 
+  SUITE_ORDERINGS = [:sorted, :random]
+
+  def self.suite_order
+    @@suite_order || :random
+  end
+
   ##
   # Registers Minitest to run at process exit
 
@@ -120,6 +126,7 @@ module Minitest
     self.load_plugins
 
     options = process_args args
+    @@suite_order = options[:order]
 
     reporter = CompositeReporter.new
     reporter << SummaryReporter.new(options[:io], options)
@@ -147,16 +154,26 @@ module Minitest
   # sub-classes to run.
 
   def self.__run reporter, options
-    suites = Runnable.runnables.shuffle
-    parallel, serial = suites.partition { |s| s.test_order == :parallel }
+    suites = case suite_order
+    when :random then
+      Runnable.runnables.shuffle
+    else
+      Runnable.runnables
+    end
 
-    # If we run the parallel tests before the serial tests, the parallel tests
-    # could run in parallel with the serial tests. This would be bad because
-    # the serial tests won't lock around Reporter#record. Run the serial tests
-    # first, so that after they complete, the parallel tests will lock when
-    # recording results.
-    serial.map { |suite| suite.run reporter, options } +
-      parallel.map { |suite| suite.run reporter, options }
+    if Minitest.suite_order == :random
+      parallel, serial = suites.partition { |s| s.test_order == :parallel }
+
+      # If we run the parallel tests before the serial tests, the parallel tests
+      # could run in parallel with the serial tests. This would be bad because
+      # the serial tests won't lock around Reporter#record. Run the serial tests
+      # first, so that after they complete, the parallel tests will lock when
+      # recording results.
+      serial.map { |suite| suite.run reporter, options } +
+        parallel.map { |suite| suite.run reporter, options }
+    else
+      suites.map { |suite| suite.run reporter, options }
+    end
   end
 
   def self.process_args args = [] # :nodoc:
@@ -189,6 +206,12 @@ module Minitest
 
       opts.on "-e", "--exclude PATTERN", "Exclude /regexp/ or string from run." do |a|
         options[:exclude] = a
+      end
+
+      opts.on "-o", "--order ORDER", "Order to run test suites in parallel, random, sorted." do |a|
+        order = a.to_sym
+        raise OptionParser::InvalidOption, "Order must be parallel, random, sorted or fixed" unless SUITE_ORDERINGS.include? order
+        options[:order] = order
       end
 
       unless extensions.empty?
