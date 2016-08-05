@@ -325,7 +325,7 @@ bogus example:
 
 Minitest uses composite reporter to output test results using multiple
 reporter instances. You can add new reporters to the composite during
-the init_plugins phase. As we saw in +plugin_bonus_init+ above, you
+the init_plugins phase. As we saw in +plugin_bogus_init+ above, you
 simply add your reporter instance to the composite via <tt><<</tt>.
 
 +AbstractReporter+ defines the API for reporters. You may subclass it
