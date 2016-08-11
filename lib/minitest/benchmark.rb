@@ -33,8 +33,8 @@ module Minitest
     #   bench_exp(2, 16, 2) # => [2, 4, 8, 16]
 
     def self.bench_exp min, max, base = 10
-      min = (Math.log10(min) / Math.log10(base)).to_i
-      max = (Math.log10(max) / Math.log10(base)).to_i
+      min = (Math.log10(min) / Math.log10(base)).ceil
+      max = (Math.log10(max) / Math.log10(base)).ceil
 
       (min..max).map { |m| base ** m }.to_a
     end

@@ -8,6 +8,7 @@ require "minitest/benchmark"
 class TestMinitestBenchmark < Minitest::Test
   def test_cls_bench_exp
     assert_equal [2, 4, 8, 16, 32], Minitest::Benchmark.bench_exp(2, 32, 2)
+    assert_equal 7, Minitest::Benchmark.bench_exp(1, 1_000_000).size
   end
 
   def test_cls_bench_linear
