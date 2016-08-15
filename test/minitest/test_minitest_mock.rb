@@ -473,11 +473,11 @@ class TestMinitestStub < Minitest::Test
     @assertion_count = 2
 
     dynamic = Class.new do
-      def self.respond_to?(meth)
+      def self.respond_to? meth
         meth == :found
       end
 
-      def self.method_missing(meth, *args, &block)
+      def self.method_missing meth, *args, &block
         if meth == :found
           false
         else
@@ -501,8 +501,8 @@ class TestMinitestStub < Minitest::Test
     end
     rs = nil
 
-    File.stub(:open, true, mock) do
-      File.open("foo.txt", "r") do |f|
+    File.stub :open, true, mock do
+      File.open "foo.txt", "r" do |f|
         rs = f.write
       end
     end

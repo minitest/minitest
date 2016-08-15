@@ -320,7 +320,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       1 runs, 1 assertions, 0 failures, 0 errors, 0 skips
     EOM
 
-    assert_filtering 'name', "/Beta#test_something/", expected
+    assert_filtering "name", "/Beta#test_something/", expected
   end
 
   def test_run_filtered_including_suite_name_string
@@ -332,7 +332,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       1 runs, 1 assertions, 0 failures, 0 errors, 0 skips
     EOM
 
-    assert_filtering 'name', "Beta#test_something", expected
+    assert_filtering "name", "Beta#test_something", expected
   end
 
   def test_run_filtered_string_method_only
@@ -344,7 +344,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       2 runs, 2 assertions, 0 failures, 0 errors, 0 skips
     EOM
 
-    assert_filtering 'name', "test_something", expected, :pass
+    assert_filtering "name", "test_something", expected, :pass
   end
 
   def test_run_failing_excluded
@@ -370,7 +370,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       1 runs, 1 assertions, 0 failures, 0 errors, 0 skips
     EOM
 
-    assert_filtering 'exclude', "/Alpha#test_something/", expected
+    assert_filtering "exclude", "/Alpha#test_something/", expected
   end
 
   def test_run_filtered_excluding_suite_name_string
@@ -382,7 +382,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       1 runs, 1 assertions, 0 failures, 0 errors, 0 skips
     EOM
 
-    assert_filtering 'exclude', "Alpha#test_something", expected
+    assert_filtering "exclude", "Alpha#test_something", expected
   end
 
   def test_run_filtered_excluding_string_method_only
@@ -394,7 +394,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       0 runs, 0 assertions, 0 failures, 0 errors, 0 skips
     EOM
 
-    assert_filtering 'exclude', "test_something", expected, :pass
+    assert_filtering "exclude", "test_something", expected, :pass
   end
 
   def test_run_passing
@@ -1111,7 +1111,7 @@ class TestMinitestUnitTestCase < Minitest::Test
     @assertion_count = 2
 
     pattern = Object.new
-    def pattern.=~(_) true end
+    def pattern.=~ _; true end
 
     @tc.assert_match pattern, 5
   end
@@ -1129,7 +1129,7 @@ class TestMinitestUnitTestCase < Minitest::Test
     @assertion_count = 2
 
     pattern = Object.new
-    def pattern.=~(_) false end
+    def pattern.=~ _; false end
     def pattern.inspect; "[Object]" end
 
     assert_triggered "Expected [Object] to match 5." do
@@ -1160,7 +1160,7 @@ class TestMinitestUnitTestCase < Minitest::Test
 
   def test_assert_operator_bad_object
     bad = Object.new
-    def bad.==(_) true end
+    def bad.== _; true end
 
     @tc.assert_operator bad, :equal?, bad
   end
@@ -1735,7 +1735,7 @@ class TestMinitestUnitTestCase < Minitest::Test
     @assertion_count = 2
 
     pattern = Object.new
-    def pattern.=~(_) true end
+    def pattern.=~ _; true end
     def pattern.inspect; "[Object]" end
 
     assert_triggered "Expected [Object] to not match 5." do
@@ -1776,7 +1776,7 @@ class TestMinitestUnitTestCase < Minitest::Test
 
   def test_refute_operator_bad_object
     bad = Object.new
-    def bad.==(_) true end
+    def bad.== _; true end
 
     @tc.refute_operator true, :equal?, bad
   end
@@ -1927,7 +1927,7 @@ end
 class TestMinitestUnitRecording < MetaMetaMetaTestCase
   # do not parallelize this suite... it just can't handle it.
 
-  def assert_run_record(*expected, &block)
+  def assert_run_record *expected, &block
     @tu = Class.new Minitest::Test, &block
 
     run_tu_with_fresh_reporter

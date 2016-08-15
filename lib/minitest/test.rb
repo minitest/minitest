@@ -37,9 +37,7 @@ module Minitest
     def self.make_my_diffs_pretty!
       require "pp"
 
-      define_method :mu_pp do |o|
-        o.pretty_inspect
-      end
+      define_method :mu_pp, &:pretty_inspect
     end
 
     ##

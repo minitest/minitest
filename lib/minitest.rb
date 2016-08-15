@@ -785,9 +785,12 @@ module Minitest
 
       return bt.dup if $DEBUG
 
-      new_bt = bt.take_while { |line| line !~ /lib\/minitest/ }
-      new_bt = bt.select     { |line| line !~ /lib\/minitest/ } if new_bt.empty?
-      new_bt = bt.dup                                           if new_bt.empty?
+      mt_re = %r%lib/minitest%
+
+      new_bt = bt.take_while { |line| line !~ mt_re }
+      new_bt = bt.take_while { |line| line !~ mt_re }
+      new_bt = bt.select     { |line| line !~ mt_re } if new_bt.empty?
+      new_bt = bt.dup                                 if new_bt.empty?
 
       new_bt
     end

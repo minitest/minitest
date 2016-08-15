@@ -132,7 +132,7 @@ class Minitest::Spec < Minitest::Test
     #       desc.superclass == ActiveRecord::Base
     #     end
 
-    def register_spec_type(*args, &block)
+    def register_spec_type *args, &block
       if block then
         matcher, klass = block, args.first
       else
