@@ -1,4 +1,4 @@
-require "minitest/unit"
+require "minitest/test"
 require "minitest/spec"
 
 module Minitest

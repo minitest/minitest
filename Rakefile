@@ -17,7 +17,7 @@ end
 desc "Find missing expectations"
 task :specs do
   $:.unshift "lib"
-  require "minitest/unit"
+  require "minitest/test"
   require "minitest/spec"
 
   pos_prefix, neg_prefix = "must", "wont"
