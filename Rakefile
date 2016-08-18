@@ -11,7 +11,21 @@ Hoe.spec "minitest" do
 
   license "MIT"
 
-  self.testlib = :minitest
+  ## TODO: uncomment this on the last point release on 5.x
+  #
+  #   self.post_install_message = <<-"EOM"
+  # NOTE: minitest 5 will be the last in the minitest family to support
+  #       ruby 1.8 and 1.9 (and maybe 2.0?). If you need to keep using 1.8
+  #       or 1.9, you need to pin your dependency to minitest with
+  #       something like "~> 5.0".
+  #
+  #       Further, minitest 6 will be dropping the following:
+  #
+  #       + MiniTest (it's been Minitest for *years*)
+  #       + MiniTest::Unit
+  #       + MiniTest::Unit::TestCase
+  #       + assert_send (unless you argue for it well)
+  #   EOM
 end
 
 desc "Find missing expectations"

@@ -1447,13 +1447,24 @@ class TestMinitestUnitTestCase < Minitest::Test
     end
   end
 
+  def assert_deprecated name
+    dep = /DEPRECATED: #{name}. From #{__FILE__}:\d+:.*?/
+    assert_output nil, dep do
+      yield
+    end
+  end
+
   def test_assert_send
-    @tc.assert_send [1, :<, 2]
+    assert_deprecated :assert_send do
+      @tc.assert_send [1, :<, 2]
+    end
   end
 
   def test_assert_send_bad
-    assert_triggered "Expected 1.>(*[2]) to return true." do
-      @tc.assert_send [1, :>, 2]
+    assert_deprecated :assert_send do
+      assert_triggered "Expected 1.>(*[2]) to return true." do
+        @tc.assert_send [1, :>, 2]
+      end
     end
   end
 

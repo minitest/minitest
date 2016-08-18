@@ -367,6 +367,8 @@ module Minitest
     # Fails unless the call returns a true value
 
     def assert_send send_ary, m = nil
+      warn "DEPRECATED: assert_send. From #{caller.first}"
+
       recv, msg, *args = send_ary
       m = message(m) {
         "Expected #{mu_pp(recv)}.#{msg}(*#{mu_pp(args)}) to return true" }
