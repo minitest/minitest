@@ -40,6 +40,11 @@ module Minitest
   mc.send :attr_accessor, :extensions
 
   ##
+  # The options used for this test run.
+
+  mc.send :attr_accessor, :options
+
+  ##
   # The signal to use for dumping information to STDERR. Defaults to "INFO".
 
   mc.send :attr_accessor, :info_signal
@@ -226,7 +231,7 @@ module Minitest
       s =~ /[\s|&<>$()]/ ? s.inspect : s
     }.join " "
 
-    options
+    self.options = options
   end
 
   def self.filter_backtrace bt # :nodoc:
