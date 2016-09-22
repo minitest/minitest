@@ -49,8 +49,11 @@ module Minitest
   # Registers Minitest to run at process exit
 
   def self.autorun
+    return if @@installed_at_exit
+
+    patch_at_exit
     at_exit {
-      next if $! and not ($!.kind_of? SystemExit and $!.success?)
+      next if @@exiting_with_error
 
       exit_code = nil
 
@@ -60,7 +63,7 @@ module Minitest
       }
 
       exit_code = Minitest.run ARGV
-    } unless @@installed_at_exit
+    }
     @@installed_at_exit = true
   end
 
@@ -72,6 +75,32 @@ module Minitest
 
   def self.after_run &block
     @@after_run << block
+  end
+
+  ##
+  # When exiting due to an unhandled exception, if an at_exit handler raises
+  # and rescues an exception, it will reset $! back to nil. We still want to
+  # skip autorunning when that happens, so we have to keep track of whether
+  # $! was set starting from when the first at_exit handler gets called. (We
+  # don't care about the handlers that are installed before we patch at_exit,
+  # because our own handler will get called before them.)
+  #
+  # Note that Ruby does something similar so it can print the original error
+  # and exit with the original code when $! gets reset, but that internal state
+  # is not exposed.
+  def self.patch_at_exit
+    @@exiting_with_error = false
+    Kernel.send :alias_method, :at_exit_without_minitest_patch, :at_exit
+    Kernel.send :define_method, :at_exit do |&blk|
+      at_exit_without_minitest_patch do
+        if $! and not ($!.kind_of? SystemExit and $!.success?)
+          Minitest.class_variable_set '@@exiting_with_error', true
+        end
+        blk.call
+      end
+    end
+    # at_exit is defined as both a class and instance method.
+    Kernel.send :module_function, :at_exit
   end
 
   def self.init_plugins options # :nodoc:
