@@ -2,6 +2,7 @@ require "optparse"
 require "thread"
 require "mutex_m"
 require "minitest/parallel"
+require "stringio"
 
 ##
 # :include: README.rdoc
@@ -579,7 +580,7 @@ module Minitest
       io.puts unless options[:verbose] # finish the dots
       io.puts
       io.puts statistics
-      io.puts aggregated_results
+      aggregated_results io
       io.puts summary
     end
 
@@ -588,21 +589,20 @@ module Minitest
         [total_time, count / total_time, assertions / total_time]
     end
 
-    def aggregated_results # :nodoc:
+    def aggregated_results io # :nodoc:
       filtered_results = results.dup
       filtered_results.reject!(&:skipped?) unless options[:verbose]
 
-      s = filtered_results.each_with_index.map { |result, i|
-        "\n%3d) %s" % [i+1, result]
-      }.join("\n") + "\n"
-
-      s.force_encoding(io.external_encoding) if
-        ENCS and io.external_encoding and s.encoding != io.external_encoding
-
-      s
+      filtered_results.each_with_index.each { |result, i|
+        io.puts "\n%3d) %s" % [i+1, result]
+      }
+      io.puts
+      io
     end
 
-    alias to_s aggregated_results
+    def to_s
+      aggregated_results(StringIO.new(''.b)).string
+    end
 
     def summary # :nodoc:
       extra = ""
