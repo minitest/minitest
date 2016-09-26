@@ -15,6 +15,13 @@
 
   * Removed Interrupt from PASSTHROUGH_EXCEPTIONS (already handled). (waldyr)
 
+=== 5.8.5 / 2016-09-25
+
+* 2 bug fixes:
+
+  * Re-release to refresh gem certificate signing. ugh.
+  * Fixed hoe/minitest to not augment load path if we're actually testing minitest.  
+
 === 5.8.4 / 2016-01-21
 
 * 1 bug fix:
