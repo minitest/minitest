@@ -1,3 +1,10 @@
+=== 5.9.1 / 2016-09-25
+
+* 2 bug fixes:
+
+  * Re-release to refresh gem certificate signing. ugh.
+  * Fixed hoe/minitest to not augment load path if we're actually testing minitest.  
+
 === 5.9.0 / 2016-05-16
 
 * 8 minor enhancements:
