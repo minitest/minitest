@@ -207,6 +207,16 @@ module Minitest
     end
 
     ##
+    # Fails unless +obj+ is true or false.
+
+    def assert_boolean obj, msg = nil
+      msg = message(msg) {
+        "Expected #{mu_pp(obj)} to be true or false"
+      }
+      assert [true, false].include?(obj), msg
+    end
+
+    ##
     # Fails unless +collection+ includes +obj+.
 
     def assert_includes collection, obj, msg = nil
@@ -572,6 +582,16 @@ module Minitest
 
     def refute_in_epsilon a, b, epsilon = 0.001, msg = nil
       refute_in_delta a, b, a * epsilon, msg
+    end
+
+    ##
+    # Fails if +obj+ is true or false.
+
+    def refute_boolean obj, msg = nil
+      msg = message(msg) {
+        "Expected #{mu_pp(obj)} to not be true or false"
+      }
+      refute [true, false].include?(obj), msg
     end
 
     ##
