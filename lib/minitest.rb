@@ -593,7 +593,7 @@ module Minitest
       filtered_results = results.dup
       filtered_results.reject!(&:skipped?) unless options[:verbose]
 
-      filtered_results.each_with_index.each { |result, i|
+      filtered_results.each_with_index { |result, i|
         io.puts "\n%3d) %s" % [i+1, result]
       }
       io.puts
