@@ -8,6 +8,17 @@ class Minitest::Test
   end
 end
 
+class FakeNamedTest < Minitest::Test
+  @@count = 0
+
+  def self.name
+    @fake_name ||= begin
+                     @@count += 1
+                     "FakeNamedTest%02d" % @@count
+                   end
+  end
+end
+
 class MetaMetaMetaTestCase < Minitest::Test
   attr_accessor :reporter, :output, :tu
 

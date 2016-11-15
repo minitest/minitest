@@ -67,7 +67,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
   # end
 
   def test_passed_eh_teardown_good
-    test_class = Class.new Minitest::Test do
+    test_class = Class.new FakeNamedTest do
       def teardown; assert true; end
       def test_omg; assert true; end
     end
@@ -78,7 +78,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
   end
 
   def test_passed_eh_teardown_skipped
-    test_class = Class.new Minitest::Test do
+    test_class = Class.new FakeNamedTest do
       def teardown; assert true; end
       def test_omg; skip "bork"; end
     end
@@ -91,7 +91,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
   end
 
   def test_passed_eh_teardown_flunked
-    test_class = Class.new Minitest::Test do
+    test_class = Class.new FakeNamedTest do
       def teardown; flunk;       end
       def test_omg; assert true; end
     end
@@ -138,7 +138,7 @@ class TestMinitestUnitInherited < MetaMetaMetaTestCase
   def test_inherited_hook_plays_nice_with_others
     with_overridden_include do
       assert_throws :inherited_hook do
-        Class.new Minitest::Test
+        Class.new FakeNamedTest
       end
     end
   end
@@ -158,7 +158,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
 
   def test_run_test
     @tu =
-    Class.new Minitest::Test do
+    Class.new FakeNamedTest do
       attr_reader :foo
 
       def run
@@ -187,7 +187,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
 
   def test_run_error
     @tu =
-    Class.new Minitest::Test do
+    Class.new FakeNamedTest do
       def test_something
         assert true
       end
@@ -215,7 +215,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
 
   def test_run_error_teardown
     @tu =
-    Class.new Minitest::Test do
+    Class.new FakeNamedTest do
       def test_something
         assert true
       end
@@ -261,7 +261,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
 
   def setup_basic_tu
     @tu =
-    Class.new Minitest::Test do
+    Class.new FakeNamedTest do
       def test_something
         assert true
       end
@@ -289,14 +289,14 @@ class TestMinitestRunner < MetaMetaMetaTestCase
   def assert_filtering filter, name, expected, a = false
     args = %W[--#{filter} #{name} --seed 42]
 
-    alpha = Class.new Minitest::Test do
+    alpha = Class.new FakeNamedTest do
       define_method :test_something do
         assert a
       end
     end
     Object.const_set(:Alpha, alpha)
 
-    beta = Class.new Minitest::Test do
+    beta = Class.new FakeNamedTest do
       define_method :test_something do
         assert true
       end
@@ -399,7 +399,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
 
   def test_run_passing
     @tu =
-    Class.new Minitest::Test do
+    Class.new FakeNamedTest do
       def test_something
         assert true
       end
@@ -418,7 +418,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
 
   def test_run_skip
     @tu =
-    Class.new Minitest::Test do
+    Class.new FakeNamedTest do
       def test_something
         assert true
       end
@@ -445,7 +445,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
 
   def test_run_skip_verbose
     @tu =
-    Class.new Minitest::Test do
+    Class.new FakeNamedTest do
       def test_something
         assert true
       end
@@ -473,7 +473,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
 
   def test_run_with_other_runner
     @tu =
-    Class.new Minitest::Test do
+    Class.new FakeNamedTest do
       def self.run reporter, options = {}
         @reporter = reporter
         before_my_suite
@@ -548,7 +548,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     }
 
     @tu =
-    Class.new Minitest::Test do
+    Class.new FakeNamedTest do
       parallelize_me!
 
       test_count.times do |i|
@@ -596,7 +596,7 @@ class TestMinitestUnitOrder < MetaMetaMetaTestCase
   def test_before_setup
     call_order = []
     @tu =
-    Class.new Minitest::Test do
+    Class.new FakeNamedTest do
       define_method :setup do
         super()
         call_order << :setup
@@ -618,7 +618,7 @@ class TestMinitestUnitOrder < MetaMetaMetaTestCase
   def test_after_teardown
     call_order = []
     @tu =
-    Class.new Minitest::Test do
+    Class.new FakeNamedTest do
       define_method :teardown do
         super()
         call_order << :teardown
@@ -640,7 +640,7 @@ class TestMinitestUnitOrder < MetaMetaMetaTestCase
   def test_all_teardowns_are_guaranteed_to_run
     call_order = []
     @tu =
-    Class.new Minitest::Test do
+    Class.new FakeNamedTest do
       define_method :after_teardown do
         super()
         call_order << :after_teardown
@@ -671,7 +671,7 @@ class TestMinitestUnitOrder < MetaMetaMetaTestCase
   def test_setup_and_teardown_survive_inheritance
     call_order = []
 
-    @tu = Class.new Minitest::Test do
+    @tu = Class.new FakeNamedTest do
       define_method :setup do
         call_order << :setup_method
       end
@@ -1829,7 +1829,7 @@ class TestMinitestUnitTestCase < Minitest::Test
   def test_runnable_methods_random
     @assertion_count = 0
 
-    sample_test_case = Class.new Minitest::Test do
+    sample_test_case = Class.new FakeNamedTest do
       def self.test_order; :random; end
       def test_test1; assert "does not matter" end
       def test_test2; assert "does not matter" end
@@ -1849,7 +1849,7 @@ class TestMinitestUnitTestCase < Minitest::Test
   def test_runnable_methods_sorted
     @assertion_count = 0
 
-    sample_test_case = Class.new Minitest::Test do
+    sample_test_case = Class.new FakeNamedTest do
       def self.test_order; :sorted end
       def test_test3; assert "does not matter" end
       def test_test2; assert "does not matter" end
@@ -1863,7 +1863,7 @@ class TestMinitestUnitTestCase < Minitest::Test
   def test_i_suck_and_my_tests_are_order_dependent_bang_sets_test_order_alpha
     @assertion_count = 0
 
-    shitty_test_case = Class.new Minitest::Test
+    shitty_test_case = Class.new FakeNamedTest
 
     shitty_test_case.i_suck_and_my_tests_are_order_dependent!
 
@@ -1873,7 +1873,7 @@ class TestMinitestUnitTestCase < Minitest::Test
   def test_i_suck_and_my_tests_are_order_dependent_bang_does_not_warn
     @assertion_count = 0
 
-    shitty_test_case = Class.new Minitest::Test
+    shitty_test_case = Class.new FakeNamedTest
 
     def shitty_test_case.test_order; :lol end
 
@@ -1939,7 +1939,7 @@ class TestMinitestUnitRecording < MetaMetaMetaTestCase
   # do not parallelize this suite... it just can't handle it.
 
   def assert_run_record *expected, &block
-    @tu = Class.new Minitest::Test, &block
+    @tu = Class.new FakeNamedTest, &block
 
     run_tu_with_fresh_reporter
 
@@ -1997,7 +1997,7 @@ class TestMinitestUnitRecording < MetaMetaMetaTestCase
   end
 
   def test_to_s_error_in_test_and_teardown
-    @tu = Class.new Minitest::Test do
+    @tu = Class.new FakeNamedTest do
       def test_method
         raise AnError
       end
