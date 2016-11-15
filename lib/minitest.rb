@@ -319,6 +319,7 @@ module Minitest
     # test. See Minitest::ParallelTest::ClassMethods for an example.
 
     def self.run_one_method klass, method_name, reporter
+      reporter.prerecord klass, method_name
       reporter.record Minitest.run_one_method(klass, method_name)
     end
 
@@ -430,6 +431,13 @@ module Minitest
     end
 
     ##
+    # About to start running a test. This allows a reporter to show
+    # that it is starting or that we are in the middle of a test run.
+
+    def prerecord klass, name
+    end
+
+    ##
     # Record a result and output the Runnable#result_code. Stores the
     # result of the run if the run did not pass.
 
@@ -477,9 +485,15 @@ module Minitest
   # own.
 
   class ProgressReporter < Reporter
+    def prerecord klass, name
+      if options[:verbose] then
+        io.print "%s#%s = " % [klass, name]
+        io.flush
+      end
+    end
+
     def record result # :nodoc:
-      io.print "%s#%s = %.2f s = " % [result.class, result.name, result.time] if
-        options[:verbose]
+      io.print "%.2f s = " % [result.time] if options[:verbose]
       io.print result.result_code
       io.puts if options[:verbose]
     end
@@ -646,6 +660,12 @@ module Minitest
 
     def start # :nodoc:
       self.reporters.each(&:start)
+    end
+
+    def prerecord klass, name # :nodoc:
+      self.reporters.each do |reporter|
+        reporter.prerecord klass, name
+      end
     end
 
     def record result # :nodoc:
