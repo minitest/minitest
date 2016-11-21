@@ -456,11 +456,13 @@ in order to require minitest, you must first add the <tt>gem 'minitest'</tt>
 to your Gemfile and run +bundle+. Once it's installed, you should be
 able to require minitest and run your tests.
 
-=== How can I access the testopts (for example the seed value) in my tests?
+=== How can I access the minitest options (for example the seed value) in my tests?
 
 If you like to use for example the generated or given seed value in your tests
-you can get the minitest options now with +Minitest.testopts+ and the seed value
-by calling +Minitest.testopts[:seed]+ from everywhere.
+you can get the minitest options now with +Minitest.options+ from everywhere.
+This is usefull to feed the random seed generator before testing something with random input,
+by just calling +srand Minitest.options[:seed]+ for example in a test setup.
+    
 
 == Prominent Projects using Minitest:
 
