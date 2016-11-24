@@ -285,9 +285,9 @@ provided via plugins. To see them, simply run with +--help+:
     % ruby -Ilib:test test/minitest/test_minitest_test.rb --help
     minitest options:
         -h, --help                       Display this help.
-        -s, --seed SEED                  Sets random seed
+        -s, --seed SEED                  Sets random seed. Also via env. Eg: SEED=n rake
         -v, --verbose                    Verbose. Show progress processing files.
-        -n, --name PATTERN               Filter run on /pattern/ or string.
+        -n, --name PATTERN               Filter run on /regexp/ or string.
         -e, --exclude PATTERN            Exclude /regexp/ or string from run.
 
     Known extensions: pride, autotest
