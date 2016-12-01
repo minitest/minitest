@@ -1,3 +1,14 @@
+=== 5.10.0 / 2016-11-30
+
+* 2 minor enhancements:
+
+  * Added AbstractReporter#prerecord and extended ProgressReporter and CompositeReporter to use it.
+  * Minor optimization: remove runnables with no runnable methods before run.
+
+* 1 bug fix:
+
+  * 2.4: removed deprecation warnings when referring to Fixnum.
+
 === 5.9.1 / 2016-09-25
 
 * 2 bug fixes:
