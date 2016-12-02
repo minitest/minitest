@@ -1,3 +1,9 @@
+=== 5.10.1 / 2016-12-01
+
+* 1 bug fix:
+
+  * Added a hack/kludge to deal with missing #prerecord on reporters that aren't properly subclassing AbstractReporter (I'm looking at you minitest-reporters)
+
 === 5.10.0 / 2016-11-30
 
 * 2 minor enhancements:
