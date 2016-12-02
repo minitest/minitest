@@ -664,7 +664,8 @@ module Minitest
 
     def prerecord klass, name # :nodoc:
       self.reporters.each do |reporter|
-        reporter.prerecord klass, name
+        # TODO: remove conditional for minitest 6
+        reporter.prerecord klass, name if reporter.respond_to? :prerecord
       end
     end
 

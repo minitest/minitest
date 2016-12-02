@@ -1948,6 +1948,30 @@ class TestMinitestUnitRecording < MetaMetaMetaTestCase
     assert_equal expected, recorded
   end
 
+  def test_run_with_bogus_reporter
+    # https://github.com/seattlerb/minitest/issues/659
+    # TODO: remove test for minitest 6
+    @tu = Class.new FakeNamedTest do
+      def test_method
+        assert true
+      end
+    end
+
+    self.reporter = Minitest::CompositeReporter.new
+    reporter << Class.new do
+      def start; end
+      # def prerecord klass, name; end
+      def record result; end
+      def report; end
+      def passed?; end
+      def results; end
+    end.new
+
+    Minitest::Runnable.runnables.delete @tu
+
+    @tu.run reporter, {}
+  end
+
   def test_record_passing
     assert_run_record do
       def test_method
