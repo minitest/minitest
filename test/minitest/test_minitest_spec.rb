@@ -216,6 +216,20 @@ describe Minitest::Spec do
     end
   end
 
+  it "needs to warn on equality with nil" do
+    @assertion_count += 1 # extra test
+
+    out, err = capture_io do
+      nil.must_equal(nil).must_equal true
+    end
+
+    exp = "Use assert_nil if expecting nil from #{__FILE__}:#{__LINE__-3}. " \
+      "This will fail in MT6.\n"
+
+    assert_empty out
+    assert_equal exp, err
+  end
+
   it "needs to verify floats outside a delta" do
     @assertion_count += 1 # extra test
 
