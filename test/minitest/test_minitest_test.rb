@@ -146,6 +146,9 @@ end
 
 class TestMinitestRunner < MetaMetaMetaTestCase
   # do not parallelize this suite... it just can't handle it.
+  def self.test_order
+    :random
+  end
 
   def test_class_runnables
     @assertion_count = 0
@@ -592,6 +595,9 @@ end
 
 class TestMinitestUnitOrder < MetaMetaMetaTestCase
   # do not parallelize this suite... it just can't handle it.
+  def self.test_order
+    :random
+  end
 
   def test_before_setup
     call_order = []
@@ -748,6 +754,9 @@ class TestMinitestUnitTestCase < Minitest::Test
   # do not call parallelize_me! - teardown accesses @tc._assertions
   # which is not threadsafe. Nearly every method in here is an
   # assertion test so it isn't worth splitting it out further.
+  def self.test_order
+    :random
+  end
 
   RUBY18 = !defined? Encoding
 
@@ -1937,6 +1946,9 @@ end
 
 class TestMinitestUnitRecording < MetaMetaMetaTestCase
   # do not parallelize this suite... it just can't handle it.
+  def self.test_order
+    :random
+  end
 
   def assert_run_record *expected, &block
     @tu = Class.new FakeNamedTest, &block
