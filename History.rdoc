@@ -6,13 +6,20 @@
 
 === 5.10.0 / 2016-11-30
 
-* 2 minor enhancements:
+* 1 major enhancement:
 
+  * Deprecated ruby 1.8, 1.9, possibly 2.0, assert_send, & old MiniTest namespace.
+
+* 3 minor enhancements:
+
+  * Warn if assert_equal expects a nil. This will fail in minitest 6+. (tenderlove)
   * Added AbstractReporter#prerecord and extended ProgressReporter and CompositeReporter to use it.
   * Minor optimization: remove runnables with no runnable methods before run.
 
-* 1 bug fix:
+* 3 bug fixes:
 
+  * Fix assert_throw rescuing any NameError and ArgumentError. (waldyr)
+  * Clean up (most of the) last remaining vestiges of minitest/unit.
   * 2.4: removed deprecation warnings when referring to Fixnum.
 
 === 5.9.1 / 2016-09-25
