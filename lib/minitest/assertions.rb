@@ -447,7 +447,7 @@ module Minitest
     end
 
     ##
-    # Captures $stdout and $stderr into strings, using Tempfile to
+    # Captures $stdout and $stderr into strings, using IO.pipe to
     # ensure that subprocess IO is captured as well.
     #
     #   out, err = capture_subprocess_io do
@@ -464,25 +464,28 @@ module Minitest
     def capture_subprocess_io
       _synchronize do
         begin
-          require "tempfile"
-
-          captured_stdout, captured_stderr = Tempfile.new("out"), Tempfile.new("err")
+          stdout_reader, stdout_writer = IO.pipe
+          stderr_reader, stderr_writer = IO.pipe
 
           orig_stdout, orig_stderr = $stdout.dup, $stderr.dup
-          $stdout.reopen captured_stdout
-          $stderr.reopen captured_stderr
 
-          yield
+          begin
+            $stdout.reopen stdout_writer
+            $stderr.reopen stderr_writer
 
-          $stdout.rewind
-          $stderr.rewind
+            yield
+          ensure
+            $stdout.reopen orig_stdout
+            $stderr.reopen orig_stderr
+          end
 
-          return captured_stdout.read, captured_stderr.read
+          stdout_writer.close
+          stderr_writer.close
+
+          return stdout_reader.read, stderr_reader.read
         ensure
-          captured_stdout.unlink
-          captured_stderr.unlink
-          $stdout.reopen orig_stdout
-          $stderr.reopen orig_stderr
+          stdout_reader.close
+          stderr_reader.close
         end
       end
     end
