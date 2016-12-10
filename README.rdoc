@@ -636,4 +636,4 @@ Just install minitest as a gem for real and you'll be happier.
 
 == LICENSE:
 
-Licensed under the [MIT-License](LICENSE).
+Licensed under the [MIT-License](./LICENSE).
