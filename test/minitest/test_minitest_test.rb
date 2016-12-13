@@ -3,6 +3,18 @@
 require "pathname"
 require "minitest/metametameta"
 
+if defined? Encoding then
+  e = Encoding.default_external
+  if e != Encoding::UTF_8 then
+    warn ""
+    warn ""
+    warn "NOTE: External encoding #{e} is not UTF-8. Tests WILL fail."
+    warn "      Run tests with `RUBYOPT=-Eutf-8 rake` to avoid errors."
+    warn ""
+    warn ""
+  end
+end
+
 module MyModule; end
 class AnError < StandardError; include MyModule; end
 class ImmutableString < String; def inspect; super.freeze; end; end
