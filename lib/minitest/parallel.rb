@@ -57,7 +57,11 @@ module Minitest
 
       module ClassMethods # :nodoc:
         def run_one_method klass, method_name, reporter
-          Minitest.parallel_executor << [klass, method_name, reporter]
+          if test_order == :parallel
+            Minitest.parallel_executor << [klass, method_name, reporter]
+          else
+            super
+          end
         end
 
         def test_order
