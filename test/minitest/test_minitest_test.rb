@@ -1969,19 +1969,24 @@ class TestMinitestUnitRecording < MetaMetaMetaTestCase
       end
     end
 
-    self.reporter = Minitest::CompositeReporter.new
-    reporter << Class.new do
-      def start; end
-      # def prerecord klass, name; end
-      def record result; end
+    bogus_reporter = Class.new do      # doesn't subclass AbstractReporter
+      def start; @success = false; end
+      # def prerecord klass, name; end # doesn't define full API
+      def record result; @success = true; end
       def report; end
       def passed?; end
       def results; end
+      def success?; @success; end
     end.new
+
+    self.reporter = Minitest::CompositeReporter.new
+    reporter << bogus_reporter
 
     Minitest::Runnable.runnables.delete @tu
 
     @tu.run reporter, {}
+
+    assert_predicate bogus_reporter, :success?
   end
 
   def test_record_passing
