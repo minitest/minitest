@@ -7,5 +7,5 @@ end
 begin
   require "minitest/proveit"
 rescue LoadError
-  # do nothing
+  warn "NOTE: `gem install minitest-proveit` for even more hellish tests"
 end
