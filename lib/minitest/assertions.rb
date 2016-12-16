@@ -370,7 +370,9 @@ module Minitest
     # Fails unless the call returns a true value
 
     def assert_send send_ary, m = nil
-      warn "DEPRECATED: assert_send. From #{caller.first}"
+      where = Minitest.filter_backtrace(caller).first
+      where = where.split(/:in /, 2).first # clean up noise
+      warn "DEPRECATED: assert_send. From #{where}"
 
       recv, msg, *args = send_ary
       m = message(m) {
