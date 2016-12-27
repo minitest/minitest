@@ -141,6 +141,14 @@ module Minitest
       true
     end
 
+    ##
+    # Fails unless +test+ is falthy.
+
+    def assert_not test, msg = nil
+      msg ||= "Expected #{mu_pp test} to be nil or false."
+      assert !test, msg
+    end
+
     def _synchronize # :nodoc:
       yield
     end
