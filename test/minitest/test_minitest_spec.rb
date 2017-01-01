@@ -224,7 +224,7 @@ describe Minitest::Spec do
     end
 
     exp = "Use assert_nil if expecting nil from #{__FILE__}:#{__LINE__-3}. " \
-      "This will fail in MT6.\n"
+      "This will fail in Minitest 6.\n"
 
     assert_empty out
     assert_equal exp, err
