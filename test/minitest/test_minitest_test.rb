@@ -1001,6 +1001,7 @@ class TestMinitestUnitTestCase < Minitest::Test
       end
     else
       err_re = /Use assert_nil if expecting nil from .*test_minitest_test.rb/
+      err_re = "" if $-w.nil?
 
       assert_output "", err_re do
         @tc.assert_equal nil, nil
@@ -1461,6 +1462,8 @@ class TestMinitestUnitTestCase < Minitest::Test
 
   def assert_deprecated name
     dep = /DEPRECATED: #{name}. From #{__FILE__}:\d+:.*?/
+    dep = "" if $-w.nil?
+
     assert_output nil, dep do
       yield
     end

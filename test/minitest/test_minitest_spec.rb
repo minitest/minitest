@@ -223,8 +223,9 @@ describe Minitest::Spec do
       nil.must_equal(nil).must_equal true
     end
 
-    exp = "Use assert_nil if expecting nil from #{__FILE__}:#{__LINE__-3}. " \
+    exp = "DEPRECATED: Use assert_nil if expecting nil from #{__FILE__}:#{__LINE__-3}. " \
       "This will fail in Minitest 6.\n"
+    exp = "" if $-w.nil?
 
     assert_empty out
     assert_equal exp, err

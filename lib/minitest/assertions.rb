@@ -180,7 +180,7 @@ module Minitest
           where = Minitest.filter_backtrace(caller).first
           where = where.split(/:in /, 2).first # clean up noise
 
-          $stderr.puts "Use assert_nil if expecting nil from #{where}. This will fail in Minitest 6."
+          warn "DEPRECATED: Use assert_nil if expecting nil from #{where}. This will fail in Minitest 6."
         end
       end
 
