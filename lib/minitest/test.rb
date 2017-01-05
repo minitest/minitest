@@ -13,8 +13,10 @@ module Minitest
 
     PASSTHROUGH_EXCEPTIONS = [NoMemoryError, SignalException, SystemExit] # :nodoc:
 
-    class << self; attr_accessor :io_lock; end # :nodoc:
+    # :stopdoc:
+    class << self; attr_accessor :io_lock; end
     self.io_lock = Mutex.new
+    # :startdoc:
 
     ##
     # Call this at the top of your tests when you absolutely
