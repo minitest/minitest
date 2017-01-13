@@ -74,6 +74,12 @@ class TestMinitestReporter < MetaMetaMetaTestCase
     @st
   end
 
+  def test_to_s
+    r.record passing_test
+    r.record fail_test
+    assert_match "woot", r.first.to_s
+  end
+
   def test_passed_eh_empty
     assert r.passed?
   end
