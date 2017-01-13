@@ -1461,7 +1461,7 @@ class TestMinitestUnitTestCase < Minitest::Test
   end
 
   def assert_deprecated name
-    dep = /DEPRECATED: #{name}. From #{__FILE__}:\d+:.*?/
+    dep = /DEPRECATED: #{name}. From #{__FILE__}:\d+(?::.*)?/
     dep = "" if $-w.nil?
 
     assert_output nil, dep do
