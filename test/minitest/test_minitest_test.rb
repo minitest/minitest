@@ -78,6 +78,38 @@ class TestMinitestUnit < MetaMetaMetaTestCase
   #   assert_instance_of Minitest::Unit, Minitest::Unit.runner
   # end
 
+  def test_infectious_binary_encoding
+    @tu = Class.new Minitest::Test do
+      def test_this_is_not_ascii_assertion
+        assert_equal "ЁЁЁ", "ёёё"
+      end
+
+      def test_this_is_non_ascii_failure_message
+        fail 'ЁЁЁ'.force_encoding('ASCII-8BIT')
+      end
+    end
+
+    expected = clean <<-EOM
+      EF
+
+      Finished in 0.00
+
+        1) Error:
+      #<Class:0xXXX>#test_this_is_non_ascii_failure_message:
+      RuntimeError: ЁЁЁ
+          FILE:LINE:in `test_this_is_non_ascii_failure_message'
+
+        2) Failure:
+      #<Class:0xXXX>#test_this_is_not_ascii_assertion [FILE:LINE]:
+      Expected: \"ЁЁЁ\"
+        Actual: \"ёёё\"
+
+      2 runs, 1 assertions, 1 failures, 1 errors, 0 skips
+    EOM
+
+    assert_report expected
+  end
+
   def test_passed_eh_teardown_good
     test_class = Class.new FakeNamedTest do
       def teardown; assert true; end
