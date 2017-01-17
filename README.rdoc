@@ -490,6 +490,21 @@ when running rake in Minitest.
 This is also a problem primarily affecting Windows developers. PowerShell
 has a command called diff, but it is not suitable for use with Minitest.
 
+If you see failures like either of these, you are probably missing diff tool:
+
+      4) Failure:
+    TestMinitestUnitTestCase#test_assert_equal_different_long [D:/ruby/seattlerb/minitest/test/minitest/test_minitest_test.rb:936]:
+    Expected: "--- expected\n+++ actual\n@@ -1 +1 @@\n-\"hahahahahahahahahahahahahahahahahahahaha\"\n+\"blahblahblahblahblahblahblahblahblahblah\"\n"
+      Actual: "Expected: \"hahahahahahahahahahahahahahahahahahahaha\"\n  Actual: \"blahblahblahblahblahblahblahblahblahblah\""
+
+
+      5) Failure:
+    TestMinitestUnitTestCase#test_assert_equal_different_collection_hash_hex_invisible [D:/ruby/seattlerb/minitest/test/minitest/test_minitest_test.rb:845]:
+    Expected: "No visible difference in the Hash#inspect output.\nYou should look at the implementation of #== on Hash or its members.\n
+    {1=>#<Object:0xXXXXXX>}"
+      Actual: "Expected: {1=>#<Object:0x00000003ba0470>}\n  Actual: {1=>#<Object:0x00000003ba0448>}"
+
+
 If you use Cygwin or MSYS2 or similar there are packages that include a
 GNU diff for Widnows. If you don't, you can download GNU diffutils from
 http://gnuwin32.sourceforge.net/packages/diffutils.htm
