@@ -121,6 +121,9 @@ module Minitest
     self.load_plugins
 
     options = process_args args
+    if file = args.find {|arg| File.file?(arg)}
+      options.merge!(file: file)
+    end
 
     reporter = CompositeReporter.new
     reporter << SummaryReporter.new(options[:io], options)
