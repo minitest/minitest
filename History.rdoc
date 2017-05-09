@@ -1,3 +1,19 @@
+=== 5.10.2 / 2017-05-09
+
+* 1 minor enhancement:
+
+  * Added suggestion in minitest/hell to install minitest/proveit.
+
+* 7 bug fixes:
+
+  * Expand MT6 to Minitest 6. (xaviershay)
+  * Fixed location of assert_send deprecation. (rab)
+  * Fixed location of nil assert_equal deprecation to work with expectations. (jeremyevans)
+  * Fixed minitest/hell to use parallelize_me! (azul)
+  * Made deprecation use warn so -W0 will silence it.
+  * Workaround for rdoc nodoc generation bug that totally f'd up minitest doco. (Paxa)
+  * Write aggregated_results directly to the IO object to avoid mixed encoding errors. (tenderlove)
+
 === 5.10.1 / 2016-12-01
 
 * 1 bug fix:
