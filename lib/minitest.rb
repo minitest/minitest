@@ -203,7 +203,7 @@ module Minitest
       end
 
       begin
-        opts.parse! args
+        opts.parse args
       rescue OptionParser::InvalidOption => e
         puts
         puts e
