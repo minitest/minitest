@@ -902,6 +902,26 @@ class TestMeta < MetaMetaMetaTestCase
     assert_equal [], z.instance_methods.grep(/^test/)
   end
 
+  def test_mixed_describe_context_structure
+    x = x1 = x2 = y = z = nil
+    x = describe "top-level thingy" do
+      x1 = it "top level it" do end
+
+      y = context "first thingy" do
+        x2 = it "nested under context" do end
+      end
+      z = context "second thingy" do end
+    end
+
+    test_methods = ["test_0001_top level it", "test_0001_nested under context"]
+
+    assert_equal test_methods, [x1, x2]
+    assert_equal [test_methods.first],
+      x.instance_methods.grep(/^test/).map {|o| o.to_s}.sort
+    assert_equal [test_methods.last.to_sym], y.instance_methods.grep(/^test/)
+    assert_equal [], z.instance_methods.grep(/^test/)
+  end
+
   def test_structure_subclasses
     z = nil
     x = Class.new Minitest::Spec do

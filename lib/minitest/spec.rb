@@ -84,7 +84,8 @@ module Kernel
     stack.pop
     cls
   end
-  private :describe
+  alias :context :describe
+  private :describe, :context
 end
 
 ##
