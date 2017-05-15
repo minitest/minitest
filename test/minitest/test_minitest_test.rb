@@ -1110,6 +1110,10 @@ class TestMinitestUnitTestCase < Minitest::Test
     end
   end
 
+  def test_assert_boolean
+    @tc.assert_boolean true
+  end
+
   def test_assert_includes
     @assertion_count = 2
 
@@ -1740,6 +1744,10 @@ class TestMinitestUnitTestCase < Minitest::Test
       @tc.refute_in_epsilon 10_000, 9990
       flunk
     end
+  end
+
+  def test_refute_boolean
+    @tc.refute_boolean nil
   end
 
   def test_refute_includes

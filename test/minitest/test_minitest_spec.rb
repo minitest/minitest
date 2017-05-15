@@ -60,6 +60,30 @@ describe Minitest::Spec do
     end
   end
 
+  it "needs to verify boolean" do
+    true.must_be_boolean.must_equal true
+
+    assert_triggered "Expected nil to be true or false." do
+      nil.must_be_boolean
+    end
+
+    assert_triggered "msg.\nExpected nil to be true or false." do
+      nil.must_be_boolean "msg"
+    end
+  end
+
+  it "needs to verify non-boolean" do
+    nil.wont_be_boolean.must_equal false
+
+    assert_triggered "Expected true to not be true or false." do
+      true.wont_be_boolean
+    end
+
+    assert_triggered "msg.\nExpected true to not be true or false." do
+      true.wont_be_boolean "msg"
+    end
+  end
+
   it "needs to be sensible about must_include order" do
     @assertion_count += 3 # must_include is 2 assertions
 
@@ -134,6 +158,7 @@ describe Minitest::Spec do
     musts, wonts = methods.sort.partition { |m| m =~ /^must/ }
 
     expected_musts = %w[must_be
+                        must_be_boolean
                         must_be_close_to
                         must_be_empty
                         must_be_instance_of

@@ -57,6 +57,15 @@ module Minitest::Expectations
   infect_an_assertion :assert_in_epsilon, :must_be_within_epsilon
 
   ##
+  # See Minitest::Assertions#assert_boolean
+  #
+  #    collection.must_be_boolean
+  #
+  # :method: must_be_boolean
+
+  infect_an_assertion :assert_boolean, :must_be_boolean, :unary
+
+  ##
   # See Minitest::Assertions#assert_includes
   #
   #    collection.must_include obj
@@ -205,6 +214,15 @@ module Minitest::Expectations
   # :method: wont_be_within_epsilon
 
   infect_an_assertion :refute_in_epsilon, :wont_be_within_epsilon
+
+  ##
+  # See Minitest::Assertions#refute_boolean
+  #
+  #    collection.wont_be_boolean
+  #
+  # :method: wont_be_boolean
+
+  infect_an_assertion :refute_boolean, :wont_be_boolean, :unary
 
   ##
   # See Minitest::Assertions#refute_includes
