@@ -1,0 +1,25 @@
+language: ruby
+# To use rbx environment.
+dist: trusty
+sudo: false
+before_install:
+  # For jruby-head environment.
+  - which bundle || gem install bundler
+script:
+  - bundle exec rake test
+rvm:
+  - 2.2.7
+  - 2.3.4
+  - 2.4.1
+  - ruby-head
+  - jruby-9.1.8.0
+  - jruby-head
+  - rbx-3
+gemfile:
+  - Gemfile
+matrix:
+  allow_failures:
+    - rvm: ruby-head
+    - rvm: jruby-head
+    - rvm: rbx-3
+  fast_finish: true
