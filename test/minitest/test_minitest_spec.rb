@@ -869,6 +869,47 @@ class TestMeta < MetaMetaMetaTestCase
     assert_equal %w[test_0001_inner-it], z.instance_methods(false).map(&:to_s)
   end
 
+  def test_shared_description
+    runnables = self.class.runnables.dup
+    runs = []
+    x = Module.new do
+      extend Minitest::Spec::DSL
+      shared_description "x" do
+        before{@order << :bx}
+        after{@order << :ax}
+        it("x"){@order << :x}
+      end
+    end
+
+    y = Module.new do
+      extend Minitest::Spec::DSL
+      include x
+      shared_description "y" do
+        include x
+        before{@order << :by}
+        after{@order << :ay}
+        it("y"){@order << :y}
+      end
+    end
+
+    z = describe "z" do
+      before{(@order = []) << :bz}
+      after{@order << :az; runs << [self.class.name, @order]}
+      it("z"){@order << :z}
+      include y
+    end
+
+    new_runnables = self.class.runnables.dup - runnables
+    assert_equal %w'z z::x z::y z::y::x', new_runnables.map(&:name).sort
+
+    new_runnables.each do |runnable|
+      runnable.runnable_methods.each do |method_name|
+        Minitest.run_one_method(runnable, method_name)
+      end
+    end
+    assert_equal [["z", [:bz, :z, :az]], ["z::x", [:bz, :bx, :x, :ax, :az]], ["z::y", [:bz, :by, :y, :ay, :az]], ["z::y::x", [:bz, :by, :bx, :x, :ax, :ay, :az]]], runs.sort
+  end
+
   def test_setup_teardown_behavior
     _, _, z, before_list, after_list = util_structure
 

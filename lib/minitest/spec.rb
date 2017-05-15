@@ -199,6 +199,84 @@ class Minitest::Spec < Minitest::Test
     end
 
     ##
+    # An array of arguments and blocks to pass to describe for classes that
+    # include the current module.
+
+    def shared_descriptions
+      @shared_descriptions ||= []
+    end
+
+    ##
+    # Add a describe block that will be shared by all classes including the current module.
+    # Example:
+    #
+    #   module EmptyBehavior
+    #     extend Minitest::Spec::DSL
+    #     shared_description "empty" do
+    #       before do
+    #         @that = double
+    #       end
+    #
+    #       it "must be empty?" do
+    #         @that.must_be :empty?
+    #       end
+    #
+    #       it "must have size equal to 0" do
+    #         @that.size.must_equal 0
+    #       end
+    #     end
+    #   end
+    #
+    #   describe "array" do
+    #     def double; @this + @this end
+    #
+    #     before do
+    #       @this = []
+    #     end
+    #
+    #     include EmptyBehavior
+    #   end
+    #
+    #   describe "hash" do
+    #     def double; @this.merge(@this) end
+    #
+    #     before do
+    #       @this = {}
+    #     end
+    #
+    #     include EmptyBehavior
+    #   end
+
+    def shared_description *desc, &block
+      raise TypeError, "can only call shared_description in a module, not a class" if is_a?(Class)
+      shared_descriptions << [desc, block]
+    end
+
+    ##
+    # For each of the modules given, if the included module has any shared descriptions
+    # and this is a class, call describe with all of the shared descriptions in the module.
+    # If the included module has any shared descriptions and this is a module,
+    # include the include module's shared descriptions in the current module's shared
+    # descriptions, so that classes that include the current module get the shared descriptions
+    # in the included modules.
+
+    def include(*mods)
+      res = super
+      mods.each do |mod|
+        if mod.respond_to?(:shared_descriptions)
+          if is_a?(Class)
+            mod.shared_descriptions.each do |args, block|
+              describe(*args, &block)
+            end
+          else
+            shared_descriptions.concat(mod.shared_descriptions).uniq!
+          end
+        end
+      end
+      res
+    end
+
+    ##
     # Define an expectation with name +desc+. Name gets morphed to a
     # proper test method name. For some freakish reason, people who
     # write specs don't like class inheritance, so this goes way out of
