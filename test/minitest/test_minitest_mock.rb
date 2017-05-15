@@ -117,6 +117,16 @@ class TestMinitestMock < Minitest::Test
     assert_mock @mock
   end
 
+  def test_set_expectation_on_threequals
+    mock = Minitest::Mock.new
+    arg = Object.new
+
+    mock.expect(:===, true, [ arg ])
+    mock.===(arg)
+
+    assert mock.verify
+  end
+
   def test_blow_up_on_wrong_arguments
     @mock.foo
     @mock.meaning_of_life
