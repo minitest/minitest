@@ -229,6 +229,13 @@ class Minitest::Spec < Minitest::Test
     end
 
     ##
+    # Sometimes you don't want a test to run temporarily (which becomes permanent)
+
+    def xit desc = "anonymous", &block
+      puts "skipping #{desc}"
+    end
+
+    ##
     # Essentially, define an accessor for +name+ with +block+.
     #
     # Why use let instead of def? I honestly don't know.
