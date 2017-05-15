@@ -53,9 +53,15 @@ module Minitest
     at_exit {
       next if $! and not ($!.kind_of? SystemExit and $!.success?)
 
+      # Keep track of the testing process pid, so that we don't accidentally run the @@after_run handlers in children processes (e.g. Process.fork).
+      @@testing_process_pid = Process.pid
+
       exit_code = nil
 
       at_exit {
+        # Don't do anything if we aren't the testing process.
+        next if Process.pid != @@testing_process_pid
+
         @@after_run.reverse_each(&:call)
         exit exit_code || false
       }
