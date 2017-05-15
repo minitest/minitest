@@ -621,7 +621,7 @@ module Minitest
     def summary # :nodoc:
       extra = ""
 
-      extra = "\n\nYou have skipped tests. Run with --verbose for details." if
+      extra = "\n\nYou have skipped tests. Run with --verbose for details, or run with TESTOPTS='-v' if you are using rake." if
         results.any?(&:skipped?) unless options[:verbose] or ENV["MT_NO_SKIP_MSG"]
 
       "%d runs, %d assertions, %d failures, %d errors, %d skips%s" %
