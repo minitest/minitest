@@ -177,7 +177,7 @@ outputs something like:
 
   # Running benchmarks:
 
-  TestBlah	100	1000	10000
+  TestBlah	         100    	 1000	         10000
   bench_my_algorithm	 0.006167	 0.079279	 0.786993
   bench_other_algorithm	 0.061679	 0.792797	 7.869932
 
