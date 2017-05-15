@@ -509,4 +509,18 @@ class TestMinitestStub < Minitest::Test
     @tc.assert_equal true, rs
   end
 
+  def test_blow_up_on_multiple_stub
+    h = {}
+    e = assert_raises StubError do
+      h.stub(:empty?, false) do
+        h.stub(:empty?, true) do
+          h.empty?
+        end
+      end
+    end
+
+    exp = "method :empty? was already stubbed"
+    @tc.assert_equal exp, e.message
+  end
+
 end
