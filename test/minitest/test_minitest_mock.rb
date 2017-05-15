@@ -357,6 +357,26 @@ class TestMinitestMock < Minitest::Test
     assert_mock mock
   end
 
+  def test_remove_expectations_from_a_method
+    mock = Minitest::Mock.new
+    mock.expect(:foo, true)
+    assert mock.foo
+
+    mock.remove_expectations(:foo)
+    e = assert_raises(NoMethodError) { mock.foo }
+    exp = "unmocked method :foo, expected one of []"
+
+    assert_equal exp, e.message
+  end
+
+  def test_remove_expectations_from_a_method_doesnt_affect_other_expectations
+    mock = Minitest::Mock.new
+    mock.expect(:foo, true)
+    mock.expect(:bar, false)
+
+    mock.remove_expectations(:bar)
+    assert mock.foo
+  end
 end
 
 require "minitest/metametameta"
