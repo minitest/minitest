@@ -66,6 +66,17 @@ module Minitest # :nodoc:
     #
     #   @mock.expect(:uses_one_string, true, ["foo"])
     #   @mock.uses_one_string("bar") # => raises MockExpectationError
+    #
+    # If a method will be called multiple times, specify a new expect for each one.
+    # They will be used in the order you define them.
+    #
+    #   @mock.expect(:ordinal_increment, 'first')
+    #   @mock.expect(:ordinal_increment, 'second')
+    #
+    #   @mock.ordinal_increment # => 'first'
+    #   @mock.ordinal_increment # => 'second'
+    #   @mock.ordinal_increment # => raises MockExpectationError "No more expects available for :ordinal_increment"
+    #
 
     def expect name, retval, args = [], &blk
       name = name.to_sym
