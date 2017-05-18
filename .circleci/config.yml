@@ -1,0 +1,12 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: ruby:2.4.1
+    working_directory: /home/ubuntu/minitest
+    steps:
+      - checkout
+      - run: gem install hoe hoe-seattlerb isolate
+      - run: |
+          ruby -e 'puts "External Encoding: #{Encoding.default_external}"'
+          RUBYOPT='-E utf-8' rake test
