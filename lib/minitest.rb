@@ -231,7 +231,9 @@ module Minitest
   end
 
   def self.filter_backtrace bt # :nodoc:
-    backtrace_filter.filter bt
+    new_bt = backtrace_filter.filter bt
+    new_bt = bt.dup if new_bt.empty?
+    new_bt
   end
 
   ##
@@ -818,7 +820,6 @@ module Minitest
 
       new_bt = bt.take_while { |line| line !~ mt_re }
       new_bt = bt.select     { |line| line !~ mt_re } if new_bt.empty?
-      new_bt = bt.dup                                 if new_bt.empty?
 
       new_bt
     end
