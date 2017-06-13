@@ -486,7 +486,7 @@ module Minitest
   # own.
 
   class ProgressReporter < Reporter
-    def prerecord klass, name
+    def prerecord klass, name #:nodoc:
       if options[:verbose] then
         io.print "%s#%s = " % [klass, name]
         io.flush
@@ -614,7 +614,7 @@ module Minitest
       io
     end
 
-    def to_s
+    def to_s # :nodoc:
       aggregated_results(StringIO.new(binary_string)).string
     end
 
@@ -808,16 +808,25 @@ module Minitest
     end
   end
 
-  class BacktraceFilter # :nodoc:
+  ##
+  # The standard backtrace filter for minitest.
+  #
+  # See Minitest.backtrace_filter=.
+
+  class BacktraceFilter
+
+    MT_RE = %r%lib/minitest% #:nodoc:
+
+    ##
+    # Filter +bt+ to something useful. Returns the whole thing if $DEBUG.
+
     def filter bt
       return ["No backtrace"] unless bt
 
       return bt.dup if $DEBUG
 
-      mt_re = %r%lib/minitest%
-
-      new_bt = bt.take_while { |line| line !~ mt_re }
-      new_bt = bt.select     { |line| line !~ mt_re } if new_bt.empty?
+      new_bt = bt.take_while { |line| line !~ MT_RE }
+      new_bt = bt.select     { |line| line !~ MT_RE } if new_bt.empty?
       new_bt = bt.dup                                 if new_bt.empty?
 
       new_bt
