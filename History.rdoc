@@ -1,3 +1,14 @@
+=== 5.10.3 / 2017-07-21
+
+* 1 minor enhancement:
+
+  * Extended documentation for Mock#expect for multiple calls to mock object. (insti)
+
+* 2 bug fixes:
+
+  * Finished off missing doco.
+  * Fixed verbose output on parallelize_me! classes. (chanks)
+
 === 5.10.2 / 2017-05-09
 
 * 1 minor enhancement:
