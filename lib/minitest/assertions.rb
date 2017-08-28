@@ -205,8 +205,8 @@ module Minitest
     # For comparing Floats.  Fails unless +exp+ and +act+ have a relative
     # error less than +epsilon+.
 
-    def assert_in_epsilon a, b, epsilon = 0.001, msg = nil
-      assert_in_delta a, b, [a.abs, b.abs].min * epsilon, msg
+    def assert_in_epsilon exp, act, epsilon = 0.001, msg = nil
+      assert_in_delta exp, act, [exp.abs, act.abs].min * epsilon, msg
     end
 
     ##
