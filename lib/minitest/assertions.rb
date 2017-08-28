@@ -173,7 +173,7 @@ module Minitest
       msg = message(msg, E) { diff exp, act }
       result = assert exp == act, msg
 
-      if exp == nil then
+      if nil == exp then
         if Minitest::VERSION =~ /^6/ then
           refute_nil exp, "Use assert_nil if expecting nil."
         else
