@@ -418,6 +418,37 @@ module Minitest
         assert_performance_exponential threshold, &work
       end
     end
+
+
+    ##
+    # Create a benchmark that verifies that the performance is logarithmic.
+    #
+    #   describe "my class Bench" do
+    #     bench_performance_logarithmic "algorithm" do |n|
+    #       @obj.algorithm(n)
+    #     end
+    #   end
+
+    def self.bench_performance_logarithmic name, threshold = 0.99, &work
+      bench name do
+        assert_performance_logarithmic threshold, &work
+      end
+    end
+
+    ##
+    # Create a benchmark that verifies that the performance is power.
+    #
+    #   describe "my class Bench" do
+    #     bench_performance_power "algorithm" do |n|
+    #       @obj.algorithm(n)
+    #     end
+    #   end
+
+    def self.bench_performance_power name, threshold = 0.99, &work
+      bench name do
+        assert_performance_power threshold, &work
+      end
+    end
   end
 
   Minitest::Spec.register_spec_type(/Bench(mark)?$/, Minitest::BenchSpec)
