@@ -98,10 +98,54 @@ class Minitest::Spec < Minitest::Test
     Thread.current[:current_spec]
   end
 
+  # :nodoc:
+  #
+  # Get around restriction in `run_one_method` so that the marshalable instance
+  # will work.
+  def self.=== other
+    super(other) || (name == other.class.name && desc == other.class.desc)
+  end
+
   def initialize name # :nodoc:
     super
     Thread.current[:current_spec] = self
   end
+
+  def run
+    result = super
+    klass = MarshalableTest::FakeClass.new self.class.name, self.class.desc
+    fake = MarshalableTest.new result.name, klass
+    fake.assertions = result.assertions
+    fake.failures   = result.failures
+    fake.time       = result.time
+    fake
+  end
+
+  # :stopdoc:
+  class MarshalableTest < Minitest::Spec
+    FakeClass = Struct.new :name, :desc do
+      def to_s
+        name
+      end
+    end
+
+    attr_reader :class
+
+    def initialize(name, klass)
+      super(name)
+      @class = klass
+    end
+
+    def marshal_dump
+      super + [@class]
+    end
+
+    def marshal_load(ary)
+      @class = ary.pop
+      super
+    end
+  end
+  # :startdoc:
 
   ##
   # Oh look! A Minitest::Spec::DSL module! Eat your heart out DHH.
