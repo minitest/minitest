@@ -774,6 +774,24 @@ class TestMinitestRunnable < Minitest::Test
 
     assert_marshal %w[@NAME @assertions @failures]
   end
+
+  def test_spec_marshal
+    klass = describe("whatever") { it("passes") { assert true } }
+    rm = klass.runnable_methods.first
+
+    # Run the test
+    @tc = klass.new(rm).run
+
+    # Pass it over the wire
+    over_the_wire = Marshal.load(Marshal.dump(@tc))
+
+    assert_equal @tc.time, over_the_wire.time
+    assert_equal @tc.name, over_the_wire.name
+    assert_equal @tc.assertions, over_the_wire.assertions
+    assert_equal @tc.failures, over_the_wire.failures
+    assert_equal @tc.class.name, over_the_wire.class.name
+    assert_equal @tc.class.desc, over_the_wire.class.desc
+  end
 end
 
 class TestMinitestTest < TestMinitestRunnable
