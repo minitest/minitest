@@ -118,6 +118,32 @@ class TestMinitestBenchmark < Minitest::Test
     assert_fit :power, x, y, 0.96, 3.119e-5, 0.8959
   end
 
+  def test_sigma
+    bench = Minitest::Benchmark.new :blah
+    assert_equal bench.sigma([1,2,3]), 6
+    assert_equal bench.sigma([1,2,3]) { |n| n**2 }, 14
+  end
+
+  def test_fit_error
+    bench = Minitest::Benchmark.new :blah
+    assert_equal bench.fit_error([[1, 1], [2, 2], [3, 3]]) { |x| x }, 1.0
+    assert_in_delta bench.fit_error([[1, 1], [2, 2], [3, 4]]) { |x| x }, 0.785
+  end
+
+  def test_fit_linear_x2
+    bench = Minitest::Benchmark.new :blah
+    xs = [1, 10, 100, 1000]
+    _a, _b, rr = bench.fit_linear(xs, xs.map { |x| x**2 }), :<, 0.99
+    assert_operator rr, :<, 0.99
+  end
+
+  def test_fit_linear_x3
+    bench = Minitest::Benchmark.new :blah
+    xs = [1, 10, 100, 1000]
+    _a, _b, rr = bench.fit_linear(xs, xs.map { |x| x**3 })
+    assert_operator rr, :<, 0.99
+  end
+
   def assert_fit msg, x, y, fit, exp_a, exp_b
     bench = Minitest::Benchmark.new :blah
 
