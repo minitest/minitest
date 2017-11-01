@@ -144,6 +144,28 @@ class TestMinitestBenchmark < Minitest::Test
     assert_operator rr, :<, 0.99
   end
 
+  def test_fit_constant_beyond_linear
+    bench = Minitest::Benchmark.new :blah
+    # This is actual data from a Minitest::Benchmark run (testing Tree#push)
+    # It sure looks steeper than linear slope 1.
+    # Look at y go from .05 to .26 as x goes from 1000 to 2000
+    xs = [10, 100, 1000, 2000]
+    ys = [0.000092, 0.000618, 0.050752, 0.258891]
+
+    # I don't know how to call #assert_performance_constant on static data
+    # i.e. without doing timing
+    # Here is what assert_performance_constant tests
+    _a, b, _rr = bench.fit_linear(xs, ys)
+    assert_in_delta 0, b, 0.01
+
+    # The assertion below is intended to be a synthetic version of
+    # #refute_performace_constant
+    refute_in_delta 0, b, 0.01
+
+    # Interestingly, assert_performance_constant succeeds for this data
+    # while assert_performance_linear fails.
+  end
+
   def assert_fit msg, x, y, fit, exp_a, exp_b
     bench = Minitest::Benchmark.new :blah
 
