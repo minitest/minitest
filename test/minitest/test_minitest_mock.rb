@@ -494,6 +494,17 @@ class TestMinitestStub < Minitest::Test
     @tc.assert_equal false, dynamic.found
   end
 
+  def test_stub_NameError
+    e = @tc.assert_raises NameError do
+      Time.stub :nope_nope_nope, 42 do
+        # do nothing
+      end
+    end
+
+    exp = "undefined method `nope_nope_nope' for class `#{self.class}::Time'"
+    assert_equal exp, e.message
+  end
+
   def test_mock_with_yield
     mock = Minitest::Mock.new
     mock.expect(:write, true) do
