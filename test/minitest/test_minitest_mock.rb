@@ -501,8 +501,8 @@ class TestMinitestStub < Minitest::Test
       end
     end
 
-    exp = "undefined method `nope_nope_nope' for class `#{self.class}::Time'"
-    assert_equal exp, e.message
+    exp = /undefined method `nope_nope_nope' for( class)? `#{self.class}::Time'/
+    assert_match exp, e.message
   end
 
   def test_mock_with_yield
@@ -714,7 +714,7 @@ class TestMinitestStub < Minitest::Test
     @assertion_count += 2
     rs = nil
     io = StringIO.new "", "w"
-    File.stub5 :open, lambda { |p, m, &blk| blk and blk.call io }, :WTF? do
+    File.stub5(:open, lambda { |p, m, &blk| blk and blk.call io }, :WTF?) do
       File.open "foo.txt", "r" do |f|
         @tc.assert_equal :WTF?, f # HACK: THIS MAKES NO SENSE AT ALL
         # TODO: rs = f.write("woot")
@@ -730,7 +730,7 @@ class TestMinitestStub < Minitest::Test
     @assertion_count += 1
     rs = nil
     io = StringIO.new "", "w"
-    File.stub6 :open, lambda { |p, m, &blk| blk.call io }, :WTF? do
+    File.stub6(:open, lambda { |p, m, &blk| blk.call io }, :WTF?) do
       File.open "foo.txt", "r" do |f|
         rs = f.write("woot")
       end
@@ -746,7 +746,7 @@ class TestMinitestStub < Minitest::Test
     rs = nil
     io = StringIO.new "", "w"
     @tc.assert_raises ArgumentError do
-      File.stub6_2 :open, lambda { |p, m, &blk| blk.call io }, :WTF? do
+      File.stub6_2(:open, lambda { |p, m, &blk| blk.call io }, :WTF?) do
         File.open "foo.txt", "r" do |f|
           rs = f.write("woot")
         end
