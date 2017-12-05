@@ -520,4 +520,357 @@ class TestMinitestStub < Minitest::Test
     @tc.assert_equal true, rs
   end
 
+  alias test_stub_value__old test_stub_value # TODO: remove/rename
+
+  ## Permutation Sets:
+
+  # [:value, :lambda]
+  # [:*,     :block,     :block_call]
+  # [:**,    :block_args]
+  #
+  # Where:
+  #
+  # :value      = a normal value
+  # :lambda     = callable or lambda
+  # :*          = no block
+  # :block      = normal block
+  # :block_call = :lambda invokes the block (N/A for :value)
+  # :**         = no args
+  # :args       = args passed to stub
+
+  ## Permutations
+
+  # [:call,   :*,          :**]   =>5 callable+block FIX: CALL BOTH (bug)
+  # [:call,   :*,          :**]   =>6 callable
+
+  # [:lambda, :*,          :**]   =>  lambda result
+
+  # [:lambda, :*,          :args] =>  lambda result NO ARGS
+
+  # [:lambda, :block,      :**]   =>5 lambda result FIX: CALL BOTH (bug)
+  # [:lambda, :block,      :**]   =>6 lambda result
+
+  # [:lambda, :block,      :args] =>5 lambda result FIX: CALL BOTH (bug)
+  # [:lambda, :block,      :args] =>6 lambda result
+  # [:lambda, :block,      :args] =>7 raise ArgumentError
+
+  # [:lambda, :block_call, :**]   =>5 lambda FIX: BUG!-not passed block to lambda
+  # [:lambda, :block_call, :**]   =>6 lambda+block result
+
+  # [:lambda, :block_call, :args] =>5 lambda FIX: BUG!-not passed block to lambda
+  # [:lambda, :block_call, :args] =>6 lambda+block result
+
+  # [:value,  :*,          :**]   =>  value
+
+  # [:value,  :*,          :args] =>  value, ignore args
+
+  # [:value,  :block,      :**]   =>5 value, call block
+  # [:value,  :block,      :**]   =>6 value
+
+  # [:value,  :block,      :args] =>5 value, call block w/ args
+  # [:value,  :block,      :args] =>6 value, call block w/ args, deprecated
+  # [:value,  :block,      :args] =>7 raise ArgumentError
+
+  # [:value,  :block_call, :**]   =>  N/A
+
+  # [:value,  :block_call, :args] =>  N/A
+
+  class Bar
+    def call
+      puts "hi"
+    end
+  end
+
+  class Foo
+    def self.blocking
+      yield
+    end
+  end
+
+  class Thingy
+    def self.identity arg
+      arg
+    end
+  end
+
+  def test_stub_callable_block_5 # from tenderlove
+    @assertion_count += 2
+    Foo.stub5 :blocking, Bar.new do
+      @tc.assert_output "hi\n", "" do
+        Foo.blocking do
+          @tc.assert true
+        end
+      end
+    end
+  end
+
+  def test_stub_callable_block_6 # from tenderlove
+    skip_stub6
+
+    @assertion_count += 1
+    Foo.stub6 :blocking, Bar.new do
+      @tc.assert_output "hi\n", "" do
+        Foo.blocking do
+          @tc.flunk "shouldn't ever hit this"
+        end
+      end
+    end
+  end
+
+  def test_stub_lambda
+    Thread.stub :new, lambda { 21+21 } do
+      @tc.assert_equal 42, Thread.new
+    end
+  end
+
+  def test_stub_lambda_args
+    Thread.stub :new, lambda { 21+21 }, :wtf do
+      @tc.assert_equal 42, Thread.new
+    end
+  end
+
+  def test_stub_lambda_block_5
+    @assertion_count += 1
+    Thread.stub5 :new, lambda { 21+21 } do
+      result = Thread.new do # TODO: warn about using both?
+        @tc.assert true
+      end
+      @tc.assert_equal 42, result
+    end
+  end
+
+  def test_stub_lambda_block_6
+    skip_stub6
+
+    Thread.stub6 :new, lambda { 21+21 } do
+      result = Thread.new do
+        @tc.flunk "shouldn't ever hit this"
+      end
+      @tc.assert_equal 42, result
+    end
+  end
+
+  def test_stub_lambda_block_args_5
+    @assertion_count += 2
+    Thingy.stub5 :identity, lambda { |y| @tc.assert_equal :nope, y; 21+21 }, :WTF? do
+      result = Thingy.identity :nope do |x|
+        @tc.assert_equal :WTF?, x # TODO: THIS MAKES NO SENSE AT ALL
+      end
+      @tc.assert_equal 42, result
+    end
+  end
+
+  def test_stub_lambda_block_args_6
+    skip_stub6
+
+    @assertion_count += 1
+    Thingy.stub6 :identity, lambda { |y| @tc.assert_equal :nope, y; 21+21 }, :WTF? do
+      result = Thingy.identity :nope do |x|
+        @tc.flunk "shouldn't reach this"
+      end
+      @tc.assert_equal 42, result
+    end
+  end
+
+  def test_stub_lambda_block_args_6_2
+    skip_stub6
+
+    @tc.assert_raises ArgumentError do
+      Thingy.stub6_2 :identity, lambda { |y| :__not_run__ }, :WTF? do
+        # doesn't matter
+      end
+    end
+  end
+
+  def test_stub_lambda_block_call_5
+    @assertion_count += 1
+    rs = nil
+    io = StringIO.new "", "w"
+    File.stub5 :open, lambda { |p, m, &blk| blk and blk.call io } do
+      File.open "foo.txt", "r" do |f|
+        rs = f && f.write("woot")
+      end
+    end
+    @tc.assert_nil rs
+    @tc.assert_equal "", io.string
+  end
+
+  def test_stub_lambda_block_call_6
+    skip_stub6
+
+    @assertion_count += 1
+    rs = nil
+    io = StringIO.new "", "w"
+    File.stub6 :open, lambda { |p, m, &blk| blk.call io } do
+      File.open "foo.txt", "r" do |f|
+        rs = f.write("woot")
+      end
+    end
+    @tc.assert_equal 4, rs
+    @tc.assert_equal "woot", io.string
+  end
+
+  def test_stub_lambda_block_call_args_5
+    @assertion_count += 2
+    rs = nil
+    io = StringIO.new "", "w"
+    File.stub5 :open, lambda { |p, m, &blk| blk and blk.call io }, :WTF? do
+      File.open "foo.txt", "r" do |f|
+        @tc.assert_equal :WTF?, f # HACK: THIS MAKES NO SENSE AT ALL
+        # TODO: rs = f.write("woot")
+      end
+    end
+    @tc.assert_nil rs              # TODO
+    @tc.assert_equal "", io.string # TODO
+  end
+
+  def test_stub_lambda_block_call_args_6
+    skip_stub6
+
+    @assertion_count += 1
+    rs = nil
+    io = StringIO.new "", "w"
+    File.stub6 :open, lambda { |p, m, &blk| blk.call io }, :WTF? do
+      File.open "foo.txt", "r" do |f|
+        rs = f.write("woot")
+      end
+    end
+    @tc.assert_equal 4, rs
+    @tc.assert_equal "woot", io.string
+  end
+
+  def test_stub_lambda_block_call_args_6_2
+    skip_stub6
+
+    @assertion_count += 2
+    rs = nil
+    io = StringIO.new "", "w"
+    @tc.assert_raises ArgumentError do
+      File.stub6_2 :open, lambda { |p, m, &blk| blk.call io }, :WTF? do
+        File.open "foo.txt", "r" do |f|
+          rs = f.write("woot")
+        end
+      end
+    end
+    @tc.assert_nil rs
+    @tc.assert_equal "", io.string
+  end
+
+  def test_stub_value
+    Thread.stub :new, 42 do
+      result = Thread.new
+      @tc.assert_equal 42, result
+    end
+  end
+
+  def test_stub_value_args
+    Thread.stub :new, 42, :WTF? do
+      result = Thread.new
+      @tc.assert_equal 42, result
+    end
+  end
+
+  def test_stub_value_block_5
+    @assertion_count += 1
+    Thread.stub5 :new, 42 do
+      result = Thread.new do
+        @tc.assert true
+      end
+      @tc.assert_equal 42, result
+    end
+  end
+
+  def test_stub_value_block_6
+    skip_stub6
+
+    Thread.stub6 :new, 42 do
+      result = Thread.new do
+        @tc.flunk "shouldn't hit this"
+      end
+      @tc.assert_equal 42, result
+    end
+  end
+
+  def test_stub_value_block_args_5
+    @assertion_count += 2
+    rs = nil
+    io = StringIO.new "", "w"
+    File.stub5 :open, :value, io do
+      result = File.open "foo.txt", "r" do |f|
+        rs = f.write("woot")
+      end
+      @tc.assert_equal :value, result
+    end
+    @tc.assert_equal 4, rs
+    @tc.assert_equal "woot", io.string
+  end
+
+  def test_stub_value_block_args_5__break_if_not_passed
+    e = @tc.assert_raises NoMethodError do
+      File.stub5 :open, :return_value do # intentionally bad setup w/ no args
+        File.open "foo.txt", "r" do |f|
+          f.write "woot"
+        end
+      end
+    end
+    exp = "undefined method `write' for nil:NilClass"
+    assert_equal exp, e.message
+  end
+
+  def test_stub_value_block_args_6
+    skip_stub6
+
+    @assertion_count += 2
+    rs = nil
+    io = StringIO.new "", "w"
+    assert_deprecated do
+      File.stub6 :open, :value, io do
+        result = File.open "foo.txt", "r" do |f|
+          rs = f.write("woot")
+        end
+        @tc.assert_equal :value, result
+      end
+    end
+    @tc.assert_equal 4, rs
+    @tc.assert_equal "woot", io.string
+  end
+
+  def test_stub_value_block_args_6_2
+    skip_stub6
+
+    @assertion_count += 2
+    rs = nil
+    io = StringIO.new "", "w"
+    @tc.assert_raises ArgumentError do
+      File.stub6_2 :open, :value, io do
+        result = File.open "foo.txt", "r" do |f|
+          @tc.flunk "shouldn't hit this"
+        end
+        @tc.assert_equal :value, result
+      end
+    end
+    @tc.assert_nil rs
+    @tc.assert_equal "", io.string
+  end
+
+  def assert_deprecated re = /deprecated/
+    assert_output "", re do
+      yield
+    end
+  end
+
+  def skip_stub6
+    skip "not yet" unless STUB6
+  end
+end
+
+STUB6 = ENV["STUB6"]
+
+if STUB6 then
+  require "minitest/mock6" if STUB6
+else
+  class Object
+    alias stub5 stub
+    alias stub6 stub
+  end
 end
