@@ -434,6 +434,21 @@ you want to extend your test using setup/teardown via a module, just
 make sure you ALWAYS call super. before/after automatically call super
 for you, so make sure you don't do it twice.
 
+=== How to run code before a group of tests?
+
+Use a constant with begin...end like this:
+
+  describe Blah do
+    SETUP = begin
+       # ... this runs once when describe Blah starts
+    end
+    # ...
+  end
+
+This can be useful for expensive initializations or sharing state.
+Remember, this is just ruby code, so you need to make sure this 
+technique and sharing state doesn't interfere with your tests.
+
 === Why am I seeing <tt>uninitialized constant MiniTest::Test (NameError)</tt>?
 
 Are you running the test with Bundler (e.g. via <tt>bundle exec</tt> )? If so, 
