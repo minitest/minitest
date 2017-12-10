@@ -118,7 +118,7 @@ module Minitest
   #                   klass.new(runnable_method).run
 
   def self.run args = []
-    self.load_plugins
+    self.load_plugins unless args.delete("--no-plugins") || ENV["MT_NO_PLUGINS"]
 
     options = process_args args
 
@@ -174,6 +174,8 @@ module Minitest
         puts opts
         exit
       end
+
+      opts.on "--no-plugins", "Bypass minitest plugin auto-loading (or set $MT_NO_PLUGINS)."
 
       desc = "Sets random seed. Also via env. Eg: SEED=n rake"
       opts.on "-s", "--seed SEED", Integer, desc do |m|
