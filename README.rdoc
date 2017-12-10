@@ -446,14 +446,14 @@ Use a constant with begin...end like this:
   end
 
 This can be useful for expensive initializations or sharing state.
-Remember, this is just ruby code, so you need to make sure this 
+Remember, this is just ruby code, so you need to make sure this
 technique and sharing state doesn't interfere with your tests.
 
 === Why am I seeing <tt>uninitialized constant MiniTest::Test (NameError)</tt>?
 
-Are you running the test with Bundler (e.g. via <tt>bundle exec</tt> )? If so, 
+Are you running the test with Bundler (e.g. via <tt>bundle exec</tt> )? If so,
 in order to require minitest, you must first add the <tt>gem 'minitest'</tt>
-to your Gemfile and run +bundle+. Once it's installed, you should be 
+to your Gemfile and run +bundle+. Once it's installed, you should be
 able to require minitest and run your tests.
 
 == Prominent Projects using Minitest:
@@ -593,7 +593,7 @@ minitest-great_expectations :: Generally useful additions to minitest's
                                assertions and expectations.
 minitest-growl              :: Test notifier for minitest via growl.
 minitest-happy              :: GLOBALLY ACTIVATE MINITEST PRIDE! RAWR!
-minitest-have_tag           :: Adds Minitest assertions to test for the existence of 
+minitest-have_tag           :: Adds Minitest assertions to test for the existence of
                                HTML tags, including contents, within a provided string.
 minitest-hooks              :: Around and before_all/after_all/around_all hooks
 minitest-hyper              :: Pretty, single-page HTML reports for your Minitest runs
@@ -630,10 +630,10 @@ minitest-rails-capybara     :: Capybara integration for Minitest::Rails.
 minitest-reporters          :: Create customizable Minitest output formats.
 minitest-rg                 :: Colored red/green output for Minitest.
 minitest-rspec_mocks        :: Use RSpec Mocks with Minitest.
-minitest-server             :: minitest-server provides a client/server setup 
-                               with your minitest process, allowing your test 
+minitest-server             :: minitest-server provides a client/server setup
+                               with your minitest process, allowing your test
                                run to send its results directly to a handler.
-minitest-sequel             :: Minitest assertions to speed-up development and 
+minitest-sequel             :: Minitest assertions to speed-up development and
                                testing of Ruby Sequel database setups.
 minitest-shared_description :: Support for shared specs and shared spec
                                subclasses
