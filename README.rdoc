@@ -521,7 +521,7 @@ If you see failures like either of these, you are probably missing diff tool:
 
 
 If you use Cygwin or MSYS2 or similar there are packages that include a
-GNU diff for Widnows. If you don't, you can download GNU diffutils from
+GNU diff for Windows. If you don't, you can download GNU diffutils from
 http://gnuwin32.sourceforge.net/packages/diffutils.htm
 (make sure to add it to your PATH).
 
