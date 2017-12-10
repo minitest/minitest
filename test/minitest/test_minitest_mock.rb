@@ -594,11 +594,11 @@ class TestMinitestStub < Minitest::Test
   end
 
   def test_stub_callable_block_5 # from tenderlove
-    @assertion_count += 2
+    @assertion_count += 1
     Foo.stub5 :blocking, Bar.new do
       @tc.assert_output "hi\n", "" do
         Foo.blocking do
-          @tc.assert true
+          @tc.flunk "shouldn't ever hit this"
         end
       end
     end
@@ -630,10 +630,9 @@ class TestMinitestStub < Minitest::Test
   end
 
   def test_stub_lambda_block_5
-    @assertion_count += 1
     Thread.stub5 :new, lambda { 21+21 } do
-      result = Thread.new do # TODO: warn about using both?
-        @tc.assert true
+      result = Thread.new do
+        @tc.flunk "shouldn't ever hit this"
       end
       @tc.assert_equal 42, result
     end
@@ -651,10 +650,10 @@ class TestMinitestStub < Minitest::Test
   end
 
   def test_stub_lambda_block_args_5
-    @assertion_count += 2
+    @assertion_count += 1
     Thingy.stub5 :identity, lambda { |y| @tc.assert_equal :nope, y; 21+21 }, :WTF? do
       result = Thingy.identity :nope do |x|
-        @tc.assert_equal :WTF?, x # TODO: THIS MAKES NO SENSE AT ALL
+        @tc.flunk "shouldn't reach this"
       end
       @tc.assert_equal 42, result
     end
@@ -691,8 +690,8 @@ class TestMinitestStub < Minitest::Test
         rs = f && f.write("woot")
       end
     end
-    @tc.assert_nil rs
-    @tc.assert_equal "", io.string
+    @tc.assert_equal 4, rs
+    @tc.assert_equal "woot", io.string
   end
 
   def test_stub_lambda_block_call_6
@@ -711,17 +710,16 @@ class TestMinitestStub < Minitest::Test
   end
 
   def test_stub_lambda_block_call_args_5
-    @assertion_count += 2
+    @assertion_count += 1
     rs = nil
     io = StringIO.new "", "w"
     File.stub5(:open, lambda { |p, m, &blk| blk and blk.call io }, :WTF?) do
       File.open "foo.txt", "r" do |f|
-        @tc.assert_equal :WTF?, f # HACK: THIS MAKES NO SENSE AT ALL
-        # TODO: rs = f.write("woot")
+        rs = f.write("woot")
       end
     end
-    @tc.assert_nil rs              # TODO
-    @tc.assert_equal "", io.string # TODO
+    @tc.assert_equal 4, rs
+    @tc.assert_equal "woot", io.string
   end
 
   def test_stub_lambda_block_call_args_6
