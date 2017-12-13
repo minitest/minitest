@@ -79,20 +79,6 @@ module Minitest
       :random
     end
 
-    ##
-    # The time it took to run this test.
-
-    attr_accessor :time
-
-    def marshal_dump # :nodoc:
-      super << self.time
-    end
-
-    def marshal_load ary # :nodoc:
-      self.time = ary.pop
-      super
-    end
-
     TEARDOWN_METHODS = %w[ before_teardown teardown after_teardown ] # :nodoc:
 
     ##
@@ -247,14 +233,6 @@ module Minitest
 
     def skipped?
       self.failure and Skip === self.failure
-    end
-
-    def time_it # :nodoc:
-      t0 = Minitest.clock_time
-
-      yield
-    ensure
-      self.time = Minitest.clock_time - t0
     end
 
     def to_s # :nodoc:

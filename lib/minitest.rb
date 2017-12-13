@@ -255,6 +255,19 @@ module Minitest
     attr_accessor :failures
 
     ##
+    # The time it took to run.
+
+    attr_accessor :time
+
+    def time_it # :nodoc:
+      t0 = Minitest.clock_time
+
+      yield
+    ensure
+      self.time = Minitest.clock_time - t0
+    end
+
+    ##
     # Name of the run.
 
     def name
@@ -370,11 +383,11 @@ module Minitest
     end
 
     def marshal_dump # :nodoc:
-      [self.name, self.failures, self.assertions]
+      [self.name, self.failures, self.assertions, self.time]
     end
 
     def marshal_load ary # :nodoc:
-      self.name, self.failures, self.assertions = ary
+      self.name, self.failures, self.assertions, self.time = ary
     end
 
     def failure # :nodoc:

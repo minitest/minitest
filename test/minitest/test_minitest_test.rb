@@ -772,7 +772,7 @@ class TestMinitestRunnable < Minitest::Test
   def test_marshal
     setup_marshal Minitest::Runnable
 
-    assert_marshal %w[@NAME @assertions @failures]
+    assert_marshal %w[@NAME @assertions @failures @time]
   end
 end
 
