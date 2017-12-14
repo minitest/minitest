@@ -7,7 +7,7 @@ module Minitest
   #
   # See Minitest::Assertions
 
-  class Test < Runnable
+  class Test < Result
     require "minitest/assertions"
     include Minitest::Assertions
 
@@ -101,7 +101,7 @@ module Minitest
         end
       end
 
-      self # per contract
+      Result.from self # per contract
     end
 
     ##
@@ -194,53 +194,6 @@ module Minitest
       self.failures << e
     rescue Exception => e
       self.failures << UnexpectedError.new(e)
-    end
-
-    ##
-    # Did this run error?
-
-    def error?
-      self.failures.any? { |f| UnexpectedError === f }
-    end
-
-    ##
-    # The location identifier of this test.
-
-    def location
-      loc = " [#{self.failure.location}]" unless passed? or error?
-      "#{self.class}##{self.name}#{loc}"
-    end
-
-    ##
-    # Did this run pass?
-    #
-    # Note: skipped runs are not considered passing, but they don't
-    # cause the process to exit non-zero.
-
-    def passed?
-      not self.failure
-    end
-
-    ##
-    # Returns ".", "F", or "E" based on the result of the run.
-
-    def result_code
-      self.failure and self.failure.result_code or "."
-    end
-
-    ##
-    # Was this run skipped?
-
-    def skipped?
-      self.failure and Skip === self.failure
-    end
-
-    def to_s # :nodoc:
-      return location if passed? and not skipped?
-
-      failures.map { |failure|
-        "#{failure.result_label}:\n#{self.location}:\n#{failure.message}\n"
-      }.join "\n"
     end
 
     def with_info_handler &block # :nodoc:

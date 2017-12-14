@@ -281,11 +281,6 @@ module Minitest
       @NAME = o
     end
 
-    def self.inherited klass # :nodoc:
-      self.runnables << klass
-      super
-    end
-
     ##
     # Returns all instance methods matching the pattern +re+.
 
@@ -382,14 +377,6 @@ module Minitest
       @@runnables
     end
 
-    def marshal_dump # :nodoc:
-      [self.name, self.failures, self.assertions, self.time]
-    end
-
-    def marshal_load ary # :nodoc:
-      self.name, self.failures, self.assertions, self.time = ary
-    end
-
     def failure # :nodoc:
       self.failures.first
     end
@@ -430,6 +417,94 @@ module Minitest
 
     def skipped?
       raise NotImplementedError, "subclass responsibility"
+    end
+  end
+
+  ##
+  # This represents a test result in a clean way that can be
+  # marshalled over a wire. Tests can do anything they want to the
+  # test instance and can create conditions that cause Marshal.dump to
+  # blow up. By using Result.from(a_test) you can be reasonably sure
+  # that the test result can be marshalled.
+
+  class Result < Runnable
+    ##
+    # The class name of the test result.
+
+    attr_accessor :klass
+
+    ##
+    # The test name of the test result.
+
+    attr_accessor :name
+
+    ##
+    # The location of the test method.
+
+    attr_accessor :source_location
+
+    ##
+    # Create a new test result from a Runnable instance.
+
+    def self.from runnable
+      o = runnable
+
+      r = self.new o.name
+      r.klass      = o.class.name
+      r.assertions = o.assertions
+      r.failures   = o.failures.dup
+      r.time       = o.time
+
+      r.source_location = o.method(o.name).source_location rescue ["unknown", -1]
+
+      r
+    end
+
+    ##
+    # Did this run error?
+
+    def error?
+      self.failures.any? { |f| UnexpectedError === f }
+    end
+
+    ##
+    # The location identifier of this test.
+
+    def location
+      loc = " [#{self.failure.location}]" unless passed? or error?
+      "#{self.klass}##{self.name}#{loc}"
+    end
+
+    ##
+    # Did this run pass?
+    #
+    # Note: skipped runs are not considered passing, but they don't
+    # cause the process to exit non-zero.
+
+    def passed?
+      not self.failure
+    end
+
+    ##
+    # Returns ".", "F", or "E" based on the result of the run.
+
+    def result_code
+      self.failure and self.failure.result_code or "."
+    end
+
+    ##
+    # Was this run skipped?
+
+    def skipped?
+      self.failure and Skip === self.failure
+    end
+
+    def to_s # :nodoc:
+      return location if passed? and not skipped?
+
+      failures.map { |failure|
+        "#{failure.result_label}:\n#{self.location}:\n#{failure.message}\n"
+      }.join "\n"
     end
   end
 
@@ -503,7 +578,7 @@ module Minitest
   class ProgressReporter < Reporter
     def prerecord klass, name #:nodoc:
       if options[:verbose] then
-        io.print "%s#%s = " % [klass, name]
+        io.print "%s#%s = " % [klass.name, name]
         io.flush
       end
     end
@@ -852,7 +927,7 @@ module Minitest
 
   def self.run_one_method klass, method_name # :nodoc:
     result = klass.new(method_name).run
-    raise "#{klass}#run _must_ return self" unless klass === result
+    raise "#{klass}#run _must_ return a Result" unless Result === result
     result
   end
 
@@ -865,6 +940,13 @@ module Minitest
   else
     def self.clock_time
       Time.now
+    end
+  end
+
+  class Runnable # re-open
+    def self.inherited klass # :nodoc:
+      self.runnables << klass
+      super
     end
   end
 

@@ -20,6 +20,12 @@ class AnError < StandardError; include MyModule; end
 class ImmutableString < String; def inspect; super.freeze; end; end
 SomeError = Class.new Exception
 
+class Minitest::Runnable
+  def whatever # faked for testing
+    assert true
+  end
+end
+
 class TestMinitestUnit < MetaMetaMetaTestCase
   parallelize_me!
 
@@ -79,7 +85,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
   # end
 
   def test_infectious_binary_encoding
-    @tu = Class.new Minitest::Test do
+    @tu = Class.new FakeNamedTest do
       def test_this_is_not_ascii_assertion
         assert_equal "ЁЁЁ", "ёёё"
       end
@@ -95,12 +101,12 @@ class TestMinitestUnit < MetaMetaMetaTestCase
       Finished in 0.00
 
         1) Error:
-      #<Class:0xXXX>#test_this_is_non_ascii_failure_message:
+      FakeNamedTestXX#test_this_is_non_ascii_failure_message:
       RuntimeError: ЁЁЁ
           FILE:LINE:in `test_this_is_non_ascii_failure_message'
 
         2) Failure:
-      #<Class:0xXXX>#test_this_is_not_ascii_assertion [FILE:LINE]:
+      FakeNamedTestXX#test_this_is_not_ascii_assertion [FILE:LINE]:
       Expected: \"ЁЁЁ\"
         Actual: \"ёёё\"
 
@@ -207,10 +213,10 @@ class TestMinitestRunner < MetaMetaMetaTestCase
 
       def run
         @foo = "hi mom!"
-        super
+        r = super
         @foo = "okay"
 
-        self # per contract
+        r
       end
 
       def test_something
@@ -247,7 +253,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       Finished in 0.00
 
         1) Error:
-      #<Class:0xXXX>#test_error:
+      FakeNamedTestXX#test_error:
       RuntimeError: unhandled exception
           FILE:LINE:in \`test_error\'
 
@@ -275,7 +281,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       Finished in 0.00
 
         1) Error:
-      #<Class:0xXXX>#test_something:
+      FakeNamedTestXX#test_something:
       RuntimeError: unhandled exception
           FILE:LINE:in \`teardown\'
 
@@ -294,7 +300,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       Finished in 0.00
 
         1) Failure:
-      #<Class:0xXXX>#test_failure [FILE:LINE]:
+      FakeNamedTestXX#test_failure [FILE:LINE]:
       Expected false to be truthy.
 
       2 runs, 2 assertions, 1 failures, 0 errors, 0 skips
@@ -500,13 +506,13 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     end
 
     expected = clean <<-EOM
-      #<Class:0xXXX>#test_skip = 0.00 s = S
-      #<Class:0xXXX>#test_something = 0.00 s = .
+      FakeNamedTestXX#test_skip = 0.00 s = S
+      FakeNamedTestXX#test_something = 0.00 s = .
 
       Finished in 0.00
 
         1) Skipped:
-      #<Class:0xXXX>#test_skip [FILE:LINE]:
+      FakeNamedTestXX#test_skip [FILE:LINE]:
       not yet
 
       2 runs, 1 assertions, 0 failures, 0 errors, 1 skips
@@ -754,7 +760,7 @@ class TestMinitestRunnable < Minitest::Test
     end
     tc.setup
 
-    @tc = tc
+    @tc = Minitest::Result.from tc
   end
 
   def assert_marshal expected_ivars
@@ -772,7 +778,26 @@ class TestMinitestRunnable < Minitest::Test
   def test_marshal
     setup_marshal Minitest::Runnable
 
-    assert_marshal %w[@NAME @assertions @failures @time]
+    assert_marshal %w[@assertions @failures @klass @name @source_location @time]
+  end
+
+  def test_spec_marshal
+    klass = describe("whatever") { it("passes") { assert true } }
+    rm = klass.runnable_methods.first
+
+    # Run the test
+    @tc = klass.new(rm).run
+
+    assert_kind_of Minitest::Result, @tc
+
+    # Pass it over the wire
+    over_the_wire = Marshal.load Marshal.dump @tc
+
+    assert_equal @tc.time,       over_the_wire.time
+    assert_equal @tc.name,       over_the_wire.name
+    assert_equal @tc.assertions, over_the_wire.assertions
+    assert_equal @tc.failures,   over_the_wire.failures
+    assert_equal @tc.klass,      over_the_wire.klass
   end
 end
 
@@ -782,7 +807,7 @@ class TestMinitestTest < TestMinitestRunnable
       tc.time = 3.14
     end
 
-    assert_marshal %w[@NAME @assertions @failures @time] do |new_tc|
+    assert_marshal %w[@assertions @failures @klass @name @source_location @time] do |new_tc|
       assert_in_epsilon 3.14, new_tc.time
     end
   end
@@ -2087,12 +2112,12 @@ class TestMinitestUnitRecording < MetaMetaMetaTestCase
 
     exp = clean "
       Error:
-      #<Class:0xXXX>#test_method:
+      FakeNamedTestXX#test_method:
       AnError: AnError
           FILE:LINE:in `test_method'
 
       Error:
-      #<Class:0xXXX>#test_method:
+      FakeNamedTestXX#test_method:
       RuntimeError: unhandled exception
           FILE:LINE:in `teardown'
     "

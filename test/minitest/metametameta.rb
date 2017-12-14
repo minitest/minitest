@@ -68,6 +68,7 @@ class MetaMetaMetaTestCase < Minitest::Test
     output.sub!(/Finished in .*/, "Finished in 0.00")
     output.sub!(/Loaded suite .*/, "Loaded suite blah")
 
+    output.gsub!(/FakeNamedTest\d+/, "FakeNamedTestXX")
     output.gsub!(/ = \d+.\d\d s = /, " = 0.00 s = ")
     output.gsub!(/0x[A-Fa-f0-9]+/, "0xXXX")
     output.gsub!(/ +$/, "")
