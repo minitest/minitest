@@ -836,8 +836,24 @@ module Minitest
     end
 
     def message # :nodoc:
-      bt = Minitest.filter_backtrace(self.backtrace).join "\n    "
-      "#{self.exception.class}: #{self.exception.message}\n    #{bt}"
+      if self.exception.respond_to?(:cause) && self.exception.cause
+        # Build a chain of exception causes starting from the outermost
+        exc = self.exception
+        cause_chain = []
+        while exc
+          cause_chain.push(exc)
+          exc = exc.cause
+        end
+
+        bt_lines = cause_chain.map { |c|
+          [c.message] + Minitest.filter_backtrace(c.backtrace)
+        }.inject() { |acc, bt| acc + ["...Caused By..."] + bt }
+        bt_out = bt_lines.join "\n    "
+        "#{self.exception.class}: #{self.exception.message}\n    #{bt_out}"
+      else
+        bt = Minitest.filter_backtrace(self.backtrace).join "\n    "
+        "#{self.exception.class}: #{self.exception.message}\n    #{bt}"
+      end
     end
 
     def result_label # :nodoc:

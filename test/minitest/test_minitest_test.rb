@@ -263,6 +263,40 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     assert_report expected
   end
 
+  def test_run_nested_error
+    @tu =
+    Class.new FakeNamedTest do
+      def test_something
+        assert true
+      end
+
+      def test_error
+        begin
+          raise "internal exception"
+        rescue
+          raise "external exception"
+        end
+      end
+    end
+
+    expected = clean <<-EOM
+      E.
+
+      Finished in 0.00
+
+        1) Error:
+      FakeNamedTestXX#test_error:
+      RuntimeError: external exception
+          FILE:LINE:in \`rescue in test_error\'
+          FILE:LINE:in \`test_error\'
+          FILE:LINE:in \`test_error\'
+
+      2 runs, 1 assertions, 0 failures, 1 errors, 0 skips
+    EOM
+
+    assert_report expected
+  end
+
   def test_run_error_teardown
     @tu =
     Class.new FakeNamedTest do
