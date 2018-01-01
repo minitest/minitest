@@ -377,6 +377,14 @@ module Minitest
       @@runnables
     end
 
+    def marshal_dump # :nodoc:
+      [self.name, self.failures, self.assertions, self.time]
+    end
+
+    def marshal_load ary # :nodoc:
+      self.name, self.failures, self.assertions, self.time = ary
+    end
+
     def failure # :nodoc:
       self.failures.first
     end
@@ -428,6 +436,9 @@ module Minitest
   # that the test result can be marshalled.
 
   class Result < Runnable
+    undef_method :marshal_dump
+    undef_method :marshal_load
+
     ##
     # The class name of the test result.
 
