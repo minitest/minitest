@@ -1,3 +1,26 @@
+=== 5.11.0 / 2018-01-01
+
+* 2 major enhancements:
+
+  * Added Minitest::Result and Minitest::Result.from(runnable).
+  * Changed Minitest::Test to subclass Result and refactored methods up.
+
+* 7 minor enhancements:
+
+  * Added --no-plugins and MT_NO_PLUGINS to bypass MT plugin autoloading. Helps with bad actors installed globally.
+  * Added bench_performance_{logarithmic,power} for spec-style benchmarks. (rickhull)
+  * Added deprecation warning for Runnable#marshal_dump.
+  * Minitest.run_one_method now checks for instance of Result, not exact same class.
+  * Minitest::Test.run returns a Result version of self, not self.
+  * ProgressReporter#prerecord now explicitly prints klass.name. Allows for fakers.
+
+* 4 bug fixes:
+
+  * Object.stub no longer calls the passed block if stubbed with a callable.
+  * Object.stub now passes blocks down to the callable result.
+  * Pushed Minitest::Test#time & #time_it up to Runnable.
+  * Test nil equality directly in assert_equal. Fixes #679. (voxik)
+
 === 5.11.0b1 / 2017-12-20
 
 * 2 major enhancements:
