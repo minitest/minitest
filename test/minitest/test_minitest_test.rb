@@ -778,7 +778,7 @@ class TestMinitestRunnable < Minitest::Test
   def test_marshal
     setup_marshal Minitest::Runnable
 
-    assert_marshal %w[@assertions @failures @klass @name @source_location @time]
+    assert_marshal %w[@NAME @assertions @failures @klass @source_location @time]
   end
 
   def test_spec_marshal
@@ -807,7 +807,7 @@ class TestMinitestTest < TestMinitestRunnable
       tc.time = 3.14
     end
 
-    assert_marshal %w[@assertions @failures @klass @name @source_location @time] do |new_tc|
+    assert_marshal %w[@NAME @assertions @failures @klass @source_location @time] do |new_tc|
       assert_in_epsilon 3.14, new_tc.time
     end
   end
