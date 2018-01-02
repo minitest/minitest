@@ -453,11 +453,6 @@ module Minitest
     attr_accessor :klass
 
     ##
-    # The test name of the test result.
-
-    attr_accessor :name
-
-    ##
     # The location of the test method.
 
     attr_accessor :source_location
