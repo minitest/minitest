@@ -1,3 +1,9 @@
+=== 5.11.1 / 2018-01-02
+
+* 1 bug fix:
+
+  * Fixed Result (a superclass of Test) overriding Runnable's name accessors. (y-yagi, MSP-Greg)
+
 === 5.11.0 / 2018-01-01
 
 * 2 major enhancements:
