@@ -486,7 +486,7 @@ module Minitest
 
     def location
       loc = " [#{self.failure.location}]" unless passed? or error?
-      "#{self.klass}##{self.name}#{loc}"
+      "#{self.klass || self.class.name}##{self.name}#{loc}"
     end
 
     ##
