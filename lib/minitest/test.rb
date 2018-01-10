@@ -85,6 +85,7 @@ module Minitest
     # Runs a single test with setup/teardown hooks.
 
     def run
+      self.klass = self.class
       with_info_handler do
         time_it do
           capture_exceptions do
