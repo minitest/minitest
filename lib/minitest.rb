@@ -381,7 +381,7 @@ module Minitest
 
     def marshal_dump # :nodoc:
       unless @@marshal_dump_warned then
-        warn ["Minitest::Test#marshal_dump is deprecated.",
+        warn ["Minitest::Runnable#marshal_dump is deprecated.",
               "You might be violating internals. From", caller.first].join " "
         @@marshal_dump_warned = true
       end
