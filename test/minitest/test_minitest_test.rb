@@ -811,6 +811,10 @@ class TestMinitestTest < TestMinitestRunnable
       assert_in_epsilon 3.14, new_tc.time
     end
   end
+
+  def test_location
+    assert_equal "TestMinitestTest#test_location", location
+  end
 end
 
 class TestMinitestUnitTestCase < Minitest::Test
