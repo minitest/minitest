@@ -509,7 +509,9 @@ describe Minitest::Spec do
 
     it "can NOT use must_equal in a thread. It must use expect in a thread" do
       assert_raises NoMethodError do
-        Thread.new { (1 + 1).must_equal 2 }.join
+        capture_io do
+          Thread.new { (1 + 1).must_equal 2 }.join
+        end
       end
     end
   end
