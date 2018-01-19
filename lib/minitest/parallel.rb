@@ -53,7 +53,7 @@ module Minitest
       end
     end
 
-    module Test
+    module Test # :nodoc:
       def _synchronize; Minitest::Test.io_lock.synchronize { yield }; end # :nodoc:
 
       module ClassMethods # :nodoc:
