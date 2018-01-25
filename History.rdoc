@@ -1,3 +1,14 @@
+=== 5.11.2 / 2018-01-25
+
+* 1 minor enhancement:
+
+  * Reversed Test < Result. Back to < Runnable and using Reportable for shared code.
+
+* 2 bug fixes:
+
+  * Fixed Result#location for instances of Test. (alexisbernard)
+  * Fixed deprecation message for Runnable#marshal_dump. (y-yagi)
+
 === 5.11.1 / 2018-01-02
 
 * 1 bug fix:
