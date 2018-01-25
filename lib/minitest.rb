@@ -437,6 +437,49 @@ module Minitest
   end
 
   ##
+  # Shared code for anything that can get passed to a Reporter. See
+  # Minitest::Test & Minitest::Result.
+
+  module Reportable
+    ##
+    # Did this run pass?
+    #
+    # Note: skipped runs are not considered passing, but they don't
+    # cause the process to exit non-zero.
+
+    def passed?
+      not self.failure
+    end
+
+    ##
+    # The location identifier of this test. Depends on a method
+    # existing called class_name.
+
+    def location
+      loc = " [#{self.failure.location}]" unless passed? or error?
+      "#{self.class_name}##{self.name}#{loc}"
+    end
+
+    def class_name # :nodoc:
+      raise NotImplementedError, "subclass responsibility"
+    end
+
+    ##
+    # Returns ".", "F", or "E" based on the result of the run.
+
+    def result_code
+      self.failure and self.failure.result_code or "."
+    end
+
+    ##
+    # Was this run skipped?
+
+    def skipped?
+      self.failure and Skip === self.failure
+    end
+  end
+
+  ##
   # This represents a test result in a clean way that can be
   # marshalled over a wire. Tests can do anything they want to the
   # test instance and can create conditions that cause Marshal.dump to
@@ -444,6 +487,8 @@ module Minitest
   # that the test result can be marshalled.
 
   class Result < Runnable
+    include Minitest::Reportable
+
     undef_method :marshal_dump
     undef_method :marshal_load
 
@@ -481,36 +526,8 @@ module Minitest
       self.failures.any? { |f| UnexpectedError === f }
     end
 
-    ##
-    # The location identifier of this test.
-
-    def location
-      loc = " [#{self.failure.location}]" unless passed? or error?
-      "#{self.klass || self.class.name}##{self.name}#{loc}"
-    end
-
-    ##
-    # Did this run pass?
-    #
-    # Note: skipped runs are not considered passing, but they don't
-    # cause the process to exit non-zero.
-
-    def passed?
-      not self.failure
-    end
-
-    ##
-    # Returns ".", "F", or "E" based on the result of the run.
-
-    def result_code
-      self.failure and self.failure.result_code or "."
-    end
-
-    ##
-    # Was this run skipped?
-
-    def skipped?
-      self.failure and Skip === self.failure
+    def class_name # :nodoc:
+      self.klass # for Minitest::Reportable
     end
 
     def to_s # :nodoc:

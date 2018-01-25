@@ -7,9 +7,14 @@ module Minitest
   #
   # See Minitest::Assertions
 
-  class Test < Result
+  class Test < Runnable
     require "minitest/assertions"
     include Minitest::Assertions
+    include Minitest::Reportable
+
+    def class_name # :nodoc:
+      self.class.name # for Minitest::Reportable
+    end
 
     PASSTHROUGH_EXCEPTIONS = [NoMemoryError, SignalException, SystemExit] # :nodoc:
 
