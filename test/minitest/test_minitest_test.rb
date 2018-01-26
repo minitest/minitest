@@ -124,7 +124,10 @@ class TestMinitestUnit < MetaMetaMetaTestCase
 
     test = test_class.new :test_omg
     test.run
-    assert test.passed?
+
+    refute_predicate test, :error?
+    assert_predicate test, :passed?
+    refute_predicate test, :skipped?
   end
 
   def test_passed_eh_teardown_skipped
@@ -136,8 +139,9 @@ class TestMinitestUnit < MetaMetaMetaTestCase
     test = test_class.new :test_omg
     test.run
 
-    assert test.skipped?
-    refute test.passed?
+    refute_predicate test, :error?
+    refute_predicate test, :passed?
+    assert_predicate test, :skipped?
   end
 
   def test_passed_eh_teardown_flunked
@@ -148,7 +152,10 @@ class TestMinitestUnit < MetaMetaMetaTestCase
 
     test = test_class.new :test_omg
     test.run
-    refute test.passed?
+
+    refute_predicate test, :error?
+    refute_predicate test, :passed?
+    refute_predicate test, :skipped?
   end
 
   def util_expand_bt bt

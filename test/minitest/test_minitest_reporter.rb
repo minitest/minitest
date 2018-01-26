@@ -90,13 +90,13 @@ class TestMinitestReporter < MetaMetaMetaTestCase
   end
 
   def test_passed_eh_empty
-    assert r.passed?
+    assert_predicate r, :passed?
   end
 
   def test_passed_eh_failure
     r.results << fail_test
 
-    refute r.passed?
+    refute_predicate r, :passed?
   end
 
   SKIP_MSG = "\n\nYou have skipped tests. Run with --verbose for details."
@@ -106,7 +106,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
 
     r.results << error_test
 
-    refute r.passed?
+    refute_predicate r, :passed?
 
     r.report
 
