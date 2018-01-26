@@ -477,6 +477,13 @@ module Minitest
     def skipped?
       self.failure and Skip === self.failure
     end
+
+    ##
+    # Did this run error?
+
+    def error?
+      self.failures.any? { |f| UnexpectedError === f }
+    end
   end
 
   ##
@@ -517,13 +524,6 @@ module Minitest
       r.source_location = o.method(o.name).source_location rescue ["unknown", -1]
 
       r
-    end
-
-    ##
-    # Did this run error?
-
-    def error?
-      self.failures.any? { |f| UnexpectedError === f }
     end
 
     def class_name # :nodoc:
