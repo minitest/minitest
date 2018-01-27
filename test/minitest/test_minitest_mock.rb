@@ -374,7 +374,7 @@ class TestMinitestStub < Minitest::Test
 
   def teardown
     super
-    assert_equal @assertion_count, @tc.assertions
+    assert_equal @assertion_count, @tc.assertions if self.passed?
   end
 
   class Time
