@@ -186,6 +186,10 @@ module Minitest
         options[:verbose] = true
       end
 
+      opts.on "-q", "--quiet", "Quiet. Show minimal output." do
+        options[:quiet] = true
+      end
+
       opts.on "-n", "--name PATTERN", "Filter run on /regexp/ or string." do |a|
         options[:filter] = a
       end
@@ -698,10 +702,10 @@ module Minitest
     def start # :nodoc:
       super
 
-      io.puts "Run options: #{options[:args]}"
-      io.puts
-      io.puts "# Running:"
-      io.puts
+      io.puts "Run options: #{options[:args]}" unless options[:quiet]
+      io.puts unless options[:quiet]
+      io.puts "# Running:" unless options[:quiet]
+      io.puts unless options[:quiet]
 
       self.sync = io.respond_to? :"sync=" # stupid emacs
       self.old_sync, io.sync = io.sync, true if self.sync
@@ -712,11 +716,11 @@ module Minitest
 
       io.sync = self.old_sync
 
-      io.puts unless options[:verbose] # finish the dots
-      io.puts
-      io.puts statistics
+      io.puts unless options[:verbose] || options[:quiet] # finish the dots
+      io.puts unless options[:quiet]
+      io.puts statistics  unless options[:quiet]
       aggregated_results io
-      io.puts summary
+      io.puts summary  unless options[:quiet]
     end
 
     def statistics # :nodoc:
