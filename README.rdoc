@@ -287,6 +287,7 @@ provided via plugins. To see them, simply run with +--help+:
         -h, --help                       Display this help.
         -s, --seed SEED                  Sets random seed. Also via env. Eg: SEED=n rake
         -v, --verbose                    Verbose. Show progress processing files.
+        -q, --quiet                      Quiet. Show minimal output.
         -n, --name PATTERN               Filter run on /regexp/ or string.
         -e, --exclude PATTERN            Exclude /regexp/ or string from run.
 
