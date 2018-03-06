@@ -535,6 +535,18 @@ describe Minitest::Spec do
 
       assert_equal "Calling #must_equal outside of test.", e.message
     end
+
+    it "deprecates expectation used without _" do
+      skip "N/A" if ENV["MT_NO_EXPECTATIONS"]
+
+      @assertion_count += 3
+
+      exp = /DEPRECATED: global use of must_equal from/
+
+      assert_output "", exp do
+        (1 + 1).must_equal 2
+      end
+    end
   end
 
   it "needs to verify throw" do

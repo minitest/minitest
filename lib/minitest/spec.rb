@@ -8,6 +8,9 @@ class Module # :nodoc:
     # warn "%-22p -> %p %p" % [meth, new_name, dont_flip]
     self.class_eval <<-EOM, __FILE__, __LINE__ + 1
       def #{new_name} *args
+        where = Minitest.filter_backtrace(caller).first
+        where = where.split(/:in /, 2).first # clean up noise
+        warn "DEPRECATED: global use of #{new_name} from #\{where}. Use _(obj).#{new_name} instead. This will fail in Minitest 6."
         Minitest::Expectation.new(self, Minitest::Spec.current).#{new_name}(*args)
       end
     EOM
