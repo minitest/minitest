@@ -511,11 +511,29 @@ describe Minitest::Spec do
 
     it "can NOT use must_equal in a thread. It must use expect in a thread" do
       skip "N/A" if ENV["MT_NO_EXPECTATIONS"]
-      assert_raises NoMethodError do
+      assert_raises RuntimeError do
         capture_io do
           Thread.new { (1 + 1).must_equal 2 }.join
         end
       end
+    end
+
+    it "fails gracefully when expectation used outside of `it`" do
+      skip "N/A" if ENV["MT_NO_EXPECTATIONS"]
+
+      @assertion_count += 1
+
+      e = assert_raises RuntimeError do
+        capture_io do
+          Thread.new { # forces ctx to be nil
+            describe("woot") do
+              (1 + 1).must_equal 2
+            end
+          }.join
+        end
+      end
+
+      assert_equal "Calling #must_equal outside of test.", e.message
     end
   end
 

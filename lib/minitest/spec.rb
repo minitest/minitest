@@ -14,6 +14,7 @@ class Module # :nodoc:
 
     Minitest::Expectation.class_eval <<-EOM, __FILE__, __LINE__ + 1
       def #{new_name} *args
+        raise "Calling ##{new_name} outside of test." unless ctx
         case
         when #{!!dont_flip} then
           ctx.#{meth}(target, *args)
