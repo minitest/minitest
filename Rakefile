@@ -1,6 +1,8 @@
 # -*- ruby -*-
 
-require "rubygems"
+# generate Manifest.txt for hoe
+`git ls-files > Manifest.txt` unless File.exists?("./Manifest.txt")
+
 require "hoe"
 
 Hoe.plugin :seattlerb
@@ -10,22 +12,11 @@ Hoe.spec "minitest" do
   developer "Ryan Davis", "ryand-ruby@zenspider.com"
 
   license "MIT"
+end
 
-  ## TODO: uncomment this on the last point release on 5.x
-  #
-  #   self.post_install_message = <<-"EOM"
-  # NOTE: minitest 5 will be the last in the minitest family to support
-  #       ruby 1.8 and 1.9 (and maybe 2.0?). If you need to keep using 1.8
-  #       or 1.9, you need to pin your dependency to minitest with
-  #       something like "~> 5.0".
-  #
-  #       Further, minitest 6 will be dropping the following:
-  #
-  #       + MiniTest (it's been Minitest for *years*)
-  #       + MiniTest::Unit
-  #       + MiniTest::Unit::TestCase
-  #       + assert_send (unless you argue for it well)
-  #   EOM
+Rake::Task["gem"].clear
+task 'gem' do
+  `gem build minitest.gemspec`
 end
 
 desc "Find missing expectations"
