@@ -24,8 +24,9 @@ Gem::Specification.new do |spec|
                      "I guess it is an example of how to write IO pipes too."
 
   spec.require_paths    = ["lib"]
-  spec.files            = `git ls-files`.split("\n")
-  spec.test_files       = []
+  spec.files            = `git ls-files`.split("\n").select {|f| f !~ /^test\// }
+  spec.test_files       = `git ls-files`.split("\n").select {|f| f =~ /^test\// }
+
   spec.extra_rdoc_files = ["History.rdoc", "README.rdoc"]
 
   # TODO: uncomment this on the last point release on 5.x
