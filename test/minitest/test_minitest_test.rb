@@ -1055,6 +1055,21 @@ class TestMinitestUnitTestCase < Minitest::Test
     end
   end
 
+  def test_assert_equal_unescape_newlines
+    msg = <<-EOM.gsub(/^ {10}/, "")
+          --- expected
+          +++ actual
+          @@ -1,2 +1 @@
+          -"hello
+          -world"
+          +"hello\\\\nworld"
+          EOM
+
+    assert_triggered msg do
+      @tc.assert_equal "hello\nworld", 'hello\nworld'
+    end
+  end
+
   def test_assert_equal_does_not_allow_lhs_nil
     if Minitest::VERSION =~ /^6/ then
       warn "Time to strip the MT5 test"
