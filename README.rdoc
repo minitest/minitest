@@ -254,11 +254,23 @@ the block.
     end
   end
 
-A note on stubbing: In order to stub a method, the method must
-actually exist prior to stubbing. Use a singleton method to create a
-new non-existing method:
+*A few notes on stubbing:*
+
+* In order to stub a method, the method must actually exist prior to stubbing. Use a singleton method
+to create a new non-existing method:
 
   def obj_under_test.fake_method
+    ...
+  end
+
+* Minitest checks whether the stubbed instance responds to the method +call+. In some cases, e.g.
+when using the _MockRedis_ gem (c.f. https://github.com/brigade/mock_redis), objects respond to
+this method. In this case Minitest will pass the given block to the +call+ method of this instance.
+If you do not wish this behaviour, you can use a lambda function to prevent this:
+
+  mock_redis = MockRedis.new
+  # set some keys or do something else
+  RedisFactory.stub :instance, ->(*args) { mock_redis } do
     ...
   end
 
