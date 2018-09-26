@@ -169,11 +169,18 @@ module Minitest
     #
     # See also: Minitest::Assertions.diff
 
-    def assert_equal exp, act, msg = nil
+    def assert_equal exp, act, msg_or_opts = nil, opts = {}
+      if Hash === msg_or_opts then
+        msg = nil
+        opts = msg_or_opts
+      else
+        msg = msg_or_opts
+      end
+
       msg = message(msg, E) { diff exp, act }
       result = assert exp == act, msg
 
-      if nil == exp then
+      if nil == exp && !opts[:allow_nil] then
         if Minitest::VERSION =~ /^6/ then
           refute_nil exp, "Use assert_nil if expecting nil."
         else

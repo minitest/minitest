@@ -1073,6 +1073,19 @@ class TestMinitestUnitTestCase < Minitest::Test
     end
   end
 
+  def test_assert_equal_does_allow_lhs_nil_if_explicitly_requested
+    assert_output "", "" do
+      @tc.assert_equal nil, nil, allow_nil: true
+    end
+  end
+
+  def test_assert_with_explicit_lhs_nil_supports_a_custom_message
+    msg = "message.\nExpected: nil\n  Actual: \"blah\""
+    assert_triggered msg do
+      @tc.assert_equal nil, "blah", "message", allow_nil: true
+    end
+  end
+
   def test_assert_equal_does_not_allow_lhs_nil_triggered
     assert_triggered "Expected: nil\n  Actual: false" do
       @tc.assert_equal nil, false
