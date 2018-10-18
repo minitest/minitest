@@ -615,6 +615,7 @@ minitest-matchers           :: Adds support for RSpec-style matchers to
 minitest-matchers_vaccine   :: Adds assertions that adhere to the matcher spec,
                                but without any expectation infections.
 minitest-metadata           :: Annotate tests with metadata (key-value).
+minitest-mock_expectations  :: Provides method call assertions for minitest.
 minitest-mongoid            :: Mongoid assertion matchers for Minitest.
 minitest-must_not           :: Provides must_not as an alias for wont in
                                Minitest.
