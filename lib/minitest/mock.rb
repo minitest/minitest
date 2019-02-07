@@ -174,6 +174,10 @@ module Minitest # :nodoc:
       return true if @delegator && @delegator.respond_to?(sym, include_private)
       __respond_to?(sym, include_private)
     end
+
+    def respond_to_missing?(symbol, include_private = false)
+      @expected_calls.key? symbol || super
+    end
   end
 end
 
