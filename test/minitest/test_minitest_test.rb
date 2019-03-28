@@ -915,8 +915,11 @@ class TestMinitestUnitTestCase < Minitest::Test
     msg = <<-EOM.gsub(/^ {10}/, "")
           --- expected
           +++ actual
-          @@ -1 +1,2 @@
+          @@ -1,3 +1,3 @@
+          -# encoding: UTF-8
+          -#    valid: false
           +# encoding: ASCII-8BIT
+          +#    valid: true
            "bad-utf8-\\xF1.txt"
           EOM
 
@@ -931,9 +934,11 @@ class TestMinitestUnitTestCase < Minitest::Test
     msg = <<-EOM.gsub(/^ {10}/, "")
           --- expected
           +++ actual
-          @@ -1,2 +1,2 @@
+          @@ -1,3 +1,3 @@
           -# encoding: US-ASCII
+          -#    valid: false
           +# encoding: ASCII-8BIT
+          +#    valid: true
            "bad-utf8-\\xF1.txt"
           EOM
 
@@ -1053,6 +1058,60 @@ class TestMinitestUnitTestCase < Minitest::Test
     assert_triggered msg do
       @tc.assert_equal "a\nb", "a\nc"
     end
+  end
+
+  def test_assert_equal_unescape_newlines
+    msg = <<-'EOM'.gsub(/^ {10}/, "") # NOTE single quotes on heredoc
+          --- expected
+          +++ actual
+          @@ -1,2 +1,2 @@
+          -"hello
+          +"hello\n
+           world"
+          EOM
+
+    assert_triggered msg do
+      act = 'hello\nworld'
+      exp = "hello\nworld"
+
+      @tc.assert_equal exp, act
+    end
+  end
+
+  def assert_mu_pp exp, input
+    @tc.assert_equal exp, mu_pp(input)
+  end
+
+  def test_mu_pp
+    @assertion_count += 4
+
+    assert_mu_pp 42.inspect,    42
+    assert_mu_pp %w[a b c].inspect,    %w[a b c]
+    assert_mu_pp "\"hello world\"",    "hello world"
+    assert_mu_pp "\"hello\\nworld\"",   "hello\nworld"
+    assert_mu_pp "\"hello\\\\nworld\"", 'hello\nworld' # notice single quotes
+  end
+
+  def assert_mu_pp_for_diff exp, input
+    @tc.assert_equal exp, mu_pp_for_diff(input)
+  end
+
+  def test_mu_pp_for_diff
+    @assertion_count += 3
+
+    assert_mu_pp_for_diff "#<Object:0xXXXXXX>", Object.new
+    assert_mu_pp_for_diff "\"hello world\"",    "hello world"
+    assert_mu_pp_for_diff "\"hello\nworld\"",   "hello\nworld"
+
+    exp = "# encoding: ASCII-8BIT\n#    valid: true\n\"hello\nworld\""
+    assert_mu_pp_for_diff exp, "hello\nworld".b
+  end
+
+  def test_mu_pp_for_diff_single_quotes_counter
+    @assertion_count += 1
+
+    assert_mu_pp_for_diff "\"hello\\n\nworld\"", 'hello\nworld'
+    assert_mu_pp_for_diff "\"hello\nworld\"",    "hello\nworld"
   end
 
   def test_assert_equal_does_not_allow_lhs_nil

@@ -101,8 +101,10 @@ module Minitest
 
     ##
     # This returns a human-readable version of +obj+. By default
-    # #inspect is called. You can override this to use #pretty_print
+    # #inspect is called. You can override this to use #pretty_inspect
     # if you want.
+    #
+    # See Minitest::Test.make_my_diffs_pretty!
 
     def mu_pp obj
       s = obj.inspect
@@ -110,8 +112,11 @@ module Minitest
       if defined? Encoding then
         s = s.encode Encoding.default_external
 
-        if String === obj && obj.encoding != Encoding.default_external then
-          s = "# encoding: #{obj.encoding}\n#{s}"
+        if String === obj && (obj.encoding != Encoding.default_external ||
+                              !obj.valid_encoding?) then
+          enc = "# encoding: #{obj.encoding}"
+          val = "#    valid: #{obj.valid_encoding?}"
+          s = "#{enc}\n#{val}\n#{s}"
         end
       end
 
@@ -119,13 +124,16 @@ module Minitest
     end
 
     ##
-    # This returns a diff-able human-readable version of +obj+. This
-    # differs from the regular mu_pp because it expands escaped
+    # This returns a diff-able more human-readable version of +obj+.
+    # This differs from the regular mu_pp because it expands escaped
     # newlines and makes hex-values generic (like object_ids). This
     # uses mu_pp to do the first pass and then cleans it up.
 
     def mu_pp_for_diff obj
-      mu_pp(obj).gsub(/\\n/, "\n").gsub(/:0x[a-fA-F0-9]{4,}/m, ":0xXXXXXX")
+      mu_pp(obj).
+        gsub(/\\n/, "\n").     # escaped newlines      -> newlines
+        gsub(/\\\n/, "\\n\n"). # escaped slash+newline -> escaped newline+newline
+        gsub(/:0x[a-fA-F0-9]{4,}/m, ":0xXXXXXX") # anonymize hex values
     end
 
     ##
