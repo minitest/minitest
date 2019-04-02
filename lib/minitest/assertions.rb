@@ -291,6 +291,8 @@ module Minitest
     # See also: #assert_silent
 
     def assert_output stdout = nil, stderr = nil
+      flunk "assert_output captures message from given block. Provide a block to use it." unless block_given?
+
       out, err = capture_io do
         yield
       end
@@ -327,6 +329,8 @@ module Minitest
     # passed.
 
     def assert_raises *exp
+      flunk "assert_raises captures errors from given block. Provide a block to use it." unless block_given?
+
       msg = "#{exp.pop}.\n" if String === exp.last
       exp << StandardError if exp.empty?
 

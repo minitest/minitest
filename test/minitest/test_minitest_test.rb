@@ -1345,6 +1345,12 @@ class TestMinitestUnitTestCase < Minitest::Test
     end
   end
 
+  def test_assert_output_without_block
+    assert_triggered "assert_output captures message from given block. Provide a block to use it." do
+      @tc.assert_output "blah"
+    end
+  end
+
   def test_assert_output_triggered_both
     assert_triggered util_msg("blah", "blah blah", "In stderr") do
       @tc.assert_output "yay", "blah" do
@@ -1417,6 +1423,12 @@ class TestMinitestUnitTestCase < Minitest::Test
   def test_assert_raises_module
     @tc.assert_raises MyModule do
       raise AnError
+    end
+  end
+
+  def test_assert_raises_without_block
+    assert_triggered "assert_raises captures errors from given block. Provide a block to use it." do
+      @tc.assert_raises StandardError
     end
   end
 
