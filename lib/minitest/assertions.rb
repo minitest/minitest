@@ -572,7 +572,7 @@ module Minitest
     end
 
     ##
-    # Fails if +obj+ is empty.
+    # Fails if +obj+ is not empty.
 
     def refute_empty obj, msg = nil
       msg = message(msg) { "Expected #{mu_pp(obj)} to not be empty" }
