@@ -44,6 +44,19 @@ module Minitest
     end
 
     ##
+    # Returns whether need to diff.
+    def self.need_to_diff? expect, butwas
+          (expect.include?("\n")    ||
+              butwas.include?("\n")    ||
+              expect.size > 30         ||
+              butwas.size > 30         ||
+              expect == butwas)        &&
+              Minitest::Assertions.diff
+
+
+    end
+
+    ##
     # Set the diff command to use in #diff.
 
     def self.diff= o
@@ -61,16 +74,8 @@ module Minitest
       butwas = mu_pp_for_diff act
       result = nil
 
-      need_to_diff =
-        (expect.include?("\n")    ||
-         butwas.include?("\n")    ||
-         expect.size > 30         ||
-         butwas.size > 30         ||
-         expect == butwas)        &&
-        Minitest::Assertions.diff
-
       return "Expected: #{mu_pp exp}\n  Actual: #{mu_pp act}" unless
-        need_to_diff
+        Minitest::Assertions.need_to_diff? expect, butwas
 
       Tempfile.open("expect") do |a|
         a.puts expect
