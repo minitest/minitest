@@ -51,26 +51,31 @@ module Minitest
     end
 
     ##
+    # Returns things to diff [expect, butwas], or [nil, nil] if nothing to diff.
+    def things_to_diff(exp, act)
+      expect = mu_pp_for_diff exp
+      butwas = mu_pp_for_diff act
+      need_to_diff =
+          (expect.include?("\n")    ||
+              butwas.include?("\n")    ||
+              expect.size > 30         ||
+              butwas.size > 30         ||
+              expect == butwas)        &&
+              Minitest::Assertions.diff
+      need_to_diff ? [expect, butwas] : [nil, nil]
+    end
+
+    ##
     # Returns a diff between +exp+ and +act+. If there is no known
     # diff command or if it doesn't make sense to diff the output
     # (single line, short output), then it simply returns a basic
     # comparison between the two.
 
     def diff exp, act
-      expect = mu_pp_for_diff exp
-      butwas = mu_pp_for_diff act
       result = nil
-
-      need_to_diff =
-        (expect.include?("\n")    ||
-         butwas.include?("\n")    ||
-         expect.size > 30         ||
-         butwas.size > 30         ||
-         expect == butwas)        &&
-        Minitest::Assertions.diff
-
+      expect, butwas = *things_to_diff(exp, act)
       return "Expected: #{mu_pp exp}\n  Actual: #{mu_pp act}" unless
-        need_to_diff
+        expect
 
       Tempfile.open("expect") do |a|
         a.puts expect
