@@ -27,6 +27,8 @@ module Minitest
     # figure out what diff to use.
 
     def self.diff
+      return @diff if defined? @diff
+
       @diff = if (RbConfig::CONFIG["host_os"] =~ /mswin|mingw/ &&
                   system("diff.exe", __FILE__, __FILE__)) then
                 "diff.exe -u"
@@ -38,9 +40,7 @@ module Minitest
                 "diff -u"
               else
                 nil
-              end unless defined? @diff
-
-      @diff
+              end
     end
 
     ##
