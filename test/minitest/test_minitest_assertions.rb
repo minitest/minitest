@@ -108,6 +108,12 @@ class TestMinitestAssertions < Minitest::Test
     end
   end
 
+  def test_assert__triggered_lambda
+    assert_triggered "whoops" do
+      @tc.assert false, lambda { "whoops" }
+    end
+  end
+
   def test_assert_empty
     @assertion_count = 2
 
@@ -158,6 +164,18 @@ class TestMinitestAssertions < Minitest::Test
 
         @tc.assert_equal o1, o2
       end
+    end
+  end
+
+  def test_assert_equal_different_message
+    assert_triggered "whoops.\nExpected: 1\n  Actual: 2" do
+      @tc.assert_equal 1, 2, message { "whoops" }
+    end
+  end
+
+  def test_assert_equal_different_lambda
+    assert_triggered "whoops.\nExpected: 1\n  Actual: 2" do
+      @tc.assert_equal 1, 2, lambda { "whoops" }
     end
   end
 
@@ -1216,6 +1234,30 @@ class TestMinitestAssertionHelpers < Minitest::Test
     assert_equal msg, diff(exp, act)
   end
 
+  def test_message
+    assert_equal "blah2.",         message          { "blah2" }.call
+    assert_equal "blah2.",         message("")      { "blah2" }.call
+    assert_equal "blah1.\nblah2.", message(:blah1)  { "blah2" }.call
+    assert_equal "blah1.\nblah2.", message("blah1") { "blah2" }.call
+
+    message = proc { "blah1" }
+    assert_equal "blah1.\nblah2.", message(message) { "blah2" }.call
+
+    message = message { "blah1" }
+    assert_equal "blah1.\nblah2.", message(message) { "blah2" }.call
+  end
+
+  def test_message_deferred
+    var = nil
+
+    msg = message { var = "blah" }
+
+    assert_nil var
+
+    msg.call
+
+    assert_equal "blah", var
+  end
 
   def test_mu_pp
     assert_mu_pp 42.inspect,            42
