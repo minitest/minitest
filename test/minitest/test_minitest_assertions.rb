@@ -285,8 +285,6 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_equal_string_both_escaped_unescaped_newlines
-    skip "not yet"
-
     msg = <<-'EOM'.gsub(/^ {10}/, "") # NOTE single quotes on heredoc
           --- expected
           +++ actual
@@ -1174,8 +1172,6 @@ class TestMinitestAssertionHelpers < Minitest::Test
   end
 
   def test_diff_str_mixed
-    skip "not yet"
-
     msg = <<-'EOM'.gsub(/^ {10}/, "") # NOTE single quotes on heredoc
           --- expected
           +++ actual
@@ -1244,8 +1240,6 @@ class TestMinitestAssertionHelpers < Minitest::Test
   end
 
   def test_mu_pp_for_diff_str_bad_encoding_both
-    skip "not yet"
-
     str = "\666A\\n\nB".force_encoding Encoding::UTF_8
     exp = "# encoding: UTF-8\n#    valid: false\n\"\\xB6A\\\\n\\n\nB\""
 
@@ -1260,8 +1254,6 @@ class TestMinitestAssertionHelpers < Minitest::Test
   end
 
   def test_mu_pp_for_diff_str_encoding_both
-    skip "not yet"
-
     str = "A\\n\nB".b
     exp = "# encoding: ASCII-8BIT\n#    valid: true\n\"A\\\\n\\n\nB\""
 
@@ -1269,8 +1261,6 @@ class TestMinitestAssertionHelpers < Minitest::Test
   end
 
   def test_mu_pp_for_diff_str_nerd
-    skip "not yet"
-
     assert_mu_pp_for_diff "\"A\\n\nB\\\\nC\"", "A\nB\\nC"
     assert_mu_pp_for_diff "\"\\n\nB\\\\nC\"",  "\nB\\nC"
     assert_mu_pp_for_diff "\"\\n\nB\\\\n\"",   "\nB\\n"

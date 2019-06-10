@@ -130,9 +130,21 @@ module Minitest
     # uses mu_pp to do the first pass and then cleans it up.
 
     def mu_pp_for_diff obj
-      mu_pp(obj).
-        gsub(/\\n/, "\n").     # escaped newlines      -> newlines
-        gsub(/\\\n/, "\\n\n"). # escaped slash+newline -> escaped newline+newline
+      str = mu_pp obj
+
+      # both '\n' & '\\n' (_after_ mu_pp (aka inspect))
+      nerd = (str.index(/(?<=\\|^)\\n/) &&
+              str.index(/(?<!\\|^)\\n/))
+
+      process =
+        if nerd then                                   # nerd view:
+          lambda { |s| "#{s}#{ "\n" if s == "\\n" }" } # keep escapes, add nl for "\n"
+        else                                           # normal view:
+          lambda { |s| s == "\\n" ? "\n" :  "\\n\n" }  # de-escape a bit, add nls
+        end
+
+      str.
+        gsub(/\\?\\n/, &process).
         gsub(/:0x[a-fA-F0-9]{4,}/m, ":0xXXXXXX") # anonymize hex values
     end
 
