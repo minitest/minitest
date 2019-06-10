@@ -19,6 +19,9 @@ class FakeNamedTest < Minitest::Test
   end
 end
 
+module MyModule; end
+class AnError < StandardError; include MyModule; end
+
 class MetaMetaMetaTestCase < Minitest::Test
   attr_accessor :reporter, :output, :tu
 
