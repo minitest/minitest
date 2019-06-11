@@ -294,6 +294,18 @@ provided via plugins. To see them, simply run with +--help+:
         -p, --pride                      Pride. Show your testing pride!
         -a, --autotest                   Connect to autotest server.
 
+You can set up a rake task to run all your tests by adding this to your Rakefile:
+
+    require "rake/testtask"
+
+    Rake::TestTask.new(:test) do |t|
+      t.libs << "test"
+      t.libs << "lib"
+      t.test_files = FileList["test/**/test_*.rb"]
+    end
+
+    task :default => :test
+
 == Writing Extensions
 
 To define a plugin, add a file named minitest/XXX_plugin.rb to your
