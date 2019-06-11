@@ -1063,7 +1063,9 @@ class TestMinitestAssertions < Minitest::Test
 
   def test_refute_match_matcher_object
     @assertion_count = 2
-    @tc.refute_match Object.new, 5 # default #=~ returns false
+    pattern = Object.new
+    def pattern.=~ _; false end
+    @tc.refute_match pattern, 5
   end
 
   def test_refute_match_object_triggered
