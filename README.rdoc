@@ -677,6 +677,7 @@ minitest_owrapper           :: Get tests results as a TestResult object.
 minitest_should             :: Shoulda style syntax for minitest test::unit.
 minitest_tu_shim            :: Bridges between test/unit and minitest.
 mongoid-minitest            :: Minitest matchers for Mongoid.
+mutant-minitest             :: Minitest integration for mutant.
 pry-rescue                  :: A pry plugin w/ minitest support. See
                                pry-rescue/minitest.rb.
 rspec2minitest              :: Easily translate any RSpec matchers to Minitest
