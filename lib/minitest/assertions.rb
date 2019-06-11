@@ -480,10 +480,10 @@ module Minitest
           ensure
             $stdout.reopen orig_stdout
             $stderr.reopen orig_stderr
-          end
 
-          stdout_writer.close
-          stderr_writer.close
+            stdout_writer.close
+            stderr_writer.close
+          end
 
           return stdout_reader_thread.join.value, stderr_reader_thread.join.value
         ensure
