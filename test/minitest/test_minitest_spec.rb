@@ -1,5 +1,5 @@
 # encoding: utf-8
-require "minitest/autorun"
+require "minitest/metametameta"
 require "stringio"
 
 class MiniSpecA < Minitest::Spec; end
@@ -755,8 +755,6 @@ class TestMetaStatic < Minitest::Test
     assert_equal 0, inner.public_instance_methods.grep(/^test_/).count
   end
 end
-
-require "minitest/metametameta"
 
 class TestMeta < MetaMetaMetaTestCase
   parallelize_me!
