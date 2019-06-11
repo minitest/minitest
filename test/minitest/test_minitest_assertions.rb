@@ -588,6 +588,12 @@ class TestMinitestAssertions < Minitest::Test
     end
   end
 
+  def test_assert_output_without_block
+    assert_triggered "assert_output requires a block to capture output." do
+      @tc.assert_output "blah"
+    end
+  end
+
   def test_assert_predicate
     @tc.assert_predicate "", :empty?
   end
@@ -765,6 +771,12 @@ class TestMinitestAssertions < Minitest::Test
     expected = "XXX.\nMinitest::Assertion expected but nothing was raised."
 
     assert_equal expected, e.message
+  end
+
+  def test_assert_raises_without_block
+    assert_triggered "assert_raises requires a block to capture errors." do
+      @tc.assert_raises StandardError
+    end
   end
 
   def test_assert_respond_to
