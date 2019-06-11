@@ -304,7 +304,7 @@ module Minitest
 
     def self.run reporter, options = {}
       filter = options[:filter] || "/./"
-      filter = Regexp.new $1 if filter =~ %r%/(.*)/%
+      filter = Regexp.new $1 if filter.is_a?(String) && filter =~ %r%/(.*)/%
 
       filtered_methods = self.runnable_methods.find_all { |m|
         filter === m || filter === "#{self}##{m}"
