@@ -473,6 +473,9 @@ module Minitest
             $stdout.reopen stdout_writer
             $stderr.reopen stderr_writer
 
+            stdout_reader_thread = Thread.new { stdout_reader.read }
+            stderr_reader_thread = Thread.new { stderr_reader.read }
+
             yield
           ensure
             $stdout.reopen orig_stdout
@@ -482,7 +485,7 @@ module Minitest
           stdout_writer.close
           stderr_writer.close
 
-          return stdout_reader.read, stderr_reader.read
+          return stdout_reader_thread.join.value, stderr_reader_thread.join.value
         ensure
           stdout_reader.close
           stderr_reader.close
