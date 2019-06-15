@@ -362,7 +362,7 @@ end
 require "minitest/metametameta"
 
 class TestMinitestStub < Minitest::Test
-  parallelize_me!
+  # Do not parallelize since we're calling stub on class methods
 
   def setup
     super

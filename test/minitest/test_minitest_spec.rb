@@ -757,7 +757,7 @@ class TestMetaStatic < Minitest::Test
 end
 
 class TestMeta < MetaMetaMetaTestCase
-  parallelize_me!
+  # do not call parallelize_me! here because specs use register_spec_type globally
 
   def util_structure
     y = z = nil
