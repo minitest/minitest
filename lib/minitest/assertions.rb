@@ -52,17 +52,20 @@ module Minitest
 
     ##
     # Returns things to diff [expect, butwas], or [nil, nil] if nothing to diff.
-    def things_to_diff(exp, act)
+
+    def things_to_diff exp, act
       expect = mu_pp_for_diff exp
       butwas = mu_pp_for_diff act
+
       need_to_diff =
-          (expect.include?("\n")    ||
+             (expect.include?("\n")    ||
               butwas.include?("\n")    ||
               expect.size > 30         ||
               butwas.size > 30         ||
               expect == butwas)        &&
               Minitest::Assertions.diff
-      need_to_diff ? [expect, butwas] : [nil, nil]
+
+      need_to_diff && [expect, butwas]
     end
 
     ##
