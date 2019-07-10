@@ -45,7 +45,6 @@ module Minitest
 
     ##
     # Set the diff command to use in #diff.
-
     def self.diff= o
       @diff = o
     end
