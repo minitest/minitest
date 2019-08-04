@@ -790,14 +790,17 @@ class TestMinitestRunnable < Minitest::Test
 
   def test_spec_marshal
     klass = describe("whatever") { it("passes") { assert true } }
-    rm = klass.runnable_methods.first
+
+    # Pass the test over the wire
+    remote_klass = Marshal.load Marshal.dump klass
 
     # Run the test
+    rm = remote_klass.runnable_methods.first
     @tc = klass.new(rm).run
 
     assert_kind_of Minitest::Result, @tc
 
-    # Pass it over the wire
+    # Pass the result back over the wire
     over_the_wire = Marshal.load Marshal.dump @tc
 
     assert_equal @tc.time,       over_the_wire.time

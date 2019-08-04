@@ -268,6 +268,14 @@ class Minitest::Spec < Minitest::Test
         nuke_test_methods!
       end
 
+      cls_const = const_base = "Test__#{name.to_s.gsub(/\W/, '')}"
+      uniq_id = 2
+      while const_defined? cls_const
+        cls_const = const_base + uniq_id.to_s
+        uniq_id += 1
+      end
+      Minitest::Spec.const_set(cls_const, cls)
+
       children << cls
 
       cls
