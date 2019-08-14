@@ -26,9 +26,8 @@ describe Minitest::Spec do
 
     msg = e.message.sub(/(---Backtrace---).*/m, '\1')
     msg.gsub!(/\(oid=[-0-9]+\)/, "(oid=N)")
-    msg.gsub!(/@.+>/, "@PATH>")
     msg.gsub!(/(\d\.\d{6})\d+/, '\1xxx') # normalize: ruby version, impl, platform
-    msg.gsub!(/:0x[a-fA-F0-9]{4,}/m, ":0xXXXXXX")
+    msg.gsub!(/:0x[Xa-fA-F0-9]{4,}[ @].+?>/, ":0xXXXXXX@PATH>")
 
     if expected
       @assertion_count += 1
@@ -213,7 +212,7 @@ describe Minitest::Spec do
       _(6 * 9).must_equal 42, "msg"
     end
 
-    assert_triggered(/^-42\n\+#<Proc:0xXXXXXX@PATH>\n/) do
+    assert_triggered(/^-42\n\+#<Proc:0xXXXXXX[ @]PATH>\n/) do
       _(proc { 42 }).must_equal 42 # proc isn't called, so expectation fails
     end
   end
