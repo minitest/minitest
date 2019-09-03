@@ -73,6 +73,8 @@ module Kernel
   # For more information about expectations, see Minitest::Expectations.
 
   def describe desc, *additional_desc, &block # :doc:
+    raise ArgumentError.new('No body provided.  Are you missing a "do"?') unless block_given?
+
     stack = Minitest::Spec.describe_stack
     name  = [stack.last, desc, *additional_desc].compact.join("::")
     sclas = stack.last || if Class === self && kind_of?(Minitest::Spec::DSL) then
@@ -214,6 +216,8 @@ class Minitest::Spec < Minitest::Test
     # and match between assertions and expectations as much as you want.
 
     def it desc = "anonymous", &block
+      raise ArgumentError.new('No body provided.  Are you missing a "do"?') unless block_given?
+
       block ||= proc { skip "(no tests defined)" }
 
       @specs ||= 0
