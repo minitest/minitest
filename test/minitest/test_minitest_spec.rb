@@ -226,7 +226,7 @@ describe Minitest::Spec do
     end
 
     exp = "DEPRECATED: Use assert_nil if expecting nil from #{__FILE__}:#{__LINE__-3}. " \
-      "This will fail in Minitest 6.\n"
+          "This will fail in Minitest 6.\n"
     exp = "" if $-w.nil?
 
     assert_empty out
@@ -684,6 +684,16 @@ describe Minitest::Spec, :let do
     assert_respond_to p, :call
     _(p).must_respond_to :call
   end
+
+  it "needs to raise if not provided a block" do
+    expect do
+      describe "has no block"
+    end.must_raise ArgumentError
+
+    expect do
+      self.class.it "has no block"
+    end.must_raise ArgumentError
+  end
 end
 
 describe Minitest::Spec, :subject do
@@ -878,7 +888,7 @@ class TestMeta < MetaMetaMetaTestCase
     top_methods = %w[setup teardown test_0001_top-level-it]
     inner_methods1 = %w[setup teardown test_0001_inner-it]
     inner_methods2 = inner_methods1 +
-      %w[test_0002_anonymous test_0003_anonymous]
+                     %w[test_0002_anonymous test_0003_anonymous]
 
     assert_equal top_methods,    x.instance_methods(false).sort.map(&:to_s)
     assert_equal inner_methods1, y.instance_methods(false).sort.map(&:to_s)
