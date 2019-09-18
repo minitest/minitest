@@ -1181,12 +1181,24 @@ class TestMinitestAssertions < Minitest::Test
 end
 
 class TestMinitestAssertionHelpers < Minitest::Test
-  def assert_mu_pp exp, input
-    assert_equal exp, mu_pp(input)
+  def assert_mu_pp exp, input, raw = false
+    act = mu_pp input
+
+    if String === input && !raw then
+      assert_equal "\"#{exp}\"", act
+    else
+      assert_equal exp, act
+    end
   end
 
-  def assert_mu_pp_for_diff exp, input
-    assert_equal exp, mu_pp_for_diff(input)
+  def assert_mu_pp_for_diff exp, input, raw = false
+    act = mu_pp_for_diff input
+
+    if String === input && !raw then
+      assert_equal "\"#{exp}\"", act
+    else
+      assert_equal exp, act
+    end
   end
 
   def test_diff_equal
@@ -1276,84 +1288,84 @@ class TestMinitestAssertionHelpers < Minitest::Test
   def test_mu_pp
     assert_mu_pp 42.inspect,            42
     assert_mu_pp %w[a b c].inspect,     %w[a b c]
-    assert_mu_pp "\"A B\"",     "A B"
-    assert_mu_pp "\"A\\nB\"",   "A\nB"
-    assert_mu_pp "\"A\\\\nB\"", 'A\nB' # notice single quotes
+    assert_mu_pp "A B",     "A B"
+    assert_mu_pp "A\\nB",   "A\nB"
+    assert_mu_pp "A\\\\nB", 'A\nB' # notice single quotes
   end
 
   def test_mu_pp_for_diff
     assert_mu_pp_for_diff "#<Object:0xXXXXXX>", Object.new
-    assert_mu_pp_for_diff "\"A B\"",            "A B"
+    assert_mu_pp_for_diff "A B",                "A B"
     assert_mu_pp_for_diff [1, 2, 3].inspect,    [1, 2, 3]
-    assert_mu_pp_for_diff "\"A\nB\"",           "A\nB"
+    assert_mu_pp_for_diff "A\nB",               "A\nB"
   end
 
   def test_mu_pp_for_diff_str_bad_encoding
     str = "\666".force_encoding Encoding::UTF_8
     exp = "# encoding: UTF-8\n#    valid: false\n\"\\xB6\""
 
-    assert_mu_pp_for_diff exp, str
+    assert_mu_pp_for_diff exp, str, :raw
   end
 
   def test_mu_pp_for_diff_str_bad_encoding_both
     str = "\666A\\n\nB".force_encoding Encoding::UTF_8
     exp = "# encoding: UTF-8\n#    valid: false\n\"\\xB6A\\\\n\\n\nB\""
 
-    assert_mu_pp_for_diff exp, str
+    assert_mu_pp_for_diff exp, str, :raw
   end
 
   def test_mu_pp_for_diff_str_encoding
     str = "A\nB".b
     exp = "# encoding: ASCII-8BIT\n#    valid: true\n\"A\nB\""
 
-    assert_mu_pp_for_diff exp, str
+    assert_mu_pp_for_diff exp, str, :raw
   end
 
   def test_mu_pp_for_diff_str_encoding_both
     str = "A\\n\nB".b
     exp = "# encoding: ASCII-8BIT\n#    valid: true\n\"A\\\\n\\n\nB\""
 
-    assert_mu_pp_for_diff exp, str
+    assert_mu_pp_for_diff exp, str, :raw
   end
 
   def test_mu_pp_for_diff_str_nerd
-    assert_mu_pp_for_diff "\"A\\n\nB\\\\nC\"", "A\nB\\nC"
-    assert_mu_pp_for_diff "\"\\n\nB\\\\nC\"",  "\nB\\nC"
-    assert_mu_pp_for_diff "\"\\n\nB\\\\n\"",   "\nB\\n"
-    assert_mu_pp_for_diff "\"\\n\n\\\\n\"",    "\n\\n"
-    assert_mu_pp_for_diff "\"\\\\n\\n\n\"",    "\\n\n"
-    assert_mu_pp_for_diff "\"\\\\nB\\n\n\"",   "\\nB\n"
-    assert_mu_pp_for_diff "\"\\\\nB\\n\nC\"",  "\\nB\nC"
-    assert_mu_pp_for_diff "\"A\\\\n\\n\nB\"", "A\\n\nB"
-    assert_mu_pp_for_diff "\"A\\n\n\\\\nB\"", "A\n\\nB"
-    assert_mu_pp_for_diff "\"\\\\n\\n\n\"",   "\\n\n"
-    assert_mu_pp_for_diff "\"\\n\n\\\\n\"",   "\n\\n"
+    assert_mu_pp_for_diff "A\\n\nB\\\\nC", "A\nB\\nC"
+    assert_mu_pp_for_diff "\\n\nB\\\\nC",  "\nB\\nC"
+    assert_mu_pp_for_diff "\\n\nB\\\\n",   "\nB\\n"
+    assert_mu_pp_for_diff "\\n\n\\\\n",    "\n\\n"
+    assert_mu_pp_for_diff "\\\\n\\n\n",    "\\n\n"
+    assert_mu_pp_for_diff "\\\\nB\\n\n",   "\\nB\n"
+    assert_mu_pp_for_diff "\\\\nB\\n\nC",  "\\nB\nC"
+    assert_mu_pp_for_diff "A\\\\n\\n\nB",  "A\\n\nB"
+    assert_mu_pp_for_diff "A\\n\n\\\\nB",  "A\n\\nB"
+    assert_mu_pp_for_diff "\\\\n\\n\n",    "\\n\n"
+    assert_mu_pp_for_diff "\\n\n\\\\n",    "\n\\n"
   end
 
   def test_mu_pp_for_diff_str_normal
-    assert_mu_pp_for_diff "\"\"",        ""
-    assert_mu_pp_for_diff "\"A\\n\n\"",  "A\\n"
-    assert_mu_pp_for_diff "\"A\\n\nB\"", "A\\nB"
-    assert_mu_pp_for_diff "\"A\n\"",     "A\n"
-    assert_mu_pp_for_diff "\"A\nB\"",    "A\nB"
-    assert_mu_pp_for_diff "\"\\n\n\"",   "\\n"
-    assert_mu_pp_for_diff "\"\n\"",      "\n"
-    assert_mu_pp_for_diff "\"\\n\nA\"",  "\\nA"
-    assert_mu_pp_for_diff "\"\nA\"",     "\nA"
+    assert_mu_pp_for_diff "",        ""
+    assert_mu_pp_for_diff "A\\n\n",  "A\\n"
+    assert_mu_pp_for_diff "A\\n\nB", "A\\nB"
+    assert_mu_pp_for_diff "A\n",     "A\n"
+    assert_mu_pp_for_diff "A\nB",    "A\nB"
+    assert_mu_pp_for_diff "\\n\n",   "\\n"
+    assert_mu_pp_for_diff "\n",      "\n"
+    assert_mu_pp_for_diff "\\n\nA",  "\\nA"
+    assert_mu_pp_for_diff "\nA",     "\nA"
   end
 
   def test_mu_pp_str_bad_encoding
     str = "\666".force_encoding Encoding::UTF_8
     exp = "# encoding: UTF-8\n#    valid: false\n\"\\xB6\""
 
-    assert_mu_pp exp, str
+    assert_mu_pp exp, str, :raw
   end
 
   def test_mu_pp_str_encoding
     str = "A\nB".b
     exp = "# encoding: ASCII-8BIT\n#    valid: true\n\"A\\nB\""
 
-    assert_mu_pp exp, str
+    assert_mu_pp exp, str, :raw
   end
 
   def test_mu_pp_str_immutable
