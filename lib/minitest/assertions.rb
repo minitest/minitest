@@ -126,7 +126,7 @@ module Minitest
     ##
     # This returns a diff-able more human-readable version of +obj+.
     # This differs from the regular mu_pp because it expands escaped
-    # newlines and makes hex-values generic (like object_ids). This
+    # newlines and makes hex-values (like object_ids) generic. This
     # uses mu_pp to do the first pass and then cleans it up.
 
     def mu_pp_for_diff obj
