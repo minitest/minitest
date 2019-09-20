@@ -61,12 +61,15 @@ module Minitest
       butwas = mu_pp_for_diff act
       result = nil
 
+      e1, e2 = expect.include?("\n"), expect.include?("\\n")
+      b1, b2 = butwas.include?("\n"), butwas.include?("\\n")
+
       need_to_diff =
-        (expect.include?("\n")    ||
-         butwas.include?("\n")    ||
-         expect.size > 30         ||
-         butwas.size > 30         ||
-         expect == butwas)        &&
+        (e1 ^ e2           ||
+         b1 ^ b2           ||
+         expect.size > 30  ||
+         butwas.size > 30  ||
+         expect == butwas) &&
         Minitest::Assertions.diff
 
       return "Expected: #{mu_pp exp}\n  Actual: #{mu_pp act}" unless
@@ -133,14 +136,18 @@ module Minitest
       str = mu_pp obj
 
       # both '\n' & '\\n' (_after_ mu_pp (aka inspect))
-      nerd = (str.index(/(?<=\\|^)\\n/) &&
-              str.index(/(?<!\\|^)\\n/))
+      single = str.match?(/(?<!\\|^)\\n/)
+      double = str.match?(/(?<=\\|^)\\n/)
 
       process =
-        if nerd then                                   # nerd view:
-          lambda { |s| "#{s}#{ "\n" if s == "\\n" }" } # keep escapes, add nl for "\n"
-        else                                           # normal view:
-          lambda { |s| s == "\\n" ? "\n" :  "\\n\n" }  # de-escape a bit, add nls
+        if single ^ double then
+          if single then
+            lambda { |s| s == "\\n"   ? "\n"    : s } # unescape
+          else
+            lambda { |s| s == "\\\\n" ? "\\n\n" : s } # unescape a bit, add nls
+          end
+        else
+          :itself                                     # leave it alone
         end
 
       str.

@@ -302,19 +302,34 @@ class TestMinitestAssertions < Minitest::Test
     end
   end
 
-  def test_assert_equal_string_both_escaped_unescaped_newlines
-    msg = <<-'EOM'.gsub(/^ {10}/, "") # NOTE single quotes on heredoc
+  def test_assert_equal_string_bug791
+    exp = <<-'EOF'.gsub(/^ {10}/, "") # note single quotes
           --- expected
           +++ actual
-          @@ -1,2 +1,2 @@
-          -"A\\n\n
-          -B"
-          +"A\n
-          +\\nB"
+          @@ -1,2 +1 @@
+          -"\\n
+          -"
+          +"\\\"
+        EOF
+
+    exp = "Expected: \"\\\\n\"\n  Actual: \"\\\\\""
+    assert_triggered exp do
+      @tc.assert_equal "\\n", "\\"
+    end
+  end
+
+  def test_assert_equal_string_both_escaped_unescaped_newlines
+    msg = <<-EOM.gsub(/^ {10}/, "")
+          --- expected
+          +++ actual
+          @@ -1,2 +1 @@
+          -\"A\\n
+          -B\"
+          +\"A\\n\\\\nB\"
           EOM
 
     assert_triggered msg do
-      exp = "A\\n\nB"
+      exp = "A\\nB"
       act = "A\n\\nB"
 
       @tc.assert_equal exp, act
@@ -1219,11 +1234,9 @@ class TestMinitestAssertionHelpers < Minitest::Test
     msg = <<-'EOM'.gsub(/^ {10}/, "") # NOTE single quotes on heredoc
           --- expected
           +++ actual
-          @@ -1,2 +1,2 @@
-          -"A\\n\n
-          -B"
-          +"A\n
-          +\\nB"
+          @@ -1 +1 @@
+          -"A\\n\nB"
+          +"A\n\\nB"
           EOM
 
     exp = "A\\n\nB"
@@ -1309,7 +1322,7 @@ class TestMinitestAssertionHelpers < Minitest::Test
 
   def test_mu_pp_for_diff_str_bad_encoding_both
     str = "\666A\\n\nB".force_encoding Encoding::UTF_8
-    exp = "# encoding: UTF-8\n#    valid: false\n\"\\xB6A\\\\n\\n\nB\""
+    exp = "# encoding: UTF-8\n#    valid: false\n\"\\xB6A\\\\n\\nB\""
 
     assert_mu_pp_for_diff exp, str, :raw
   end
@@ -1323,23 +1336,23 @@ class TestMinitestAssertionHelpers < Minitest::Test
 
   def test_mu_pp_for_diff_str_encoding_both
     str = "A\\n\nB".b
-    exp = "# encoding: ASCII-8BIT\n#    valid: true\n\"A\\\\n\\n\nB\""
+    exp = "# encoding: ASCII-8BIT\n#    valid: true\n\"A\\\\n\\nB\""
 
     assert_mu_pp_for_diff exp, str, :raw
   end
 
   def test_mu_pp_for_diff_str_nerd
-    assert_mu_pp_for_diff "A\\n\nB\\\\nC", "A\nB\\nC"
-    assert_mu_pp_for_diff "\\n\nB\\\\nC",  "\nB\\nC"
-    assert_mu_pp_for_diff "\\n\nB\\\\n",   "\nB\\n"
-    assert_mu_pp_for_diff "\\n\n\\\\n",    "\n\\n"
-    assert_mu_pp_for_diff "\\\\n\\n\n",    "\\n\n"
-    assert_mu_pp_for_diff "\\\\nB\\n\n",   "\\nB\n"
-    assert_mu_pp_for_diff "\\\\nB\\n\nC",  "\\nB\nC"
-    assert_mu_pp_for_diff "A\\\\n\\n\nB",  "A\\n\nB"
-    assert_mu_pp_for_diff "A\\n\n\\\\nB",  "A\n\\nB"
-    assert_mu_pp_for_diff "\\\\n\\n\n",    "\\n\n"
-    assert_mu_pp_for_diff "\\n\n\\\\n",    "\n\\n"
+    assert_mu_pp_for_diff "A\\nB\\\\nC", "A\nB\\nC"
+    assert_mu_pp_for_diff "\\nB\\\\nC",  "\nB\\nC"
+    assert_mu_pp_for_diff "\\nB\\\\n",   "\nB\\n"
+    assert_mu_pp_for_diff "\\n\\\\n",    "\n\\n"
+    assert_mu_pp_for_diff "\\\\n\\n",    "\\n\n"
+    assert_mu_pp_for_diff "\\\\nB\\n",   "\\nB\n"
+    assert_mu_pp_for_diff "\\\\nB\\nC",  "\\nB\nC"
+    assert_mu_pp_for_diff "A\\\\n\\nB",  "A\\n\nB"
+    assert_mu_pp_for_diff "A\\n\\\\nB",  "A\n\\nB"
+    assert_mu_pp_for_diff "\\\\n\\n",    "\\n\n"
+    assert_mu_pp_for_diff "\\n\\\\n",    "\n\\n"
   end
 
   def test_mu_pp_for_diff_str_normal
