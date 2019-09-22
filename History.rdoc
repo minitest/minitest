@@ -1,3 +1,22 @@
+=== 5.12.0 / 2019-09-22
+
+* 8 minor enhancements:
+
+  * Added a descriptive error if assert_output or assert_raises called without a block. (okuramasafumi)
+  * Changed mu_pp_for_diff to make having both \n and \\n easier to debug.
+  * Deprecated $N for specifying number of parallel test runners. Use MT_CPU.
+  * Deprecated use of global expectations. To be removed from MT6.
+  * Extended Assertions#mu_pp to encoding validity output for strings to improve diffs.
+  * Extended Assertions#mu_pp to output encoding and validity if invalid to improve diffs.
+  * Extended Assertions#mu_pp_for_diff to make escaped newlines more obvious in diffs.
+  * Fail gracefully when expectation used outside of `it`.
+
+* 3 bug fixes:
+
+  * Check `option[:filter]` klass before match. Fixes 2.6 warning. (y-yagi)
+  * Fixed Assertions#diff from recalculating if set to nil
+  * Fixed spec section of readme to not use deprecated global expectations. (CheezItMan)
+
 === 5.11.3 / 2018-01-26
 
 * 1 bug fix:
