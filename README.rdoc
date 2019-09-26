@@ -220,9 +220,9 @@ verification to ensure they got all the calls they were expecting."
     end
   end
 
-**Multi-threading and Mocks**
+==== Multi-threading and Mocks
 
-Minitest mocks do not support multi-threading if it works, fine, if it doesn't
+Minitest mocks do not support multi-threading. If it works, fine, if it doesn't
 you can use regular ruby patterns and facilities like local variables. Here's
 an example of asserting that code inside a thread is run:
 
