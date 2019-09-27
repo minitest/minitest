@@ -481,6 +481,8 @@ able to require minitest and run your tests.
 
 == Developing Minitest:
 
+Minitest requires {Hoe}[https://rubygems.org/gems/hoe].
+
 === Minitest's own tests require UTF-8 external encoding.
 
 This is a common problem in Windows, where the default external Encoding is

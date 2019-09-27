@@ -425,7 +425,8 @@ module Minitest
 
     ##
     # Returns a single character string to print based on the result
-    # of the run. Eg ".", "F", or "E".
+    # of the run. One of <tt>"."</tt>, <tt>"F"</tt>,
+    # <tt>"E"</tt> or <tt>"S"</tt>.
 
     def result_code
       raise NotImplementedError, "subclass responsibility"
@@ -563,8 +564,10 @@ module Minitest
     end
 
     ##
-    # Record a result and output the Runnable#result_code. Stores the
-    # result of the run if the run did not pass.
+    # Output and record the result of the test. Call
+    # {result#result_code}[rdoc-ref:Runnable#result_code] to get the
+    # result character string. Stores the result of the run if the run
+    # did not pass.
 
     def record result
     end
@@ -631,18 +634,63 @@ module Minitest
   #
   # If you want to create an entirely different type of output (eg,
   # CI, HTML, etc), this is the place to start.
+  #
+  # Example:
+  #
+  #   class JenkinsCIReporter < StatisticsReporter
+  #     def report
+  #       super  # Needed to calculate some statistics
+  #
+  #       print "<testsuite "
+  #       print "tests='#{count}' "
+  #       print "failures='#{failures}' "
+  #       # Remaining XML...
+  #     end
+  #   end
 
   class StatisticsReporter < Reporter
-    # :stopdoc:
+    ##
+    # Total number of assertions.
+
     attr_accessor :assertions
+
+    ##
+    # Total number of test cases.
+
     attr_accessor :count
+
+    ##
+    # An +Array+ of test cases that failed or were skipped.
+
     attr_accessor :results
+
+    ##
+    # Time the test run started. If available, the monotonic clock is
+    # used and this is a +Float+, otherwise it's an instance of
+    # +Time+.
+
     attr_accessor :start_time
+
+    ##
+    # Test run time. If available, the monotonic clock is used and
+    # this is a +Float+, otherwise it's an instance of +Time+.
+
     attr_accessor :total_time
+
+    ##
+    # Total number of tests that failed.
+
     attr_accessor :failures
+
+    ##
+    # Total number of tests that erred.
+
     attr_accessor :errors
+
+    ##
+    # Total number of tests that where skipped.
+
     attr_accessor :skips
-    # :startdoc:
 
     def initialize io = $stdout, options = {} # :nodoc:
       super
@@ -672,7 +720,10 @@ module Minitest
       results << result if not result.passed? or result.skipped?
     end
 
-    def report # :nodoc:
+    ##
+    # Report on the tracked statistics.
+
+    def report
       aggregate = results.group_by { |r| r.failure.class }
       aggregate.default = [] # dumb. group_by should provide this
 
