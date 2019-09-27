@@ -601,6 +601,7 @@ minitest-firemock           :: Makes your Minitest mocks more resilient.
 minitest-focus              :: Focus on one test at a time.
 minitest-gcstats            :: A minitest plugin that adds a report of the top
                                tests by number of objects allocated.
+minitest-global_expectations:: Support minitest expectation methods for all objects
 minitest-great_expectations :: Generally useful additions to minitest's
                                assertions and expectations.
 minitest-growl              :: Test notifier for minitest via growl.
