@@ -136,8 +136,8 @@ module Minitest
       str = mu_pp obj
 
       # both '\n' & '\\n' (_after_ mu_pp (aka inspect))
-      single = str.match?(/(?<!\\|^)\\n/)
-      double = str.match?(/(?<=\\|^)\\n/)
+      single = !!str.match(/(?<!\\|^)\\n/)
+      double = !!str.match(/(?<=\\|^)\\n/)
 
       process =
         if single ^ double then
