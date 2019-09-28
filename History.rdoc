@@ -1,3 +1,15 @@
+=== 5.12.1 / 2019-09-28
+
+* 1 minor enhancement:
+
+  * Added documentation for Reporter classes. (sshaw)
+
+* 3 bug fixes:
+
+  * Avoid using 'match?' to support older ruby versions. (y-yagi)
+  * Fixed broken link to reference on goodness-of-fit testing. (havenwood)
+  * Update requirements in readme and Rakefile/hoe spec.
+
 === 5.12.0 / 2019-09-22
 
 * 8 minor enhancements:
