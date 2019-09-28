@@ -109,8 +109,8 @@ module Minitest
     # is applied against the slope itself. As such, you probably want
     # to tighten it from the default.
     #
-    # See http://www.graphpad.com/curvefit/goodness_of_fit.htm for
-    # more details.
+    # See https://www.graphpad.com/guides/prism/8/curve-fitting/reg_intepretingnonlinr2.htm
+    # for more details.
     #
     # Fit is calculated by #fit_linear.
     #
