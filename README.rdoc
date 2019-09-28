@@ -561,6 +561,7 @@ minispec-metadata           :: Metadata for describe/it blocks & CLI tag filter.
                                E.g. <tt>it "requires JS driver", js: true do</tt> &
                                <tt>ruby test.rb --tag js</tt> runs tests tagged :js.
 minispec-rails              :: Minimal support to use Spec style in Rails 5+.
+mini-apivore                :: for swagger based automated API testing.
 minitest-around             :: Around block for minitest. An alternative to
                                setup/teardown dance.
 minitest-assert_errors      :: Adds Minitest assertions to test for errors raised
