@@ -289,21 +289,28 @@ class Minitest::Spec < Minitest::Test
 
     module InstanceMethods
       ##
-      # Returns a value monad that has all of Expectations methods
-      # available to it.
+      # Takes a value or a block and returns a value monad that has
+      # all of Expectations methods available to it.
       #
-      # Also aliased to #value and #expect for your aesthetic pleasure:
+      #   _(1 + 1).must_equal 2
       #
-      #         _(1 + 1).must_equal 2
-      #     value(1 + 1).must_equal 2
-      #    expect(1 + 1).must_equal 2
+      # And for blocks:
+      #
+      #   _ { 1 + "1" }.must_raise TypeError
       #
       # This method of expectation-based testing is preferable to
       # straight-expectation methods (on Object) because it stores its
       # test context, bypassing our hacky use of thread-local variables.
       #
-      # At some point, the methods on Object will be deprecated and then
-      # removed.
+      # NOTE: At some point, the methods on Object will be deprecated
+      # and then removed.
+      #
+      # It is also aliased to #value and #expect for your aesthetic
+      # pleasure:
+      #
+      #         _(1 + 1).must_equal 2
+      #     value(1 + 1).must_equal 2
+      #    expect(1 + 1).must_equal 2
 
       def _ value = nil, &block
         Minitest::Expectation.new block || value, self
