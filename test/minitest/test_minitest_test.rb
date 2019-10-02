@@ -2198,4 +2198,16 @@ class TestMinitestUnitRecording < MetaMetaMetaTestCase
       end
     end
   end
+
+  def test_fork_can_exit_cleanly
+    pid = fork {}
+    _, status = Process.waitpid2(pid)
+    assert_equal 0, status.exitstatus
+  end
+
+  def test_fork_can_exit_with_code
+    pid = fork { exit(123) }
+    _, status = Process.waitpid2(pid)
+    assert_equal 123, status.exitstatus
+  end
 end

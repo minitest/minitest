@@ -50,12 +50,15 @@ module Minitest
   # Registers Minitest to run at process exit
 
   def self.autorun
+    initial_pid = Process.pid
     at_exit {
+      next if Process.pid != initial_pid
       next if $! and not ($!.kind_of? SystemExit and $!.success?)
 
       exit_code = nil
 
       at_exit {
+        next if Process.pid != initial_pid
         @@after_run.reverse_each(&:call)
         exit exit_code || false
       }
