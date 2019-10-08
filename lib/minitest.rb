@@ -905,24 +905,20 @@ module Minitest
   # Assertion wrapping an unexpected error that was raised during a run.
 
   class UnexpectedError < Assertion
-    attr_accessor :exception # :nodoc:
+    attr_accessor :error # :nodoc:
 
-    def initialize exception # :nodoc:
+    def initialize error # :nodoc:
       super "Unexpected exception"
-      self.exception = exception
+      self.error = error
     end
 
     def backtrace # :nodoc:
-      self.exception.backtrace
-    end
-
-    def error # :nodoc:
-      self.exception
+      self.error.backtrace
     end
 
     def message # :nodoc:
       bt = Minitest.filter_backtrace(self.backtrace).join "\n    "
-      "#{self.exception.class}: #{self.exception.message}\n    #{bt}"
+      "#{self.error.class}: #{self.error.message}\n    #{bt}"
     end
 
     def result_label # :nodoc:

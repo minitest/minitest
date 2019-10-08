@@ -609,6 +609,20 @@ class TestMinitestAssertions < Minitest::Test
     end
   end
 
+  def test_assert_output_unexpected_error
+    assertion = @tc.assert_raises Minitest::UnexpectedError do
+      @tc.assert_raises ArgumentError do
+        @tc.assert_output "yay" do
+          print "nay"
+          1 + '2'
+        end
+      end
+    end
+
+    assert_instance_of Minitest::UnexpectedError, assertion
+    assert_instance_of TypeError, assertion.error
+  end
+
   def test_assert_predicate
     @tc.assert_predicate "", :empty?
   end
@@ -875,11 +889,13 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_throws_argument_exception
-    @tc.assert_raises ArgumentError do
+    assertion = @tc.assert_raises Minitest::UnexpectedError do
       @tc.assert_throws :blah do
         raise ArgumentError
       end
     end
+
+    assert_instance_of ArgumentError, assertion.error
   end
 
   def test_assert_throws_different
@@ -891,11 +907,13 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_throws_name_error
-    @tc.assert_raises NameError do
+    assertion = @tc.assert_raises Minitest::UnexpectedError do
       @tc.assert_throws :blah do
         raise NameError
       end
     end
+
+    assert_instance_of NameError, assertion.error
   end
 
   def test_assert_throws_unthrown
@@ -904,6 +922,20 @@ class TestMinitestAssertions < Minitest::Test
         # do nothing
       end
     end
+  end
+
+  def test_assert_throws_unexpected_error
+    assertion = @tc.assert_raises Minitest::UnexpectedError do
+      @tc.assert_raises TypeError do
+        @tc.assert_throws :blah do
+          1 + '2'
+          throw :not_blah
+        end
+      end
+    end
+
+    assert_instance_of Minitest::UnexpectedError, assertion
+    assert_instance_of TypeError, assertion.error
   end
 
   def test_capture_io

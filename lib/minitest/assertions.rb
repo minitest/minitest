@@ -309,12 +309,12 @@ module Minitest
     #
     # See also: #assert_silent
 
-    def assert_output stdout = nil, stderr = nil
+    def assert_output stdout = nil, stderr = nil, &block
       flunk "assert_output requires a block to capture output." unless
         block_given?
 
       out, err = capture_io do
-        yield
+        assert_nothing_raised(&block)
       end
 
       err_msg = Regexp === stderr ? :assert_match : :assert_equal if stderr
@@ -376,6 +376,12 @@ module Minitest
       flunk "#{msg}#{mu_pp(exp)} expected but nothing was raised."
     end
 
+    def assert_nothing_raised # :nodoc:
+      yield
+    rescue => error
+      raise Minitest::UnexpectedError, error
+    end
+
     ##
     # Fails unless +obj+ responds to +meth+.
 
@@ -427,20 +433,22 @@ module Minitest
     ##
     # Fails unless the block throws +sym+
 
-    def assert_throws sym, msg = nil
+    def assert_throws sym, msg = nil, &block
       default = "Expected #{mu_pp(sym)} to have been thrown"
       caught = true
       catch(sym) do
-        begin
-          yield
-        rescue ThreadError => e       # wtf?!? 1.8 + threads == suck
-          default += ", not \:#{e.message[/uncaught throw \`(\w+?)\'/, 1]}"
-        rescue ArgumentError => e     # 1.9 exception
-          raise e unless e.message.include?("uncaught throw")
-          default += ", not #{e.message.split(/ /).last}"
-        rescue NameError => e         # 1.8 exception
-          raise e unless e.name == sym
-          default += ", not #{e.name.inspect}"
+        assert_nothing_raised do
+          begin
+            yield
+          rescue ThreadError => e       # wtf?!? 1.8 + threads == suck
+            default += ", not \:#{e.message[/uncaught throw \`(\w+?)\'/, 1]}"
+          rescue ArgumentError => e     # 1.9 exception
+            raise e unless e.message.include?("uncaught throw")
+            default += ", not #{e.message.split(/ /).last}"
+          rescue NameError => e         # 1.8 exception
+            raise e unless e.name == sym
+            default += ", not #{e.name.inspect}"
+          end
         end
         caught = false
       end
