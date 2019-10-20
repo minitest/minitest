@@ -901,6 +901,20 @@ class TestMinitestUnitTestCase < Minitest::Test
       shitty_test_case.i_suck_and_my_tests_are_order_dependent!
     end
   end
+
+  def test_autorun_does_not_affect_fork_success_status
+    @assertion_count = 0
+    skip "windows doesn't have skip" unless Process.respond_to?(:fork)
+    Process.waitpid(fork {})
+    assert_equal true, $?.success?
+  end
+
+  def test_autorun_does_not_affect_fork_exit_status
+    @assertion_count = 0
+    skip "windows doesn't have skip" unless Process.respond_to?(:fork)
+    Process.waitpid(fork { exit 42 })
+    assert_equal 42, $?.exitstatus
+  end
 end
 
 class TestMinitestGuard < Minitest::Test

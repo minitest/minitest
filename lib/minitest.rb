@@ -58,7 +58,9 @@ module Minitest
 
       exit_code = nil
 
+      pid = Process.pid
       at_exit {
+        next if Process.pid != pid
         @@after_run.reverse_each(&:call)
         exit exit_code || false
       }
