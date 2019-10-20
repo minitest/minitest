@@ -906,6 +906,16 @@ class TestMinitestAssertions < Minitest::Test
     end
   end
 
+  def test_assert_path_exists
+    @tc.assert_path_exists __FILE__
+  end
+
+  def test_assert_path_exists_triggered
+    assert_triggered "Expected path 'blah' to exist." do
+      @tc.assert_path_exists "blah"
+    end
+  end
+
   def test_capture_io
     @assertion_count = 0
 
@@ -1168,6 +1178,16 @@ class TestMinitestAssertions < Minitest::Test
   def test_refute_same_triggered
     assert_triggered "Expected 1 (oid=N) to not be the same as 1 (oid=N)." do
       @tc.refute_same 1, 1
+    end
+  end
+
+  def test_refute_path_exists
+    @tc.refute_path_exists "blah"
+  end
+
+  def test_refute_path_exists_triggered
+    assert_triggered "Expected path '#{__FILE__}' to not exist." do
+      @tc.refute_path_exists __FILE__
     end
   end
 

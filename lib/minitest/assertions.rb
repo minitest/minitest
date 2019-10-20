@@ -482,6 +482,14 @@ module Minitest
     end
 
     ##
+    # Fails unless +path+ exists.
+
+    def assert_path_exists path, msg = nil
+      msg = message(msg) { "Expected path '#{path}' to exist" }
+      assert File.exist?(path), msg
+    end
+
+    ##
     # Captures $stdout and $stderr into strings:
     #
     #   out, err = capture_io do
@@ -736,6 +744,14 @@ module Minitest
         "Expected %s (oid=%d) to not be the same as %s (oid=%d)" % data
       }
       refute exp.equal?(act), msg
+    end
+
+    ##
+    # Fails if +path+ exists.
+
+    def refute_path_exists path, msg = nil
+      msg = message(msg) { "Expected path '#{path}' to not exist" }
+      refute File.exist?(path), msg
     end
 
     ##
