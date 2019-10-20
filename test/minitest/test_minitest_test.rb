@@ -582,8 +582,6 @@ class TestMinitestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_parallel
-    skip "I don't have ParallelEach debugged yet" if maglev?
-
     test_count = 2
     test_latch = Latch.new test_count
     wait_latch = Latch.new test_count
@@ -857,12 +855,7 @@ class TestMinitestUnitTestCase < Minitest::Test
     end
 
     srand 42
-    expected = case
-               when maglev? then
-                 %w[test_test2 test_test3 test_test1]
-               else
-                 %w[test_test2 test_test1 test_test3]
-               end
+    expected = %w[test_test2 test_test1 test_test3]
     assert_equal expected, sample_test_case.runnable_methods
   end
 
@@ -931,8 +924,26 @@ class TestMinitestGuard < Minitest::Test
   end
 
   def test_rubinius_eh
-    assert self.class.rubinius? "rbx"
-    assert self.rubinius? "rbx"
+    assert_output "", /DEPRECATED/ do
+      assert self.class.rubinius? "rbx"
+    end
+    assert_output "", /DEPRECATED/ do
+      assert self.rubinius? "rbx"
+    end
+  end
+
+  def test_maglev_eh
+    assert_output "", /DEPRECATED/ do
+      assert self.class.maglev? "maglev"
+    end
+    assert_output "", /DEPRECATED/ do
+      assert self.maglev? "maglev"
+    end
+  end
+
+  def test_osx_eh
+    assert self.class.osx? "darwin"
+    assert self.osx? "darwin"
   end
 
   def test_windows_eh

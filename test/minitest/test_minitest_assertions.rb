@@ -397,7 +397,7 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_in_delta_triggered
-    x = maglev? ? "9.999999xxxe-07" : "1.0e-06"
+    x = "1.0e-06"
     assert_triggered "Expected |0.0 - 0.001| (0.001) to be <= #{x}." do
       @tc.assert_in_delta 0.0, 1.0 / 1000, 0.000001
     end
@@ -428,7 +428,7 @@ class TestMinitestAssertions < Minitest::Test
 
   def test_assert_in_epsilon_triggered_negative_case
     x = (RUBY18 and not maglev?) ? "0.1" : "0.100000xxx"
-    y = maglev? ? "0.100000xxx" : "0.1"
+    y = "0.1"
     assert_triggered "Expected |-1.1 - -1| (#{x}) to be <= #{y}." do
       @tc.assert_in_epsilon(-1.1, -1, 0.1)
     end
@@ -1052,7 +1052,7 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_refute_in_delta_triggered
-    x = maglev? ? "0.100000xxx" : "0.1"
+    x = "0.1"
     assert_triggered "Expected |0.0 - 0.001| (0.001) to not be <= #{x}." do
       @tc.refute_in_delta 0.0, 1.0 / 1000, 0.1
     end
