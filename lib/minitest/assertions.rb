@@ -346,6 +346,14 @@ module Minitest
     end
 
     ##
+    # Fails unless +path+ exists.
+
+    def assert_path_exists path, msg = nil
+      msg = message(msg) { "Expected path '#{path}' to exist" }
+      assert File.exist?(path), msg
+    end
+
+    ##
     # For testing with predicates. Eg:
     #
     #   assert_predicate str, :empty?
@@ -479,14 +487,6 @@ module Minitest
       end
 
       assert caught, message(msg) { default }
-    end
-
-    ##
-    # Fails unless +path+ exists.
-
-    def assert_path_exists path, msg = nil
-      msg = message(msg) { "Expected path '#{path}' to exist" }
-      assert File.exist?(path), msg
     end
 
     ##
@@ -713,6 +713,14 @@ module Minitest
     end
 
     ##
+    # Fails if +path+ exists.
+
+    def refute_path_exists path, msg = nil
+      msg = message(msg) { "Expected path '#{path}' to not exist" }
+      refute File.exist?(path), msg
+    end
+
+    ##
     # For testing with predicates.
     #
     #   refute_predicate str, :empty?
@@ -744,14 +752,6 @@ module Minitest
         "Expected %s (oid=%d) to not be the same as %s (oid=%d)" % data
       }
       refute exp.equal?(act), msg
-    end
-
-    ##
-    # Fails if +path+ exists.
-
-    def refute_path_exists path, msg = nil
-      msg = message(msg) { "Expected path '#{path}' to not exist" }
-      refute File.exist?(path), msg
     end
 
     ##
