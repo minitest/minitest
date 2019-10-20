@@ -169,6 +169,24 @@ module Minitest::Expectations
   infect_an_assertion :assert_throws, :must_throw, :block
 
   ##
+  # See Minitest::Assertions#assert_path_exists
+  #
+  #   _(some_path).path_must_exist
+  #
+  # :method: path_must_exist
+
+  infect_an_assertion :assert_path_exists, :path_must_exist, :unary
+
+  ##
+  # See Minitest::Assertions#refute_path_exists
+  #
+  #   _(some_path).path_wont_exist
+  #
+  # :method: path_wont_exist
+
+  infect_an_assertion :refute_path_exists, :path_wont_exist, :unary
+
+  ##
   # See Minitest::Assertions#refute_empty
   #
   #    collection.wont_be_empty

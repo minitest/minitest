@@ -59,6 +59,26 @@ describe Minitest::Spec do
     end
   end
 
+  it "needs to check for file existence" do
+    @assertion_count = 3
+
+    _(_(__FILE__).path_must_exist).must_equal true
+
+    assert_triggered "Expected path 'blah' to exist." do
+      _("blah").path_must_exist
+    end
+  end
+
+  it "needs to check for file non-existence" do
+    @assertion_count = 3
+
+    _(_("blah").path_wont_exist).must_equal false
+
+    assert_triggered "Expected path '#{__FILE__}' to not exist." do
+      _(__FILE__).path_wont_exist
+    end
+  end
+
   it "needs to be sensible about must_include order" do
     @assertion_count += 3 # must_include is 2 assertions
 
@@ -129,10 +149,10 @@ describe Minitest::Spec do
 
     @assertion_count = 2
 
-    methods = Object.public_instance_methods.find_all { |n| n =~ /^must|^wont/ }
+    methods = Minitest::Expectations.public_instance_methods.grep(/must|wont/)
     methods.map!(&:to_s) if Symbol === methods.first
 
-    musts, wonts = methods.sort.partition { |m| m =~ /^must/ }
+    musts, wonts = methods.sort.partition { |m| m =~ /must/ }
 
     expected_musts = %w[must_be
                         must_be_close_to
@@ -150,11 +170,12 @@ describe Minitest::Spec do
                         must_output
                         must_raise
                         must_respond_to
-                        must_throw]
+                        must_throw
+                        path_must_exist]
 
     bad = %w[not raise throw send output be_silent]
 
-    expected_wonts = expected_musts.map { |m| m.sub(/^must/, "wont") }
+    expected_wonts = expected_musts.map { |m| m.sub(/must/, "wont") }.sort
     expected_wonts.reject! { |m| m =~ /wont_#{Regexp.union(*bad)}/ }
 
     _(musts).must_equal expected_musts
