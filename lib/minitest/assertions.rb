@@ -346,7 +346,21 @@ module Minitest
     #
     # +exp+ takes an optional message on the end to help explain
     # failures and defaults to StandardError if no exception class is
-    # passed.
+    # passed. Eg:
+    #
+    #   assert_raises(CustomError) { method_with_custom_error }
+    #
+    # With custom error message:
+    #
+    #   assert_raises(CustomError, 'This should have raised CustomError') { method_with_custom_error }
+    #
+    # Using the returned object:
+    #
+    #   error = assert_raises(CustomError) do
+    #     raise CustomError, 'This is really bad'
+    #   end
+    #
+    #   assert_equal 'This is really bad', error.message
 
     def assert_raises *exp
       flunk "assert_raises requires a block to capture errors." unless
