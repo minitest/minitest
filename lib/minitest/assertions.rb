@@ -55,25 +55,16 @@ module Minitest
     # diff command or if it doesn't make sense to diff the output
     # (single line, short output), then it simply returns a basic
     # comparison between the two.
+    #
+    # See +things_to_diff+ for more info.
 
     def diff exp, act
-      expect = mu_pp_for_diff exp
-      butwas = mu_pp_for_diff act
       result = nil
 
-      e1, e2 = expect.include?("\n"), expect.include?("\\n")
-      b1, b2 = butwas.include?("\n"), butwas.include?("\\n")
-
-      need_to_diff =
-        (e1 ^ e2           ||
-         b1 ^ b2           ||
-         expect.size > 30  ||
-         butwas.size > 30  ||
-         expect == butwas) &&
-        Minitest::Assertions.diff
+      expect, butwas = things_to_diff(exp, act)
 
       return "Expected: #{mu_pp exp}\n  Actual: #{mu_pp act}" unless
-        need_to_diff
+        expect
 
       Tempfile.open("expect") do |a|
         a.puts expect
@@ -100,6 +91,34 @@ module Minitest
       end
 
       result
+    end
+
+    ##
+    # Returns things to diff [expect, butwas], or [nil, nil] if nothing to diff.
+    #
+    # Criterion:
+    #
+    # 1. Strings include newlines or escaped newlines, but not both.
+    # 2. or:  String lengths are > 30 characters.
+    # 3. or:  Strings are equal to each other (but maybe different encodings?).
+    # 4. and: we found a diff executable.
+
+    def things_to_diff exp, act
+      expect = mu_pp_for_diff exp
+      butwas = mu_pp_for_diff act
+
+      e1, e2 = expect.include?("\n"), expect.include?("\\n")
+      b1, b2 = butwas.include?("\n"), butwas.include?("\\n")
+
+      need_to_diff =
+        (e1 ^ e2                  ||
+         b1 ^ b2                  ||
+         expect.size > 30         ||
+         butwas.size > 30         ||
+         expect == butwas)        &&
+        Minitest::Assertions.diff
+
+      need_to_diff && [expect, butwas]
     end
 
     ##
