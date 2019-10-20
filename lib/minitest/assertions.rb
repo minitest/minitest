@@ -578,7 +578,16 @@ module Minitest
     end
 
     ##
-    # Fails with +msg+
+    # Fails after a given date (in the local time zone). This allows
+    # you to put time-bombs in your tests if you need to keep
+    # something around until a later date lest you forget about it.
+
+    def fail_after y,m,d,msg
+      flunk msg if Time.now > Time.local(y, m, d)
+    end
+
+    ##
+    # Fails with +msg+.
 
     def flunk msg = nil
       msg ||= "Epic Fail!"
@@ -763,6 +772,18 @@ module Minitest
       msg ||= "Skipped, no message given"
       @skip = true
       raise Minitest::Skip, msg, bt
+    end
+
+    ##
+    # Skips the current run until a given date (in the local time
+    # zone). This allows you to put some fixes on hold until a later
+    # date, but still holds you accountable and prevents you from
+    # forgetting it.
+
+    def skip_until y,m,d,msg
+      skip msg if Time.now < Time.local(y, m, d)
+      where = caller.first.split(/:/, 3).first(2).join ":"
+      warn "Stale skip_until %p at %s" % [msg, where]
     end
 
     ##
