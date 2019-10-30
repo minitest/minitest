@@ -1,3 +1,23 @@
+=== 5.13.0 / 2019-10-29
+
+* 9 minor enhancements:
+
+  * Added Minitest::Guard#osx?
+  * Added examples to documentation for assert_raises. (lxxxvi)
+  * Added expectations #path_must_exist and #path_wont_exist. Not thrilled with the names.
+  * Added fail_after(year, month, day, msg) to allow time-bombing after a deadline.
+  * Added skip_until(year, month, day, msg) to allow deferring until a deadline.
+  * Deprecated Minitest::Guard#maglev?
+  * Deprecated Minitest::Guard#rubinius?
+  * Finally added assert_path_exists and refute_path_exists. (deivid-rodriguez)
+  * Refactored and pulled Assertions#things_to_diff out of #diff. (BurdetteLamar)
+
+* 3 bug fixes:
+
+  * Fix autorun bug that affects fork exit status in tests. (dylanahsmith/jhawthorn)
+  * Improved documentation for _/value/expect, especially for blocks. (svoop)
+  * Support new Proc#to_s format. (ko1)
+
 === 5.12.2 / 2019-09-28
 
 * 1 bug fix:
