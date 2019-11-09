@@ -677,6 +677,7 @@ minitest-unordered          :: Adds a new assertion to minitest for checking the
                                contents of a collection, ignoring element order.
 minitest-vcr                :: Automatic cassette managment with Minitest::Spec
                                and VCR.
+minitest_log                :: Adds structured logging, data explication, and verdicts.
 minitest_owrapper           :: Get tests results as a TestResult object.
 minitest_should             :: Shoulda style syntax for minitest test::unit.
 minitest_tu_shim            :: Bridges between test/unit and minitest.
