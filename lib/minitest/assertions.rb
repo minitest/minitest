@@ -399,7 +399,7 @@ module Minitest
       rescue *exp => e
         pass # count assertion
         return e
-      rescue Minitest::Skip, Minitest::Assertion
+      rescue Minitest::Assertion # incl Skip & UnexpectedError
         # don't count assertion
         raise
       rescue SignalException, SystemExit
