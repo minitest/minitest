@@ -45,7 +45,7 @@ module Minitest::Expectations
 
   infect_an_assertion :assert_in_delta, :must_be_close_to
 
-  alias :must_be_within_delta :must_be_close_to # :nodoc:
+  infect_an_assertion :assert_in_delta, :must_be_within_delta # :nodoc:
 
   ##
   # See Minitest::Assertions#assert_in_epsilon
@@ -213,7 +213,7 @@ module Minitest::Expectations
 
   infect_an_assertion :refute_in_delta, :wont_be_close_to
 
-  alias :wont_be_within_delta :wont_be_close_to # :nodoc:
+  infect_an_assertion :refute_in_delta, :wont_be_within_delta # :nodoc:
 
   ##
   # See Minitest::Assertions#refute_in_epsilon
