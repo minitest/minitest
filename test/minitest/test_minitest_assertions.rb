@@ -77,6 +77,14 @@ class TestMinitestAssertions < Minitest::Test
     self.send assert_msg, expected, msg
   end
 
+  def assert_unexpected expected
+    expected = Regexp.new expected if String === expected
+
+    assert_triggered expected, Minitest::UnexpectedError do
+      yield
+    end
+  end
+
   def clean s
     s.gsub(/^ {6,10}/, "")
   end
@@ -603,12 +611,117 @@ class TestMinitestAssertions < Minitest::Test
     end
   end
 
-  def test_assert_output_without_block
+  def test_assert_output_no_block
     assert_triggered "assert_output requires a block to capture output." do
       @tc.assert_output "blah"
     end
   end
 
+  def test_assert_output_nested_assert_uncaught
+    @assertion_count = 1
+
+    assert_triggered "Epic Fail!" do
+      @tc.assert_output "blah\n" do
+        puts "blah"
+        @tc.flunk
+      end
+    end
+  end
+
+  def test_assert_output_nested_raise
+    @assertion_count = 2
+
+    @tc.assert_output "blah\n" do
+      @tc.assert_raises RuntimeError do
+        puts "blah"
+        raise "boom!"
+      end
+    end
+  end
+
+  def test_assert_output_nested_raise_bad
+    @assertion_count = 0
+
+    assert_unexpected "boom!" do
+      @tc.assert_raises do            # 2) bypassed via UnexpectedError
+        @tc.assert_output "blah\n" do # 1) captures and raises UnexpectedError
+          puts "not_blah"
+          raise "boom!"
+        end
+      end
+    end
+  end
+
+  def test_assert_output_nested_raise_mismatch
+    # this test is redundant, but illustrative
+    @assertion_count = 0
+
+    assert_unexpected "boom!" do
+      @tc.assert_raises RuntimeError do # 2) bypassed via UnexpectedError
+        @tc.assert_output "blah\n" do   # 1) captures and raises UnexpectedError
+          puts "not_blah"
+          raise ArgumentError, "boom!"
+        end
+      end
+    end
+  end
+
+  def test_assert_output_nested_throw_caught
+    @assertion_count = 2
+
+    @tc.assert_output "blah\n" do
+      @tc.assert_throws :boom! do
+        puts "blah"
+        throw :boom!
+      end
+    end
+  end
+
+  def test_assert_output_nested_throw_caught_bad
+    @assertion_count = 1            # want 0; can't prevent throw from escaping :(
+
+    @tc.assert_throws :boom! do     # 2) captured via catch
+      @tc.assert_output "blah\n" do # 1) bypassed via throw
+        puts "not_blah"
+        throw :boom!
+      end
+    end
+  end
+
+  def test_assert_output_nested_throw_mismatch
+    @assertion_count = 0
+
+    assert_unexpected "uncaught throw :boom!" do
+      @tc.assert_throws :not_boom! do # 2) captured via assert_throws+rescue
+        @tc.assert_output "blah\n" do # 1) bypassed via throw
+          puts "not_blah"
+          throw :boom!
+        end
+      end
+    end
+  end
+
+  def test_assert_output_uncaught_raise
+    @assertion_count = 0
+
+    assert_unexpected "RuntimeError: boom!" do
+      @tc.assert_output "blah\n" do
+        puts "not_blah"
+        raise "boom!"
+      end
+    end
+  end
+
+  def test_assert_output_uncaught_throw
+    @assertion_count = 0
+
+    assert_unexpected "uncaught throw :boom!" do
+      @tc.assert_output "blah\n" do
+        puts "not_blah"
+        throw :boom!
+      end
+    end
+  end
   def test_assert_predicate
     @tc.assert_predicate "", :empty?
   end
@@ -668,6 +781,19 @@ class TestMinitestAssertions < Minitest::Test
   def test_assert_raises_signals
     @tc.assert_raises SignalException do
       raise SignalException, :INT
+    end
+  end
+
+  def test_assert_raises_throw_nested_bad
+    @assertion_count = 0
+
+    assert_unexpected "RuntimeError: boom!" do
+      @tc.assert_raises do
+        @tc.assert_throws :blah do
+          raise "boom!"
+          throw :not_blah
+        end
+      end
     end
   end
 
@@ -875,7 +1001,9 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_throws_argument_exception
-    @tc.assert_raises ArgumentError do
+    @assertion_count = 0
+
+    assert_unexpected "ArgumentError" do
       @tc.assert_throws :blah do
         raise ArgumentError
       end
@@ -891,7 +1019,9 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_throws_name_error
-    @tc.assert_raises NameError do
+    @assertion_count = 0
+
+    assert_unexpected "NameError" do
       @tc.assert_throws :blah do
         raise NameError
       end

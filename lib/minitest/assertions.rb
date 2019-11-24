@@ -341,6 +341,10 @@ module Minitest
       x = send out_msg, stdout, out, "In stdout" if out_msg
 
       (!stdout || x) && (!stderr || y)
+    rescue Assertion
+      raise
+    rescue => e
+      raise UnexpectedError, e
     end
 
     ##
@@ -485,6 +489,10 @@ module Minitest
       end
 
       assert caught, message(msg) { default }
+    rescue Assertion
+      raise
+    rescue => e
+      raise UnexpectedError, e
     end
 
     ##
