@@ -565,6 +565,11 @@ module Minitest
           captured_stderr.unlink
           $stdout.reopen orig_stdout
           $stderr.reopen orig_stderr
+
+          orig_stdout.close
+          orig_stderr.close
+          captured_stdout.close
+          captured_stderr.close
         end
       end
     end
