@@ -230,6 +230,7 @@ class Object
         val_or_callable
       end
     end
+    metaclass.send(:ruby2_keywords, name) if metaclass.respond_to?(:ruby2_keywords, true)
 
     yield self
   ensure

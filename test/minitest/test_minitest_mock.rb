@@ -766,6 +766,17 @@ class TestMinitestStub < Minitest::Test
     end
   end
 
+  def test_stub_value_kwargs
+    stub = ->(foo, bar:) { foo + bar }
+
+    assert_silent do
+      Thread.stub :new, stub do
+        result = Thread.new(1, bar: 2)
+        @tc.assert_equal 3, result
+      end
+    end
+  end
+
   def test_stub_value_block_5
     @assertion_count += 1
     Thread.stub5 :new, 42 do
