@@ -9,10 +9,11 @@
 #
 #     it "should still work in threads" do
 #       my_threaded_thingy do
-#         (1+1).must_equal 2         # bad
-#         assert_equal 2, 1+1        # good
-#         _(1 + 1).must_equal 2      # good
-#         value(1 + 1).must_equal 2  # good, also #expect
+#         (1+1).must_equal 2                  # bad
+#         assert_equal 2, 1+1                 # good
+#         _(1 + 1).must_equal 2               # good
+#         value(1 + 1).must_equal 2           # good, also #expect
+#         _ { 1 + "1" }.must_raise TypeError  # good
 #       end
 #     end
 
