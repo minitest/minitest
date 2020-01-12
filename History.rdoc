@@ -1,3 +1,16 @@
+=== 5.14.0 / 2020-01-11
+
+* 2 minor enhancements:
+
+  * Block-assertions (eg assert_output) now error if raised inside the block. (casperisfine)
+  * Changed assert_raises to only catch Assertion since that covers Skip and friends.
+
+* 3 bug fixes:
+
+  * Added example for value wrapper with block to Expectations module. (stomar)
+  * Fixed use of must/wont_be_within_delta on Expectation instance. (stomar)
+  * Renamed UnexpectedError#exception to #error to avoid problems with reraising. (casperisfine)
+
 === 5.13.0 / 2019-10-29
 
 * 9 minor enhancements:
