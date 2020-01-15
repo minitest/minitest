@@ -173,7 +173,14 @@ module Minitest
     end
 
     ##
-    # Fails unless +test+ is truthy.
+    # Returns +true+ if +test+ is truthy:
+    #   assert true, 'My message' # => true
+    #   assert Object.new, 'My message' # => true
+    # Raises Minitest::Assertion with the given message if +test+ is not truthy:
+    #   assert false, 'My message' # => #<Minitest::Assertion: My message>
+    #   assert nil, 'My message' # => #<Minitest::Assertion: My message>
+    # Uses a default message if none given:
+    #   assert false # => #<Minitest::Assertion: Expected false to be truthy.>
 
     def assert test, msg = nil
       self.assertions += 1
@@ -190,7 +197,18 @@ module Minitest
     end
 
     ##
-    # Fails unless +obj+ is empty.
+    # Returns +true+ if <tt>obj#empty?</tt> returns a truthy value:
+    #   assert_empty '', 'My message' # => true
+    #   assert_empty [], 'My message' # => true
+    #   assert_empty Hash.new, 'My message' # => true
+    # Raises Minitest::Assertion with the given message and a default message if <tt>obj#empty?</tt> does not return a truthy value:
+    #   assert_empty '0', 'My message' # => #<Minitest::Assertion: My message. Expected "0" to be empty.>
+    #   assert_empty [0], 'My message' # => #<Minitest::Assertion: My message. Expected [0] to be empty.>
+    #   assert_empty Hash(:foo => 0), 'My message' # => #<Minitest::Assertion: My message. Expected {:foo=>0} to be empty.>
+    # Uses only the default message if no message given:
+    #   assert_empty [0] # => #<Minitest::Assertion: Expected [0] to be empty.>
+    # Raises Minitest::Assertion unless <tt>obj#respond_to?(:empty?)</tt>:
+    #   assert_empty Object.new # => #<Minitest::Assertion: Expected #<Object:0x000000000526d270> (Object) to respond to #empty?.>
 
     def assert_empty obj, msg = nil
       msg = message(msg) { "Expected #{mu_pp(obj)} to be empty" }
@@ -201,17 +219,41 @@ module Minitest
     E = "" # :nodoc:
 
     ##
-    # Fails unless <tt>exp == act</tt> printing the difference between
-    # the two, if possible.
+    # Returns +true+ if <tt>exp == act</tt>:
+    #   assert_equal :foo, :foo, 'My message' # => true
+    # Raises Minitest::Assertion with the given message and a default message if <tt>exp == act</tt> is +false+:
+    #   assert_equal :foo, :bar, 'My message'
+    # Message:
+    #    My message.
+    #    Expected: :foo
+    #    Actual: :bar
+    # Uses only the default message if no message given:
+    #    assert_equal :foo, :bar
+    # Message:
+    #    Expected: :foo
+    #    Actual: :bar
+    # Raises NoMethodError unless <tt>exp.respond_to?(:==):
+    #   o = Object.new
+    #   o.instance_eval 'undef :=='
+    #   assert_equal o, Object.new
+    # Message:
+    #    undefined method `==' for #<Object:0x0000000005233ca0>
     #
-    # If there is no visible difference but the assertion fails, you
-    # should suspect that your #== is buggy, or your inspect output is
-    # missing crucial details.  For nicer structural diffing, set
-    # Minitest::Test.make_my_diffs_pretty!
+    # Note:  If there is no visible difference but the assertion fails, you
+    # should suspect that <tt>exp#==</tt> is buggy, or that the return from <tt>obj#inspect</tt> is
+    # missing crucial details.
     #
-    # For floats use assert_in_delta.
+    # For nicer structural diffing, call Minitest::Test.make_my_diffs_pretty!:
+    #   Minitest::Test.make_my_diffs_pretty!
+    #   assert_equal :foo, :bar
+    # Message:
+    #   --- expected
+    #   +++ actual
+    #   @@ -1 +1 @@
+    #   -:foo
+    #   +:bar
     #
-    # See also: Minitest::Assertions.diff
+    # To test equality for +Float+ objects, use Minitest::Assertions#assert_in_delta.
 
     def assert_equal exp, act, msg = nil
       msg = message(msg, E) { diff exp, act }
