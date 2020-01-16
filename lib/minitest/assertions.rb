@@ -6,13 +6,18 @@ require "stringio"
 
 module Minitest
   ##
-  # Minitest Assertions.  All assertion methods accept a +msg+ which is
-  # printed if the assertion fails.
+  # Minitest assert and refute methods.
   #
-  # Protocol: Nearly everything here boils up to +assert+, which
-  # expects to be able to increment an instance accessor named
-  # +assertions+. This is not provided by Assertions and must be
-  # provided by the thing including Assertions. See Minitest::Runnable
+  # === About \Assertion Messages
+  #
+  # Each assert/refute method in this module will sooner or later call method +assert+,
+  # passing its +msg+ argument.  See #assert.
+  #
+  # === Requirement
+  #
+  # Method +assert+ expects to be able to increment an instance accessor named
+  # +assertions+. This is not provided by Assertions, and must be
+  # provided by the including class or module. See Minitest::Runnable
   # for an example.
 
   module Assertions
@@ -173,14 +178,28 @@ module Minitest
     end
 
     ##
-    # Returns +true+ if +test+ is truthy:
+    # Accepts:
+    # * A test expression +test+.
+    # * An optional message +msg+, which commonly a +String+,
+    #   but may be any object. (It gets special treatment if it's a +Proc+).
+    # ==== If +test+ Is Truthy
+    # Ignores +msg+ and returns +true+:
+    #   assert true # => true
     #   assert true, 'My message' # => true
     #   assert Object.new, 'My message' # => true
-    # Raises Minitest::Assertion with the given message if +test+ is not truthy:
-    #   assert false, 'My message' # => #<Minitest::Assertion: My message>
-    #   assert nil, 'My message' # => #<Minitest::Assertion: My message>
-    # Uses a default message if none given:
+    #   # Note that the Proc is not called.
+    #   assert true, proc { fail } # => true
+    # ==== If +test+ Is +false+ or +nil+
+    # Raises Minitest::Assertion with a message determined by +msg+.
+    #
+    # Message is a default +String+ if +msg+ not given:
     #   assert false # => #<Minitest::Assertion: Expected false to be truthy.>
+    #   assert nil # => #<Minitest::Assertion: Expected nil to be truthy.>
+    # Message is +msg+ itself if it is not a +Proc+:
+    #   assert false, 'My message' # => #<Minitest::Assertion: My message>
+    #   assert false, Object.new # => #<Minitest::Assertion: #<Object:0x000000000521cff0>>
+    # Message is the +Proc+'s' return value if +msg+ is a +Proc+:
+    #   assert false, proc { 'My message'} # => #<Minitest::Assertion: My message>
 
     def assert test, msg = nil
       self.assertions += 1
@@ -201,7 +220,8 @@ module Minitest
     #   assert_empty '', 'My message' # => true
     #   assert_empty [], 'My message' # => true
     #   assert_empty Hash.new, 'My message' # => true
-    # Raises Minitest::Assertion with the given message and a default message if <tt>obj#empty?</tt> does not return a truthy value:
+    # Raises Minitest::Assertion if <tt>obj#empty?</tt> does not return a truthy value.
+    # The message includes both the given +msg+ and a default message:
     #   assert_empty '0', 'My message' # => #<Minitest::Assertion: My message. Expected "0" to be empty.>
     #   assert_empty [0], 'My message' # => #<Minitest::Assertion: My message. Expected [0] to be empty.>
     #   assert_empty Hash(:foo => 0), 'My message' # => #<Minitest::Assertion: My message. Expected {:foo=>0} to be empty.>
@@ -223,21 +243,19 @@ module Minitest
     #   assert_equal :foo, :foo, 'My message' # => true
     # Raises Minitest::Assertion with the given message and a default message if <tt>exp == act</tt> is +false+:
     #   assert_equal :foo, :bar, 'My message'
-    # Message:
+    # Exception message:
     #    My message.
     #    Expected: :foo
     #    Actual: :bar
     # Uses only the default message if no message given:
     #    assert_equal :foo, :bar
-    # Message:
+    # Exception message:
     #    Expected: :foo
     #    Actual: :bar
-    # Raises NoMethodError unless <tt>exp.respond_to?(:==):
+    # Raises NoMethodError unless <tt>exp.respond_to?(:==)</tt>:
     #   o = Object.new
     #   o.instance_eval 'undef :=='
-    #   assert_equal o, Object.new
-    # Message:
-    #    undefined method `==' for #<Object:0x0000000005233ca0>
+    #   assert_equal o, Object.new # => #<NoMethodError: undefined method `==' for #<Object:0x00000000052b8040>>
     #
     # Note:  If there is no visible difference but the assertion fails, you
     # should suspect that <tt>exp#==</tt> is buggy, or that the return from <tt>obj#inspect</tt> is
@@ -246,14 +264,14 @@ module Minitest
     # For nicer structural diffing, call Minitest::Test.make_my_diffs_pretty!:
     #   Minitest::Test.make_my_diffs_pretty!
     #   assert_equal :foo, :bar
-    # Message:
+    # Exception message:
     #   --- expected
     #   +++ actual
     #   @@ -1 +1 @@
     #   -:foo
     #   +:bar
     #
-    # To test equality for +Float+ objects, use Minitest::Assertions#assert_in_delta.
+    # To test equality for +Float+ objects, use #assert_in_delta.
 
     def assert_equal exp, act, msg = nil
       msg = message(msg, E) { diff exp, act }
