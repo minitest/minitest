@@ -404,6 +404,8 @@ end
 
 You can execute this on individual files now to replace via: `fast .minitest_upgrade FILE`
 
+> You will need to `gem install ffast`
+
 === How to test SimpleDelegates?
 
 The following implementation and test:
