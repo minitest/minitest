@@ -376,6 +376,34 @@ Using our example above, here is how we might implement MyCI:
 
 == FAQ
 
+== Easing the transition to Minitest 6
+
+Minitest has started issuing _DEPRECATED_ warn messages if you are using the global version of expectations.
+You might come across a similar warning such as:
+
+```
+DEPRECATED: global use of must_equal from ... Use _(obj).must_equal instead. This will fail in Minitest 6…
+```
+
+If you'd like to easily transition your codebase consider leveraging https://github.com/jonatas/fast/
+You can simply include a _Fastfile_ in the source of your repository with the contents of:
+
+```ruby
+Fast.shortcut(:minitest_upgrade) do
+  # the file to upgrade
+  file_name = ARGV.last
+  raise "Missing file argument" unless File.file?(file_name)
+
+  puts "Doing Minitest 6 upgrade for #{file_name}"
+  Fast.rewrite_file('(send _ { :must_equal :must_be_empty :must_include :must_be :must_be_empty } _)', file_name) do | node|
+    expected_value = node.children[0].location.expression
+    replace(expected_value, "expect(#{expected_value.source})")
+  end
+end
+```
+
+You can execute this on individual files now to replace via: `fast .minitest_upgrade FILE`
+
 === How to test SimpleDelegates?
 
 The following implementation and test:
