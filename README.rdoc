@@ -390,14 +390,27 @@ You can simply include a _Fastfile_ in the source of your repository with the co
 
 ```ruby
 Fast.shortcut(:minitest_upgrade) do
-  # the file to upgrade
-  file_name = ARGV.last
-  raise "Missing file argument" unless File.file?(file_name)
+  test_files = Fast.ruby_files_from('test')
 
-  puts "Doing Minitest 6 upgrade for #{file_name}"
-  Fast.rewrite_file('(send _ { :must_equal :must_be_empty :must_include :must_be :must_be_empty } _)', file_name) do | node|
-    expected_value = node.children[0].location.expression
-    replace(expected_value, "expect(#{expected_value.source})")
+  test_files.each do |file_name|
+    puts "Doing Minitest 6 upgrade for #{file_name}"
+    begin
+      Fast.rewrite_file('(send _ { :must_equal :must_include :must_be :must_match :must_be_close_to :must_be_same_as :must_be_instance_of :must_be_kind_of :must_raise :wont_include :wont_equal :wont_match :wont_be } _)', file_name) do |node|
+        expected_ast_node = node.children[0]
+        # if this source line already is wrapped with expect(..) then do nothing
+        # s(:send, nil, :expect,
+        #  s(:send, nil, :build,
+        #   s(:lvar, :factory_name)), :valid?)), :must_equal,
+        if expected_ast_node.children[1] == :expect
+          next
+        end
+
+        expected_value_expression = expected_ast_node.location.expression
+        replace(expected_value_expression, "expect(#{expected_value_expression.source})")
+      end
+    rescue => e
+      puts "Failed to convert file: #{file_name} - #{e}"
+    end
   end
 end
 ```
