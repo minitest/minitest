@@ -323,6 +323,7 @@ module Minitest
 
       with_info_handler reporter do
         filtered_methods.each do |method_name|
+          Random.srand options[:seed] if options[:seed]
           run_one_method self, method_name, reporter
         end
       end
