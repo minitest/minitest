@@ -1150,7 +1150,7 @@ class TestMinitestAssertions < Minitest::Test
   def test_refute
     @assertion_count = 2
 
-    @tc.assert_equal false, @tc.refute(false), "returns false on success"
+    @tc.assert_equal true, @tc.refute(false), "returns true on success"
   end
 
   def test_refute_empty
