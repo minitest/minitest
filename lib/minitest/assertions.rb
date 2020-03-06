@@ -628,7 +628,7 @@ module Minitest
 
     def refute test, msg = nil
       msg ||= message { "Expected #{mu_pp(test)} to not be truthy" }
-      not assert !test, msg
+      assert !test, msg
     end
 
     ##
