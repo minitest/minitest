@@ -190,6 +190,14 @@ module Minitest
     end
 
     ##
+    # Fails unless +dir+ exists.
+
+    def assert_directory_exists dir, msg = nil
+      msg = message(msg) { "Expected '#{dir}' to be a directory" }
+      assert File.directory?(dir), msg
+    end
+
+    ##
     # Fails unless +obj+ is empty.
 
     def assert_empty obj, msg = nil
@@ -629,6 +637,14 @@ module Minitest
     def refute test, msg = nil
       msg ||= message { "Expected #{mu_pp(test)} to not be truthy" }
       assert !test, msg
+    end
+
+    ##
+    # Fails if +dir+ exists.
+
+    def refute_directory_exists dir, msg = nil
+      msg = message(msg) { "Expected '#{dir}' to not be a directory" }
+      refute File.directory?(dir), msg
     end
 
     ##
