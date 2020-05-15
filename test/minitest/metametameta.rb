@@ -6,7 +6,26 @@ class Minitest::Test
   def clean s
     s.gsub(/^ {6}/, "")
   end
+
+  def with_empty_backtrace_filter
+    original = Minitest.backtrace_filter
+
+    obj = Minitest::BacktraceFilter.new
+    def obj.filter _bt
+      []
+    end
+
+    Minitest::Test.io_lock.synchronize do # try not to trounce in parallel
+      begin
+        Minitest.backtrace_filter = obj
+        yield
+      ensure
+        Minitest.backtrace_filter = original
+      end
+    end
+  end
 end
+
 
 class FakeNamedTest < Minitest::Test
   @@count = 0

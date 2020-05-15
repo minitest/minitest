@@ -75,9 +75,13 @@ class TestMinitestUnit < MetaMetaMetaTestCase
     assert_equal ex, fu
   end
 
-  # def test_default_runner_is_minitest_unit
-  #   assert_instance_of Minitest::Unit, Minitest::Unit.runner
-  # end
+  def test_filter_backtrace__empty
+    with_empty_backtrace_filter do
+      bt = %w[first second third]
+      fu = Minitest.filter_backtrace bt.dup
+      assert_equal bt, fu
+    end
+  end
 
   def test_infectious_binary_encoding
     @tu = Class.new FakeNamedTest do

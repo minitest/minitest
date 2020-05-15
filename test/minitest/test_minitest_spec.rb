@@ -571,6 +571,22 @@ describe Minitest::Spec do
         (1 + 1).must_equal 2
       end
     end
+
+    # https://github.com/seattlerb/minitest/issues/837
+    # https://github.com/rails/rails/pull/39304
+    it "deprecates expectation used without _ with empty backtrace_filter" do
+      skip "N/A" if ENV["MT_NO_EXPECTATIONS"]
+
+      @assertion_count += 3
+
+      exp = /DEPRECATED: global use of must_equal from/
+
+      with_empty_backtrace_filter do
+        assert_output "", exp do
+          (1 + 1).must_equal 2
+        end
+      end
+    end
   end
 
   it "needs to verify throw" do

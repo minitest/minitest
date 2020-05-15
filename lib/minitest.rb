@@ -238,7 +238,9 @@ module Minitest
   end
 
   def self.filter_backtrace bt # :nodoc:
-    backtrace_filter.filter bt
+    result = backtrace_filter.filter bt
+    result = bt.dup if result.empty?
+    result
   end
 
   ##
@@ -1005,12 +1007,13 @@ module Minitest
     MT_RE = %r%lib/minitest% #:nodoc:
 
     ##
-    # Filter +bt+ to something useful. Returns the whole thing if $DEBUG.
+    # Filter +bt+ to something useful. Returns the whole thing if
+    # $DEBUG (ruby) or $MT_DEBUG (env).
 
     def filter bt
       return ["No backtrace"] unless bt
 
-      return bt.dup if $DEBUG
+      return bt.dup if $DEBUG || ENV["MT_DEBUG"]
 
       new_bt = bt.take_while { |line| line !~ MT_RE }
       new_bt = bt.select     { |line| line !~ MT_RE } if new_bt.empty?
