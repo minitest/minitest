@@ -8,7 +8,7 @@ require "stringio"
 # :include: README.rdoc
 
 module Minitest
-  VERSION = "5.14.0" # :nodoc:
+  VERSION = "5.14.1" # :nodoc:
   ENCS = "".respond_to? :encoding # :nodoc:
 
   @@installed_at_exit ||= false

@@ -1,3 +1,15 @@
+=== 5.14.1 / 2020-05-15
+
+* 3 minor enhancements:
+
+  * Minitest.filter_backtrace returns original backtrace if filter comes back empty.
+  * Minitest::BacktraceFilter now returns entire backtrace if $MT_DEBUG set in env.
+  * Return true on a successful refute. (jusleg)
+
+* 1 bug fix:
+
+  * Fixed expectation doco to not use global expectations.
+
 === 5.14.0 / 2020-01-11
 
 * 2 minor enhancements:
