@@ -1118,16 +1118,20 @@ class TestMinitestAssertions < Minitest::Test
     end
   end
 
+  def assert_fail_after t
+    @tc.fail_after t.year, t.month, t.day, "remove the deprecations"
+  end
+
   def test_fail_after
-    t = Time.now
-    y, m, d = t.year, t.month, t.day
+    d0 = Time.now
+    d1 = d0 + 86_400 # I am an idiot
 
     assert_silent do
-      @tc.fail_after y, m, d+1, "remove the deprecations"
+      assert_fail_after d1
     end
 
     assert_triggered "remove the deprecations" do
-      @tc.fail_after y, m, d, "remove the deprecations"
+      assert_fail_after d0
     end
   end
 
@@ -1342,18 +1346,22 @@ class TestMinitestAssertions < Minitest::Test
     end
   end
 
+  def assert_skip_until t, msg
+    @tc.skip_until t.year, t.month, t.day, msg
+  end
+
   def test_skip_until
     @assertion_count = 0
 
-    t = Time.now
-    y, m, d = t.year, t.month, t.day
+    d0 = Time.now
+    d1 = d0 + 86_400 # I am an idiot
 
     assert_output "", /Stale skip_until \"not yet\" at .*?:\d+$/ do
-      @tc.skip_until y, m, d, "not yet"
+      assert_skip_until d0, "not yet"
     end
 
     assert_triggered "not ready yet", Minitest::Skip do
-      @tc.skip_until y, m, d+1, "not ready yet"
+      assert_skip_until d1, "not ready yet"
     end
   end
 
