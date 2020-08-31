@@ -205,7 +205,7 @@
 * 2 bug fixes:
 
   * Re-release to refresh gem certificate signing. ugh.
-  * Fixed hoe/minitest to not augment load path if we're actually testing minitest.  
+  * Fixed hoe/minitest to not augment load path if we're actually testing minitest.
 
 === 5.9.0 / 2016-05-16
 
@@ -229,7 +229,7 @@
 * 2 bug fixes:
 
   * Re-release to refresh gem certificate signing. ugh.
-  * Fixed hoe/minitest to not augment load path if we're actually testing minitest.  
+  * Fixed hoe/minitest to not augment load path if we're actually testing minitest.
 
 === 5.8.4 / 2016-01-21
 
@@ -1389,4 +1389,3 @@ back.
 * 1 major enhancement
 
   * Birthday!
-
