@@ -1,3 +1,9 @@
+=== 5.14.2 / 2020-08-31
+
+* 1 bug fix:
+
+  * Bumped ruby version to include 3.0 (trunk).
+
 === 5.14.1 / 2020-05-15
 
 * 3 minor enhancements:
