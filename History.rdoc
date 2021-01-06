@@ -1,3 +1,9 @@
+=== 5.14.3 / 2021-01-05
+
+* 1 bug fix:
+
+  * Bumped require_ruby_version to < 4 (trunk = 3.1).
+
 === 5.14.2 / 2020-08-31
 
 * 1 bug fix:
