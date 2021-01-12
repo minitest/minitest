@@ -989,6 +989,18 @@ class TestMeta < MetaMetaMetaTestCase
     assert_respond_to y.new(nil), "xyz"
     assert_respond_to z.new(nil), "xyz"
   end
+
+  def test_methods_around_describe
+    y = nil
+    x = describe "top-level thingy" do
+      def test_before_desc; end
+      y = describe "second thingy" do end
+      def test_after_desc; end
+    end
+
+    assert_equal ["test_after_desc", "test_before_desc"], x.methods_matching(/^test/).sort
+    assert_equal [], y.methods_matching(/^test/)
+  end
 end
 
 class TestSpecInTestCase < MetaMetaMetaTestCase

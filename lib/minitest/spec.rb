@@ -266,6 +266,10 @@ class Minitest::Spec < Minitest::Test
         @desc = desc
 
         nuke_test_methods!
+
+        def self.methods_matching re
+          public_instance_methods(false).grep(re).map(&:to_s)
+        end
       end
 
       children << cls
