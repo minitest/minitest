@@ -48,7 +48,7 @@ module Minitest
 
   ##
   # Access the minitest options for example to use the seed value in your tests.
-  mc.send :attr_accessor, :options
+  mc.send :attr_accessor, :option
 
   ##
   # Registers Minitest to run at process exit
@@ -125,7 +125,7 @@ module Minitest
     self.load_plugins unless args.delete("--no-plugins") || ENV["MT_NO_PLUGINS"]
 
     options = process_args args
-    self.options = options
+    self.option = options
 
     reporter = CompositeReporter.new
     reporter << SummaryReporter.new(options[:io], options)

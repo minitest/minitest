@@ -459,9 +459,9 @@ able to require minitest and run your tests.
 === How can I access the minitest options (for example the seed value) in my tests?
 
 If you like to use for example the generated or given seed value in your tests
-you can get the minitest options now with +Minitest.options+ from everywhere.
+you can get the minitest options now with +Minitest.option+ from everywhere.
 This is usefull to feed the random seed generator before testing something with random input,
-by just calling +srand Minitest.options[:seed]+ for example in a test setup.
+by just calling +srand Minitest.option[:seed]+ for example in a test setup.
     
 
 == Prominent Projects using Minitest:
