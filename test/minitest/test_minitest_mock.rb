@@ -591,6 +591,18 @@ class TestMinitestStub < Minitest::Test
     end
   end
 
+  class Keywords
+    def self.args req, kw1:, kw2:24
+      [req, kw1, kw2]
+    end
+  end
+
+  def test_stub_callable_keyword_args
+    Keywords.stub :args, ->(*args, **kws) { 42 } do
+      @tc.assert_equal 42, Keywords.args("woot", kw1:314)
+    end
+  end
+
   def test_stub_callable_block_5 # from tenderlove
     @assertion_count += 1
     Foo.stub5 :blocking, Bar.new do
