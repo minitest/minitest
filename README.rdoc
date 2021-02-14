@@ -376,6 +376,42 @@ Using our example above, here is how we might implement MyCI:
 
 == FAQ
 
+=== What versions are compatible with what? Or what versions are supported?
+
+Minitest is a dependency of rails, which until fairly recently had an
+overzealous backwards compatibility policy. As such, I'm stuck
+supporting versions of ruby that are long past EOL. Once rails 5.2 is
+dropped (hopefully April 2021), I get to drop a bunch of versions of
+ruby that I have to currently test against.
+
+(As of 2021-01-31)
+
+Current versions of rails: (https://endoflife.date/rails)
+
+  | rails | min ruby | rec ruby | minitest | status   |
+  |-------+----------+----------+----------+----------|
+  |   7.0 | >= 2.7   |      3.0 | >= 5.1   | Future   |
+  |   6.1 | >= 2.5   |      3.0 | >= 5.1   | Current  |
+  |   6.0 | >= 2.5   |      2.6 | >= 5.1   | Security |
+  |   5.2 | >= 2.2.2 |      2.5 | ~> 5.1   | Security | EOL @railsconf 2021?
+
+Current versions of ruby: (https://endoflife.date/ruby)
+
+  | ruby | Status  |   EOL Date |
+  |------+---------+------------|
+  |  3.0 | Current | 2024-03-31 |
+  |  2.7 | Maint   | 2023-03-31 |
+  |  2.6 | Maint   | 2022-03-31 |
+  |  2.5 | Maint*  | 2021-03-31 |
+  |  2.4 | EOL     | 2020-03-31 |
+  |  2.3 | EOL     | 2019-03-31 |
+  |  2.2 | EOL     | 2018-03-31 |
+
+See also:
+
+* https://www.fastruby.io/blog/ruby/rails/versions/compatibility-table.html
+* https://jamesjeffersconsulting.com/ruby-rails-version-matrix/
+
 === How to test SimpleDelegates?
 
 The following implementation and test:
