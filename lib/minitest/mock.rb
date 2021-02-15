@@ -231,6 +231,8 @@ class Object
       end
     end
 
+    metaclass.send(:ruby2_keywords, name) if metaclass.respond_to?(:ruby2_keywords, true)
+
     yield self
   ensure
     metaclass.send :undef_method, name
