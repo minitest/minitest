@@ -207,7 +207,9 @@ class Object
   #         assert obj_under_test.stale?
   #       end
   #     end
-  #
+  #--
+  # NOTE: keyword args in callables are NOT checked for correctness
+  # against the existing method. Too many edge cases to be worth it.
 
   def stub name, val_or_callable, *block_args
     new_name = "__minitest_stub__#{name}"

@@ -598,8 +598,8 @@ class TestMinitestStub < Minitest::Test
   end
 
   def test_stub_callable_keyword_args
-    Keywords.stub :args, ->(*args, **kws) { 42 } do
-      @tc.assert_equal 42, Keywords.args("woot", kw1:314)
+    Keywords.stub :args, ->(*args, **kws) { [args, kws] } do
+      @tc.assert_equal [["woot"], { kw1: 42 }], Keywords.args("woot", kw1: 42)
     end
   end
 
