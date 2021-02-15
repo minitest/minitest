@@ -222,9 +222,9 @@ class Object
 
     metaclass.send :alias_method, new_name, name
 
-    metaclass.send :define_method, name do |*args, **kwargs, &blk|
+    metaclass.send :define_method, name do |*args, &blk|
       if val_or_callable.respond_to? :call then
-        val_or_callable.call(*args, **kwargs, &blk)
+        val_or_callable.call(*args, &blk)
       else
         blk.call(*block_args) if blk
         val_or_callable
