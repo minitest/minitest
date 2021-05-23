@@ -473,7 +473,7 @@ module Minitest
     def assert_throws sym, msg = nil
       default = "Expected #{mu_pp(sym)} to have been thrown"
       caught = true
-      catch(sym) do
+      value = catch(sym) do
         begin
           yield
         rescue ThreadError => e       # wtf?!? 1.8 + threads == suck
@@ -489,6 +489,7 @@ module Minitest
       end
 
       assert caught, message(msg) { default }
+      value
     rescue Assertion
       raise
     rescue => e

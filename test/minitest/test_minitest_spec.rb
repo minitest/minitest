@@ -590,9 +590,10 @@ describe Minitest::Spec do
   end
 
   it "needs to verify throw" do
-    @assertion_count += 2 # 2 extra tests
+    @assertion_count += 4 # 2 extra tests
 
-    assert_success expect { throw :blah }.must_throw(:blah)
+    assert_nil expect { throw :blah }.must_throw(:blah)
+    assert_equal 42, expect { throw :blah, 42 }.must_throw(:blah)
 
     assert_triggered "Expected :blah to have been thrown." do
       expect {}.must_throw :blah

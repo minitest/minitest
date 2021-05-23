@@ -995,9 +995,19 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_throws
-    @tc.assert_throws :blah do
+    v = @tc.assert_throws :blah do
       throw :blah
     end
+
+    assert_nil v
+  end
+
+  def test_assert_throws_value
+    v = @tc.assert_throws :blah do
+      throw :blah, 42
+    end
+
+    assert_equal 42, v
   end
 
   def test_assert_throws_argument_exception
