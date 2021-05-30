@@ -721,6 +721,8 @@ mongoid-minitest            :: Minitest matchers for Mongoid.
 mutant-minitest             :: Minitest integration for mutant.
 pry-rescue                  :: A pry plugin w/ minitest support. See
                                pry-rescue/minitest.rb.
+rematch                     :: Declutter your test files from large hardcoded data
+                               and update them automatically when your code changes.
 rspec2minitest              :: Easily translate any RSpec matchers to Minitest
                                assertions and expectations.
 
