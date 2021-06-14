@@ -552,8 +552,6 @@ module Minitest
   # you want. Go nuts.
 
   class AbstractReporter
-    include Mutex_m
-
     ##
     # Starts reporting on the run.
 
