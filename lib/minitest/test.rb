@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "minitest" unless defined? Minitest::Runnable
 
 module Minitest
@@ -16,7 +18,7 @@ module Minitest
       self.class.name # for Minitest::Reportable
     end
 
-    PASSTHROUGH_EXCEPTIONS = [NoMemoryError, SignalException, SystemExit] # :nodoc:
+    PASSTHROUGH_EXCEPTIONS = [NoMemoryError, SignalException, SystemExit].freeze # :nodoc:
 
     # :stopdoc:
     class << self; attr_accessor :io_lock; end
@@ -84,7 +86,7 @@ module Minitest
       :random
     end
 
-    TEARDOWN_METHODS = %w[ before_teardown teardown after_teardown ] # :nodoc:
+    TEARDOWN_METHODS = %w[ before_teardown teardown after_teardown ].freeze # :nodoc:
 
     ##
     # Runs a single test with setup/teardown hooks.

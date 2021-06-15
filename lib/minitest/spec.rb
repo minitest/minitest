@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "minitest/test"
 
 class Module # :nodoc:

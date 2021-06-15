@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MockExpectationError < StandardError; end # :nodoc:
 
 module Minitest # :nodoc:

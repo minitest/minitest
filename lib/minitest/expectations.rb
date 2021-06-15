@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # It's where you hide your "assertions".
 #
