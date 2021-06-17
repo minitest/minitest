@@ -20,6 +20,7 @@ module Minitest
         @size  = size
         @queue = Queue.new
         @pool  = nil
+        @reporter_mutex = Mutex.new
       end
 
       ##
@@ -31,9 +32,9 @@ module Minitest
             Thread.current.abort_on_exception = true
             while (job = queue.pop)
               klass, method, reporter = job
-              reporter.synchronize { reporter.prerecord klass, method }
+              @reporter_mutex.synchronize { reporter.prerecord klass, method }
               result = Minitest.run_one_method klass, method
-              reporter.synchronize { reporter.record result }
+              @reporter_mutex.synchronize { reporter.record result }
             end
           end
         }
@@ -57,11 +58,6 @@ module Minitest
 
     module Test # :nodoc:
       def _synchronize; Minitest::Test.io_lock.synchronize { yield }; end # :nodoc:
-
-      def self.included(_klass)
-        super
-        CompositeReporter.__send__(:include, Mutex_m)
-      end
 
       module ClassMethods # :nodoc:
         def run_one_method klass, method_name, reporter
