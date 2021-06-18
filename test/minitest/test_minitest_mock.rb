@@ -133,7 +133,7 @@ class TestMinitestMock < Minitest::Test
       @mock.expect :blah, 3, false
     end
 
-    assert_equal "args must be an array", e.message
+    assert_match "args must be an array", e.message
   end
 
   def test_respond_appropriately
@@ -150,7 +150,7 @@ class TestMinitestMock < Minitest::Test
 
     expected = "unmocked method :bar, expected one of [:foo, :meaning_of_life]"
 
-    assert_equal expected, e.message
+    assert_match expected, e.message
   end
 
   def test_assign_per_mock_return_values
@@ -309,7 +309,7 @@ class TestMinitestMock < Minitest::Test
 
     exp = "args ignored when block given"
 
-    assert_equal exp, e.message
+    assert_match exp, e.message
   end
 
   def test_mock_returns_retval_when_called_with_block
@@ -822,7 +822,7 @@ class TestMinitestStub < Minitest::Test
       end
     end
     exp = "undefined method `write' for nil:NilClass"
-    assert_equal exp, e.message
+    assert_match exp, e.message
   end
 
   def test_stub_value_block_args_6
