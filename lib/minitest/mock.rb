@@ -217,9 +217,11 @@ class Object
     metaclass = class << self; self; end
 
     if respond_to? name and not methods.map(&:to_s).include? name.to_s then
-      metaclass.send :define_method, name do |*args|
-        super(*args)
-      end
+      metaclass.class_eval <<-CODE, __FILE__, __LINE__ + 1
+        def #{name}(*args) # def name(*args)
+          super(*args)     #   super(*args)
+        end                # end
+      CODE
     end
 
     metaclass.send :alias_method, new_name, name
