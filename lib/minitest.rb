@@ -53,6 +53,10 @@ module Minitest
   # Registers Minitest to run at process exit
 
   def self.autorun
+    if Object.const_defined?(:Warning) && Warning.respond_to?(:[]=)
+      Warning[:deprecated] = true
+    end
+
     at_exit {
       next if $! and not ($!.kind_of? SystemExit and $!.success?)
 
