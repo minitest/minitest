@@ -1,5 +1,6 @@
 require "minitest/autorun"
 require "minitest/metametameta"
+require "forwardable"
 
 class Runnable
   def woot
@@ -16,21 +17,10 @@ class TestMinitestReporter < MetaMetaMetaTestCase
     reporter << Minitest::SummaryReporter.new(self.io)
     reporter << Minitest::ProgressReporter.new(self.io)
 
-    def reporter.first
-      reporters.first
-    end
-
-    def reporter.results
-      first.results
-    end
-
-    def reporter.count
-      first.count
-    end
-
-    def reporter.assertions
-      first.assertions
-    end
+    # eg reporter.results -> reporters.first.results
+    reporter.extend Forwardable
+    reporter.delegate :first => :reporters
+    reporter.delegate %i[results count assertions options to_s] => :first
 
     reporter
   end
@@ -86,7 +76,25 @@ class TestMinitestReporter < MetaMetaMetaTestCase
   def test_to_s
     r.record passing_test
     r.record fail_test
-    assert_match "woot", r.first.to_s
+    assert_match "woot", r.to_s
+  end
+
+  def test_options_skip_F
+    r.options[:skip] = "F"
+
+    r.record passing_test
+    r.record fail_test
+
+    refute_match "woot", r.to_s
+  end
+
+  def test_options_skip_E
+    r.options[:skip] = "E"
+
+    r.record passing_test
+    r.record error_test
+
+    refute_match "RuntimeError: no", r.to_s
   end
 
   def test_passed_eh_empty
@@ -126,7 +134,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
   end
 
   def test_passed_eh_skipped_verbose
-    r.first.options[:verbose] = true
+    r.options[:verbose] = true
 
     r.start
     r.results << skip_test

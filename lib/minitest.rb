@@ -199,6 +199,10 @@ module Minitest
         options[:exclude] = a
       end
 
+      opts.on "-S", "--skip CODES", String, "Skip reporting of certain types of results (eg E)." do |s|
+        options[:skip] = s.chars.to_a
+      end
+
       unless extensions.empty?
         opts.separator ""
         opts.separator "Known extensions: #{extensions.join(", ")}"
@@ -786,7 +790,11 @@ module Minitest
       filtered_results = results.dup
       filtered_results.reject!(&:skipped?) unless options[:verbose]
 
+      skip = options[:skip] || []
+
       filtered_results.each_with_index { |result, i|
+        next if skip.include? result.result_code
+
         io.puts "\n%3d) %s" % [i+1, result]
       }
       io.puts
