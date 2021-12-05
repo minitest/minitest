@@ -1,0 +1,88 @@
+name: CI
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  test:
+    name: >-
+      test-${{ matrix.os }} ${{ matrix.ruby }}
+    env:
+      TESTOPTS: -v
+
+    runs-on: ${{ matrix.os }}
+    if: |
+      !(   contains(github.event.pull_request.title,  '[ci skip]')
+        || contains(github.event.pull_request.title,  '[skip ci]'))
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-20.04, ubuntu-18.04, macos-10.15, macos-11, windows-2022 ]
+        ruby: [ 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, '3.0', head ]
+        include:
+          - { os: windows-2022, ruby: mingw }
+          - { os: windows-2022, ruby: ucrt  }
+
+        exclude:
+          - { os: windows-2022, ruby: head  }
+          - { os: macos-10.15 , ruby: 2.6   }
+          - { os: macos-10.15 , ruby: 2.7   }
+          - { os: macos-10.15 , ruby: '3.0' }
+          - { os: macos-10.15 , ruby: head  }
+          - { os: macos-11    , ruby: 2.2   }
+          - { os: macos-11    , ruby: 2.3   }
+          - { os: macos-11    , ruby: 2.4   }
+          - { os: macos-11    , ruby: 2.5   }
+
+    steps:
+      - name: repo checkout
+        uses: actions/checkout@v2
+
+      - name: load ruby
+        uses: MSP-Greg/ruby-setup-ruby@win-ucrt-1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+
+      - name: install hoe
+        run:  gem install hoe
+
+      - name: rake test
+        run:  |
+          rake test
+          ruby -v
+        timeout-minutes: 3
+
+  isolated:
+    name: >-
+      isolated-${{ matrix.os }} ${{ matrix.ruby }}
+    env:
+      TESTOPTS: -v
+
+    runs-on: ${{ matrix.os }}
+    if: |
+      !(   contains(github.event.pull_request.title,  '[ci skip]')
+        || contains(github.event.pull_request.title,  '[skip ci]'))
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-20.04, windows-2022 ]
+        ruby: [ 2.3, '3.0' ]
+        include:
+          - { os: macos-10.15 , ruby: 2.3   }
+          - { os: macos-11    , ruby: '3.0' }
+    steps:
+      - name: repo checkout
+        uses: actions/checkout@v2
+
+      - name: load ruby
+        uses: MSP-Greg/ruby-setup-ruby@win-ucrt-1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+
+      - name: install hoe
+        run:  gem install hoe
+
+      - name: rake test:isolated
+        run:  |
+          rake test:isolated
+          ruby -v
+        timeout-minutes: 3
