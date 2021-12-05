@@ -13,6 +13,10 @@ class TestMinitestReporter < MetaMetaMetaTestCase
   attr_accessor :r, :io
 
   def new_composite_reporter
+    # Ruby bug in older versions of 2.2 & 2.3 on all platforms
+    # Latest Windows builds were 2.2.6 and 2.3.3.  Latest Ruby releases were
+    # 2.2.10 and 2.3.8.
+    skip if windows? && RUBY_VERSION < '2.4'
     reporter = Minitest::CompositeReporter.new
     reporter << Minitest::SummaryReporter.new(self.io)
     reporter << Minitest::ProgressReporter.new(self.io)
