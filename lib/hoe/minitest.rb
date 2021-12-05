@@ -24,9 +24,5 @@ module Hoe::Minitest
 
   def define_minitest_tasks
     self.testlib = :minitest
-
-    # make sure we use the gemmed minitest on 1.9
-    self.test_prelude = 'gem "minitest"' unless
-      minitest? or ENV["MT_NO_ISOLATE"]
   end
 end
