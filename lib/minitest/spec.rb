@@ -4,13 +4,14 @@ class Module # :nodoc:
   def infect_an_assertion meth, new_name, dont_flip = false # :nodoc:
     block = dont_flip == :block
     dont_flip = false if block
+    target_obj = block ? '_{obj.method}' : '_(obj)'
 
     # warn "%-22p -> %p %p" % [meth, new_name, dont_flip]
     self.class_eval <<-EOM, __FILE__, __LINE__ + 1
       def #{new_name} *args
         where = Minitest.filter_backtrace(caller).first
         where = where.split(/:in /, 2).first # clean up noise
-        Kernel.warn "DEPRECATED: global use of #{new_name} from #\{where}. Use _(obj).#{new_name} instead. This will fail in Minitest 6."
+        Kernel.warn "DEPRECATED: global use of #{new_name} from #\{where}. Use #{target_obj}.#{new_name} instead. This will fail in Minitest 6."
         Minitest::Expectation.new(self, Minitest::Spec.current).#{new_name}(*args)
       end
     EOM
