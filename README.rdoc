@@ -647,6 +647,7 @@ minitest-growl              :: Test notifier for minitest via growl.
 minitest-happy              :: GLOBALLY ACTIVATE MINITEST PRIDE! RAWR!
 minitest-have_tag           :: Adds Minitest assertions to test for the existence of
                                HTML tags, including contents, within a provided string.
+minitest-heat               :: Reporting that builds a heat map of failure locations
 minitest-hooks              :: Around and before_all/after_all/around_all hooks
 minitest-hyper              :: Pretty, single-page HTML reports for your Minitest runs
 minitest-implicit-subject   :: Implicit declaration of the test subject.
