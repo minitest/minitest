@@ -803,6 +803,25 @@ class TestMinitestRunnable < Minitest::Test
     assert_equal @tc.failures,   over_the_wire.failures
     assert_equal @tc.klass,      over_the_wire.klass
   end
+
+  def test_spec_marshal_with_exception
+    klass = describe("whatever") { it("passes") { raise Class.new(StandardError)} }
+    rm = klass.runnable_methods.first
+
+    # Run the test
+    @tc = klass.new(rm).run
+
+    assert_kind_of Minitest::Result, @tc
+
+    # Pass it over the wire
+    over_the_wire = Marshal.load Marshal.dump @tc
+
+    assert_equal @tc.time,       over_the_wire.time
+    assert_equal @tc.name,       over_the_wire.name
+    assert_equal @tc.assertions, over_the_wire.assertions
+    assert_equal @tc.failures,   over_the_wire.failures
+    assert_equal @tc.klass,      over_the_wire.klass
+  end
 end
 
 class TestMinitestTest < TestMinitestRunnable
