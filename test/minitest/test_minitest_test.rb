@@ -867,19 +867,25 @@ class TestMinitestUnitTestCase < Minitest::Test
     $VERBOSE = orig_verbose
   end
 
+  def sample_test_case(rand)
+    srand rand
+    Class.new FakeNamedTest do
+      100.times do |i|
+        define_method("test_#{i}") { assert true }
+      end
+    end.runnable_methods
+  end
+
+  # srand varies with OS
   def test_runnable_methods_random
     @assertion_count = 0
 
-    sample_test_case = Class.new FakeNamedTest do
-      def self.test_order; :random; end
-      def test_test1; assert "does not matter" end
-      def test_test2; assert "does not matter" end
-      def test_test3; assert "does not matter" end
-    end
+    random_tests_1 = sample_test_case 42
+    random_tests_2 = sample_test_case 42
+    random_tests_3 = sample_test_case 1_000
 
-    srand 42
-    expected = %w[test_test2 test_test1 test_test3]
-    assert_equal expected, sample_test_case.runnable_methods
+    assert_equal random_tests_1, random_tests_2
+    refute_equal random_tests_1, random_tests_3
   end
 
   def test_runnable_methods_sorted

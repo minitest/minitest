@@ -28,6 +28,9 @@ class TestMinitestAssertions < Minitest::Test
 
   RUBY18 = !defined? Encoding
 
+  # not included in JRuby
+  RE_LEVELS = /\(\d+ levels\) /
+
   class DummyTest
     include Minitest::Assertions
     # include Minitest::Reportable # TODO: why do I really need this?
@@ -756,12 +759,12 @@ class TestMinitestAssertions < Minitest::Test
       Class: <SomeError>
       Message: <\"blah\">
       ---Backtrace---
-      FILE:LINE:in \`test_assert_raises_default_triggered\'
+      FILE:LINE:in \`block in test_assert_raises_default_triggered\'
       ---------------
     EOM
 
     actual = e.message.gsub(/^.+:\d+/, "FILE:LINE")
-    actual.gsub!(/block \(\d+ levels\) in /, "") if RUBY_VERSION >= "1.9.0"
+    actual.gsub!(RE_LEVELS, "") unless jruby?
 
     assert_equal expected, actual
   end
@@ -835,12 +838,12 @@ class TestMinitestAssertions < Minitest::Test
       Class: <AnError>
       Message: <\"some message\">
       ---Backtrace---
-      FILE:LINE:in \`test_assert_raises_subclass_triggered\'
+      FILE:LINE:in \`block in test_assert_raises_subclass_triggered\'
       ---------------
     EOM
 
     actual = e.message.gsub(/^.+:\d+/, "FILE:LINE")
-    actual.gsub!(/block \(\d+ levels\) in /, "") if RUBY_VERSION >= "1.9.0"
+    actual.gsub!(RE_LEVELS, "") unless jruby?
 
     assert_equal expected.chomp, actual
   end
@@ -857,12 +860,12 @@ class TestMinitestAssertions < Minitest::Test
       Class: <SyntaxError>
       Message: <\"icky\">
       ---Backtrace---
-      FILE:LINE:in \`test_assert_raises_triggered_different\'
+      FILE:LINE:in \`block in test_assert_raises_triggered_different\'
       ---------------
     EOM
 
     actual = e.message.gsub(/^.+:\d+/, "FILE:LINE")
-    actual.gsub!(/block \(\d+ levels\) in /, "") if RUBY_VERSION >= "1.9.0"
+    actual.gsub!(RE_LEVELS, "") unless jruby?
 
     assert_equal expected, actual
   end
@@ -880,12 +883,12 @@ class TestMinitestAssertions < Minitest::Test
       Class: <SyntaxError>
       Message: <\"icky\">
       ---Backtrace---
-      FILE:LINE:in \`test_assert_raises_triggered_different_msg\'
+      FILE:LINE:in \`block in test_assert_raises_triggered_different_msg\'
       ---------------
     EOM
 
     actual = e.message.gsub(/^.+:\d+/, "FILE:LINE")
-    actual.gsub!(/block \(\d+ levels\) in /, "") if RUBY_VERSION >= "1.9.0"
+    actual.gsub!(RE_LEVELS, "") unless jruby?
 
     assert_equal expected.chomp, actual
   end
