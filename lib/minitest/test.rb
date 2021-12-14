@@ -198,7 +198,17 @@ module Minitest
     rescue Assertion => e
       self.failures << e
     rescue Exception => e
-      self.failures << UnexpectedError.new(e)
+      self.failures << UnexpectedError.new(sanitize_exception e)
+    end
+
+    def sanitize_exception e # :nodoc:
+      Marshal.dump e
+      e
+    rescue TypeError
+      bt = e.backtrace
+      e = RuntimeError.new "Wrapped undumpable exception for: #{e.class}: #{e.message}"
+      e.set_backtrace bt
+      e
     end
 
     def with_info_handler &block # :nodoc:
