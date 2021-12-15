@@ -1,3 +1,24 @@
+=== 5.15.0 / 2021-12-14
+
+* 1 major enhancement:
+
+  * assert_throws returns the value returned, if any. (volmer)
+
+* 3 minor enhancements:
+
+  * Added -S <CODES> option to skip reporting of certain types of output
+  * Enable Ruby deprecation warnings by default. (casperisfine)
+  * Use Etc.nprocessors by default in order to maximize cpu usage. (tonytonyjan)
+
+* 6 bug fixes:
+
+  * Close then unlink tempfiles on Windows. (nobu)
+  * Fixed #skip_until for windows paths. (MSP-Greg)
+  * Fixed a bunch of tests for jruby and windows. (MSP-Greg)
+  * Fixed marshalling of specs if they error. (tenderlove, jeremyevans, et al)
+  * Updated deprecation message for block expectations. (blowmage)
+  * Use Kernel.warn directly in expectations in case CUT defines their own warn. (firien)
+
 === 5.14.4 / 2021-02-23
 
 * 1 bug fix:

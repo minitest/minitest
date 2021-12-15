@@ -9,7 +9,7 @@ require "etc"
 # :include: README.rdoc
 
 module Minitest
-  VERSION = "5.14.4" # :nodoc:
+  VERSION = "5.15.0" # :nodoc:
   ENCS = "".respond_to? :encoding # :nodoc:
 
   @@installed_at_exit ||= false
