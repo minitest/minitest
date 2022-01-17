@@ -532,6 +532,9 @@ class TestMinitestStub < Minitest::Test
 
     shirt, t_shirt = _class.new, _class.new
 
+    assert_equal( t_shirt.clean, :dirty )
+    assert_equal( shirt.clean, :dirty )
+
     shirt.stub(:clean, :clean) do |s|
       assert_equal( s.clean, :clean )
     end
@@ -542,22 +545,17 @@ class TestMinitestStub < Minitest::Test
     assert_equal( shirt.clean, :clean )
   end
 
-  def test_class_singleton_class_is_not_dirty
+  def test_class_singleton_class_will_not_loose_its_method
     _class = Class.new do
       def self.clean; :dirty end
     end
 
-    _module = Module.new do
-      def clean; :clean end
-    end
 
     _class.stub(:clean, :clean) do |s|
       assert_equal( s.clean, :clean )
     end
-
-    _class.extend(_module)
-
-    assert_equal( _class.clean, :clean )
+    # method is still present and unchanged
+    assert_equal( _class.clean, :dirty )
   end
   ## Permutation Sets:
 
