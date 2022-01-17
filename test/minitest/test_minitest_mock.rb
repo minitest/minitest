@@ -550,7 +550,6 @@ class TestMinitestStub < Minitest::Test
       def self.clean; :dirty end
     end
 
-
     _class.stub(:clean, :clean) do |s|
       assert_equal( s.clean, :clean )
     end
