@@ -521,6 +521,44 @@ class TestMinitestStub < Minitest::Test
 
   alias test_stub_value__old test_stub_value # TODO: remove/rename
 
+  def test_instance_singleton_class_is_not_dirty
+    _class = Class.new do
+      def clean; :dirty end
+    end
+
+    _module = Module.new do
+      def clean; :clean end
+    end
+
+    shirt, t_shirt = _class.new, _class.new
+
+    shirt.stub(:clean, :clean) do |s|
+      assert_equal( s.clean, :clean )
+    end
+
+    _class.prepend(_module)
+
+    assert_equal( t_shirt.clean, :clean )
+    assert_equal( shirt.clean, :clean )
+  end
+
+  def test_class_singleton_class_is_not_dirty
+    _class = Class.new do
+      def self.clean; :dirty end
+    end
+
+    _module = Module.new do
+      def clean; :clean end
+    end
+
+    _class.stub(:clean, :clean) do |s|
+      assert_equal( s.clean, :clean )
+    end
+
+    _class.extend(_module)
+
+    assert_equal( _class.clean, :clean )
+  end
   ## Permutation Sets:
 
   # [:value, :lambda]

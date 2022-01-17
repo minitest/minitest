@@ -216,7 +216,9 @@ class Object
 
     metaclass = class << self; self; end
 
-    if respond_to? name and not methods.map(&:to_s).include? name.to_s then
+    if respond_to?( name ) && !methods.map(&:to_s).include?( name.to_s )
+      # this mean that 'name' is a public method which is expected
+      # to be defined dynamically somewhere inside ancestors chain
       metaclass.send :define_method, name do |*args|
         super(*args)
       end
@@ -237,8 +239,7 @@ class Object
 
     yield self
   ensure
-    metaclass.send :undef_method, name
-    metaclass.send :alias_method, name, new_name
-    metaclass.send :undef_method, new_name
+    metaclass.send :remove_method, name
+    metaclass.send :remove_method, new_name
   end
 end
