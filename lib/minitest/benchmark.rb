@@ -217,7 +217,7 @@ module Minitest
     ##
     # Takes an array of x/y pairs and calculates the general R^2 value.
     #
-    # See: http://en.wikipedia.org/wiki/Coefficient_of_determination
+    # See: https://en.wikipedia.org/wiki/Coefficient_of_determination
 
     def fit_error xys
       y_bar  = sigma(xys) { |_, y| y } / xys.size.to_f
@@ -232,7 +232,7 @@ module Minitest
     #
     # Takes x and y values and returns [a, b, r^2].
     #
-    # See: http://mathworld.wolfram.com/LeastSquaresFittingExponential.html
+    # See: https://mathworld.wolfram.com/LeastSquaresFittingExponential.html
 
     def fit_exponential xs, ys
       n     = xs.size
@@ -254,7 +254,7 @@ module Minitest
     #
     # Takes x and y values and returns [a, b, r^2].
     #
-    # See: http://mathworld.wolfram.com/LeastSquaresFittingLogarithmic.html
+    # See: https://mathworld.wolfram.com/LeastSquaresFittingLogarithmic.html
 
     def fit_logarithmic xs, ys
       n     = xs.size
@@ -276,7 +276,7 @@ module Minitest
     #
     # Takes x and y values and returns [a, b, r^2].
     #
-    # See: http://mathworld.wolfram.com/LeastSquaresFitting.html
+    # See: https://mathworld.wolfram.com/LeastSquaresFitting.html
 
     def fit_linear xs, ys
       n   = xs.size
@@ -298,7 +298,7 @@ module Minitest
     #
     # Takes x and y values and returns [a, b, r^2].
     #
-    # See: http://mathworld.wolfram.com/LeastSquaresFittingPowerLaw.html
+    # See: https://mathworld.wolfram.com/LeastSquaresFittingPowerLaw.html
 
     def fit_power xs, ys
       n       = xs.size
