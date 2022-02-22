@@ -648,6 +648,20 @@ class TestMinitestStub < Minitest::Test
     end
   end
 
+  def test_stub_public_module_method_that_was_private
+    console = Module.new do
+      class << self
+        public :system
+      end
+    end
+
+    console.stub(:system, "some command") do
+      console.system("some command")
+    end
+
+    @tc.assert_respond_to(console, :system)
+  end
+
   def test_stub_value
     assert_stub 42
   end
