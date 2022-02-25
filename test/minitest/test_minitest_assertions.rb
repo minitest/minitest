@@ -354,7 +354,7 @@ class TestMinitestAssertions < Minitest::Test
           @@ -1,3 +1,3 @@
           -# encoding: UTF-8
           -#    valid: false
-          +# encoding: ASCII-8BIT
+          +# encoding: #{Encoding::BINARY.name}
           +#    valid: true
            "bad-utf8-\\xF1.txt"
           EOM
@@ -373,7 +373,7 @@ class TestMinitestAssertions < Minitest::Test
           @@ -1,3 +1,3 @@
           -# encoding: US-ASCII
           -#    valid: false
-          +# encoding: ASCII-8BIT
+          +# encoding: #{Encoding::BINARY.name}
           +#    valid: true
            "bad-utf8-\\xF1.txt"
           EOM
@@ -1528,14 +1528,14 @@ class TestMinitestAssertionHelpers < Minitest::Test
 
   def test_mu_pp_for_diff_str_encoding
     str = "A\nB".b
-    exp = "# encoding: ASCII-8BIT\n#    valid: true\n\"A\nB\""
+    exp = "# encoding: #{Encoding::BINARY.name}\n#    valid: true\n\"A\nB\""
 
     assert_mu_pp_for_diff exp, str, :raw
   end
 
   def test_mu_pp_for_diff_str_encoding_both
     str = "A\\n\nB".b
-    exp = "# encoding: ASCII-8BIT\n#    valid: true\n\"A\\\\n\\nB\""
+    exp = "# encoding: #{Encoding::BINARY.name}\n#    valid: true\n\"A\\\\n\\nB\""
 
     assert_mu_pp_for_diff exp, str, :raw
   end
@@ -1575,7 +1575,7 @@ class TestMinitestAssertionHelpers < Minitest::Test
 
   def test_mu_pp_str_encoding
     str = "A\nB".b
-    exp = "# encoding: ASCII-8BIT\n#    valid: true\n\"A\\nB\""
+    exp = "# encoding: #{Encoding::BINARY.name}\n#    valid: true\n\"A\\nB\""
 
     assert_mu_pp exp, str, :raw
   end
