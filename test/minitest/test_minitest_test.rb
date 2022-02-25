@@ -48,9 +48,11 @@ class TestMinitestUnit < MetaMetaMetaTestCase
           "test/test_autotest.rb:62:in `test_add_exception'"]
     ex = util_expand_bt ex
 
-    fu = Minitest.filter_backtrace(bt)
+    Minitest::Test.io_lock.synchronize do # try not to trounce in parallel
+      fu = Minitest.filter_backtrace(bt)
 
-    assert_equal ex, fu
+      assert_equal ex, fu
+    end
   end
 
   def test_filter_backtrace_all_unit
@@ -71,8 +73,10 @@ class TestMinitestUnit < MetaMetaMetaTestCase
     bt = util_expand_bt bt
 
     ex = ["-e:1"]
-    fu = Minitest.filter_backtrace bt
-    assert_equal ex, fu
+    Minitest::Test.io_lock.synchronize do # try not to trounce in parallel
+      fu = Minitest.filter_backtrace bt
+      assert_equal ex, fu
+    end
   end
 
   def test_filter_backtrace__empty
@@ -112,7 +116,9 @@ class TestMinitestUnit < MetaMetaMetaTestCase
       2 runs, 1 assertions, 1 failures, 1 errors, 0 skips
     EOM
 
-    assert_report expected
+    Minitest::Test.io_lock.synchronize do # try not to trounce in parallel
+      assert_report expected
+    end
   end
 
   def test_passed_eh_teardown_good
