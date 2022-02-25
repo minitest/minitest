@@ -2,7 +2,7 @@
 
 home :: https://github.com/seattlerb/minitest
 bugs :: https://github.com/seattlerb/minitest/issues
-rdoc :: http://docs.seattlerb.org/minitest
+rdoc :: https://docs.seattlerb.org/minitest
 vim  :: https://github.com/sunaku/vim-ruby-minitest
 emacs:: https://github.com/arthurnn/minitest-emacs
 
@@ -186,7 +186,7 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
 === Mocks
 
 Mocks and stubs defined using terminology by Fowler & Meszaros at
-http://www.martinfowler.com/bliki/TestDouble.html:
+https://www.martinfowler.com/bliki/TestDouble.html:
 
 "Mocks are pre-programmed with expectations which form a specification
 of the calls they are expected to receive. They can throw an exception
@@ -237,7 +237,7 @@ an example of asserting that code inside a thread is run:
 === Stubs
 
 Mocks and stubs are defined using terminology by Fowler & Meszaros at
-http://www.martinfowler.com/bliki/TestDouble.html:
+https://www.martinfowler.com/bliki/TestDouble.html:
 
 "Stubs provide canned answers to calls made during the test".
 
@@ -751,7 +751,7 @@ Authors... Please send me a pull request with a description of your minitest ext
 
 == Minitest related goods
 
-* minitest/pride fabric: http://www.spoonflower.com/fabric/3928730-again-by-katie_allen
+* minitest/pride fabric: https://www.spoonflower.com/fabric/3928730-again-by-katie_allen
 
 == REQUIREMENTS:
 

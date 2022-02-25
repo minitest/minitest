@@ -66,7 +66,7 @@ module Kernel
   #
   # For some suggestions on how to improve your specs, try:
   #
-  # http://betterspecs.org
+  # https://betterspecs.org
   #
   # but do note that several items there are debatable or specific to
   # rspec.

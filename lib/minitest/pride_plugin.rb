@@ -48,7 +48,7 @@ module Minitest
     def initialize io # :nodoc:
       @io = io
       # stolen from /System/Library/Perl/5.10.0/Term/ANSIColor.pm
-      # also reference http://en.wikipedia.org/wiki/ANSI_escape_code
+      # also reference https://en.wikipedia.org/wiki/ANSI_escape_code
       @colors ||= (31..36).to_a
       @size   = @colors.size
       @index  = 0
