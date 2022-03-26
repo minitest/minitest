@@ -275,6 +275,18 @@ class TestMinitestMock < Minitest::Test
     assert_mock mock
   end
 
+  def test_mock_block_is_passed_keyword_args
+    arg1, arg2, arg3 = :bar, [1, 2, 3], { :a => "a" }
+    mock = Minitest::Mock.new
+    mock.expect :foo, nil do |k1:, k2:, k3:|
+      k1 == arg1 && k2 == arg2 && k3 == arg3
+    end
+
+    mock.foo(k1: arg1, k2: arg2, k3: arg3)
+
+    assert_mock mock
+  end
+
   def test_mock_block_is_passed_function_block
     mock = Minitest::Mock.new
     block = proc { "bar" }
