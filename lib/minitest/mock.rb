@@ -115,10 +115,10 @@ module Minitest # :nodoc:
       true
     end
 
-    def method_missing sym, *args, &block # :nodoc:
+    def method_missing sym, *args, **kwargs, &block # :nodoc:
       unless @expected_calls.key?(sym) then
         if @delegator && @delegator.respond_to?(sym)
-          return @delegator.public_send(sym, *args, &block)
+          return @delegator.public_send(sym, *args, **kwargs, &block)
         else
           raise NoMethodError, "unmocked method %p, expected one of %p" %
             [sym, @expected_calls.keys.sort_by(&:to_s)]
@@ -129,8 +129,8 @@ module Minitest # :nodoc:
       expected_call = @expected_calls[sym][index]
 
       unless expected_call then
-        raise MockExpectationError, "No more expects available for %p: %p" %
-          [sym, args]
+        raise MockExpectationError, "No more expects available for %p: %p %p" %
+          [sym, args, kwargs]
       end
 
       expected_args, retval, val_block =
@@ -140,8 +140,8 @@ module Minitest # :nodoc:
         # keep "verify" happy
         @actual_calls[sym] << expected_call
 
-        raise MockExpectationError, "mocked method %p failed block w/ %p" %
-          [sym, args] unless val_block.call(*args, &block)
+        raise MockExpectationError, "mocked method %p failed block w/ %p %p" %
+          [sym, args, kwargs] unless val_block.call(*args, **kwargs, &block)
 
         return retval
       end

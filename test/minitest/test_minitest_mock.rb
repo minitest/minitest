@@ -210,7 +210,7 @@ class TestMinitestMock < Minitest::Test
       mock.a
     end
 
-    assert_equal "No more expects available for :a: []", e.message
+    assert_equal "No more expects available for :a: [] {}", e.message
   end
 
   def test_same_method_expects_are_verified_when_all_called
@@ -286,6 +286,13 @@ class TestMinitestMock < Minitest::Test
     assert_mock mock
   end
 
+  def test_mock_forward_keyword_arguments
+    mock = Minitest::Mock.new
+    mock.expect(:foo, nil) { |bar:| bar == 'bar' }
+    mock.foo(bar: 'bar')
+    assert_mock mock
+  end
+
   def test_verify_fails_when_mock_block_returns_false
     mock = Minitest::Mock.new
     mock.expect :foo, nil do
@@ -293,7 +300,7 @@ class TestMinitestMock < Minitest::Test
     end
 
     e = assert_raises(MockExpectationError) { mock.foo }
-    exp = "mocked method :foo failed block w/ []"
+    exp = "mocked method :foo failed block w/ [] {}"
 
     assert_equal exp, e.message
   end
