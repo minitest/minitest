@@ -42,9 +42,10 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
+          bundler: none
 
       - name: install hoe
-        run: gem install hoe
+        run: gem install hoe -N
 
       - name: rake test
         run: |
@@ -76,9 +77,10 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
+          bundler: none
 
       - name: install hoe
-        run: gem install hoe
+        run: gem install hoe -N
 
       - name: rake test:isolated
         run: |
