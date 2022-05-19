@@ -202,12 +202,16 @@ module Minitest
     end
 
     def sanitize_exception e # :nodoc:
-      Marshal.dump e
-      e
-    rescue TypeError
-      bt = e.backtrace
-      e = RuntimeError.new "Wrapped undumpable exception for: #{e.class}: #{e.message}"
-      e.set_backtrace bt
+      begin
+        Marshal.dump e
+        e
+      rescue TypeError
+        bt = e.backtrace
+        e = RuntimeError.new "Wrapped undumpable exception for: #{e.class}: #{e.message}"
+        e.set_backtrace bt
+        e
+      end
+    rescue StandardError
       e
     end
 
