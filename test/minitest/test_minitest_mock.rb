@@ -492,6 +492,32 @@ class TestMinitestStub < Minitest::Test
     @tc.assert_equal false, dynamic.found
   end
 
+  def test_dynamic_method_does_not_keep_implicit_block
+    @assertion_count = 4
+
+    dynamic = Class.new do
+      def self.respond_to? meth
+        meth == :given_a_block?
+      end
+
+      def self.method_missing meth, *args, &block
+        if meth == :given_a_block?
+          block_given?
+        else
+          super
+        end
+      end
+    end
+
+    @tc.refute dynamic.given_a_block?
+    @tc.assert dynamic.given_a_block? {}
+
+    dynamic.stub(:given_a_block?, :_unused) {}
+
+    @tc.refute dynamic.given_a_block?
+    @tc.assert dynamic.given_a_block? {}
+  end
+
   def test_stub_NameError
     e = @tc.assert_raises NameError do
       Time.stub :nope_nope_nope, 42 do
