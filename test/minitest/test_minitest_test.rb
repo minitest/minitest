@@ -99,19 +99,19 @@ class TestMinitestUnit < MetaMetaMetaTestCase
     end
 
     expected = clean <<-EOM
-      EF
+      FE
 
       Finished in 0.00
 
-        1) Error:
-      FakeNamedTestXX#test_this_is_non_ascii_failure_message:
-      RuntimeError: ЁЁЁ
-          FILE:LINE:in `test_this_is_non_ascii_failure_message'
-
-        2) Failure:
+        1) Failure:
       FakeNamedTestXX#test_this_is_not_ascii_assertion [FILE:LINE]:
       Expected: \"ЁЁЁ\"
         Actual: \"ёёё\"
+
+        2) Error:
+      FakeNamedTestXX#test_this_is_non_ascii_failure_message:
+      RuntimeError: ЁЁЁ
+          FILE:LINE:in `test_this_is_non_ascii_failure_message'
 
       2 runs, 1 assertions, 1 failures, 1 errors, 0 skips
     EOM
@@ -260,7 +260,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     end
 
     expected = clean <<-EOM
-      E.
+      .E
 
       Finished in 0.00
 
@@ -307,7 +307,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     setup_basic_tu
 
     expected = clean <<-EOM
-      F.
+      .F
 
       Finished in 0.00
 
@@ -491,7 +491,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     end
 
     expected = clean <<-EOM
-      S.
+      .S
 
       Finished in 0.00
 
@@ -518,8 +518,8 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     end
 
     expected = clean <<-EOM
-      FakeNamedTestXX#test_skip = 0.00 s = S
       FakeNamedTestXX#test_something = 0.00 s = .
+      FakeNamedTestXX#test_skip = 0.00 s = S
 
       Finished in 0.00
 

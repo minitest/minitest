@@ -67,8 +67,7 @@ module Minitest
 
       case self.test_order
       when :random, :parallel then
-        max = methods.size
-        methods.sort.sort_by { rand max }
+        methods.sort.shuffle
       when :alpha, :sorted then
         methods.sort
       else
