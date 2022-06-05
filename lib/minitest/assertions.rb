@@ -293,6 +293,8 @@ module Minitest
       assert_respond_to matcher, :"=~"
       matcher = Regexp.new Regexp.escape matcher if String === matcher
       assert matcher =~ obj, msg
+
+      Regexp.last_match
     end
 
     ##

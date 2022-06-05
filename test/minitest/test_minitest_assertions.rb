@@ -484,7 +484,10 @@ class TestMinitestAssertions < Minitest::Test
 
   def test_assert_match
     @assertion_count = 2
-    @tc.assert_match(/\w+/, "blah blah blah")
+    m = @tc.assert_match(/\w+/, "blah blah blah")
+
+    assert_kind_of MatchData, m
+    assert_equal "blah", m[0]
   end
 
   def test_assert_match_matchee_to_str

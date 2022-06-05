@@ -505,7 +505,7 @@ describe Minitest::Spec do
   it "needs to verify regexp matches" do
     @assertion_count += 3 # must_match is 2 assertions
 
-    assert_success _("blah").must_match(/\w+/)
+    assert_kind_of MatchData, _("blah").must_match(/\w+/)
 
     assert_triggered "Expected /\\d+/ to match \"blah\"." do
       _("blah").must_match(/\d+/)
