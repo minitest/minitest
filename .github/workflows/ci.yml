@@ -24,11 +24,6 @@ jobs:
           - ubuntu-latest
           - macos-latest
         ruby:
-          - '2.2'
-          - '2.3'
-          - '2.4'
-          - '2.5'
-          - '2.6'
           - '2.7'
           - '3.0'
           - '3.1'
@@ -61,17 +56,10 @@ jobs:
     env:
       TESTOPTS: -v
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     if: |
       !(   contains(github.event.pull_request.title,  '[ci skip]')
         || contains(github.event.pull_request.title,  '[skip ci]'))
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-        ruby:
-          - '3.1'
     steps:
       - name: repo checkout
         uses: actions/checkout@v2
@@ -79,7 +67,7 @@ jobs:
       - name: load ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ matrix.ruby }}
+          ruby-version: ruby
           bundler: none
 
       - name: install hoe
