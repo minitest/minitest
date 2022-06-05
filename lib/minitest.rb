@@ -12,6 +12,13 @@ module Minitest
   VERSION = "5.15.0" # :nodoc:
   ENCS = "".respond_to? :encoding # :nodoc:
 
+  ##
+  # The random seed used for this run.
+  #
+  # Set via Minitest.run after processing args.
+
+  SEED = nil
+
   @@installed_at_exit ||= false
   @@after_run = []
   @extensions = []
@@ -131,6 +138,8 @@ module Minitest
     self.load_plugins unless args.delete("--no-plugins") || ENV["MT_NO_PLUGINS"]
 
     options = process_args args
+
+    Minitest.const_set :SEED, options[:seed] unless defined?(Minitest::SEED)
 
     reporter = CompositeReporter.new
     reporter << SummaryReporter.new(options[:io], options)
