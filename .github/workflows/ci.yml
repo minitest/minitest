@@ -2,6 +2,7 @@
 name: CI
 
 # https://github.com/actions/virtual-environments#available-environments
+# https://github.com/ruby/setup-ruby/blob/master/README.md#supported-platforms
 
 'on': [push, pull_request, workflow_dispatch]
 
@@ -22,7 +23,6 @@ jobs:
         os:
           - ubuntu-latest
           - macos-latest
-          - windows-latest
         ruby:
           - '2.2'
           - '2.3'
@@ -33,6 +33,9 @@ jobs:
           - '3.0'
           - '3.1'
           - head
+        include:
+          - os: windows-latest
+            ruby: ruby
 
     steps:
       - name: repo checkout
