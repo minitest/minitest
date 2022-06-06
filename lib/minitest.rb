@@ -213,6 +213,10 @@ module Minitest
         options[:verbose] = true
       end
 
+      opts.on "--show-skips", "Show skipped at the end of run." do
+        options[:show_skips] = true
+      end
+
       opts.on "-n", "--name PATTERN", "Filter run on /regexp/ or string." do |a|
         options[:filter] = a
       end
@@ -810,7 +814,8 @@ module Minitest
 
     def aggregated_results io # :nodoc:
       filtered_results = results.dup
-      filtered_results.reject!(&:skipped?) unless options[:verbose]
+      filtered_results.reject!(&:skipped?) unless
+        options[:verbose] or options[:show_skips]
 
       skip = options[:skip] || []
 
@@ -831,7 +836,8 @@ module Minitest
       extra = ""
 
       extra = "\n\nYou have skipped tests. Run with --verbose for details." if
-        results.any?(&:skipped?) unless options[:verbose] or ENV["MT_NO_SKIP_MSG"]
+        results.any?(&:skipped?) unless
+        options[:verbose] or options[:show_skips] or ENV["MT_NO_SKIP_MSG"]
 
       "%d runs, %d assertions, %d failures, %d errors, %d skips%s" %
         [count, assertions, failures, errors, skips, extra]

@@ -164,11 +164,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
   end
 
   def util_expand_bt bt
-    if RUBY_VERSION >= "1.9.0" then
-      bt.map { |f| (f =~ /^\./) ? File.expand_path(f) : f }
-    else
-      bt
-    end
+    bt.map { |f| (f =~ /^\./) ? File.expand_path(f) : f }
   end
 end
 
@@ -535,6 +531,33 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     EOM
 
     assert_report expected, %w[--seed 42 --verbose]
+  end
+
+  def test_run_skip_show_skips
+    @tu =
+    Class.new FakeNamedTest do
+      def test_something
+        assert true
+      end
+
+      def test_skip
+        skip "not yet"
+      end
+    end
+
+    expected = clean <<-EOM
+      .S
+
+      Finished in 0.00
+
+        1) Skipped:
+      FakeNamedTestXX#test_skip [FILE:LINE]:
+      not yet
+
+      2 runs, 1 assertions, 0 failures, 0 errors, 1 skips
+    EOM
+
+    assert_report expected, %w[--seed 42 --show-skips]
   end
 
   def test_run_with_other_runner
