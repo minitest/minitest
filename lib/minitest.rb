@@ -139,7 +139,10 @@ module Minitest
 
     options = process_args args
 
-    Minitest.const_set :SEED, options[:seed] unless defined?(Minitest::SEED)
+    unless defined?(Minitest::SEED) && Minitest::SEED then
+      remove_const :SEED
+      const_set :SEED, options[:seed]
+    end
 
     reporter = CompositeReporter.new
     reporter << SummaryReporter.new(options[:io], options)

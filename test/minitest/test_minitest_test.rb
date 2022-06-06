@@ -334,6 +334,10 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     end
   end
 
+  def test_seed # this is set for THIS run, so I'm not testing it's actual value
+    assert_instance_of Integer, Minitest::SEED
+  end
+
   def test_run_failing_filtered
     setup_basic_tu
 
