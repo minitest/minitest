@@ -10,7 +10,6 @@ require "etc"
 
 module Minitest
   VERSION = "5.15.0" # :nodoc:
-  ENCS = "".respond_to? :encoding # :nodoc:
 
   ##
   # The random seed used for this run.
@@ -23,38 +22,44 @@ module Minitest
   @@after_run = []
   @extensions = []
 
-  mc = (class << self; self; end)
+  def self.cattr_accessor name # :nodoc:
+    (class << self; self; end).attr_accessor name
+  end
 
   ##
+  # :call-seq:
+  #   parallel_executor # => Parallel::Executor
+  #
   # Parallel test executor
 
-  mc.send :attr_accessor, :parallel_executor
+  cattr_accessor :parallel_executor
 
   warn "DEPRECATED: use MT_CPU instead of N for parallel test runs" if ENV["N"]
   n_threads = (ENV["MT_CPU"] || ENV["N"] || Etc.nprocessors).to_i
+
   self.parallel_executor = Parallel::Executor.new n_threads
 
   ##
   # Filter object for backtraces.
 
-  mc.send :attr_accessor, :backtrace_filter
+  cattr_accessor :backtrace_filter
 
   ##
   # Reporter object to be used for all runs.
   #
   # NOTE: This accessor is only available during setup, not during runs.
 
-  mc.send :attr_accessor, :reporter
+  cattr_accessor :reporter
 
   ##
   # Names of known extension plugins.
 
-  mc.send :attr_accessor, :extensions
+  cattr_accessor :extensions
 
   ##
   # The signal to use for dumping information to STDERR. Defaults to "INFO".
 
-  mc.send :attr_accessor, :info_signal
+  cattr_accessor :info_signal
   self.info_signal = "INFO"
 
   ##
