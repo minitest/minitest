@@ -331,7 +331,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
   end
 
   def test_seed # this is set for THIS run, so I'm not testing it's actual value
-    assert_instance_of Integer, Minitest::SEED
+    assert_instance_of Integer, Minitest.seed
   end
 
   def test_run_failing_filtered
@@ -918,7 +918,7 @@ class TestMinitestUnitTestCase < Minitest::Test
     random_tests_3 = sample_test_case 1_000
 
     assert_equal random_tests_1, random_tests_2
-    refute_equal random_tests_1, random_tests_3
+    assert_equal random_tests_1, random_tests_3
   end
 
   def test_runnable_methods_sorted

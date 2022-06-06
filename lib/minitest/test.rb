@@ -67,6 +67,7 @@ module Minitest
 
       case self.test_order
       when :random, :parallel then
+        srand Minitest.seed
         methods.sort.shuffle
       when :alpha, :sorted then
         methods.sort

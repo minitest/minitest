@@ -129,7 +129,7 @@ class MetaMetaMetaTestCase < Minitest::Test
 
   def setup
     super
-    srand 42
+    Minitest.seed = 42
     Minitest::Test.reset
     @tu = nil
   end

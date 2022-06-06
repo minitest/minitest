@@ -11,13 +11,6 @@ require "etc"
 module Minitest
   VERSION = "5.15.0" # :nodoc:
 
-  ##
-  # The random seed used for this run.
-  #
-  # Set via Minitest.run after processing args.
-
-  SEED = nil
-
   @@installed_at_exit ||= false
   @@after_run = []
   @extensions = []
@@ -27,9 +20,14 @@ module Minitest
   end
 
   ##
-  # :call-seq:
-  #   parallel_executor # => Parallel::Executor
+  # The random seed used for this run. This is used to srand at the
+  # start of the run and between each +Runnable.run+.
   #
+  # Set via Minitest.run after processing args.
+
+  cattr_accessor :seed
+
+  ##
   # Parallel test executor
 
   cattr_accessor :parallel_executor
@@ -144,10 +142,8 @@ module Minitest
 
     options = process_args args
 
-    unless defined?(Minitest::SEED) && Minitest::SEED then
-      remove_const :SEED
-      const_set :SEED, options[:seed]
-    end
+    Minitest.seed = options[:seed]
+    srand Minitest.seed
 
     reporter = CompositeReporter.new
     reporter << SummaryReporter.new(options[:io], options)
@@ -257,8 +253,6 @@ module Minitest
       options[:seed] = (ENV["SEED"] || srand).to_i % 0xFFFF
       orig_args << "--seed" << options[:seed].to_s
     end
-
-    srand options[:seed]
 
     options[:args] = orig_args.map { |s|
       s =~ /[\s|&<>$()]/ ? s.inspect : s
