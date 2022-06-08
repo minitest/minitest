@@ -70,6 +70,7 @@ extract-method refactorings still apply.
 * minitest/mock - a simple and clean mock/stub system.
 * minitest/benchmark - an awesome way to assert your algorithm's performance.
 * minitest/pride - show your pride in testing!
+* minitest/test_task - a full-featured and clean rake task generator.
 * Incredibly small and fast runner, but no bells and whistles.
 * Written by squishy human beings. Software can never be perfect. We will all eventually die.
 
@@ -264,9 +265,8 @@ new non-existing method:
 
 === Running Your Tests
 
-Ideally, you'll use a rake task to run your tests, either piecemeal or
-all at once. Both rake and rails ship with rake tasks for running your
-tests. BUT! You don't have to:
+Ideally, you'll use a rake task to run your tests (see below), either
+piecemeal or all at once. BUT! You don't have to:
 
     % ruby -Ilib:test test/minitest/test_minitest_test.rb
     Run options: --seed 37685
@@ -294,17 +294,44 @@ provided via plugins. To see them, simply run with +--help+:
         -p, --pride                      Pride. Show your testing pride!
         -a, --autotest                   Connect to autotest server.
 
+=== Rake Tasks
+
 You can set up a rake task to run all your tests by adding this to your Rakefile:
 
-    require "rake/testtask"
+    require "minitest/test_task"
 
-    Rake::TestTask.new(:test) do |t|
+    Minitest::TestTask.create # named test, sensible defaults
+
+    # or more explicitly:
+
+    Minitest::TestTask.create(:test) do |t|
       t.libs << "test"
       t.libs << "lib"
-      t.test_files = FileList["test/**/test_*.rb"]
+      t.warning = false
+      t.test_globs = ["test/**/*_test.rb"]
     end
 
     task :default => :test
+
+Each of these will generate 4 tasks:
+
+    rake test          :: Run the test suite.
+    rake test:cmd      :: Print out the test command.
+    rake test:isolated :: Show which test files fail when run separately.
+    rake test:slow     :: Show bottom 25 tests sorted by time.
+
+=== Rake Task Variables
+
+There are a bunch of variables you can supply to rake to modify the run.
+
+    MT_LIB_EXTRAS :: Extra libs to dynamically override/inject for custom runs.
+    N             :: -n: Tests to run (string or /regexp/).
+    X             :: -x: Tests to exclude (string or /regexp/).
+    A             :: Any extra arguments. Honors shell quoting.
+    MT_CPU        :: How many threads to use for parallel test runs
+    SEED          :: -s --seed Sets random seed.
+    TESTOPTS      :: Deprecated, same as A
+    FILTER        :: Deprecated, same as A
 
 == Writing Extensions
 
