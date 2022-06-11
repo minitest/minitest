@@ -203,12 +203,27 @@ module Minitest
 
     def sanitize_exception e # :nodoc:
       Marshal.dump e
-      e
+      e                                         # good: use as-is
     rescue TypeError
+      neuter_exception e
+    end
+
+    def neuter_exception e
       bt = e.backtrace
-      e = RuntimeError.new "Wrapped undumpable exception for: #{e.class}: #{e.message}"
-      e.set_backtrace bt
-      e
+      msg = e.message.dup
+
+      new_exception e.class, msg, bt            # e.class can be a problem...
+    rescue TypeError
+      msg.prepend "Neutered Exception #{e.class}: "
+
+      new_exception RuntimeError, msg, bt       # but if this raises, we die
+    end
+
+    def new_exception klass, msg, bt
+      ne = klass.new msg
+      ne.set_backtrace bt
+      Marshal.dump ne                           # can raise TypeError
+      ne
     end
 
     def with_info_handler &block # :nodoc:

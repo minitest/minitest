@@ -838,13 +838,52 @@ class TestMinitestRunnable < Minitest::Test
   end
 
   def test_spec_marshal_with_exception
-    klass = describe("whatever") { it("passes") { raise Class.new(StandardError)} }
+    klass = describe("whatever") {
+      it("raises, badly") {
+        raise Class.new(StandardError), "this is bad!"
+      }
+    }
+
     rm = klass.runnable_methods.first
 
     # Run the test
     @tc = klass.new(rm).run
 
     assert_kind_of Minitest::Result, @tc
+    assert_instance_of Minitest::UnexpectedError, @tc.failure
+
+    msg = @tc.failure.error.message
+    assert_includes msg, "Neutered Exception #<Class:"
+    assert_includes msg, "this is bad!"
+
+    # Pass it over the wire
+    over_the_wire = Marshal.load Marshal.dump @tc
+
+    assert_equal @tc.time,       over_the_wire.time
+    assert_equal @tc.name,       over_the_wire.name
+    assert_equal @tc.assertions, over_the_wire.assertions
+    assert_equal @tc.failures,   over_the_wire.failures
+    assert_equal @tc.klass,      over_the_wire.klass
+  end
+
+  def test_spec_marshal_with_exception_nameerror
+    klass = describe("whatever") {
+      it("raises nameerror") {
+        NOPE::does_not_exist
+      }
+    }
+
+    rm = klass.runnable_methods.first
+
+    # Run the test
+    @tc = klass.new(rm).run
+
+    assert_kind_of Minitest::Result, @tc
+    assert_instance_of Minitest::UnexpectedError, @tc.failure
+
+    msg = @tc.failure.error.message
+    assert_includes msg, "uninitialized constant TestMinitestRunnable::NOPE"
+    assert_includes msg, "NOPE::does_not_exist"
 
     # Pass it over the wire
     over_the_wire = Marshal.load Marshal.dump @tc
