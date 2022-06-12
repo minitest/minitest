@@ -883,7 +883,6 @@ class TestMinitestRunnable < Minitest::Test
 
     msg = @tc.failure.error.message
     assert_includes msg, "uninitialized constant TestMinitestRunnable::NOPE"
-    assert_includes msg, "NOPE::does_not_exist"
 
     # Pass it over the wire
     over_the_wire = Marshal.load Marshal.dump @tc
