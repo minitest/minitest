@@ -660,6 +660,8 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       2 runs, 2 assertions, 0 failures, 0 errors, 0 skips
     EOM
 
+    skip if Minitest.parallel_executor.size < 2 # locks up test runner if 1 CPU
+
     assert_report(expected) do |reporter|
       reporter.extend(Module.new {
         define_method("record") do |result|
