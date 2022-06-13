@@ -319,7 +319,8 @@ class TestMinitestMock < Minitest::Test
       mock.foo(k1: arg1, k2: arg2)
     end
 
-    assert_equal "missing keyword: :k3", e.message # basically testing ruby
+    # basically testing ruby ... need ? for ruby < 2.7 :(
+    assert_match(/missing keyword: :?k3/, e.message)
   end
 
   def test_mock_block_is_passed_keyword_args__block_bad_extra
@@ -333,7 +334,8 @@ class TestMinitestMock < Minitest::Test
       mock.foo(k1: arg1, k2: arg2, k3: arg3)
     end
 
-    assert_equal "unknown keyword: :k3", e.message # basically testing ruby
+    # basically testing ruby ... need ? for ruby < 2.7 :(
+    assert_match(/unknown keyword: :?k3/, e.message)
   end
 
   def test_mock_block_is_passed_keyword_args__block_bad_value
@@ -659,6 +661,19 @@ class TestMinitestStub < Minitest::Test
       end
     end
     @tc.assert_equal true, rs
+  end
+
+  def test_mock_with_yield_kwargs
+    mock = Minitest::Mock.new
+    rs = nil
+
+    File.stub :open, true, mock, kw:42 do
+      File.open "foo.txt", "r" do |f, kw:|
+        rs = kw
+      end
+    end
+
+    @tc.assert_equal 42, rs
   end
 
   alias test_stub_value__old test_stub_value # TODO: remove/rename
