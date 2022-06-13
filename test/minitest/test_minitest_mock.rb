@@ -255,15 +255,14 @@ class TestMinitestMock < Minitest::Test
   def test_handles_kwargs_in_error_message
     mock = Minitest::Mock.new
 
-    mock.expect :foo, nil, [:bar, 42], kw: true
+    mock.expect :foo, nil, [], kw: true
+    mock.expect :foo, nil, [], kw: false
 
-    e = assert_raises ArgumentError do
-      mock.foo :bar
-    end
+    mock.foo kw: true
 
-    # e = assert_raises(MockExpectationError) { mock.verify }
+    e = assert_raises(MockExpectationError) { mock.verify }
 
-    exp = "mocked method :foo expects 2 arguments, got [:bar]"
+    exp = "expected foo(:kw=>false) => nil, got [foo(:kw=>true) => nil]"
 
     assert_equal exp, e.message
   end

@@ -28,11 +28,11 @@ module Minitest # :nodoc:
     end
 
     overridden_methods.map(&:to_sym).each do |method_id|
-      define_method method_id do |*args, &b|
+      define_method method_id do |*args, **kwargs, &b|
         if @expected_calls.key? method_id then
-          method_missing(method_id, *args, &b)
+          method_missing(method_id, *args, **kwargs, &b)
         else
-          super(*args, &b)
+          super(*args, **kwargs, &b)
         end
       end
     end
@@ -44,8 +44,8 @@ module Minitest # :nodoc:
     end
 
     ##
-    # Expect that method +name+ is called, optionally with +args+ or a
-    # +blk+, and returns +retval+.
+    # Expect that method +name+ is called, optionally with +args+ (and
+    # +kwargs+ or a +blk+, and returns +retval+.
     #
     #   @mock.expect(:meaning_of_life, 42)
     #   @mock.meaning_of_life # => 42
@@ -177,8 +177,12 @@ module Minitest # :nodoc:
         raise MockExpectationError, fmt % [sym, expected_kwargs.keys, kwargs.keys]
       end
 
-      fully_matched = expected_kwargs.all? { |ek, ev|
+      zipped_kwargs = expected_kwargs.map { |ek, ev|
         av = kwargs[ek]
+        [ek, [ev, av]]
+      }.to_h
+
+      fully_matched = zipped_kwargs.all? { |ek, (ev, av)|
         ev === av or ev == av
       }
 
@@ -189,7 +193,8 @@ module Minitest # :nodoc:
 
       @actual_calls[sym] << {
         :retval => retval,
-        :args => zipped_args.map! { |mod, a| mod === a ? mod : a },
+        :args => zipped_args.map { |e, a| e === a ? e : a },
+        :kwargs => zipped_kwargs.map { |k, (e, a)| [k, e === a ? e : a] }.to_h,
       }
 
       retval
