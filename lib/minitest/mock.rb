@@ -78,7 +78,7 @@ module Minitest # :nodoc:
     #   @mock.ordinal_increment # => raises MockExpectationError "No more expects available for :ordinal_increment"
     #
 
-    def expect name, retval, args = [], &blk
+    def expect name, retval, args = [], **kwargs, &blk
       name = name.to_sym
 
       if block_given?
@@ -86,7 +86,7 @@ module Minitest # :nodoc:
         @expected_calls[name] << { :retval => retval, :block => blk }
       else
         raise ArgumentError, "args must be an array" unless Array === args
-        @expected_calls[name] << { :retval => retval, :args => args }
+        @expected_calls[name] << { :retval => retval, :args => args, :kwargs => kwargs }
       end
       self
     end
@@ -94,7 +94,13 @@ module Minitest # :nodoc:
     def __call name, data # :nodoc:
       case data
       when Hash then
-        "#{name}(#{data[:args].inspect[1..-2]}) => #{data[:retval].inspect}"
+        args   = data[:args].inspect[1..-2]
+        kwargs = data[:kwargs]
+        if kwargs && !kwargs.empty? then
+          args << ", " unless args.empty?
+          args << kwargs.inspect[1..-2]
+        end
+        "#{name}(#{args}) => #{data[:retval].inspect}"
       else
         data.map { |d| __call name, d }.join ", "
       end
@@ -115,10 +121,10 @@ module Minitest # :nodoc:
       true
     end
 
-    def method_missing sym, *args, &block # :nodoc:
+    def method_missing sym, *args, **kwargs, &block # :nodoc:
       unless @expected_calls.key?(sym) then
         if @delegator && @delegator.respond_to?(sym)
-          return @delegator.public_send(sym, *args, &block)
+          return @delegator.public_send(sym, *args, **kwargs, &block)
         else
           raise NoMethodError, "unmocked method %p, expected one of %p" %
             [sym, @expected_calls.keys.sort_by(&:to_s)]
@@ -129,26 +135,31 @@ module Minitest # :nodoc:
       expected_call = @expected_calls[sym][index]
 
       unless expected_call then
-        raise MockExpectationError, "No more expects available for %p: %p" %
-          [sym, args]
+        raise MockExpectationError, "No more expects available for %p: %p %p" %
+          [sym, args, kwargs]
       end
 
-      expected_args, retval, val_block =
-        expected_call.values_at(:args, :retval, :block)
+      expected_args, expected_kwargs, retval, val_block =
+        expected_call.values_at(:args, :kwargs, :retval, :block)
 
       if val_block then
         # keep "verify" happy
         @actual_calls[sym] << expected_call
 
-        raise MockExpectationError, "mocked method %p failed block w/ %p" %
-          [sym, args] unless val_block.call(*args, &block)
+        raise MockExpectationError, "mocked method %p failed block w/ %p %p" %
+          [sym, args, kwargs] unless val_block.call(*args, **kwargs, &block)
 
         return retval
       end
 
       if expected_args.size != args.size then
-        raise ArgumentError, "mocked method %p expects %d arguments, got %d" %
-          [sym, expected_args.size, args.size]
+        raise ArgumentError, "mocked method %p expects %d arguments, got %p" %
+          [sym, expected_args.size, args]
+      end
+
+      if expected_kwargs.size != kwargs.size then
+        raise ArgumentError, "mocked method %p expects %d keyword arguments, got %p" %
+          [sym, expected_kwargs.size, kwargs]
       end
 
       zipped_args = expected_args.zip(args)
@@ -157,8 +168,23 @@ module Minitest # :nodoc:
       }
 
       unless fully_matched then
-        raise MockExpectationError, "mocked method %p called with unexpected arguments %p" %
-          [sym, args]
+        fmt = "mocked method %p called with unexpected arguments %p"
+        raise MockExpectationError, fmt % [sym, args]
+      end
+
+      unless expected_kwargs.keys.sort == kwargs.keys.sort then
+        fmt = "mocked method %p called with unexpected keywords %p vs %p"
+        raise MockExpectationError, fmt % [sym, expected_kwargs.keys, kwargs.keys]
+      end
+
+      fully_matched = expected_kwargs.all? { |ek, ev|
+        av = kwargs[ek]
+        ev === av or ev == av
+      }
+
+      unless fully_matched then
+        fmt = "mocked method %p called with unexpected keyword arguments %p vs %p"
+        raise MockExpectationError, fmt % [sym, expected_kwargs, kwargs]
       end
 
       @actual_calls[sym] << {
