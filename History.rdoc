@@ -1,8 +1,9 @@
 === 5.16.0 / 2022-06-14
 
-* 1 major enhancement:
+* 2 major enhancements:
 
   * Added Minitest::TestTask.
+  * Dropping ruby 2.2 - 2.5. 2.6 is DTM soon too.
 
 * 11 minor enhancements:
 
