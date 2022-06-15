@@ -1,3 +1,29 @@
+=== 5.16.0 / 2022-06-14
+
+* 1 major enhancement:
+
+  * Added Minitest::TestTask.
+
+* 11 minor enhancements:
+
+  * Added --show-skips option to show skips at end of run but not require --verbose. (MSP-Greg)
+  * Added Minitest.seed, the random seed used by the run.
+  * Calling `srand Minitest.seed` before all shuffles to ensure determinism.
+  * Extended #stub to handle kwargs for both block and call args. (SampsonCrowley)
+  * Extended Mock#__call to display kwargs.
+  * Extended Mock#expect to record kwargs.
+  * Extended Mock#method_missing to take kwargs & compare them against expected.
+  * Mock#method_missing displays better errors on arity mismatch.
+  * Removed minor optimization removing empty suites before run.
+  * Simplified test randomization (test order will change even with fixed seed).
+  * assert_match now returns the MatchData on success. (Nakilon)
+
+* 3 bug fixes:
+
+  * (Re)Fixed marshalling of exceptions, neutering them in 2 passes.
+  * Fixed more problems with rdoc.
+  * Had to patch up mock and stub to deal with <=2.7 kwargs oddities
+
 === 5.15.0 / 2021-12-14
 
 * 1 major enhancement:
