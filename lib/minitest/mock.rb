@@ -267,7 +267,7 @@ class Object
   # NOTE: keyword args in callables are NOT checked for correctness
   # against the existing method. Too many edge cases to be worth it.
 
-  def stub name, val_or_callable, *block_args, **block_kwargs
+  def stub name, val_or_callable, *block_args, **block_kwargs, &block
     new_name = "__minitest_stub__#{name}"
 
     metaclass = class << self; self; end
@@ -299,7 +299,7 @@ class Object
       end
     end
 
-    yield self
+    block[self]
   ensure
     metaclass.send :undef_method, name
     metaclass.send :alias_method, name, new_name
