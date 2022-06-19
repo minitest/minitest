@@ -363,6 +363,53 @@ class TestMinitestMock < Minitest::Test
     assert_mock mock
   end
 
+  def with_kwargs_env
+    ENV["MT_KWARGS_HAC\K"] = "1"
+
+    yield
+  ensure
+    ENV.delete "MT_KWARGS_HAC\K"
+  end
+
+  def test_mock_block_is_passed_keyword_args__args__old_style_bad
+    arg1, arg2, arg3 = :bar, [1, 2, 3], { :a => "a" }
+    mock = Minitest::Mock.new
+    mock.expect :foo, nil, [{k1: arg1, k2: arg2, k3: arg3}]
+
+    e = assert_raises ArgumentError do
+      mock.foo(k1: arg1, k2: arg2, k3: arg3)
+    end
+
+    assert_equal "mocked method :foo expects 1 arguments, got []", e.message
+  end
+
+  def test_mock_block_is_passed_keyword_args__args__old_style_env
+    with_kwargs_env do
+      arg1, arg2, arg3 = :bar, [1, 2, 3], { :a => "a" }
+      mock = Minitest::Mock.new
+      mock.expect :foo, nil, [{k1: arg1, k2: arg2, k3: arg3}]
+
+      mock.foo(k1: arg1, k2: arg2, k3: arg3)
+
+      assert_mock mock
+    end
+  end
+
+  def test_mock_block_is_passed_keyword_args__args__old_style_both
+    with_kwargs_env do
+      arg1, arg2, arg3 = :bar, [1, 2, 3], { :a => "a" }
+      mock = Minitest::Mock.new
+
+      assert_output nil, /Using MT_KWARGS_HAC. yet passing kwargs/ do
+        mock.expect :foo, nil, [{}], k1: arg1, k2: arg2, k3: arg3
+      end
+
+      mock.foo({}, k1: arg1, k2: arg2, k3: arg3)
+
+      assert_mock mock
+    end
+  end
+
   def test_mock_block_is_passed_keyword_args__args_bad_missing
     arg1, arg2, arg3 = :bar, [1, 2, 3], { :a => "a" }
     mock = Minitest::Mock.new
@@ -442,7 +489,7 @@ class TestMinitestMock < Minitest::Test
     assert_equal exp, e.message
   end
 
-  def test_mock_block_throws_if_args_passed
+  def test_mock_block_raises_if_args_passed
     mock = Minitest::Mock.new
 
     e = assert_raises(ArgumentError) do
@@ -452,6 +499,20 @@ class TestMinitestMock < Minitest::Test
     end
 
     exp = "args ignored when block given"
+
+    assert_match exp, e.message
+  end
+
+  def test_mock_block_raises_if_kwargs_passed
+    mock = Minitest::Mock.new
+
+    e = assert_raises(ArgumentError) do
+      mock.expect :foo, nil, kwargs:1 do
+        true
+      end
+    end
+
+    exp = "kwargs ignored when block given"
 
     assert_match exp, e.message
   end

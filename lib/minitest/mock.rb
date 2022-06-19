@@ -51,6 +51,8 @@ module Minitest # :nodoc:
       @actual_calls   = Hash.new { |calls, name| calls[name] = [] }
     end
 
+    @@KW_WARNED = false # :nodoc:
+
     ##
     # Expect that method +name+ is called, optionally with +args+ (and
     # +kwargs+ or a +blk+, and returns +retval+.
@@ -91,10 +93,25 @@ module Minitest # :nodoc:
 
       if block_given?
         raise ArgumentError, "args ignored when block given" unless args.empty?
+        raise ArgumentError, "kwargs ignored when block given" unless kwargs.empty?
         @expected_calls[name] << { :retval => retval, :block => blk }
       else
         raise ArgumentError, "args must be an array" unless Array === args
-        @expected_calls[name] << { :retval => retval, :args => args, :kwargs => kwargs }
+
+        if ENV["MT_KWARGS_HAC\K"] && Hash === args.last then
+          if kwargs.empty? then
+            kwargs = args.pop
+          else
+            unless @@KW_WARNED then
+              from = caller.first
+              warn "Using MT_KWARGS_HAC\K yet passing kwargs. From #{from}"
+              @@KW_WARNED = true
+            end
+          end
+        end
+
+        @expected_calls[name] <<
+          { :retval => retval, :args => args, :kwargs => kwargs }
       end
       self
     end
