@@ -1,3 +1,11 @@
+=== 5.16.1 / 2022-06-20
+
+* 2 bug fixes:
+
+  * Apparently adding real kwarg support to mocks/stubs broke some code. Fixed.
+    * Use `MT_KWARGS_HACK=1` to activate the kludgy kwargs support w/ caveats.
+  * Clarified some doco wrt the block on #stub.
+
 === 5.16.0 / 2022-06-14
 
 * 2 major enhancements:
