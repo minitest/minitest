@@ -371,6 +371,22 @@ class TestMinitestMock < Minitest::Test
     ENV.delete "MT_KWARGS_HAC\K"
   end
 
+  def test_mock_allow_all_kwargs__old_style_env
+    with_kwargs_env do
+      mock = Minitest::Mock.new
+      mock.expect :foo, true, [Hash]
+      assert_equal true, mock.foo(bar: 42)
+    end
+  end
+
+  def test_mock_allow_all_kwargs__old_style_env__rewrite
+    with_kwargs_env do
+      mock = Minitest::Mock.new
+      mock.expect :foo, true, [], bar: Integer
+      assert_equal true, mock.foo(bar: 42)
+    end
+  end
+
   def test_mock_block_is_passed_keyword_args__args__old_style_bad
     arg1, arg2, arg3 = :bar, [1, 2, 3], { :a => "a" }
     mock = Minitest::Mock.new

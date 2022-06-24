@@ -98,7 +98,8 @@ module Minitest # :nodoc:
       else
         raise ArgumentError, "args must be an array" unless Array === args
 
-        if ENV["MT_KWARGS_HAC\K"] && Hash === args.last then
+        if ENV["MT_KWARGS_HAC\K"] && (Hash === args.last ||
+                                      Hash ==  args.last) then
           if kwargs.empty? then
             kwargs = args.pop
           else
@@ -166,6 +167,9 @@ module Minitest # :nodoc:
 
       expected_args, expected_kwargs, retval, val_block =
         expected_call.values_at(:args, :kwargs, :retval, :block)
+
+      expected_kwargs = kwargs.map { |ak, av| [ak, Object] }.to_h if
+        Hash == expected_kwargs
 
       if val_block then
         # keep "verify" happy
