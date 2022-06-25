@@ -216,12 +216,19 @@ module Minitest
     rescue TypeError
       msg.prepend "Neutered Exception #{e.class}: "
 
-      new_exception RuntimeError, msg, bt       # but if this raises, we die
+      new_exception RuntimeError, msg, bt, true # but if this raises, we die
     end
 
-    def new_exception klass, msg, bt
+    def new_exception klass, msg, bt, kill = false
       ne = klass.new msg
       ne.set_backtrace bt
+
+      if kill then
+        ne.instance_variables.each do |v|
+          ne.remove_instance_variable v
+        end
+      end
+
       Marshal.dump ne                           # can raise TypeError
       ne
     end

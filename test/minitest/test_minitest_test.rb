@@ -786,6 +786,13 @@ class TestMinitestUnitOrder < MetaMetaMetaTestCase
   end
 end
 
+class BetterError < RuntimeError # like better_error w/o infecting RuntimeError
+  def set_backtrace bt
+    super
+    @bad_ivar = binding
+  end
+end
+
 class TestMinitestRunnable < Minitest::Test
   def setup_marshal klass
     tc = klass.new "whatever"
@@ -885,6 +892,46 @@ class TestMinitestRunnable < Minitest::Test
 
     msg = @tc.failure.error.message
     assert_includes msg, "uninitialized constant TestMinitestRunnable::NOPE"
+
+    # Pass it over the wire
+    over_the_wire = Marshal.load Marshal.dump @tc
+
+    assert_equal @tc.time,       over_the_wire.time
+    assert_equal @tc.name,       over_the_wire.name
+    assert_equal @tc.assertions, over_the_wire.assertions
+    assert_equal @tc.failures,   over_the_wire.failures
+    assert_equal @tc.klass,      over_the_wire.klass
+  end
+
+  def with_runtime_error klass
+    old_runtime = RuntimeError
+    Object.send :remove_const, :RuntimeError
+    Object.const_set :RuntimeError, klass
+    yield
+  ensure
+    Object.send :remove_const, :RuntimeError
+    Object.const_set :RuntimeError, old_runtime
+  end
+
+  def test_spec_marshal_with_exception__better_error_typeerror
+    klass = describe("whatever") {
+      it("raises with binding") {
+        raise BetterError, "boom"
+      }
+    }
+
+    rm = klass.runnable_methods.first
+
+    # Run the test
+    @tc = with_runtime_error BetterError do
+      klass.new(rm).run
+    end
+
+    assert_kind_of Minitest::Result, @tc
+    assert_instance_of Minitest::UnexpectedError, @tc.failure
+
+    msg = @tc.failure.error.message
+    assert_equal "Neutered Exception BetterError: boom", msg
 
     # Pass it over the wire
     over_the_wire = Marshal.load Marshal.dump @tc
