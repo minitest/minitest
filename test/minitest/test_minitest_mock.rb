@@ -838,7 +838,7 @@ class TestMinitestStub < Minitest::Test
     end
   end
 
-  def test_stub__hash_as_last_real_arg__FUCK
+  def test_stub__hash_as_last_real_arg
     with_kwargs_env do
       token = Object.new
       def token.create_with_retry u, p; raise "shouldn't see this"; end
