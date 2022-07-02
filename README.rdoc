@@ -641,6 +641,7 @@ minitest-capistrano         :: Assertions and expectations for testing
                                Capistrano recipes.
 minitest-capybara           :: Capybara matchers support for minitest unit and
                                spec.
+minitest-cc                 :: It provides minimal information about code coverage.
 minitest-chef-handler       :: Run Minitest suites as Chef report handlers
 minitest-ci                 :: CI reporter plugin for Minitest.
 minitest-context            :: Defines contexts for code reuse in Minitest
