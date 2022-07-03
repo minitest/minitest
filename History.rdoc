@@ -1,3 +1,12 @@
+=== 5.16.2 / 2022-07-03
+
+* 4 bug fixes:
+
+  * Added MT_KWARGS_HACK kludge for stub to deal with ruby 2.7 kwargs nastiness. (tsugimoto)
+  * In #expect, pop Hash class from args if $MT_KWARGS_HACK. (casperisfine)
+  * In above scenario, set expected kwargs (as Objects) based on actual kwargs.
+  * Nuke ivars if exception fails to marshal twice (eg better_errors). (irphilli)
+
 === 5.16.1 / 2022-06-20
 
 * 2 bug fixes:
