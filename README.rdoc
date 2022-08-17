@@ -739,7 +739,7 @@ minitest-stub-const         :: Stub constants for the duration of a block.
 minitest-tags               :: Add tags for minitest.
 minitest-unordered          :: Adds a new assertion to minitest for checking the
                                contents of a collection, ignoring element order.
-minitest-vcr                :: Automatic cassette managment with Minitest::Spec
+minitest-vcr                :: Automatic cassette management with Minitest::Spec
                                and VCR.
 minitest_log                :: Adds structured logging, data explication, and verdicts.
 minitest_owrapper           :: Get tests results as a TestResult object.
