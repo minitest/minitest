@@ -204,7 +204,7 @@ module Minitest
     def sanitize_exception e # :nodoc:
       Marshal.dump e
       e                                         # good: use as-is
-    rescue TypeError
+    rescue
       neuter_exception e
     end
 
@@ -213,7 +213,7 @@ module Minitest
       msg = e.message.dup
 
       new_exception e.class, msg, bt            # e.class can be a problem...
-    rescue TypeError
+    rescue
       msg.prepend "Neutered Exception #{e.class}: "
 
       new_exception RuntimeError, msg, bt, true # but if this raises, we die

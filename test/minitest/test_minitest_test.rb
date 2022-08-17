@@ -942,6 +942,49 @@ class TestMinitestRunnable < Minitest::Test
     assert_equal @tc.failures,   over_the_wire.failures
     assert_equal @tc.klass,      over_the_wire.klass
   end
+
+  def test_spec_marshal_with_exception__worse_error_typeerror
+    worse_error_klass = Class.new(StandardError) do
+      # problem #1: anonymous subclass can'tmarshal, fails sanitize_exception
+      def initialize(record = nil)
+
+        super(record.first)
+      end
+    end
+
+    klass = describe("whatever") {
+      it("raises with NoMethodError") {
+        # problem #2: instantiated with a NON-string argument
+        #
+        # problem #3: arg responds to #first, but it becomes message
+        #             which gets passed back in via new_exception
+        #             that passes a string to worse_error_klass#initialize
+        #             which calls first on it, which raises NoMethodError
+        raise worse_error_klass.new(["boom"])
+      }
+    }
+
+    rm = klass.runnable_methods.first
+
+    # Run the test
+    @tc = klass.new(rm).run
+
+    assert_kind_of Minitest::Result, @tc
+    assert_instance_of Minitest::UnexpectedError, @tc.failure
+
+    msg = @tc.failure.error.message.gsub(/0x[A-Fa-f0-9]+/, "0xXXX")
+
+    assert_equal "Neutered Exception #<Class:0xXXX>: boom", msg
+
+    # Pass it over the wire
+    over_the_wire = Marshal.load Marshal.dump @tc
+
+    assert_equal @tc.time,       over_the_wire.time
+    assert_equal @tc.name,       over_the_wire.name
+    assert_equal @tc.assertions, over_the_wire.assertions
+    assert_equal @tc.failures,   over_the_wire.failures
+    assert_equal @tc.klass,      over_the_wire.klass
+  end
 end
 
 class TestMinitestTest < TestMinitestRunnable
