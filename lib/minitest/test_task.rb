@@ -238,7 +238,7 @@ module Minitest # :nodoc:
 
       desc "Show bottom 25 tests wrt time."
       task "#{name}:slow" do
-        sh ["rake #{name} TESTOPTS=-v",
+        sh ["rake #{name} A=-v",
             "egrep '#test_.* s = .'",
             "sort -n -k2 -t=",
             "tail -25"].join " | "
