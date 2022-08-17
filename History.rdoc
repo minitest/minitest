@@ -1,3 +1,10 @@
+=== 5.16.3 / 2022-08-17
+
+* 2 bug fixes:
+
+  * Fixed exception sanitization by removing TypeError restriction on rescue.
+  * Use A instead of deprecated TESTOPTS in rake test:slow. (davidstosik)
+
 === 5.16.2 / 2022-07-03
 
 * 4 bug fixes:
