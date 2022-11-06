@@ -18,6 +18,10 @@ module Minitest
 
     PASSTHROUGH_EXCEPTIONS = [NoMemoryError, SignalException, SystemExit] # :nodoc:
 
+    SETUP_METHODS = %w[ before_setup setup after_setup ] # :nodoc:
+
+    TEARDOWN_METHODS = %w[ before_teardown teardown after_teardown ] # :nodoc:
+
     # :stopdoc:
     class << self; attr_accessor :io_lock; end
     self.io_lock = Mutex.new
@@ -83,10 +87,6 @@ module Minitest
     def self.test_order
       :random
     end
-
-    SETUP_METHODS = %w[ before_setup setup after_setup ] # :nodoc:
-
-    TEARDOWN_METHODS = %w[ before_teardown teardown after_teardown ] # :nodoc:
 
     ##
     # Runs a single test with setup/teardown hooks.
@@ -212,7 +212,7 @@ module Minitest
       neuter_exception e
     end
 
-    def neuter_exception e
+    def neuter_exception e # :nodoc:
       bt = e.backtrace
       msg = e.message.dup
 
@@ -223,7 +223,7 @@ module Minitest
       new_exception RuntimeError, msg, bt, true # but if this raises, we die
     end
 
-    def new_exception klass, msg, bt, kill = false
+    def new_exception klass, msg, bt, kill = false # :nodoc:
       ne = klass.new msg
       ne.set_backtrace bt
 

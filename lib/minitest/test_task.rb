@@ -277,8 +277,8 @@ module Minitest # :nodoc:
   end
 end
 
-class Work < Queue
-  def initialize jobs = []
+class Work < Queue # :nodoc:
+  def initialize jobs = [] # :nodoc:
     super()
 
     jobs.each do |job|
@@ -289,7 +289,7 @@ class Work < Queue
   end
 end
 
-class Integer
+class Integer # :nodoc:
   def threads_do(jobs) # :nodoc:
     require "thread"
     q = Work.new jobs
