@@ -8,24 +8,24 @@ class Module # :nodoc:
 
     # warn "%-22p -> %p %p" % [meth, new_name, dont_flip]
     self.class_eval <<-EOM, __FILE__, __LINE__ + 1
-      def #{new_name} *args
+      def #{new_name} *args, **kwargs
         where = Minitest.filter_backtrace(caller).first
         where = where.split(/:in /, 2).first # clean up noise
         Kernel.warn "DEPRECATED: global use of #{new_name} from #\{where}. Use #{target_obj}.#{new_name} instead. This will fail in Minitest 6."
-        Minitest::Expectation.new(self, Minitest::Spec.current).#{new_name}(*args)
+        Minitest::Expectation.new(self, Minitest::Spec.current).#{new_name}(*args, **kwargs)
       end
     EOM
 
     Minitest::Expectation.class_eval <<-EOM, __FILE__, __LINE__ + 1
-      def #{new_name} *args
+      def #{new_name} *args, **kwargs
         raise "Calling ##{new_name} outside of test." unless ctx
         case
         when #{!!dont_flip} then
-          ctx.#{meth}(target, *args)
+          ctx.#{meth}(target, *args, **kwargs)
         when #{block} && Proc === target then
-          ctx.#{meth}(*args, &target)
+          ctx.#{meth}(*args, **kwargs, &target)
         else
-          ctx.#{meth}(args.first, target, *args[1..-1])
+          ctx.#{meth}(args.first, target, *args[1..-1], **kwargs)
         end
       end
     EOM
