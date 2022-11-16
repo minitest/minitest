@@ -150,7 +150,11 @@ module Minitest # :nodoc:
     def method_missing sym, *args, **kwargs, &block # :nodoc:
       unless @expected_calls.key?(sym) then
         if @delegator && @delegator.respond_to?(sym)
-          return @delegator.public_send(sym, *args, **kwargs, &block)
+          if kwargs.empty? then # FIX: drop this after 2.7 dead
+            return @delegator.public_send(sym, *args, &block)
+          else
+            return @delegator.public_send(sym, *args, **kwargs, &block)
+          end
         else
           raise NoMethodError, "unmocked method %p, expected one of %p" %
             [sym, @expected_calls.keys.sort_by(&:to_s)]
