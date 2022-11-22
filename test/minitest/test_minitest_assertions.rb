@@ -1062,6 +1062,50 @@ class TestMinitestAssertions < Minitest::Test
     end
   end
 
+  def test_assert_pattern
+    if RUBY_VERSION >= "3.0"
+      @tc.assert_pattern do
+        eval "[1,2,3] => [Integer, Integer, Integer]"
+      end
+    else
+      @assertion_count = 0
+
+      assert_raises(NotImplementedError) do
+        @tc.assert_pattern do
+          eval "[1,2,3] => [Integer, Integer, Integer]"
+        end
+      end
+    end
+  end
+
+  def test_assert_pattern_traps_nomatchingpatternerror
+    skip unless RUBY_VERSION >= "3.0"
+
+    assert_triggered(/length mismatch/) do
+      @tc.assert_pattern do
+        eval "[1,2,3] => [Integer, Integer]"
+      end
+    end
+  end
+
+  def test_assert_pattern_raises_other_exceptions
+    skip unless RUBY_VERSION >= "3.0"
+
+    @assertion_count = 0
+
+    assert_raises(RuntimeError) do
+      @tc.assert_pattern do
+        raise "boom"
+      end
+    end
+  end
+
+  def test_assert_pattern_with_no_block
+    assert_triggered "assert_pattern requires a block to capture errors." do
+      @tc.assert_pattern
+    end
+  end
+
   def test_capture_io
     @assertion_count = 0
 
@@ -1311,6 +1355,50 @@ class TestMinitestAssertions < Minitest::Test
   def test_refute_operator_triggered
     assert_triggered "Expected 2 to not be > 1." do
       @tc.refute_operator 2, :>, 1
+    end
+  end
+
+  def test_refute_pattern
+    if RUBY_VERSION >= "3.0"
+      @tc.refute_pattern do
+        eval "[1,2,3] => [Integer, Integer, String]"
+      end
+    else
+      @assertion_count = 0
+
+      assert_raises(NotImplementedError) do
+        @tc.refute_pattern do
+          eval "[1,2,3] => [Integer, Integer, String]"
+        end
+      end
+    end
+  end
+
+  def test_refute_pattern_expects_nomatchingpatternerror
+    skip unless RUBY_VERSION >= "3.0"
+
+    assert_triggered(/NoMatchingPatternError expected, but nothing was raised./) do
+      @tc.refute_pattern do
+        eval "[1,2,3] => [Integer, Integer, Integer]"
+      end
+    end
+  end
+
+  def test_refute_pattern_raises_other_exceptions
+    skip unless RUBY_VERSION >= "3.0"
+
+    @assertion_count = 0
+
+    assert_raises(RuntimeError) do
+      @tc.refute_pattern do
+        raise "boom"
+      end
+    end
+  end
+
+  def test_refute_pattern_with_no_block
+    assert_triggered "refute_pattern requires a block to capture errors." do
+      @tc.refute_pattern
     end
   end
 
