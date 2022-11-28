@@ -9,8 +9,6 @@ ensure
 end
 
 class TestMinitestMock < Minitest::Test
-  parallelize_me!
-
   def setup
     @mock = Minitest::Mock.new.expect(:foo, nil)
     @mock.expect(:meaning_of_life, 42)
