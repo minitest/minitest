@@ -772,6 +772,24 @@ class TestMinitestAssertions < Minitest::Test
     assert_equal expected, actual
   end
 
+  def test_assert_raises_match
+    @assertion_count = 2
+
+    @tc.assert_raises RuntimeError, match: "blah" do
+      raise "blah"
+    end
+  end
+
+  def test_assert_raises_match_triggered
+    @assertion_count = 2
+
+    assert_triggered 'Expected /nope/ to match "blah".' do
+      @tc.assert_raises RuntimeError, match: /nope/ do
+        raise "blah"
+      end
+    end
+  end
+
   def test_assert_raises_exit
     @tc.assert_raises SystemExit do
       exit 1

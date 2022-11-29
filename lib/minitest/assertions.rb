@@ -392,8 +392,15 @@ module Minitest
     #   end
     #
     #   assert_equal 'This is really bad', error.message
+    #
+    # Accepts an optional +match+ matcher to test against the raised
+    # exception message. Eg:
+    #
+    #   assert_raises(ArgumentError, match: /bad argument/i) do
+    #     raise ArgumentError, 'Bad argument'
+    #   end
 
-    def assert_raises *exp
+    def assert_raises *exp, match: nil
       flunk "assert_raises requires a block to capture errors." unless
         block_given?
 
@@ -403,7 +410,11 @@ module Minitest
       begin
         yield
       rescue *exp => e
-        pass # count assertion
+        if match
+          assert_match(match, e.message)
+        else
+          pass # count assertion
+        end
         return e
       rescue Minitest::Assertion # incl Skip & UnexpectedError
         # don't count assertion
