@@ -417,7 +417,7 @@ Current versions of rails: (https://endoflife.date/rails)
 
   | rails | min ruby | rec ruby | minitest | status   |
   |-------+----------+----------+----------+----------|
-  | 7.0.0 | >= 2.7   |      3.1 | >= 5.1   | Current  |
+  |   7.0 | >= 2.7   |      3.1 | >= 5.1   | Current  |
   |   6.1 | >= 2.5   |      3.0 | >= 5.1   | Maint    |
   |   6.0 | >= 2.5   |      2.6 | >= 5.1   | Security |
   |   5.2 | >= 2.2.2 |      2.5 | ~> 5.1   | EOL      |
