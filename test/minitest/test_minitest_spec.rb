@@ -1068,3 +1068,38 @@ class ValueMonadTest < Minitest::Test
     assert_equal "c", struct.expect
   end
 end
+
+describe Minitest::Spec, :infect_an_assertion do
+  class << self
+    attr_accessor :infect_mock
+  end
+
+  def assert_infects exp, act, msg = nil, foo: nil, bar: nil
+    self.class.infect_mock.assert_infects exp, act, msg, foo: foo, bar: bar
+  end
+
+  infect_an_assertion :assert_infects, :must_infect
+  infect_an_assertion :assert_infects, :must_infect_without_flipping, :dont_flip
+
+  it "infects assertions with kwargs" do
+    mock = Minitest::Mock.new
+    mock.expect :assert_infects, true, [:exp, :act, nil], foo: :foo, bar: :bar
+
+    self.class.infect_mock = mock
+
+    _(:act).must_infect :exp, foo: :foo, bar: :bar
+
+    assert_mock mock
+  end
+
+  it "infects assertions with kwargs (dont_flip)" do
+    mock = Minitest::Mock.new
+    mock.expect :assert_infects, true, [:act, :exp, nil], foo: :foo, bar: :bar
+
+    self.class.infect_mock = mock
+
+    _(:act).must_infect_without_flipping :exp, foo: :foo, bar: :bar
+
+    assert_mock mock
+  end
+end

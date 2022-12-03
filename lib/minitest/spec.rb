@@ -6,6 +6,10 @@ class Module # :nodoc:
     dont_flip = false if block
     target_obj = block ? '_{obj.method}' : '_(obj)'
 
+    # https://eregon.me/blog/2021/02/13/correct-delegation-in-ruby-2-27-3.html
+    # Drop this when we can drop ruby 2.6 (aka after rails 6.1 EOL, ~2024-06)
+    kw_extra = "ruby2_keywords %p" % [new_name] if respond_to?(:ruby2_keywords, true)
+
     # warn "%-22p -> %p %p" % [meth, new_name, dont_flip]
     self.class_eval <<-EOM, __FILE__, __LINE__ + 1
       def #{new_name} *args
@@ -14,6 +18,7 @@ class Module # :nodoc:
         Kernel.warn "DEPRECATED: global use of #{new_name} from #\{where}. Use #{target_obj}.#{new_name} instead. This will fail in Minitest 6."
         Minitest::Expectation.new(self, Minitest::Spec.current).#{new_name}(*args)
       end
+      #{kw_extra}
     EOM
 
     Minitest::Expectation.class_eval <<-EOM, __FILE__, __LINE__ + 1
@@ -28,6 +33,7 @@ class Module # :nodoc:
           ctx.#{meth}(args.first, target, *args[1..-1])
         end
       end
+      #{kw_extra}
     EOM
   end
 end
