@@ -258,6 +258,15 @@ class TestMinitestMock < Minitest::Test
     assert_equal exp, e.message
   end
 
+  def test_delegator_calls_are_propagated
+    delegator = Object.new
+    mock = Minitest::Mock.new delegator
+
+    refute delegator.nil?
+    refute mock.nil?
+    assert_mock mock
+  end
+
   def test_handles_kwargs_in_error_message
     mock = Minitest::Mock.new
 
