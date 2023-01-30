@@ -1083,7 +1083,7 @@ class TestMinitestStub < Minitest::Test
         end
       end
     end
-    exp = "undefined method `write' for nil:NilClass"
+    exp = /undefined method `write' for nil/
     assert_match exp, e.message
   end
 
