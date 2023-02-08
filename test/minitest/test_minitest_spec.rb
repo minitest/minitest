@@ -137,6 +137,46 @@ describe Minitest::Spec do
     end
   end
 
+  def good_pattern
+    capture_io do # 3.0 is noisy
+      eval "[1,2,3] => [Integer, Integer, Integer]" # eval to escape parser for ruby<3
+    end
+  end
+
+  def bad_pattern
+    capture_io do # 3.0 is noisy
+      eval "[1,2,3] => [Integer, Integer]" # eval to escape parser for ruby<3
+    end
+  end
+
+  it "needs to pattern match" do
+    @assertion_count = 1
+
+    if RUBY_VERSION > "3" then
+      expect { good_pattern }.must_pattern_match
+    else
+      assert_raises NotImplementedError do
+        expect {}.must_pattern_match
+      end
+    end
+  end
+
+  it "needs to error on bad pattern match" do
+    skip unless RUBY_VERSION > "3"
+
+    @assertion_count = 1
+
+    exp = if RUBY_VERSION.start_with? "3.0"
+            "[1, 2, 3]" # terrible error message!
+          else
+            /length mismatch/
+          end
+
+    assert_triggered exp do
+      expect { bad_pattern }.must_pattern_match
+    end
+  end
+
   it "needs to ensure silence" do
     @assertion_count -= 1 # no msg
     @assertion_count += 2 # assert_output is 2 assertions
@@ -172,6 +212,7 @@ describe Minitest::Spec do
                         must_include
                         must_match
                         must_output
+                        must_pattern_match
                         must_raise
                         must_respond_to
                         must_throw

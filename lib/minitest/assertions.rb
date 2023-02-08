@@ -358,6 +358,32 @@ module Minitest
     end
 
     ##
+    # For testing with pattern matching (only supported with Ruby 3.0 and later)
+    #
+    #   # pass
+    #   assert_pattern { [1,2,3] => [Integer, Integer, Integer] }
+    #
+    #   # fail "length mismatch (given 3, expected 1)"
+    #   assert_pattern { [1,2,3] => [Integer] }
+    #
+    # The bare <tt>=></tt> pattern will raise a NoMatchingPatternError on failure, which would
+    # normally be counted as a test error. This assertion rescues NoMatchingPatternError and
+    # generates a test failure. Any other exception will be raised as normal and generate a test
+    # error.
+
+    def assert_pattern
+      raise NotImplementedError, "only available in Ruby 3.0+" unless RUBY_VERSION >= "3.0"
+      flunk "assert_pattern requires a block to capture errors." unless block_given?
+
+      begin # TODO: remove after ruby 2.6 dropped
+        yield
+        pass
+      rescue NoMatchingPatternError => e
+        flunk e.message
+      end
+    end
+
+    ##
     # For testing with predicates. Eg:
     #
     #   assert_predicate str, :empty?
@@ -719,6 +745,30 @@ module Minitest
     def refute_nil obj, msg = nil
       msg = message(msg) { "Expected #{mu_pp(obj)} to not be nil" }
       refute obj.nil?, msg
+    end
+
+    ##
+    # For testing with pattern matching (only supported with Ruby 3.0 and later)
+    #
+    #   # pass
+    #   refute_pattern { [1,2,3] => [String] }
+    #
+    #   # fail "NoMatchingPatternError expected, but nothing was raised."
+    #   refute_pattern { [1,2,3] => [Integer, Integer, Integer] }
+    #
+    # This assertion expects a NoMatchingPatternError exception, and will fail if none is raised. Any
+    # other exceptions will be raised as normal and generate a test error.
+
+    def refute_pattern
+      raise NotImplementedError, "only available in Ruby 3.0+" unless RUBY_VERSION >= "3.0"
+      flunk "refute_pattern requires a block to capture errors." unless block_given?
+
+      begin
+        yield
+        flunk("NoMatchingPatternError expected, but nothing was raised.")
+      rescue NoMatchingPatternError
+        pass
+      end
     end
 
     ##
