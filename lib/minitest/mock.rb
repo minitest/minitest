@@ -55,7 +55,7 @@ module Minitest # :nodoc:
 
     ##
     # Expect that method +name+ is called, optionally with +args+ (and
-    # +kwargs+ or a +blk+, and returns +retval+.
+    # +kwargs+ or a +blk+), and returns +retval+.
     #
     #   @mock.expect(:meaning_of_life, 42)
     #   @mock.meaning_of_life # => 42
