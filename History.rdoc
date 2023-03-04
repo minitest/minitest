@@ -1,3 +1,14 @@
+=== 5.18.0 / 2023-03-04
+
+* 2 major enhancements:
+
+  * Added assert_pattern & refute_pattern for pattern matching. (flavorjones)
+  * Added matching must_pattern_match & wont_pattern_match to minitest/spec.
+
+* 1 bug fix:
+
+  * Support the new message format of NameError in Ruby 3.3 (mame)
+
 === 5.17.0 / 2022-12-31
 
 * 1 minor enhancement:
