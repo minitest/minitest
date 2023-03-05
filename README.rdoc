@@ -411,7 +411,7 @@ supporting versions of ruby that are long past EOL. Hopefully I'll be
 able to support only current versions of ruby sometime in the near
 future.
 
-(As of 2022-11-29)
+(As of 2023-03-05)
 
 Current versions of rails: (https://endoflife.date/rails)
 
@@ -422,19 +422,20 @@ Current versions of rails: (https://endoflife.date/rails)
   |   6.0 | >= 2.5   |      2.6 | >= 5.1   | Security | 2023-06-01 |
   |   5.2 | >= 2.2.2 |      2.5 | ~> 5.1   | EOL      | 2022-06-01 |
 
+If you want to look at the requirements for a specific version, run:
+
+    gem spec -r --ruby rails -v 7.0.0
+
 Current versions of ruby: (https://endoflife.date/ruby)
 
   | ruby | Status  |   EOL Date |
   |------+---------+------------|
-  |  3.1 | Current | 2025-12-25 |
+  |  3.2 | Current | 2026-03-31 |
+  |  3.1 | Maint   | 2025-03-31 |
   |  3.0 | Maint   | 2024-03-31 |
-  |  2.7 | Maint*  | 2023-03-31 |
+  |  2.7 | Security| 2023-03-31 |
   |  2.6 | EOL     | 2022-03-31 |
   |  2.5 | EOL     | 2021-03-31 |
-
-See also:
-
-* https://www.fastruby.io/blog/ruby/rails/versions/compatibility-table.html
 
 === How to test SimpleDelegates?
 
