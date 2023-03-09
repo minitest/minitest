@@ -365,6 +365,14 @@ module Minitest
       reporter.record Minitest.run_one_method(klass, method_name)
     end
 
+    ##
+    # Defines the order to run tests (:random by default). Override
+    # this or use a convenience method to change it for your tests.
+
+    def self.test_order
+      :random
+    end
+
     def self.with_info_handler reporter, &block # :nodoc:
       handler = lambda do
         unless reporter.passed? then

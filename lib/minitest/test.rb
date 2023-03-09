@@ -81,14 +81,6 @@ module Minitest
     end
 
     ##
-    # Defines the order to run tests (:random by default). Override
-    # this or use a convenience method to change it for your tests.
-
-    def self.test_order
-      :random
-    end
-
-    ##
     # Runs a single test with setup/teardown hooks.
 
     def run
