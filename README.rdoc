@@ -1,7 +1,7 @@
 = minitest/{test,spec,mock,benchmark}
 
-home :: https://github.com/seattlerb/minitest
-bugs :: https://github.com/seattlerb/minitest/issues
+home :: https://github.com/minitest/minitest
+bugs :: https://github.com/minitest/minitest/issues
 rdoc :: https://docs.seattlerb.org/minitest
 vim  :: https://github.com/sunaku/vim-ruby-minitest
 emacs:: https://github.com/arthurnn/minitest-emacs
