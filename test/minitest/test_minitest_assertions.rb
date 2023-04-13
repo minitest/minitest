@@ -354,7 +354,7 @@ class TestMinitestAssertions < Minitest::Test
           @@ -1,3 +1,3 @@
           -# encoding: UTF-8
           -#    valid: false
-          +# encoding: ASCII-8BIT
+          +# encoding: #{Encoding::BINARY.name}
           +#    valid: true
            "bad-utf8-\\xF1.txt"
           EOM
@@ -373,7 +373,7 @@ class TestMinitestAssertions < Minitest::Test
           @@ -1,3 +1,3 @@
           -# encoding: US-ASCII
           -#    valid: false
-          +# encoding: ASCII-8BIT
+          +# encoding: #{Encoding::BINARY.name}
           +#    valid: true
            "bad-utf8-\\xF1.txt"
           EOM
@@ -484,7 +484,10 @@ class TestMinitestAssertions < Minitest::Test
 
   def test_assert_match
     @assertion_count = 2
-    @tc.assert_match(/\w+/, "blah blah blah")
+    m = @tc.assert_match(/\w+/, "blah blah blah")
+
+    assert_kind_of MatchData, m
+    assert_equal "blah", m[0]
   end
 
   def test_assert_match_matchee_to_str
@@ -804,7 +807,7 @@ class TestMinitestAssertions < Minitest::Test
   # *sigh* This is quite an odd scenario, but it is from real (albeit
   # ugly) test code in ruby-core:
 
-  # http://svn.ruby-lang.org/cgi-bin/viewvc.cgi?view=rev&revision=29259
+  # https://svn.ruby-lang.org/cgi-bin/viewvc.cgi?view=rev&revision=29259
 
   def test_assert_raises_skip
     @assertion_count = 0
@@ -1056,6 +1059,66 @@ class TestMinitestAssertions < Minitest::Test
   def test_assert_path_exists_triggered
     assert_triggered "Expected path 'blah' to exist." do
       @tc.assert_path_exists "blah"
+    end
+  end
+
+  def test_assert_pattern
+    if RUBY_VERSION > "3" then
+      @tc.assert_pattern do
+        exp = if RUBY_VERSION.start_with? "3.0"
+                "(eval):1: warning: One-line pattern matching is experimental, and the behavior may change in future versions of Ruby!\n"
+              else
+                ""
+              end
+        assert_output nil, exp do
+          eval "[1,2,3] => [Integer, Integer, Integer]" # eval to escape parser for ruby<3
+        end
+      end
+    else
+      @assertion_count = 0
+
+      assert_raises NotImplementedError do
+        @tc.assert_pattern do
+          # do nothing
+        end
+      end
+    end
+  end
+
+  def test_assert_pattern_traps_nomatchingpatternerror
+    skip unless RUBY_VERSION > "3"
+    exp = if RUBY_VERSION.start_with? "3.0" then
+            "[1, 2, 3]" # terrible error message!
+          else
+            /length mismatch/
+          end
+
+    assert_triggered exp do
+      @tc.assert_pattern do
+        capture_io do # 3.0 is noisy
+          eval "[1,2,3] => [Integer, Integer]" # eval to escape parser for ruby<3
+        end
+      end
+    end
+  end
+
+  def test_assert_pattern_raises_other_exceptions
+    skip unless RUBY_VERSION >= "3.0"
+
+    @assertion_count = 0
+
+    assert_raises RuntimeError do
+      @tc.assert_pattern do
+        raise "boom"
+      end
+    end
+  end
+
+  def test_assert_pattern_with_no_block
+    skip unless RUBY_VERSION >= "3.0"
+
+    assert_triggered "assert_pattern requires a block to capture errors." do
+      @tc.assert_pattern
     end
   end
 
@@ -1311,6 +1374,56 @@ class TestMinitestAssertions < Minitest::Test
     end
   end
 
+  def test_refute_pattern
+    if RUBY_VERSION >= "3.0"
+      @tc.refute_pattern do
+        capture_io do # 3.0 is noisy
+          eval "[1,2,3] => [Integer, Integer, String]"
+        end
+      end
+    else
+      @assertion_count = 0
+
+      assert_raises NotImplementedError do
+        @tc.refute_pattern do
+          eval "[1,2,3] => [Integer, Integer, String]"
+        end
+      end
+    end
+  end
+
+  def test_refute_pattern_expects_nomatchingpatternerror
+    skip unless RUBY_VERSION > "3"
+
+    assert_triggered(/NoMatchingPatternError expected, but nothing was raised./) do
+      @tc.refute_pattern do
+        capture_io do # 3.0 is noisy
+          eval "[1,2,3] => [Integer, Integer, Integer]"
+        end
+      end
+    end
+  end
+
+  def test_refute_pattern_raises_other_exceptions
+    skip unless RUBY_VERSION >= "3.0"
+
+    @assertion_count = 0
+
+    assert_raises RuntimeError do
+      @tc.refute_pattern do
+        raise "boom"
+      end
+    end
+  end
+
+  def test_refute_pattern_with_no_block
+    skip unless RUBY_VERSION >= "3.0"
+
+    assert_triggered "refute_pattern requires a block to capture errors." do
+      @tc.refute_pattern
+    end
+  end
+
   def test_refute_predicate
     @tc.refute_predicate "42", :empty?
   end
@@ -1528,14 +1641,14 @@ class TestMinitestAssertionHelpers < Minitest::Test
 
   def test_mu_pp_for_diff_str_encoding
     str = "A\nB".b
-    exp = "# encoding: ASCII-8BIT\n#    valid: true\n\"A\nB\""
+    exp = "# encoding: #{Encoding::BINARY.name}\n#    valid: true\n\"A\nB\""
 
     assert_mu_pp_for_diff exp, str, :raw
   end
 
   def test_mu_pp_for_diff_str_encoding_both
     str = "A\\n\nB".b
-    exp = "# encoding: ASCII-8BIT\n#    valid: true\n\"A\\\\n\\nB\""
+    exp = "# encoding: #{Encoding::BINARY.name}\n#    valid: true\n\"A\\\\n\\nB\""
 
     assert_mu_pp_for_diff exp, str, :raw
   end
@@ -1575,7 +1688,7 @@ class TestMinitestAssertionHelpers < Minitest::Test
 
   def test_mu_pp_str_encoding
     str = "A\nB".b
-    exp = "# encoding: ASCII-8BIT\n#    valid: true\n\"A\\nB\""
+    exp = "# encoding: #{Encoding::BINARY.name}\n#    valid: true\n\"A\\nB\""
 
     assert_mu_pp exp, str, :raw
   end

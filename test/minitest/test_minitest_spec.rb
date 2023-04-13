@@ -137,6 +137,46 @@ describe Minitest::Spec do
     end
   end
 
+  def good_pattern
+    capture_io do # 3.0 is noisy
+      eval "[1,2,3] => [Integer, Integer, Integer]" # eval to escape parser for ruby<3
+    end
+  end
+
+  def bad_pattern
+    capture_io do # 3.0 is noisy
+      eval "[1,2,3] => [Integer, Integer]" # eval to escape parser for ruby<3
+    end
+  end
+
+  it "needs to pattern match" do
+    @assertion_count = 1
+
+    if RUBY_VERSION > "3" then
+      expect { good_pattern }.must_pattern_match
+    else
+      assert_raises NotImplementedError do
+        expect {}.must_pattern_match
+      end
+    end
+  end
+
+  it "needs to error on bad pattern match" do
+    skip unless RUBY_VERSION > "3"
+
+    @assertion_count = 1
+
+    exp = if RUBY_VERSION.start_with? "3.0"
+            "[1, 2, 3]" # terrible error message!
+          else
+            /length mismatch/
+          end
+
+    assert_triggered exp do
+      expect { bad_pattern }.must_pattern_match
+    end
+  end
+
   it "needs to ensure silence" do
     @assertion_count -= 1 # no msg
     @assertion_count += 2 # assert_output is 2 assertions
@@ -172,6 +212,7 @@ describe Minitest::Spec do
                         must_include
                         must_match
                         must_output
+                        must_pattern_match
                         must_raise
                         must_respond_to
                         must_throw
@@ -505,7 +546,7 @@ describe Minitest::Spec do
   it "needs to verify regexp matches" do
     @assertion_count += 3 # must_match is 2 assertions
 
-    assert_success _("blah").must_match(/\w+/)
+    assert_kind_of MatchData, _("blah").must_match(/\w+/)
 
     assert_triggered "Expected /\\d+/ to match \"blah\"." do
       _("blah").must_match(/\d+/)
@@ -744,6 +785,10 @@ describe Minitest::Spec, :subject do
 end
 
 class TestMetaStatic < Minitest::Test
+  def assert_method_count expected, klass
+    assert_equal expected, klass.public_instance_methods.grep(/^test_/).count
+  end
+
   def test_children
     Minitest::Spec.children.clear # prevents parallel run
 
@@ -777,8 +822,8 @@ class TestMetaStatic < Minitest::Test
       end
     end
 
-    assert_equal 1, outer.public_instance_methods.grep(/^test_/).count
-    assert_equal 1, inner.public_instance_methods.grep(/^test_/).count
+    assert_method_count 1, outer
+    assert_method_count 1, inner
   end
 
   def test_it_wont_add_test_methods_to_children
@@ -792,13 +837,17 @@ class TestMetaStatic < Minitest::Test
       end
     end
 
-    assert_equal 1, outer.public_instance_methods.grep(/^test_/).count
-    assert_equal 0, inner.public_instance_methods.grep(/^test_/).count
+    assert_method_count 1, outer
+    assert_method_count 0, inner
   end
 end
 
 class TestMeta < MetaMetaMetaTestCase
   # do not call parallelize_me! here because specs use register_spec_type globally
+
+  def assert_defined_methods expected, klass
+    assert_equal expected, klass.instance_methods(false).sort.map(&:to_s)
+  end
 
   def util_structure
     y = z = nil
@@ -872,7 +921,7 @@ class TestMeta < MetaMetaMetaTestCase
       end
     end
 
-    test_name = spec_class.instance_methods.sort.grep(/test/).first
+    test_name = spec_class.instance_methods.sort.grep(/test_/).first
 
     spec = spec_class.new test_name
 
@@ -921,9 +970,9 @@ class TestMeta < MetaMetaMetaTestCase
     inner_methods2 = inner_methods1 +
       %w[test_0002_anonymous test_0003_anonymous]
 
-    assert_equal top_methods,    x.instance_methods(false).sort.map(&:to_s)
-    assert_equal inner_methods1, y.instance_methods(false).sort.map(&:to_s)
-    assert_equal inner_methods2, z.instance_methods(false).sort.map(&:to_s)
+    assert_defined_methods top_methods, x
+    assert_defined_methods inner_methods1, y
+    assert_defined_methods inner_methods2, z
   end
 
   def test_structure_postfix_it
@@ -940,8 +989,8 @@ class TestMeta < MetaMetaMetaTestCase
       it "inner-it" do end
     end
 
-    assert_equal %w[test_0001_inner-it], y.instance_methods(false).map(&:to_s)
-    assert_equal %w[test_0001_inner-it], z.instance_methods(false).map(&:to_s)
+    assert_defined_methods %w[test_0001_inner-it], y
+    assert_defined_methods %w[test_0001_inner-it], z
   end
 
   def test_setup_teardown_behavior
@@ -972,9 +1021,9 @@ class TestMeta < MetaMetaMetaTestCase
                    ].sort
 
     assert_equal test_methods, [x1, x2]
-    assert_equal test_methods, x.instance_methods.grep(/^test/).map(&:to_s).sort
-    assert_equal [], y.instance_methods.grep(/^test/)
-    assert_equal [], z.instance_methods.grep(/^test/)
+    assert_defined_methods test_methods, x
+    assert_defined_methods [], y
+    assert_defined_methods [], z
   end
 
   def test_structure_subclasses
@@ -1058,5 +1107,40 @@ class ValueMonadTest < Minitest::Test
 
   def test_value_monad_expect_alias
     assert_equal "c", struct.expect
+  end
+end
+
+describe Minitest::Spec, :infect_an_assertion do
+  class << self
+    attr_accessor :infect_mock
+  end
+
+  def assert_infects exp, act, msg = nil, foo: nil, bar: nil
+    self.class.infect_mock.assert_infects exp, act, msg, foo: foo, bar: bar
+  end
+
+  infect_an_assertion :assert_infects, :must_infect
+  infect_an_assertion :assert_infects, :must_infect_without_flipping, :dont_flip
+
+  it "infects assertions with kwargs" do
+    mock = Minitest::Mock.new
+    mock.expect :assert_infects, true, [:exp, :act, nil], foo: :foo, bar: :bar
+
+    self.class.infect_mock = mock
+
+    _(:act).must_infect :exp, foo: :foo, bar: :bar
+
+    assert_mock mock
+  end
+
+  it "infects assertions with kwargs (dont_flip)" do
+    mock = Minitest::Mock.new
+    mock.expect :assert_infects, true, [:act, :exp, nil], foo: :foo, bar: :bar
+
+    self.class.infect_mock = mock
+
+    _(:act).must_infect_without_flipping :exp, foo: :foo, bar: :bar
+
+    assert_mock mock
   end
 end

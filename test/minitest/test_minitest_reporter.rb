@@ -30,6 +30,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
   end
 
   def setup
+    super
     self.io = StringIO.new("")
     self.r  = new_composite_reporter
   end

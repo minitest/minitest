@@ -9,45 +9,55 @@ require "etc"
 # :include: README.rdoc
 
 module Minitest
-  VERSION = "5.15.0" # :nodoc:
-  ENCS = "".respond_to? :encoding # :nodoc:
+  VERSION = "5.18.0" # :nodoc:
 
   @@installed_at_exit ||= false
   @@after_run = []
   @extensions = []
 
-  mc = (class << self; self; end)
+  def self.cattr_accessor name # :nodoc:
+    (class << self; self; end).attr_accessor name
+  end
+
+  ##
+  # The random seed used for this run. This is used to srand at the
+  # start of the run and between each +Runnable.run+.
+  #
+  # Set via Minitest.run after processing args.
+
+  cattr_accessor :seed
 
   ##
   # Parallel test executor
 
-  mc.send :attr_accessor, :parallel_executor
+  cattr_accessor :parallel_executor
 
   warn "DEPRECATED: use MT_CPU instead of N for parallel test runs" if ENV["N"]
   n_threads = (ENV["MT_CPU"] || ENV["N"] || Etc.nprocessors).to_i
+
   self.parallel_executor = Parallel::Executor.new n_threads
 
   ##
   # Filter object for backtraces.
 
-  mc.send :attr_accessor, :backtrace_filter
+  cattr_accessor :backtrace_filter
 
   ##
   # Reporter object to be used for all runs.
   #
   # NOTE: This accessor is only available during setup, not during runs.
 
-  mc.send :attr_accessor, :reporter
+  cattr_accessor :reporter
 
   ##
   # Names of known extension plugins.
 
-  mc.send :attr_accessor, :extensions
+  cattr_accessor :extensions
 
   ##
   # The signal to use for dumping information to STDERR. Defaults to "INFO".
 
-  mc.send :attr_accessor, :info_signal
+  cattr_accessor :info_signal
   self.info_signal = "INFO"
 
   ##
@@ -132,6 +142,9 @@ module Minitest
 
     options = process_args args
 
+    Minitest.seed = options[:seed]
+    srand Minitest.seed
+
     reporter = CompositeReporter.new
     reporter << SummaryReporter.new(options[:io], options)
     reporter << ProgressReporter.new(options[:io], options)
@@ -158,7 +171,7 @@ module Minitest
   # sub-classes to run.
 
   def self.__run reporter, options
-    suites = Runnable.runnables.reject { |s| s.runnable_methods.empty? }.shuffle
+    suites = Runnable.runnables.shuffle
     parallel, serial = suites.partition { |s| s.test_order == :parallel }
 
     # If we run the parallel tests before the serial tests, the parallel tests
@@ -194,6 +207,10 @@ module Minitest
 
       opts.on "-v", "--verbose", "Verbose. Show progress processing files." do
         options[:verbose] = true
+      end
+
+      opts.on "--show-skips", "Show skipped at the end of run." do
+        options[:show_skips] = true
       end
 
       opts.on "-n", "--name PATTERN", "Filter run on /regexp/ or string." do |a|
@@ -236,8 +253,6 @@ module Minitest
       options[:seed] = (ENV["SEED"] || srand).to_i % 0xFFFF
       orig_args << "--seed" << options[:seed].to_s
     end
-
-    srand options[:seed]
 
     options[:args] = orig_args.map { |s|
       s =~ /[\s|&<>$()]/ ? s.inspect : s
@@ -348,6 +363,14 @@ module Minitest
     def self.run_one_method klass, method_name, reporter
       reporter.prerecord klass, method_name
       reporter.record Minitest.run_one_method(klass, method_name)
+    end
+
+    ##
+    # Defines the order to run tests (:random by default). Override
+    # this or use a convenience method to change it for your tests.
+
+    def self.test_order
+      :random
     end
 
     def self.with_info_handler reporter, &block # :nodoc:
@@ -793,7 +816,8 @@ module Minitest
 
     def aggregated_results io # :nodoc:
       filtered_results = results.dup
-      filtered_results.reject!(&:skipped?) unless options[:verbose]
+      filtered_results.reject!(&:skipped?) unless
+        options[:verbose] or options[:show_skips]
 
       skip = options[:skip] || []
 
@@ -807,25 +831,18 @@ module Minitest
     end
 
     def to_s # :nodoc:
-      aggregated_results(StringIO.new(binary_string)).string
+      aggregated_results(StringIO.new(''.b)).string
     end
 
     def summary # :nodoc:
       extra = ""
 
       extra = "\n\nYou have skipped tests. Run with --verbose for details." if
-        results.any?(&:skipped?) unless options[:verbose] or ENV["MT_NO_SKIP_MSG"]
+        results.any?(&:skipped?) unless
+        options[:verbose] or options[:show_skips] or ENV["MT_NO_SKIP_MSG"]
 
       "%d runs, %d assertions, %d failures, %d errors, %d skips%s" %
         [count, assertions, failures, errors, skips, extra]
-    end
-
-    private
-
-    if '<3'.respond_to? :b
-      def binary_string; ''.b; end
-    else
-      def binary_string; ''.force_encoding(Encoding::ASCII_8BIT); end
     end
   end
 

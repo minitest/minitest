@@ -3,7 +3,7 @@ require "minitest/benchmark"
 
 ##
 # Used to verify data:
-# http://www.wolframalpha.com/examples/RegressionAnalysis.html
+# https://www.wolframalpha.com/examples/RegressionAnalysis.html
 
 class TestMinitestBenchmark < Minitest::Test
   def test_cls_bench_exp
@@ -110,7 +110,7 @@ class TestMinitestBenchmark < Minitest::Test
     assert_fit :power, x, y, 0.90, 2.6217, 1.4556
 
     # income to % of households below income amount
-    # http://library.wolfram.com/infocenter/Conferences/6461/PowerLaws.nb
+    # https://library.wolfram.com/infocenter/Conferences/6461/PowerLaws.nb
     x = [15_000, 25_000, 35_000, 50_000, 75_000, 100_000]
     y = [0.154, 0.283, 0.402, 0.55, 0.733, 0.843]
 

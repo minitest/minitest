@@ -1,8 +1,8 @@
 = minitest/{test,spec,mock,benchmark}
 
-home :: https://github.com/seattlerb/minitest
-bugs :: https://github.com/seattlerb/minitest/issues
-rdoc :: http://docs.seattlerb.org/minitest
+home :: https://github.com/minitest/minitest
+bugs :: https://github.com/minitest/minitest/issues
+rdoc :: https://docs.seattlerb.org/minitest
 vim  :: https://github.com/sunaku/vim-ruby-minitest
 emacs:: https://github.com/arthurnn/minitest-emacs
 
@@ -70,6 +70,7 @@ extract-method refactorings still apply.
 * minitest/mock - a simple and clean mock/stub system.
 * minitest/benchmark - an awesome way to assert your algorithm's performance.
 * minitest/pride - show your pride in testing!
+* minitest/test_task - a full-featured and clean rake task generator.
 * Incredibly small and fast runner, but no bells and whistles.
 * Written by squishy human beings. Software can never be perfect. We will all eventually die.
 
@@ -186,7 +187,7 @@ Output is tab-delimited to make it easy to paste into a spreadsheet.
 === Mocks
 
 Mocks and stubs defined using terminology by Fowler & Meszaros at
-http://www.martinfowler.com/bliki/TestDouble.html:
+https://www.martinfowler.com/bliki/TestDouble.html:
 
 "Mocks are pre-programmed with expectations which form a specification
 of the calls they are expected to receive. They can throw an exception
@@ -237,7 +238,7 @@ an example of asserting that code inside a thread is run:
 === Stubs
 
 Mocks and stubs are defined using terminology by Fowler & Meszaros at
-http://www.martinfowler.com/bliki/TestDouble.html:
+https://www.martinfowler.com/bliki/TestDouble.html:
 
 "Stubs provide canned answers to calls made during the test".
 
@@ -264,9 +265,8 @@ new non-existing method:
 
 === Running Your Tests
 
-Ideally, you'll use a rake task to run your tests, either piecemeal or
-all at once. Both rake and rails ship with rake tasks for running your
-tests. BUT! You don't have to:
+Ideally, you'll use a rake task to run your tests (see below), either
+piecemeal or all at once. BUT! You don't have to:
 
     % ruby -Ilib:test test/minitest/test_minitest_test.rb
     Run options: --seed 37685
@@ -294,17 +294,44 @@ provided via plugins. To see them, simply run with +--help+:
         -p, --pride                      Pride. Show your testing pride!
         -a, --autotest                   Connect to autotest server.
 
+=== Rake Tasks
+
 You can set up a rake task to run all your tests by adding this to your Rakefile:
 
-    require "rake/testtask"
+    require "minitest/test_task"
 
-    Rake::TestTask.new(:test) do |t|
+    Minitest::TestTask.create # named test, sensible defaults
+
+    # or more explicitly:
+
+    Minitest::TestTask.create(:test) do |t|
       t.libs << "test"
       t.libs << "lib"
-      t.test_files = FileList["test/**/test_*.rb"]
+      t.warning = false
+      t.test_globs = ["test/**/*_test.rb"]
     end
 
     task :default => :test
+
+Each of these will generate 4 tasks:
+
+    rake test          :: Run the test suite.
+    rake test:cmd      :: Print out the test command.
+    rake test:isolated :: Show which test files fail when run separately.
+    rake test:slow     :: Show bottom 25 tests sorted by time.
+
+=== Rake Task Variables
+
+There are a bunch of variables you can supply to rake to modify the run.
+
+    MT_LIB_EXTRAS :: Extra libs to dynamically override/inject for custom runs.
+    N             :: -n: Tests to run (string or /regexp/).
+    X             :: -x: Tests to exclude (string or /regexp/).
+    A             :: Any extra arguments. Honors shell quoting.
+    MT_CPU        :: How many threads to use for parallel test runs
+    SEED          :: -s --seed Sets random seed.
+    TESTOPTS      :: Deprecated, same as A
+    FILTER        :: Deprecated, same as A
 
 == Writing Extensions
 
@@ -380,37 +407,35 @@ Using our example above, here is how we might implement MyCI:
 
 Minitest is a dependency of rails, which until fairly recently had an
 overzealous backwards compatibility policy. As such, I'm stuck
-supporting versions of ruby that are long past EOL. Once rails 5.2 is
-dropped (hopefully April 2021), I get to drop a bunch of versions of
-ruby that I have to currently test against.
+supporting versions of ruby that are long past EOL. Hopefully I'll be
+able to support only current versions of ruby sometime in the near
+future.
 
-(As of 2021-01-31)
+(As of 2023-03-05)
 
 Current versions of rails: (https://endoflife.date/rails)
 
-  | rails | min ruby | rec ruby | minitest | status   |
-  |-------+----------+----------+----------+----------|
-  |   7.0 | >= 2.7   |      3.0 | >= 5.1   | Future   |
-  |   6.1 | >= 2.5   |      3.0 | >= 5.1   | Current  |
-  |   6.0 | >= 2.5   |      2.6 | >= 5.1   | Security |
-  |   5.2 | >= 2.2.2 |      2.5 | ~> 5.1   | Security | EOL @railsconf 2021?
+  | rails | min ruby | rec ruby | minitest | status   |  EOL Date  |
+  |-------+----------+----------+----------+----------+------------|
+  |   7.0 | >= 2.7   |      3.1 | >= 5.1   | Current  | 2025-06-01?|
+  |   6.1 | >= 2.5   |      3.0 | >= 5.1   | Maint    | 2024-06-01?|
+  |   6.0 | >= 2.5   |      2.6 | >= 5.1   | Security | 2023-06-01 |
+  |   5.2 | >= 2.2.2 |      2.5 | ~> 5.1   | EOL      | 2022-06-01 |
+
+If you want to look at the requirements for a specific version, run:
+
+    gem spec -r --ruby rails -v 7.0.0
 
 Current versions of ruby: (https://endoflife.date/ruby)
 
   | ruby | Status  |   EOL Date |
   |------+---------+------------|
-  |  3.0 | Current | 2024-03-31 |
-  |  2.7 | Maint   | 2023-03-31 |
-  |  2.6 | Maint*  | 2022-03-31 |
+  |  3.2 | Current | 2026-03-31 |
+  |  3.1 | Maint   | 2025-03-31 |
+  |  3.0 | Maint   | 2024-03-31 |
+  |  2.7 | Security| 2023-03-31 |
+  |  2.6 | EOL     | 2022-03-31 |
   |  2.5 | EOL     | 2021-03-31 |
-  |  2.4 | EOL     | 2020-03-31 |
-  |  2.3 | EOL     | 2019-03-31 |
-  |  2.2 | EOL     | 2018-03-31 |
-
-See also:
-
-* https://www.fastruby.io/blog/ruby/rails/versions/compatibility-table.html
-* https://jamesjeffersconsulting.com/ruby-rails-version-matrix/
 
 === How to test SimpleDelegates?
 
@@ -614,6 +639,7 @@ minitest-capistrano         :: Assertions and expectations for testing
                                Capistrano recipes.
 minitest-capybara           :: Capybara matchers support for minitest unit and
                                spec.
+minitest-cc                 :: It provides minimal information about code coverage.
 minitest-chef-handler       :: Run Minitest suites as Chef report handlers
 minitest-ci                 :: CI reporter plugin for Minitest.
 minitest-context            :: Defines contexts for code reuse in Minitest
@@ -712,7 +738,7 @@ minitest-stub-const         :: Stub constants for the duration of a block.
 minitest-tags               :: Add tags for minitest.
 minitest-unordered          :: Adds a new assertion to minitest for checking the
                                contents of a collection, ignoring element order.
-minitest-vcr                :: Automatic cassette managment with Minitest::Spec
+minitest-vcr                :: Automatic cassette management with Minitest::Spec
                                and VCR.
 minitest_log                :: Adds structured logging, data explication, and verdicts.
 minitest_owrapper           :: Get tests results as a TestResult object.
@@ -726,6 +752,9 @@ rematch                     :: Declutter your test files from large hardcoded da
                                and update them automatically when your code changes.
 rspec2minitest              :: Easily translate any RSpec matchers to Minitest
                                assertions and expectations.
+stubberry                   :: Multiple stubbing 'berries', sweet and useful 
+                               stub helpers and assertions. ( stub_must, 
+                               assert_method_called, stubbing ORM objects by id )
 
 == Unknown Extensions:
 
@@ -751,7 +780,7 @@ Authors... Please send me a pull request with a description of your minitest ext
 
 == Minitest related goods
 
-* minitest/pride fabric: http://www.spoonflower.com/fabric/3928730-again-by-katie_allen
+* minitest/pride fabric: https://www.spoonflower.com/fabric/3928730-again-by-katie_allen
 
 == REQUIREMENTS:
 

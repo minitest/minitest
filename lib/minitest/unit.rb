@@ -1,5 +1,3 @@
-# :stopdoc:
-
 unless defined?(Minitest) then
   # all of this crap is just to avoid circular requires and is only
   # needed if a user requires "minitest/unit" directly instead of
@@ -10,17 +8,18 @@ unless defined?(Minitest) then
   warn %(Warning: or add 'gem "minitest"' before 'require "minitest/autorun"')
   warn "From:\n  #{from}"
 
-  module Minitest; end
-  MiniTest = Minitest # prevents minitest.rb from requiring back to us
+  module Minitest # :nodoc:
+  end
+  MiniTest = Minitest # :nodoc: # prevents minitest.rb from requiring back to us
   require "minitest"
 end
 
 MiniTest = Minitest unless defined?(MiniTest)
 
 module Minitest
-  class Unit
+  class Unit # :nodoc:
     VERSION = Minitest::VERSION
-    class TestCase < Minitest::Test
+    class TestCase < Minitest::Test # :nodoc:
       def self.inherited klass # :nodoc:
         from = caller.first
         warn "MiniTest::Unit::TestCase is now Minitest::Test. From #{from}"
@@ -41,5 +40,3 @@ module Minitest
     end
   end
 end
-
-# :startdoc:

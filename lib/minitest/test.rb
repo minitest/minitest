@@ -18,6 +18,10 @@ module Minitest
 
     PASSTHROUGH_EXCEPTIONS = [NoMemoryError, SignalException, SystemExit] # :nodoc:
 
+    SETUP_METHODS = %w[ before_setup setup after_setup ] # :nodoc:
+
+    TEARDOWN_METHODS = %w[ before_teardown teardown after_teardown ] # :nodoc:
+
     # :stopdoc:
     class << self; attr_accessor :io_lock; end
     self.io_lock = Mutex.new
@@ -67,8 +71,8 @@ module Minitest
 
       case self.test_order
       when :random, :parallel then
-        max = methods.size
-        methods.sort.sort_by { rand max }
+        srand Minitest.seed
+        methods.sort.shuffle
       when :alpha, :sorted then
         methods.sort
       else
@@ -77,23 +81,15 @@ module Minitest
     end
 
     ##
-    # Defines the order to run tests (:random by default). Override
-    # this or use a convenience method to change it for your tests.
-
-    def self.test_order
-      :random
-    end
-
-    TEARDOWN_METHODS = %w[ before_teardown teardown after_teardown ] # :nodoc:
-
-    ##
     # Runs a single test with setup/teardown hooks.
 
     def run
       with_info_handler do
         time_it do
           capture_exceptions do
-            before_setup; setup; after_setup
+            SETUP_METHODS.each do |hook|
+              self.send hook
+            end
 
             self.send self.name
           end
@@ -203,12 +199,34 @@ module Minitest
 
     def sanitize_exception e # :nodoc:
       Marshal.dump e
-      e
-    rescue TypeError
+      e                                         # good: use as-is
+    rescue
+      neuter_exception e
+    end
+
+    def neuter_exception e # :nodoc:
       bt = e.backtrace
-      e = RuntimeError.new "Wrapped undumpable exception for: #{e.class}: #{e.message}"
-      e.set_backtrace bt
-      e
+      msg = e.message.dup
+
+      new_exception e.class, msg, bt            # e.class can be a problem...
+    rescue
+      msg.prepend "Neutered Exception #{e.class}: "
+
+      new_exception RuntimeError, msg, bt, true # but if this raises, we die
+    end
+
+    def new_exception klass, msg, bt, kill = false # :nodoc:
+      ne = klass.new msg
+      ne.set_backtrace bt
+
+      if kill then
+        ne.instance_variables.each do |v|
+          ne.remove_instance_variable v
+        end
+      end
+
+      Marshal.dump ne                           # can raise TypeError
+      ne
     end
 
     def with_info_handler &block # :nodoc:

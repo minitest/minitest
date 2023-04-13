@@ -1,8 +1,14 @@
 require "minitest/autorun"
 
-class TestMinitestMock < Minitest::Test
-  parallelize_me!
+def with_kwargs_env
+  ENV["MT_KWARGS_HAC\K"] = "1"
 
+  yield
+ensure
+  ENV.delete "MT_KWARGS_HAC\K"
+end
+
+class TestMinitestMock < Minitest::Test
   def setup
     @mock = Minitest::Mock.new.expect(:foo, nil)
     @mock.expect(:meaning_of_life, 42)
@@ -51,7 +57,7 @@ class TestMinitestMock < Minitest::Test
       @mock.sum
     end
 
-    assert_equal "mocked method :sum expects 2 arguments, got 0", e.message
+    assert_equal "mocked method :sum expects 2 arguments, got []", e.message
   end
 
   def test_return_mock_does_not_raise
@@ -210,7 +216,7 @@ class TestMinitestMock < Minitest::Test
       mock.a
     end
 
-    assert_equal "No more expects available for :a: []", e.message
+    assert_equal "No more expects available for :a: [] {}", e.message
   end
 
   def test_same_method_expects_are_verified_when_all_called
@@ -252,6 +258,30 @@ class TestMinitestMock < Minitest::Test
     assert_equal exp, e.message
   end
 
+  def test_delegator_calls_are_propagated
+    delegator = Object.new
+    mock = Minitest::Mock.new delegator
+
+    refute delegator.nil?
+    refute mock.nil?
+    assert_mock mock
+  end
+
+  def test_handles_kwargs_in_error_message
+    mock = Minitest::Mock.new
+
+    mock.expect :foo, nil, [], kw: true
+    mock.expect :foo, nil, [], kw: false
+
+    mock.foo kw: true
+
+    e = assert_raises(MockExpectationError) { mock.verify }
+
+    exp = "expected foo(:kw=>false) => nil, got [foo(:kw=>true) => nil]"
+
+    assert_equal exp, e.message
+  end
+
   def test_verify_passes_when_mock_block_returns_true
     mock = Minitest::Mock.new
     mock.expect :foo, nil do
@@ -270,9 +300,186 @@ class TestMinitestMock < Minitest::Test
       a1 == arg1 && a2 == arg2 && a3 == arg3
     end
 
-    mock.foo arg1, arg2, arg3
+    assert_silent do
+      if RUBY_VERSION > "3" then
+        mock.foo arg1, arg2, arg3
+      else
+        mock.foo arg1, arg2, **arg3 # oddity just for ruby 2.7
+      end
+    end
 
     assert_mock mock
+  end
+
+  def test_mock_block_is_passed_keyword_args__block
+    arg1, arg2, arg3 = :bar, [1, 2, 3], { :a => "a" }
+    mock = Minitest::Mock.new
+    mock.expect :foo, nil do |k1:, k2:, k3:|
+      k1 == arg1 && k2 == arg2 && k3 == arg3
+    end
+
+    mock.foo(k1: arg1, k2: arg2, k3: arg3)
+
+    assert_mock mock
+  end
+
+  def test_mock_block_is_passed_keyword_args__block_bad_missing
+    arg1, arg2, arg3 = :bar, [1, 2, 3], { :a => "a" }
+    mock = Minitest::Mock.new
+    mock.expect :foo, nil do |k1:, k2:, k3:|
+      k1 == arg1 && k2 == arg2 && k3 == arg3
+    end
+
+    e = assert_raises ArgumentError do
+      mock.foo(k1: arg1, k2: arg2)
+    end
+
+    # basically testing ruby ... need ? for ruby < 2.7 :(
+    assert_match(/missing keyword: :?k3/, e.message)
+  end
+
+  def test_mock_block_is_passed_keyword_args__block_bad_extra
+    arg1, arg2, arg3 = :bar, [1, 2, 3], { :a => "a" }
+    mock = Minitest::Mock.new
+    mock.expect :foo, nil do |k1:, k2:|
+      k1 == arg1 && k2 == arg2 && k3 == arg3
+    end
+
+    e = assert_raises ArgumentError do
+      mock.foo(k1: arg1, k2: arg2, k3: arg3)
+    end
+
+    # basically testing ruby ... need ? for ruby < 2.7 :(
+    assert_match(/unknown keyword: :?k3/, e.message)
+  end
+
+  def test_mock_block_is_passed_keyword_args__block_bad_value
+    arg1, arg2, arg3 = :bar, [1, 2, 3], { :a => "a" }
+    mock = Minitest::Mock.new
+    mock.expect :foo, nil do |k1:, k2:, k3:|
+      k1 == arg1 && k2 == arg2 && k3 == arg3
+    end
+
+    e = assert_raises MockExpectationError do
+      mock.foo(k1: arg1, k2: arg2, k3: :BAD!)
+    end
+
+    exp = "mocked method :foo failed block w/ [] {:k1=>:bar, :k2=>[1, 2, 3], :k3=>:BAD!}"
+    assert_equal exp, e.message
+  end
+
+  def test_mock_block_is_passed_keyword_args__args
+    arg1, arg2, arg3 = :bar, [1, 2, 3], { :a => "a" }
+    mock = Minitest::Mock.new
+    mock.expect :foo, nil, k1: arg1, k2: arg2, k3: arg3
+
+    mock.foo(k1: arg1, k2: arg2, k3: arg3)
+
+    assert_mock mock
+  end
+
+  def test_mock_allow_all_kwargs__old_style_env
+    with_kwargs_env do
+      mock = Minitest::Mock.new
+      mock.expect :foo, true, [Hash]
+      assert_equal true, mock.foo(bar: 42)
+    end
+  end
+
+  def test_mock_allow_all_kwargs__old_style_env__rewrite
+    with_kwargs_env do
+      mock = Minitest::Mock.new
+      mock.expect :foo, true, [], bar: Integer
+      assert_equal true, mock.foo(bar: 42)
+    end
+  end
+
+  def test_mock_block_is_passed_keyword_args__args__old_style_bad
+    arg1, arg2, arg3 = :bar, [1, 2, 3], { :a => "a" }
+    mock = Minitest::Mock.new
+    mock.expect :foo, nil, [{k1: arg1, k2: arg2, k3: arg3}]
+
+    e = assert_raises ArgumentError do
+      mock.foo(k1: arg1, k2: arg2, k3: arg3)
+    end
+
+    assert_equal "mocked method :foo expects 1 arguments, got []", e.message
+  end
+
+  def test_mock_block_is_passed_keyword_args__args__old_style_env
+    with_kwargs_env do
+      arg1, arg2, arg3 = :bar, [1, 2, 3], { :a => "a" }
+      mock = Minitest::Mock.new
+      mock.expect :foo, nil, [{k1: arg1, k2: arg2, k3: arg3}]
+
+      mock.foo(k1: arg1, k2: arg2, k3: arg3)
+
+      assert_mock mock
+    end
+  end
+
+  def test_mock_block_is_passed_keyword_args__args__old_style_both
+    with_kwargs_env do
+      arg1, arg2, arg3 = :bar, [1, 2, 3], { :a => "a" }
+      mock = Minitest::Mock.new
+
+      assert_output nil, /Using MT_KWARGS_HAC. yet passing kwargs/ do
+        mock.expect :foo, nil, [{}], k1: arg1, k2: arg2, k3: arg3
+      end
+
+      mock.foo({}, k1: arg1, k2: arg2, k3: arg3)
+
+      assert_mock mock
+    end
+  end
+
+  def test_mock_block_is_passed_keyword_args__args_bad_missing
+    arg1, arg2, arg3 = :bar, [1, 2, 3], { :a => "a" }
+    mock = Minitest::Mock.new
+    mock.expect :foo, nil, k1: arg1, k2: arg2, k3: arg3
+
+    e = assert_raises ArgumentError do
+      mock.foo(k1: arg1, k2: arg2)
+    end
+
+    assert_equal "mocked method :foo expects 3 keyword arguments, got %p" % {k1: arg1, k2: arg2}, e.message
+  end
+
+  def test_mock_block_is_passed_keyword_args__args_bad_extra
+    arg1, arg2, arg3 = :bar, [1, 2, 3], { :a => "a" }
+    mock = Minitest::Mock.new
+    mock.expect :foo, nil, k1: arg1, k2: arg2
+
+    e = assert_raises ArgumentError do
+      mock.foo(k1: arg1, k2: arg2, k3: arg3)
+    end
+
+    assert_equal "mocked method :foo expects 2 keyword arguments, got %p" % {k1: arg1, k2: arg2, k3: arg3}, e.message
+  end
+
+  def test_mock_block_is_passed_keyword_args__args_bad_key
+    arg1, arg2, arg3 = :bar, [1, 2, 3], { :a => "a" }
+    mock = Minitest::Mock.new
+    mock.expect :foo, nil, k1: arg1, k2: arg2, k3: arg3
+
+    e = assert_raises MockExpectationError do
+      mock.foo(k1: arg1, k2: arg2, BAD: arg3)
+    end
+
+    assert_includes e.message, "unexpected keywords [:k1, :k2, :k3]"
+    assert_includes e.message, "vs [:k1, :k2, :BAD]"
+  end
+
+  def test_mock_block_is_passed_keyword_args__args_bad_val
+    arg1, arg2, arg3 = :bar, [1, 2, 3], { :a => "a" }
+    mock = Minitest::Mock.new
+    mock.expect :foo, nil, k1: arg1, k2: arg2, k3: arg3
+
+    e = assert_raises MockExpectationError do
+      mock.foo(k1: arg1, k2: :BAD!, k3: arg3)
+    end
+
+    assert_match(/unexpected keyword arguments.* vs .*:k2=>:BAD!/, e.message)
   end
 
   def test_mock_block_is_passed_function_block
@@ -286,6 +493,13 @@ class TestMinitestMock < Minitest::Test
     assert_mock mock
   end
 
+  def test_mock_forward_keyword_arguments
+    mock = Minitest::Mock.new
+    mock.expect(:foo, nil) { |bar:| bar == 'bar' }
+    mock.foo(bar: 'bar')
+    assert_mock mock
+  end
+
   def test_verify_fails_when_mock_block_returns_false
     mock = Minitest::Mock.new
     mock.expect :foo, nil do
@@ -293,12 +507,12 @@ class TestMinitestMock < Minitest::Test
     end
 
     e = assert_raises(MockExpectationError) { mock.foo }
-    exp = "mocked method :foo failed block w/ []"
+    exp = "mocked method :foo failed block w/ [] {}"
 
     assert_equal exp, e.message
   end
 
-  def test_mock_block_throws_if_args_passed
+  def test_mock_block_raises_if_args_passed
     mock = Minitest::Mock.new
 
     e = assert_raises(ArgumentError) do
@@ -308,6 +522,20 @@ class TestMinitestMock < Minitest::Test
     end
 
     exp = "args ignored when block given"
+
+    assert_match exp, e.message
+  end
+
+  def test_mock_block_raises_if_kwargs_passed
+    mock = Minitest::Mock.new
+
+    e = assert_raises(ArgumentError) do
+      mock.expect :foo, nil, kwargs:1 do
+        true
+      end
+    end
+
+    exp = "kwargs ignored when block given"
 
     assert_match exp, e.message
   end
@@ -519,6 +747,19 @@ class TestMinitestStub < Minitest::Test
     @tc.assert_equal true, rs
   end
 
+  def test_mock_with_yield_kwargs
+    mock = Minitest::Mock.new
+    rs = nil
+
+    File.stub :open, true, mock, kw:42 do
+      File.open "foo.txt", "r" do |f, kw:|
+        rs = kw
+      end
+    end
+
+    @tc.assert_equal 42, rs
+  end
+
   alias test_stub_value__old test_stub_value # TODO: remove/rename
 
   def test_instance_singleton_class_is_not_dirty
@@ -636,6 +877,26 @@ class TestMinitestStub < Minitest::Test
   def test_stub_callable_keyword_args
     Keywords.stub :args, ->(*args, **kws) { [args, kws] } do
       @tc.assert_equal [["woot"], { kw1: 42 }], Keywords.args("woot", kw1: 42)
+    end
+  end
+
+  def test_stub__hash_as_last_real_arg
+    with_kwargs_env do
+      token = Object.new
+      def token.create_with_retry u, p; raise "shouldn't see this"; end
+
+      controller = Object.new
+      controller.define_singleton_method :create do |u, p|
+        token.create_with_retry u, p
+      end
+
+      params = Object.new
+      def params.to_hash; raise "nah"; end
+
+      token.stub(:create_with_retry, ->(u, p) { 42 }) do
+        act = controller.create :u, params
+        @tc.assert_equal 42, act
+      end
     end
   end
 
@@ -857,7 +1118,7 @@ class TestMinitestStub < Minitest::Test
         end
       end
     end
-    exp = "undefined method `write' for nil:NilClass"
+    exp = /undefined method `write' for nil/
     assert_match exp, e.message
   end
 

@@ -48,9 +48,11 @@ class TestMinitestUnit < MetaMetaMetaTestCase
           "test/test_autotest.rb:62:in `test_add_exception'"]
     ex = util_expand_bt ex
 
-    fu = Minitest.filter_backtrace(bt)
+    Minitest::Test.io_lock.synchronize do # try not to trounce in parallel
+      fu = Minitest.filter_backtrace(bt)
 
-    assert_equal ex, fu
+      assert_equal ex, fu
+    end
   end
 
   def test_filter_backtrace_all_unit
@@ -71,8 +73,10 @@ class TestMinitestUnit < MetaMetaMetaTestCase
     bt = util_expand_bt bt
 
     ex = ["-e:1"]
-    fu = Minitest.filter_backtrace bt
-    assert_equal ex, fu
+    Minitest::Test.io_lock.synchronize do # try not to trounce in parallel
+      fu = Minitest.filter_backtrace bt
+      assert_equal ex, fu
+    end
   end
 
   def test_filter_backtrace__empty
@@ -95,24 +99,26 @@ class TestMinitestUnit < MetaMetaMetaTestCase
     end
 
     expected = clean <<-EOM
-      EF
+      FE
 
       Finished in 0.00
 
-        1) Error:
-      FakeNamedTestXX#test_this_is_non_ascii_failure_message:
-      RuntimeError: ЁЁЁ
-          FILE:LINE:in `test_this_is_non_ascii_failure_message'
-
-        2) Failure:
+        1) Failure:
       FakeNamedTestXX#test_this_is_not_ascii_assertion [FILE:LINE]:
       Expected: \"ЁЁЁ\"
         Actual: \"ёёё\"
 
+        2) Error:
+      FakeNamedTestXX#test_this_is_non_ascii_failure_message:
+      RuntimeError: ЁЁЁ
+          FILE:LINE:in `test_this_is_non_ascii_failure_message'
+
       2 runs, 1 assertions, 1 failures, 1 errors, 0 skips
     EOM
 
-    assert_report expected
+    Minitest::Test.io_lock.synchronize do # try not to trounce in parallel
+      assert_report expected
+    end
   end
 
   def test_passed_eh_teardown_good
@@ -158,11 +164,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
   end
 
   def util_expand_bt bt
-    if RUBY_VERSION >= "1.9.0" then
-      bt.map { |f| (f =~ /^\./) ? File.expand_path(f) : f }
-    else
-      bt
-    end
+    bt.map { |f| (f =~ /^\./) ? File.expand_path(f) : f }
   end
 end
 
@@ -254,7 +256,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     end
 
     expected = clean <<-EOM
-      E.
+      .E
 
       Finished in 0.00
 
@@ -301,7 +303,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     setup_basic_tu
 
     expected = clean <<-EOM
-      F.
+      .F
 
       Finished in 0.00
 
@@ -326,6 +328,10 @@ class TestMinitestRunner < MetaMetaMetaTestCase
         assert false
       end
     end
+  end
+
+  def test_seed # this is set for THIS run, so I'm not testing it's actual value
+    assert_instance_of Integer, Minitest.seed
   end
 
   def test_run_failing_filtered
@@ -485,7 +491,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     end
 
     expected = clean <<-EOM
-      S.
+      .S
 
       Finished in 0.00
 
@@ -512,8 +518,8 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     end
 
     expected = clean <<-EOM
-      FakeNamedTestXX#test_skip = 0.00 s = S
       FakeNamedTestXX#test_something = 0.00 s = .
+      FakeNamedTestXX#test_skip = 0.00 s = S
 
       Finished in 0.00
 
@@ -525,6 +531,33 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     EOM
 
     assert_report expected, %w[--seed 42 --verbose]
+  end
+
+  def test_run_skip_show_skips
+    @tu =
+    Class.new FakeNamedTest do
+      def test_something
+        assert true
+      end
+
+      def test_skip
+        skip "not yet"
+      end
+    end
+
+    expected = clean <<-EOM
+      .S
+
+      Finished in 0.00
+
+        1) Skipped:
+      FakeNamedTestXX#test_skip [FILE:LINE]:
+      not yet
+
+      2 runs, 1 assertions, 0 failures, 0 errors, 1 skips
+    EOM
+
+    assert_report expected, %w[--seed 42 --show-skips]
   end
 
   def test_run_with_other_runner
@@ -626,6 +659,8 @@ class TestMinitestRunner < MetaMetaMetaTestCase
 
       2 runs, 2 assertions, 0 failures, 0 errors, 0 skips
     EOM
+
+    skip if Minitest.parallel_executor.size < 2 # locks up test runner if 1 CPU
 
     assert_report(expected) do |reporter|
       reporter.extend(Module.new {
@@ -751,6 +786,13 @@ class TestMinitestUnitOrder < MetaMetaMetaTestCase
   end
 end
 
+class BetterError < RuntimeError # like better_error w/o infecting RuntimeError
+  def set_backtrace bt
+    super
+    @bad_ivar = binding
+  end
+end
+
 class TestMinitestRunnable < Minitest::Test
   def setup_marshal klass
     tc = klass.new "whatever"
@@ -805,13 +847,134 @@ class TestMinitestRunnable < Minitest::Test
   end
 
   def test_spec_marshal_with_exception
-    klass = describe("whatever") { it("passes") { raise Class.new(StandardError)} }
+    klass = describe("whatever") {
+      it("raises, badly") {
+        raise Class.new(StandardError), "this is bad!"
+      }
+    }
+
     rm = klass.runnable_methods.first
 
     # Run the test
     @tc = klass.new(rm).run
 
     assert_kind_of Minitest::Result, @tc
+    assert_instance_of Minitest::UnexpectedError, @tc.failure
+
+    msg = @tc.failure.error.message
+    assert_includes msg, "Neutered Exception #<Class:"
+    assert_includes msg, "this is bad!"
+
+    # Pass it over the wire
+    over_the_wire = Marshal.load Marshal.dump @tc
+
+    assert_equal @tc.time,       over_the_wire.time
+    assert_equal @tc.name,       over_the_wire.name
+    assert_equal @tc.assertions, over_the_wire.assertions
+    assert_equal @tc.failures,   over_the_wire.failures
+    assert_equal @tc.klass,      over_the_wire.klass
+  end
+
+  def test_spec_marshal_with_exception_nameerror
+    klass = describe("whatever") {
+      it("raises nameerror") {
+        NOPE::does_not_exist
+      }
+    }
+
+    rm = klass.runnable_methods.first
+
+    # Run the test
+    @tc = klass.new(rm).run
+
+    assert_kind_of Minitest::Result, @tc
+    assert_instance_of Minitest::UnexpectedError, @tc.failure
+
+    msg = @tc.failure.error.message
+    assert_includes msg, "uninitialized constant TestMinitestRunnable::NOPE"
+
+    # Pass it over the wire
+    over_the_wire = Marshal.load Marshal.dump @tc
+
+    assert_equal @tc.time,       over_the_wire.time
+    assert_equal @tc.name,       over_the_wire.name
+    assert_equal @tc.assertions, over_the_wire.assertions
+    assert_equal @tc.failures,   over_the_wire.failures
+    assert_equal @tc.klass,      over_the_wire.klass
+  end
+
+  def with_runtime_error klass
+    old_runtime = RuntimeError
+    Object.send :remove_const, :RuntimeError
+    Object.const_set :RuntimeError, klass
+    yield
+  ensure
+    Object.send :remove_const, :RuntimeError
+    Object.const_set :RuntimeError, old_runtime
+  end
+
+  def test_spec_marshal_with_exception__better_error_typeerror
+    klass = describe("whatever") {
+      it("raises with binding") {
+        raise BetterError, "boom"
+      }
+    }
+
+    rm = klass.runnable_methods.first
+
+    # Run the test
+    @tc = with_runtime_error BetterError do
+      klass.new(rm).run
+    end
+
+    assert_kind_of Minitest::Result, @tc
+    assert_instance_of Minitest::UnexpectedError, @tc.failure
+
+    msg = @tc.failure.error.message
+    assert_equal "Neutered Exception BetterError: boom", msg
+
+    # Pass it over the wire
+    over_the_wire = Marshal.load Marshal.dump @tc
+
+    assert_equal @tc.time,       over_the_wire.time
+    assert_equal @tc.name,       over_the_wire.name
+    assert_equal @tc.assertions, over_the_wire.assertions
+    assert_equal @tc.failures,   over_the_wire.failures
+    assert_equal @tc.klass,      over_the_wire.klass
+  end
+
+  def test_spec_marshal_with_exception__worse_error_typeerror
+    worse_error_klass = Class.new(StandardError) do
+      # problem #1: anonymous subclass can'tmarshal, fails sanitize_exception
+      def initialize(record = nil)
+
+        super(record.first)
+      end
+    end
+
+    klass = describe("whatever") {
+      it("raises with NoMethodError") {
+        # problem #2: instantiated with a NON-string argument
+        #
+        # problem #3: arg responds to #first, but it becomes message
+        #             which gets passed back in via new_exception
+        #             that passes a string to worse_error_klass#initialize
+        #             which calls first on it, which raises NoMethodError
+        raise worse_error_klass.new(["boom"])
+      }
+    }
+
+    rm = klass.runnable_methods.first
+
+    # Run the test
+    @tc = klass.new(rm).run
+
+    assert_kind_of Minitest::Result, @tc
+    assert_instance_of Minitest::UnexpectedError, @tc.failure
+
+    msg = @tc.failure.error.message.gsub(/0x[A-Fa-f0-9]+/, "0xXXX")
+
+    assert_equal "Neutered Exception #<Class:0xXXX>: boom", msg
 
     # Pass it over the wire
     over_the_wire = Marshal.load Marshal.dump @tc
@@ -885,7 +1048,7 @@ class TestMinitestUnitTestCase < Minitest::Test
     random_tests_3 = sample_test_case 1_000
 
     assert_equal random_tests_1, random_tests_2
-    refute_equal random_tests_1, random_tests_3
+    assert_equal random_tests_1, random_tests_3
   end
 
   def test_runnable_methods_sorted
