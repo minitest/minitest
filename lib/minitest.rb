@@ -331,19 +331,25 @@ module Minitest
     # reporter to record.
 
     def self.run reporter, options = {}
-      filter = options[:filter] || "/./"
-      filter = Regexp.new $1 if filter.is_a?(String) && filter =~ %r%/(.*)/%
+      filtered_methods = if options[:filter]
+        filter = options[:filter]
+        filter = Regexp.new $1 if filter.is_a?(String) && filter =~ %r%/(.*)/%
 
-      filtered_methods = self.runnable_methods.find_all { |m|
-        filter === m || filter === "#{self}##{m}"
-      }
+        self.runnable_methods.find_all { |m|
+          filter === m || filter === "#{self}##{m}"
+        }
+      else
+        self.runnable_methods
+      end
 
-      exclude = options[:exclude]
-      exclude = Regexp.new $1 if exclude =~ %r%/(.*)/%
+      if options[:exclude]
+        exclude = options[:exclude]
+        exclude = Regexp.new $1 if exclude =~ %r%/(.*)/%
 
-      filtered_methods.delete_if { |m|
-        exclude === m || exclude === "#{self}##{m}"
-      }
+        filtered_methods.delete_if { |m|
+          exclude === m || exclude === "#{self}##{m}"
+        }
+      end
 
       return if filtered_methods.empty?
 
