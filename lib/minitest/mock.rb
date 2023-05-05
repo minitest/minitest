@@ -293,6 +293,10 @@ end
 
 ##
 # Object extensions for Minitest::Mock.
+#
+# Mocks and also stubs are defined using terminology by Fowler & Meszaros at www.martinfowler.com/bliki/TestDouble.html:
+#
+# “Stubs provide canned answers to calls made during the test”.
 
 class Object
 
