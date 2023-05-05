@@ -6,6 +6,47 @@ module Minitest # :nodoc:
   # A simple and clean mock object framework.
   #
   # All mock objects are an instance of Mock
+  # 
+  # Mocks and stubs defined using terminology by Fowler & Meszaros at www.martinfowler.com/bliki/TestDouble.html:
+  #
+  # “Mocks are pre-programmed with expectations which form a specification of the calls they are expected to receive. They can throw an exception if they receive a call they don’t expect and are checked during verification to ensure they got all the calls they were expecting.”
+  #
+  #   class MemeAsker
+  #     def initialize(meme)
+  #       @meme = meme
+  #     end
+  #
+  #     def ask(question)
+  #       method = question.tr(" ", "_") + "?"
+  #       @meme.__send__(method)
+  #     end
+  #   end
+  #
+  #   require "minitest/autorun"
+  #
+  #   describe MemeAsker, :ask do
+  #     describe "when passed an unpunctuated question" do
+  #       it "should invoke the appropriate predicate method on the meme" do
+  #         @meme = Minitest::Mock.new
+  #         @meme_asker = MemeAsker.new @meme
+  #         @meme.expect :will_it_blend?, :return_value
+  #
+  #         @meme_asker.ask "will it blend"
+  #
+  #         @meme.verify
+  #       end
+  #     end
+  #   end
+  #
+  # A note on multi-threading: Minitest mocks do not support multi-threading. If it works, fine, if it doesn’t you can use regular ruby patterns and facilities like local variables. Here’s an example of asserting that code inside a thread is run:
+  #
+  #   def test_called_inside_thread
+  #     called = false
+  #     pr = Proc.new { called = true }
+  #     thread = Thread.new(&pr)
+  #     thread.join
+  #     assert called, "proc not called"
+  #   end
 
   class Mock
     alias :__respond_to? :respond_to?
