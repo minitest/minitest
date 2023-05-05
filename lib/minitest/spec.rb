@@ -101,7 +101,7 @@ end
 ##
 # Minitest::Spec -- The faster, better, less-magical spec framework!
 #
-# For a list of expectations, see Minitest::Expectations.
+# For a list of expectations, see Minitest::Expectations. To learn how to set up a basic spec see Kernel.
 
 class Minitest::Spec < Minitest::Test
 
