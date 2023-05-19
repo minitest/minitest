@@ -141,7 +141,7 @@ module Minitest
       #     end
       #   end
       #
-      #   class MiniTest::Test
+      #   class Minitest::Test
       #     include MyMinitestPlugin
       #   end
 
