@@ -32,7 +32,7 @@ module Minitest
 
   cattr_accessor :parallel_executor
 
-  warn "DEPRECATED: use MT_CPU instead of N for parallel test runs" if ENV["N"]
+  warn "DEPRECATED: use MT_CPU instead of N for parallel test runs" if ENV["N"] && ENV["N"].to_i > 0
   n_threads = (ENV["MT_CPU"] || ENV["N"] || Etc.nprocessors).to_i
 
   self.parallel_executor = Parallel::Executor.new n_threads
