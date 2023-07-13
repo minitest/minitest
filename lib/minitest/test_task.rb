@@ -34,14 +34,15 @@ module Minitest # :nodoc:
     WINDOWS = RbConfig::CONFIG["host_os"] =~ /mswin|mingw/ # :nodoc:
 
     ##
-    # Create several test-oriented tasks under +name+. Takes an
-    # optional block to customize variables.
+    # Create several test-oriented tasks under +name+ (default +test+).
+    # Also adds a test task to the default task(s) unless +default: false+.
+    # Takes an optional block to customize variables.
 
-    def self.create name = :test, &block
+    def self.create name = :test, default: true, &block
       task = new name
       task.instance_eval(&block) if block
       task.process_env
-      task.define
+      task.define default: default
       task
     end
 
@@ -156,9 +157,7 @@ module Minitest # :nodoc:
       extra_args.compact!
     end
 
-    def define # :nodoc:
-      default_tasks = []
-
+    def define default: true # :nodoc:
       desc "Run the test suite. Use N, X, A, and TESTOPTS to add flags/args."
       task name do
         ruby make_test_cmd, verbose:verbose
@@ -244,10 +243,10 @@ module Minitest # :nodoc:
             "tail -25"].join " | "
       end
 
-      default_tasks << name
-
-      desc "Run the default task(s)."
-      task :default => default_tasks
+      if default
+        desc "Run the default task(s)."
+        task :default => [name]
+      end
     end
 
     ##
