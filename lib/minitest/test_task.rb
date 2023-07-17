@@ -29,6 +29,10 @@ module Minitest # :nodoc:
   #   end
   #
   # Customize the name and only run unit tests.
+  #
+  # NOTE: To hook this task up to the default, make it a dependency:
+  #
+  #   task default: :unit
 
   class TestTask < Rake::TaskLib
     WINDOWS = RbConfig::CONFIG["host_os"] =~ /mswin|mingw/ # :nodoc:
@@ -157,8 +161,6 @@ module Minitest # :nodoc:
     end
 
     def define # :nodoc:
-      default_tasks = []
-
       desc "Run the test suite. Use N, X, A, and TESTOPTS to add flags/args."
       task name do
         ruby make_test_cmd, verbose:verbose
@@ -243,11 +245,6 @@ module Minitest # :nodoc:
             "sort -n -k2 -t=",
             "tail -25"].join " | "
       end
-
-      default_tasks << name
-
-      desc "Run the default task(s)."
-      task :default => default_tasks
     end
 
     ##
