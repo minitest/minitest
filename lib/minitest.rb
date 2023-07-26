@@ -446,6 +446,31 @@ module Minitest
       self.name       = name
       self.failures   = []
       self.assertions = 0
+      # lazy initializer for metadata
+    end
+
+    ##
+    # Metadata you attach to the test results that get sent to the reporter.
+    #
+    # Lazily initializes to a hash, to keep memory down.
+    #
+    # NOTE: this data *must* be plain (read: marshal-able) data!
+    # Hashes! Arrays! Strings!
+
+    def metadata
+      @metadata ||= {}
+    end
+
+    ##
+    # Sets metadata, mainly used for +Result.from+.
+
+    attr_writer :metadata
+
+    ##
+    # Returns true if metadata exists.
+
+    def metadata?
+      defined? @metadata
     end
 
     ##
@@ -566,6 +591,7 @@ module Minitest
       r.assertions = o.assertions
       r.failures   = o.failures.dup
       r.time       = o.time
+      r.metadata   = o.metadata if o.metadata?
 
       r.source_location = o.method(o.name).source_location rescue ["unknown", -1]
 

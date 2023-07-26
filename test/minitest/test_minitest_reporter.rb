@@ -65,6 +65,12 @@ class TestMinitestReporter < MetaMetaMetaTestCase
     @pt ||= Minitest::Result.from Minitest::Test.new(:woot)
   end
 
+  def passing_test_with_metadata
+    test = Minitest::Test.new(:woot)
+    test.metadata[:meta] = :data
+    @pt ||= Minitest::Result.from test
+  end
+
   def skip_test
     unless defined? @st then
       @st = Minitest::Test.new(:woot)
@@ -159,6 +165,29 @@ class TestMinitestReporter < MetaMetaMetaTestCase
 
   def test_record_pass
     r.record passing_test
+
+    assert_equal ".", io.string
+    assert_empty r.results
+    assert_equal 1, r.count
+    assert_equal 0, r.assertions
+  end
+
+  def test_record_pass_with_metadata
+    reporter = self.r
+
+    def reporter.metadata
+      @metadata
+    end
+
+    def reporter.record result
+      super
+      @metadata = result.metadata if result.metadata?
+    end
+
+    r.record passing_test_with_metadata
+
+    exp = { :meta => :data }
+    assert_equal exp, reporter.metadata
 
     assert_equal ".", io.string
     assert_empty r.results
