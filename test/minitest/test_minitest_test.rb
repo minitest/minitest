@@ -1089,14 +1089,14 @@ class TestMinitestUnitTestCase < Minitest::Test
 
   def test_autorun_does_not_affect_fork_success_status
     @assertion_count = 0
-    skip "windows doesn't have skip" unless Process.respond_to?(:fork)
+    skip "windows doesn't have fork" unless Process.respond_to?(:fork)
     Process.waitpid(fork {})
     assert_equal true, $?.success?
   end
 
   def test_autorun_does_not_affect_fork_exit_status
     @assertion_count = 0
-    skip "windows doesn't have skip" unless Process.respond_to?(:fork)
+    skip "windows doesn't have fork" unless Process.respond_to?(:fork)
     Process.waitpid(fork { exit 42 })
     assert_equal 42, $?.exitstatus
   end
