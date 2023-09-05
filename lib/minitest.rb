@@ -458,19 +458,21 @@ module Minitest
     # Hashes! Arrays! Strings!
 
     def metadata
-      @metadata ||= {}
+      @_metadata ||= {}
     end
 
     ##
     # Sets metadata, mainly used for +Result.from+.
 
-    attr_writer :metadata
+    def metadata=(metadata)
+      @_metadata = metadata
+    end
 
     ##
     # Returns true if metadata exists.
 
     def metadata?
-      defined? @metadata
+      defined? @_metadata
     end
 
     ##
