@@ -60,6 +60,9 @@ module Minitest
   cattr_accessor :info_signal
   self.info_signal = "INFO"
 
+  cattr_accessor :allow_fork
+  self.allow_fork = false
+
   ##
   # Registers Minitest to run at process exit
 
@@ -75,7 +78,7 @@ module Minitest
 
       pid = Process.pid
       at_exit {
-        next if Process.pid != pid
+        next if !Minitest.allow_fork && Process.pid != pid
         @@after_run.reverse_each(&:call)
         exit exit_code || false
       }

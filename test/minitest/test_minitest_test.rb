@@ -1100,6 +1100,16 @@ class TestMinitestUnitTestCase < Minitest::Test
     Process.waitpid(fork { exit 42 })
     assert_equal 42, $?.exitstatus
   end
+
+  def test_autorun_optionally_can_affect_fork_exit_status
+    @assertion_count = 0
+    skip "windows doesn't have fork" unless Process.respond_to?(:fork)
+    Minitest.allow_fork = true
+    Process.waitpid(fork { exit 42 })
+    refute_equal 42, $?.exitstatus
+  ensure
+    Minitest.allow_fork = false
+  end
 end
 
 class TestMinitestGuard < Minitest::Test
