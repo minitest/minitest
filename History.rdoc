@@ -1,3 +1,9 @@
+=== 5.20.0 / 2023-09-06
+
+* 1 minor enhancement:
+
+  * Optionally allow autorun exit hook to remain active in forked child. (casperisfine)
+
 === 5.19.0 / 2023-07-26
 
 * 2 minor enhancements:

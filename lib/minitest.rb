@@ -9,7 +9,7 @@ require "etc"
 # :include: README.rdoc
 
 module Minitest
-  VERSION = "5.19.0" # :nodoc:
+  VERSION = "5.20.0" # :nodoc:
 
   @@installed_at_exit ||= false
   @@after_run = []
