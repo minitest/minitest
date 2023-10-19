@@ -29,9 +29,10 @@ module Minitest
             Thread.current.abort_on_exception = true
             while (job = queue.pop)
               klass, method, reporter = job
-              reporter.synchronize { reporter.prerecord klass, method }
+              @mutex = Mutex.new
+              @mutex.synchronize { reporter.prerecord klass, method }
               result = Minitest.run_one_method klass, method
-              reporter.synchronize { reporter.record result }
+              @mutex.synchronize { reporter.record result }
             end
           end
         }

@@ -1,5 +1,4 @@
 require "optparse"
-require "mutex_m"
 require "minitest/parallel"
 require "stringio"
 require "etc"
@@ -618,8 +617,6 @@ module Minitest
   # you want. Go nuts.
 
   class AbstractReporter
-    include Mutex_m
-
     ##
     # Starts reporting on the run.
 
