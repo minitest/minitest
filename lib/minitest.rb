@@ -617,6 +617,11 @@ module Minitest
   # you want. Go nuts.
 
   class AbstractReporter
+
+    def initialize # :nodoc:
+      @mutex = Mutex.new
+    end
+
     ##
     # Starts reporting on the run.
 
@@ -650,6 +655,10 @@ module Minitest
 
     def passed?
       true
+    end
+
+    def mutex # :nodoc:
+      @mutex
     end
   end
 
