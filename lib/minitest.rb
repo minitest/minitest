@@ -1,5 +1,4 @@
 require "optparse"
-require "thread"
 require "mutex_m"
 require "minitest/parallel"
 require "stringio"

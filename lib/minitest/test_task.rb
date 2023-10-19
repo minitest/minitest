@@ -288,7 +288,6 @@ end
 
 class Integer # :nodoc:
   def threads_do(jobs) # :nodoc:
-    require "thread"
     q = Work.new jobs
 
     self.times.map {
