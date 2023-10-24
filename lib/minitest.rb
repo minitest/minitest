@@ -657,8 +657,8 @@ module Minitest
       true
     end
 
-    def mutex # :nodoc:
-      @mutex
+    def synchronize(&block) # :nodoc:
+      @mutex.synchronize(&block)
     end
   end
 
