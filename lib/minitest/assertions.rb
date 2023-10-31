@@ -449,12 +449,13 @@ module Minitest
 
     ##
     # Fails unless +obj+ responds to +meth+.
+    # include_all defaults to false to match Object#respond_to?
 
-    def assert_respond_to obj, meth, msg = nil
+    def assert_respond_to obj, meth, include_all: false, msg = nil
       msg = message(msg) {
         "Expected #{mu_pp(obj)} (#{obj.class}) to respond to ##{meth}"
       }
-      assert obj.respond_to?(meth), msg
+      assert obj.respond_to?(meth, include_all), msg
     end
 
     ##

@@ -41,6 +41,12 @@ class TestMinitestAssertions < Minitest::Test
       self.assertions = 0
       self.failure = nil
     end
+
+    private
+
+    def private_method
+      puts "Hello, I'm private"
+    end
   end
 
   def setup
@@ -928,6 +934,10 @@ class TestMinitestAssertions < Minitest::Test
 
   def test_assert_respond_to
     @tc.assert_respond_to "blah", :empty?
+  end
+
+  def test_assert_respond_to_for_private_method_with_include_all_true
+    @tc.assert_respond_to "blah", :private_method, include_all: true
   end
 
   def test_assert_respond_to_triggered
