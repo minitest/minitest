@@ -936,6 +936,16 @@ class TestMinitestAssertions < Minitest::Test
     end
   end
 
+  def test_assert_respond_to__include_all
+    @tc.assert_respond_to @tc, :exit, include_all: true
+  end
+
+  def test_assert_respond_to__include_all_triggered
+    assert_triggered(/Expected .+::DummyTest. to respond to #exit\?/) do
+      @tc.assert_respond_to @tc, :exit?, include_all: true
+    end
+  end
+
   def test_assert_same
     @assertion_count = 3
 
@@ -1441,6 +1451,16 @@ class TestMinitestAssertions < Minitest::Test
   def test_refute_respond_to_triggered
     assert_triggered 'Expected "blah" to not respond to empty?.' do
       @tc.refute_respond_to "blah", :empty?
+    end
+  end
+
+  def test_refute_respond_to__include_all
+    @tc.refute_respond_to "blah", :missing, include_all: true
+  end
+
+  def test_refute_respond_to__include_all_triggered
+    assert_triggered(/Expected .*DummyTest.* to not respond to exit./) do
+      @tc.refute_respond_to @tc, :exit, include_all: true
     end
   end
 
