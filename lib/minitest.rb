@@ -1,6 +1,4 @@
 require "optparse"
-require "thread"
-require "mutex_m"
 require "minitest/parallel"
 require "stringio"
 require "etc"
@@ -619,7 +617,10 @@ module Minitest
   # you want. Go nuts.
 
   class AbstractReporter
-    include Mutex_m
+
+    def initialize # :nodoc:
+      @mutex = Mutex.new
+    end
 
     ##
     # Starts reporting on the run.
@@ -654,6 +655,10 @@ module Minitest
 
     def passed?
       true
+    end
+
+    def synchronize(&block) # :nodoc:
+      @mutex.synchronize(&block)
     end
   end
 
