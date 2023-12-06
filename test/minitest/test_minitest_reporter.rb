@@ -338,4 +338,16 @@ class TestMinitestReporter < MetaMetaMetaTestCase
 
     assert_equal exp, normalize_output(io.string)
   end
+
+  def test_report_failure_uses_backtrace_filter
+    with_backtrace_filter ["foo.rb:123:in `foo'"] do
+      r.start
+      r.record fail_test
+      r.report
+    end
+
+    exp = "Minitest::Test#woot [foo.rb:123]"
+
+    assert_includes io.string, exp
+  end
 end
