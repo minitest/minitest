@@ -8,11 +8,17 @@ class Minitest::Test
   end
 
   def with_empty_backtrace_filter
+    with_backtrace_filter [] do
+      yield
+    end
+  end
+
+  def with_backtrace_filter bt
     original = Minitest.backtrace_filter
 
     obj = Minitest::BacktraceFilter.new
-    def obj.filter _bt
-      []
+    obj.define_singleton_method(:filter) do |_bt|
+      bt
     end
 
     Minitest::Test.io_lock.synchronize do # try not to trounce in parallel
