@@ -1085,6 +1085,12 @@ module Minitest
 
     MT_RE = %r%lib/minitest% #:nodoc:
 
+    attr_accessor :regexp
+
+    def initialize regexp = MT_RE
+      self.regexp = regexp
+    end
+
     ##
     # Filter +bt+ to something useful. Returns the whole thing if
     # $DEBUG (ruby) or $MT_DEBUG (env).
@@ -1094,9 +1100,9 @@ module Minitest
 
       return bt.dup if $DEBUG || ENV["MT_DEBUG"]
 
-      new_bt = bt.take_while { |line| line.to_s !~ MT_RE }
-      new_bt = bt.select     { |line| line.to_s !~ MT_RE } if new_bt.empty?
-      new_bt = bt.dup                                      if new_bt.empty?
+      new_bt = bt.take_while { |line| line.to_s !~ regexp }
+      new_bt = bt.select     { |line| line.to_s !~ regexp } if new_bt.empty?
+      new_bt = bt.dup                                       if new_bt.empty?
 
       new_bt
     end

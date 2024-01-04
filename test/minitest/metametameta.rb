@@ -8,16 +8,17 @@ class Minitest::Test
   end
 
   def with_empty_backtrace_filter
-    original = Minitest.backtrace_filter
-
-    obj = Minitest::BacktraceFilter.new
-    def obj.filter _bt
-      []
+    with_backtrace_filter Minitest::BacktraceFilter.new(/./) do
+      yield
     end
+  end
+
+  def with_backtrace_filter filter
+    original = Minitest.backtrace_filter
 
     Minitest::Test.io_lock.synchronize do # try not to trounce in parallel
       begin
-        Minitest.backtrace_filter = obj
+        Minitest.backtrace_filter = filter
         yield
       ensure
         Minitest.backtrace_filter = original
