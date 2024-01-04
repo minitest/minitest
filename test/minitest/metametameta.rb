@@ -8,7 +8,7 @@ class Minitest::Test
   end
 
   def with_empty_backtrace_filter
-    with_backtrace_filter Minitest::BacktraceFilter.new(/./) do
+    with_backtrace_filter Minitest::BacktraceFilter.new %r%.% do
       yield
     end
   end
