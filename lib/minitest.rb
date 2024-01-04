@@ -148,7 +148,7 @@ module Minitest
 
     reporter = CompositeReporter.new
     reporter << SummaryReporter.new(options[:io], options)
-    reporter << ProgressReporter.new(options[:io], options)
+    reporter << ProgressReporter.new(options[:io], options) unless options[:quiet]
 
     self.reporter = reporter # this makes it available to plugins
     self.init_plugins options
@@ -208,6 +208,10 @@ module Minitest
 
       opts.on "-v", "--verbose", "Verbose. Show progress processing files." do
         options[:verbose] = true
+      end
+
+      opts.on "-q", "--quiet", "Quiet. Show no progress processing files." do
+        options[:quiet] = true
       end
 
       opts.on "--show-skips", "Show skipped at the end of run." do
