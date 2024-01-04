@@ -832,10 +832,10 @@ module Minitest
     # gets listed at the end of the run but doesn't cause a failure
     # exit code.
 
-    def skip msg = nil, bt = caller
+    def skip msg = nil, _ignored = nil
       msg ||= "Skipped, no message given"
       @skip = true
-      raise Minitest::Skip, msg, bt
+      raise Minitest::Skip, msg
     end
 
     ##
