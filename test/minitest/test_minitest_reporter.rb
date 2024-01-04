@@ -338,4 +338,48 @@ class TestMinitestReporter < MetaMetaMetaTestCase
 
     assert_equal exp, normalize_output(io.string)
   end
+
+  def test_report_failure_uses_backtrace_filter
+    filter = Minitest::BacktraceFilter.new
+    def filter.filter _bt
+      ["foo.rb:123:in `foo'"]
+    end
+
+    with_backtrace_filter filter do
+      r.start
+      r.record fail_test
+      r.report
+    end
+
+    exp = "Minitest::Test#woot [foo.rb:123]"
+
+    assert_includes io.string, exp
+  end
+
+  def test_report_failure_uses_backtrace_filter_complex_sorbet
+    backtrace = <<~EOBT
+      /Users/user/.gem/ruby/3.2.2/gems/minitest-5.20.0/lib/minitest/assertions.rb:183:in `assert'
+      example_test.rb:9:in `assert_false'
+      /Users/user/.gem/ruby/3.2.2/gems/sorbet-runtime-0.5.11068/lib/types/private/methods/call_validation.rb:256:in `bind_call'
+      /Users/user/.gem/ruby/3.2.2/gems/sorbet-runtime-0.5.11068/lib/types/private/methods/call_validation.rb:256:in `validate_call'
+      /Users/user/.gem/ruby/3.2.2/gems/sorbet-runtime-0.5.11068/lib/types/private/methods/_methods.rb:275:in `block in _on_method_added'
+      example_test.rb:25:in `test_something'
+      /Users/user/.gem/ruby/3.2.2/gems/minitest-5.20.0/lib/minitest/test.rb:94:in `block (3 levels) in run'
+      /Users/user/.gem/ruby/3.2.2/gems/minitest-5.20.0/lib/minitest/test.rb:191:in `capture_exceptions'
+      /Users/user/.gem/ruby/3.2.2/gems/minitest-5.20.0/lib/minitest/test.rb:89:in `block (2 levels) in run'
+      ... so many lines ...
+    EOBT
+
+    filter = Minitest::BacktraceFilter.new %r%lib/minitest|gems/sorbet%
+
+    with_backtrace_filter filter do
+      begin
+        assert_equal 1, 2
+      rescue Minitest::Assertion => e
+        e.set_backtrace backtrace.lines.map(&:chomp)
+
+        assert_match "example_test.rb:25", e.location
+      end
+    end
+  end
 end

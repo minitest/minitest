@@ -957,7 +957,7 @@ module Minitest
     # Where was this run before an assertion was raised?
 
     def location
-      bt  = self.backtrace
+      bt  = Minitest.filter_backtrace self.backtrace
       idx = bt.rindex { |s| s.match? RE } || -1 # fall back to first item
 
       bt[idx+1].sub(/:in .*$/, "")
