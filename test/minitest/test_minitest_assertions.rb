@@ -1163,18 +1163,14 @@ class TestMinitestAssertions < Minitest::Test
   def test_class_asserts_match_refutes
     @assertion_count = 0
 
-    methods = Minitest::Assertions.public_instance_methods
-    methods.map!(&:to_s) if Symbol === methods.first
+    methods = Minitest::Assertions.public_instance_methods.map(&:to_s)
 
     # These don't have corresponding refutes _on purpose_. They're
     # useless and will never be added, so don't bother.
     ignores = %w[assert_output assert_raises assert_send
                  assert_silent assert_throws assert_mock]
 
-    # These are test/unit methods. I'm not actually sure why they're still here
-    ignores += %w[assert_no_match assert_not_equal assert_not_nil
-                  assert_not_same assert_nothing_raised
-                  assert_nothing_thrown assert_raise]
+    ignores += %w[assert_allocations] # for minitest-gcstats
 
     asserts = methods.grep(/^assert/).sort - ignores
     refutes = methods.grep(/^refute/).sort - ignores
