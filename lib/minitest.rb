@@ -837,7 +837,7 @@ module Minitest
       io.puts "# Running:"
       io.puts
 
-      self.sync = io.respond_to? :"sync=" # stupid emacs
+      self.sync = io.respond_to? :"sync="
       self.old_sync, io.sync = io.sync, true if self.sync
     end
 
