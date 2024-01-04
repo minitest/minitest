@@ -9,7 +9,7 @@
 * 2 minor enhancements:
 
   * Add metadata lazy accessor to Runnable / Result. (matteeyah)
-  * Only load minitest/unit (aka ancient MiniTest compatibility layer) if ENV["MT_COMPAT"]
+  * Only load minitest/unit (aka ancient MiniTest compatibility layer) if \ENV[\"MT_COMPAT\"]
 
 * 1 bug fix:
 
@@ -20,7 +20,7 @@
 * 3 bug fixes:
 
   * Avoid extra string allocations when filtering tests. (tenderlove)
-  * Only mention deprecated ENV['N'] if it is an integer string.
+  * Only mention deprecated \ENV[\'N\'] if it is an integer string.
   * Push up test_order to Minitest::Runnable to fix minitest/hell. (koic)
 
 === 5.18.0 / 2023-03-04
@@ -214,7 +214,7 @@
 
 * 3 bug fixes:
 
-  * Check `option[:filter]` klass before match. Fixes 2.6 warning. (y-yagi)
+  * Check \option[:filter] klass before match. Fixes 2.6 warning. (y-yagi)
   * Fixed Assertions#diff from recalculating if set to nil
   * Fixed spec section of readme to not use deprecated global expectations. (CheezItMan)
 
