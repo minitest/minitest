@@ -527,12 +527,14 @@ module Minitest
       not self.failure
     end
 
+    BASE_DIR = "#{Dir.pwd}/" # :nodoc:
+
     ##
     # The location identifier of this test. Depends on a method
     # existing called class_name.
 
     def location
-      loc = " [#{self.failure.location}]" unless passed? or error?
+      loc = " [#{self.failure.location.delete_prefix BASE_DIR}]" unless passed? or error?
       "#{self.class_name}##{self.name}#{loc}"
     end
 
@@ -995,8 +997,11 @@ module Minitest
       self.error.backtrace
     end
 
+    BASE_RE = %r%#{Dir.pwd}/% # :nodoc:
+
     def message # :nodoc:
-      bt = Minitest.filter_backtrace(self.backtrace).join "\n    "
+      bt = Minitest.filter_backtrace(self.backtrace).join("\n    ")
+        .gsub(BASE_RE, "")
       "#{self.error.class}: #{self.error.message}\n    #{bt}"
     end
 

@@ -105,15 +105,17 @@ class MetaMetaMetaTestCase < Minitest::Test
     output.gsub!(/0x[A-Fa-f0-9]+/, "0xXXX")
     output.gsub!(/ +$/, "")
 
+    file = ->(s) { s.start_with?("/") ? "FULLFILE" : "FILE" }
+
     if windows? then
       output.gsub!(/\[(?:[A-Za-z]:)?[^\]:]+:\d+\]/, "[FILE:LINE]")
       output.gsub!(/^(\s+)(?:[A-Za-z]:)?[^:]+:\d+:in/, '\1FILE:LINE:in')
     else
-      output.gsub!(/\[[^\]:]+:\d+\]/, "[FILE:LINE]")
-      output.gsub!(/^(\s+)[^:]+:\d+:in/, '\1FILE:LINE:in')
+      output.gsub!(/\[([^\]:]+):\d+\]/)    {     "[#{file[$1]}:LINE]"   }
+      output.gsub!(/^(\s+)([^:]+):\d+:in/) { "#{$1}#{file[$2]}:LINE:in" }
     end
 
-    output.gsub!(/( at )[^:]+:\d+/, '\1[FILE:LINE]')
+    output.gsub!(/( at )[^:]+:\d+/) { "#{$1}[#{file[$2]}:LINE]" } # eval?
 
     output
   end
