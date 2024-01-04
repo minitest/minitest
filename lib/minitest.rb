@@ -945,6 +945,8 @@ module Minitest
   # Represents run failures.
 
   class Assertion < Exception
+    RE = /in .(?:assert|refute|flunk|pass|fail|raise|must|wont)/ # :nodoc:
+
     def error # :nodoc:
       self
     end
@@ -953,12 +955,10 @@ module Minitest
     # Where was this run before an assertion was raised?
 
     def location
-      last_before_assertion = ""
-      self.backtrace.reverse_each do |s|
-        break if s =~ /in .(assert|refute|flunk|pass|fail|raise|must|wont)/
-        last_before_assertion = s
-      end
-      last_before_assertion.sub(/:in .*$/, "")
+      bt  = self.backtrace
+      idx = bt.rindex { |s| s.match? RE } || -1 # fall back to first item
+
+      bt[idx+1].sub(/:in .*$/, "")
     end
 
     def result_code # :nodoc:
