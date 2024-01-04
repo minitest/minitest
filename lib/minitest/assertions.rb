@@ -198,6 +198,11 @@ module Minitest
       assert obj.empty?, msg
     end
 
+    def _where # :nodoc:
+      where = Minitest.filter_backtrace(caller_locations).first
+      [where.path, where.lineno].join ":"
+    end
+
     E = "" # :nodoc:
 
     ##
@@ -221,10 +226,7 @@ module Minitest
         if Minitest::VERSION =~ /^6/ then
           refute_nil exp, "Use assert_nil if expecting nil."
         else
-          where = Minitest.filter_backtrace(caller).first
-          where = where.split(/:in /, 2).first # clean up noise
-
-          warn "DEPRECATED: Use assert_nil if expecting nil from #{where}. This will fail in Minitest 6."
+          warn "DEPRECATED: Use assert_nil if expecting nil from #{_where}. This will fail in Minitest 6."
         end
       end
 
@@ -475,9 +477,7 @@ module Minitest
     # Fails unless the call returns a true value
 
     def assert_send send_ary, m = nil
-      where = Minitest.filter_backtrace(caller).first
-      where = where.split(/:in /, 2).first # clean up noise
-      warn "DEPRECATED: assert_send. From #{where}"
+      warn "DEPRECATED: assert_send. From #{_where}"
 
       recv, msg, *args = send_ary
       m = message(m) {
