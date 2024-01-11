@@ -48,6 +48,25 @@ class TestMinitestReporter < MetaMetaMetaTestCase
     @et
   end
 
+  def system_stack_error_test
+    unless defined? @sse then
+
+      ex = SystemStackError.new
+
+      pre  = ("a".."c").to_a
+      mid  = ("aa".."ad").to_a * 67
+      post = ("d".."f").to_a
+      ary  = pre + mid + post
+
+      ex.set_backtrace ary
+
+      @sse = Minitest::Test.new(:woot)
+      @sse.failures << Minitest::UnexpectedError.new(ex)
+      @sse = Minitest::Result.from @sse
+    end
+    @sse
+  end
+
   def fail_test
     unless defined? @ft then
       @ft = Minitest::Test.new(:woot)
@@ -307,6 +326,42 @@ class TestMinitestReporter < MetaMetaMetaTestCase
       RuntimeError: no
           FILE:LINE:in `error_test'
           FILE:LINE:in `test_report_error'
+
+      1 runs, 0 assertions, 0 failures, 1 errors, 0 skips
+    EOM
+
+    assert_equal exp, normalize_output(io.string)
+  end
+
+  def test_report_error__sse
+    r.start
+    r.record system_stack_error_test
+    r.report
+
+    exp = clean <<-EOM
+      Run options:
+
+      # Running:
+
+      E
+
+      Finished in 0.00
+
+        1) Error:
+      Minitest::Test#woot:
+      SystemStackError: 274 -> 12
+          a
+          b
+          c
+           +->> 67 cycles of 4 lines:
+           | aa
+           | ab
+           | ac
+           | ad
+           +-<<
+          d
+          e
+          f
 
       1 runs, 0 assertions, 0 failures, 1 errors, 0 skips
     EOM

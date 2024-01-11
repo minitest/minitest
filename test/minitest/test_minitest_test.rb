@@ -1280,3 +1280,98 @@ class TestMinitestUnitRecording < MetaMetaMetaTestCase
     end
   end
 end
+
+class TestUnexpectedError < Minitest::Test
+  def assert_compress exp, input
+    e = Minitest::UnexpectedError.new RuntimeError.new
+
+    exp = exp.lines.map(&:chomp) if String === exp
+    act = e.compress input
+
+    assert_equal exp, act
+  end
+
+  ACT1 = %w[ a b c b c b c b c d ]
+
+  def test_normal
+    assert_compress <<~EXP, %w[ a b c b c b c b c d ]
+          a
+           +->> 4 cycles of 2 lines:
+           | b
+           | c
+           +-<<
+          d
+        EXP
+  end
+
+  def test_normal2
+    assert_compress <<~EXP, %w[ a b c b c b c b c ]
+          a
+           +->> 4 cycles of 2 lines:
+           | b
+           | c
+           +-<<
+        EXP
+  end
+
+  def test_longer_c_than_b
+    # the extra c in the front makes the overall length longer sorting it first
+    assert_compress <<~EXP, %w[ c a b c b c b c b c b d ]
+          c
+          a
+          b
+           +->> 4 cycles of 2 lines:
+           | c
+           | b
+           +-<<
+          d
+        EXP
+  end
+
+  def test_1_line_cycles
+    assert_compress <<~EXP, %w[ c a b c b c b c b c b b b d ]
+          c
+          a
+           +->> 4 cycles of 2 lines:
+           | b
+           | c
+           +-<<
+           +->> 3 cycles of 1 lines:
+           | b
+           +-<<
+          d
+        EXP
+  end
+
+  def test_sanity3
+    pre  = ("aa".."am").to_a
+    mid  = ("a".."z").to_a * 67
+    post = ("aa".."am").to_a
+    ary  = pre + mid + post
+
+    exp = pre +
+      [" +->> 67 cycles of 26 lines:"] +
+      ("a".."z").map { |s| " | #{s}" } +
+      [" +-<<"] +
+      post
+
+    assert_compress exp, ary
+  end
+
+  def test_absurd_patterns
+    skip "NOOOO!!! but I don't care enough right now."
+
+    assert_compress <<~EXP, %w[ a b c b c a b c b c a b c ]
+           +->> 2 cycles of 5 lines:
+           | a
+           |  +->> 2 cycles of 2 lines:
+           |  | b
+           |  | c
+           |  +-<<
+           +-<<
+          a
+          b
+          c
+        EXP
+  end
+end

@@ -1,7 +1,9 @@
 require "optparse"
-require "minitest/parallel"
 require "stringio"
 require "etc"
+
+require_relative "minitest/parallel"
+require_relative "minitest/compress"
 
 ##
 # :include: README.rdoc
@@ -985,11 +987,21 @@ module Minitest
   # Assertion wrapping an unexpected error that was raised during a run.
 
   class UnexpectedError < Assertion
+    include Minitest::Compress
+
     # TODO: figure out how to use `cause` instead
     attr_accessor :error # :nodoc:
 
     def initialize error # :nodoc:
       super "Unexpected exception"
+
+      if SystemStackError === error then
+        bt = error.backtrace
+        new_bt = compress bt
+        error = error.exception "#{bt.size} -> #{new_bt.size}"
+        error.set_backtrace new_bt
+      end
+
       self.error = error
     end
 
