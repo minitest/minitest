@@ -1,3 +1,23 @@
+=== 5.21.0 / 2024-01-11
+
+* 10 minor enhancements:
+
+  * Add include_all kw arg to assert_respond_to and refute_respond_to.
+  * Added --quiet flag to skip ProgressReporter (prints the dots). Minor speedup.
+  * Added Minitest::Compress#compress and added it to UnexpectedError.
+  * Added ability to initialize BacktraceFilter w/ custom regexp.
+  * Filter failure backtraces using backtrace_filter before calculating location. (thomasmarshall)
+  * Make BacktraceFilter#filter compatible with locations (still compares strings).
+  * Optimized Assertion#location ~30%.
+  * Output relative paths for all failures/errors/backtraces.
+  * Refactored location information in assertions, now using locations.
+  * Removed thread and mutex_m dependencies. (hsbt, eregon)
+
+* 2 bug fixes:
+
+  * Drop undocumented bt arg in #skip. Dunno why that ever happened, prolly for testing?
+  * Fix mock to work with ruby debugger enabled. (keithlayne)
+
 === 5.20.0 / 2023-09-06
 
 * 1 minor enhancement:
