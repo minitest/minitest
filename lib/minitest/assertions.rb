@@ -199,8 +199,8 @@ module Minitest
     end
 
     def _where # :nodoc:
-      where = Minitest.filter_backtrace(caller_locations).first
-      [where.path, where.lineno].join ":"
+      where = Minitest.filter_backtrace(caller).first
+      where = where.split(/:in /, 2).first # clean up noise
     end
 
     E = "" # :nodoc:
