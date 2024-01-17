@@ -1359,8 +1359,6 @@ class TestUnexpectedError < Minitest::Test
   end
 
   def test_absurd_patterns
-    skip "NOOOO!!! but I don't care enough right now."
-
     assert_compress <<~EXP, %w[ a b c b c a b c b c a b c ]
            +->> 2 cycles of 5 lines:
            | a

@@ -64,18 +64,31 @@ module Minitest
 
         ary = min.flat_map { |(n, lines)|
           if n > 1 then
-            [
-              " +->> #{n} cycles of #{lines.size} lines:",
-              *lines.map { |s| " | #{s}" },
-              " +-<<",
-            ]
+            [[n, compress(lines)]]                # [o1 [2 s1] [2 s2]]
           else
             lines
           end
         }
       end
 
-      ary
+      format = ->(lines) {
+        lines.flat_map { |line|
+          case line
+          when Array then
+            n, lines = line
+            lines = format[lines]
+            [
+              " +->> #{n} cycles of #{lines.size} lines:",
+              *lines.map { |s| " | #{s}" },
+              " +-<<",
+            ]
+          else
+            line
+          end
+        }
+      }
+
+      format[ary]
     end
   end
 end
