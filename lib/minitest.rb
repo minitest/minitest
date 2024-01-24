@@ -961,8 +961,9 @@ module Minitest
     def location
       bt  = Minitest.filter_backtrace self.backtrace
       idx = bt.rindex { |s| s.match? RE } || -1 # fall back to first item
+      loc = bt[idx+1] || bt.last || "unknown:-1"
 
-      bt[idx+1].sub(/:in .*$/, "")
+      loc.sub(/:in .*$/, "")
     end
 
     def result_code # :nodoc:
