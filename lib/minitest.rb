@@ -134,7 +134,7 @@ module Minitest
   #     Minitest.run(args)
   #       Minitest.__run(reporter, options)
   #         Runnable.runnables.each
-  #           runnable.run(reporter, options)
+  #           runnable_klass.run(reporter, options)
   #             self.runnable_methods.each
   #               self.run_one_method(self, runnable_method, reporter)
   #                 Minitest.run_one_method(klass, runnable_method)
@@ -338,25 +338,15 @@ module Minitest
     # reporter to record.
 
     def self.run reporter, options = {}
-      filtered_methods = if options[:filter]
-        filter = options[:filter]
-        filter = Regexp.new $1 if filter.is_a?(String) && filter =~ %r%/(.*)/%
+      pos = options[:filter]
+      neg = options[:exclude]
 
-        self.runnable_methods.find_all { |m|
-          filter === m || filter === "#{self}##{m}"
-        }
-      else
-        self.runnable_methods
-      end
+      pos = Regexp.new $1 if pos.is_a?(String) && pos =~ %r%/(.*)/%
+      neg = Regexp.new $1 if neg.is_a?(String) && neg =~ %r%/(.*)/%
 
-      if options[:exclude]
-        exclude = options[:exclude]
-        exclude = Regexp.new $1 if exclude =~ %r%/(.*)/%
-
-        filtered_methods.delete_if { |m|
-          exclude === m || exclude === "#{self}##{m}"
-        }
-      end
+      filtered_methods = self.runnable_methods
+        .select { |m| !pos ||  pos === m || pos === "#{self}##{m}"  }
+        .reject { |m|  neg && (neg === m || neg === "#{self}##{m}") }
 
       return if filtered_methods.empty?
 
