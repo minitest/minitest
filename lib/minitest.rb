@@ -164,9 +164,31 @@ module Minitest
       warn "Interrupted. Exiting..."
     end
     self.parallel_executor.shutdown
+
+    # might have been removed/replaced during init_plugins:
+    summary = reporter.reporters.grep(SummaryReporter).first
+    return empty_run! options if summary && summary.count == 0
+
     reporter.report
 
     reporter.passed?
+  end
+
+  def self.empty_run! options # :nodoc:
+    filter = options[:filter]
+
+    warn "Nothing ran for filter: %s" % [filter]
+
+    require "did_you_mean" # soft dependency, punt if it doesn't load
+
+    ms = Runnable.runnables.flat_map(&:runnable_methods)
+    cs = DidYouMean::SpellChecker.new(dictionary: ms).correct filter
+
+    warn DidYouMean::Formatter.message_for cs unless cs.empty?
+  rescue LoadError
+    # do nothing
+  ensure
+    false
   end
 
   ##
