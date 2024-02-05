@@ -9,7 +9,7 @@ require_relative "minitest/compress"
 # :include: README.rdoc
 
 module Minitest
-  VERSION = "5.21.2" # :nodoc:
+  VERSION = "5.22.0" # :nodoc:
 
   @@installed_at_exit ||= false
   @@after_run = []
