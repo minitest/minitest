@@ -176,6 +176,7 @@ module Minitest
 
   def self.empty_run! options # :nodoc:
     filter = options[:filter]
+    return true unless filter # no filter, but nothing ran == success
 
     warn "Nothing ran for filter: %s" % [filter]
 
@@ -188,7 +189,7 @@ module Minitest
   rescue LoadError
     # do nothing
   ensure
-    false
+    return false
   end
 
   ##
