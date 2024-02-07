@@ -188,8 +188,6 @@ module Minitest
     warn DidYouMean::Formatter.message_for cs unless cs.empty?
   rescue LoadError
     # do nothing
-  ensure
-    return false
   end
 
   ##
