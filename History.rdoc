@@ -1,3 +1,10 @@
+=== 5.22.1 / 2024-02-06
+
+* 1 bug fix:
+
+  * Don't exit non-zero if no tests ran and no filter (aka, the test file is empty).
+    (I'm starting to think the exit 1 thing for @tenderlove was a mistake...)
+
 === 5.22.0 / 2024-02-05
 
 * 1 minor enhancement:
