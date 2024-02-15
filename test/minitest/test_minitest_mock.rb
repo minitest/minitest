@@ -728,7 +728,7 @@ class TestMinitestStub < Minitest::Test
     end
 
     exp = jruby? ? /Undefined method nope_nope_nope for '#{self.class}::Time'/ :
-      /undefined method `nope_nope_nope' for( class)? `#{self.class}::Time'/
+      /undefined method [`']nope_nope_nope' for( class)? [`']#{self.class}::Time'/
     assert_match exp, e.message
   end
 
@@ -1083,7 +1083,7 @@ class TestMinitestStub < Minitest::Test
         end
       end
     end
-    exp = /undefined method `write' for nil/
+    exp = /undefined method [`']write' for nil/
     assert_match exp, e.message
   end
 

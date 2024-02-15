@@ -110,11 +110,14 @@ class MetaMetaMetaTestCase < Minitest::Test
 
     if windows? then
       output.gsub!(/\[(?:[A-Za-z]:)?[^\]:]+:\d+\]/, "[FILE:LINE]")
-      output.gsub!(/^(\s+)(?:[A-Za-z]:)?[^:]+:\d+:in/, '\1FILE:LINE:in')
+      output.gsub!(/^(\s+)(?:[A-Za-z]:)?[^:]+:\d+:in [`']/, '\1FILE:LINE:in \'')
     else
-      output.gsub!(/\[([^\]:]+):\d+\]/)    {     "[#{file[$1]}:LINE]"   }
-      output.gsub!(/^(\s+)([^:]+):\d+:in/) { "#{$1}#{file[$2]}:LINE:in" }
+      output.gsub!(/\[([^\]:]+):\d+\]/)         {     "[#{file[$1]}:LINE]"   }
+      output.gsub!(/^(\s+)([^:]+):\d+:in [`']/) { "#{$1}#{file[$2]}:LINE:in '" }
     end
+
+    output.gsub!(/in [`']block in (?:([^']+)[#.])?/, "in 'block in")
+    output.gsub!(/in [`'](?:([^']+)[#.])?/, "in '")
 
     output.gsub!(/( at )[^:]+:\d+/) { "#{$1}[#{file[$2]}:LINE]" } # eval?
 

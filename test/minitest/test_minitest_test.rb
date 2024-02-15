@@ -28,24 +28,24 @@ class TestMinitestUnit < MetaMetaMetaTestCase
   basedir = Pathname.new(File.expand_path "lib/minitest") + "mini"
   basedir = basedir.relative_path_from(pwd).to_s
   MINITEST_BASE_DIR = basedir[/\A\./] ? basedir : "./#{basedir}"
-  BT_MIDDLE = ["#{MINITEST_BASE_DIR}/test.rb:161:in `each'",
-               "#{MINITEST_BASE_DIR}/test.rb:158:in `each'",
-               "#{MINITEST_BASE_DIR}/test.rb:139:in `run'",
-               "#{MINITEST_BASE_DIR}/test.rb:106:in `run'"]
+  BT_MIDDLE = ["#{MINITEST_BASE_DIR}/test.rb:161:in 'each'",
+               "#{MINITEST_BASE_DIR}/test.rb:158:in 'each'",
+               "#{MINITEST_BASE_DIR}/test.rb:139:in 'run'",
+               "#{MINITEST_BASE_DIR}/test.rb:106:in 'run'"]
 
   def test_filter_backtrace
     # this is a semi-lame mix of relative paths.
     # I cheated by making the autotest parts not have ./
-    bt = (["lib/autotest.rb:571:in `add_exception'",
-           "test/test_autotest.rb:62:in `test_add_exception'",
-           "#{MINITEST_BASE_DIR}/test.rb:165:in `__send__'"] +
+    bt = (["lib/autotest.rb:571:in 'add_exception'",
+           "test/test_autotest.rb:62:in 'test_add_exception'",
+           "#{MINITEST_BASE_DIR}/test.rb:165:in '__send__'"] +
           BT_MIDDLE +
           ["#{MINITEST_BASE_DIR}/test.rb:29",
            "test/test_autotest.rb:422"])
     bt = util_expand_bt bt
 
-    ex = ["lib/autotest.rb:571:in `add_exception'",
-          "test/test_autotest.rb:62:in `test_add_exception'"]
+    ex = ["lib/autotest.rb:571:in 'add_exception'",
+          "test/test_autotest.rb:62:in 'test_add_exception'"]
     ex = util_expand_bt ex
 
     Minitest::Test.io_lock.synchronize do # try not to trounce in parallel
@@ -56,7 +56,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
   end
 
   def test_filter_backtrace_all_unit
-    bt = (["#{MINITEST_BASE_DIR}/test.rb:165:in `__send__'"] +
+    bt = (["#{MINITEST_BASE_DIR}/test.rb:165:in '__send__'"] +
           BT_MIDDLE +
           ["#{MINITEST_BASE_DIR}/test.rb:29"])
     ex = bt.clone
@@ -65,7 +65,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
   end
 
   def test_filter_backtrace_unit_starts
-    bt = (["#{MINITEST_BASE_DIR}/test.rb:165:in `__send__'"] +
+    bt = (["#{MINITEST_BASE_DIR}/test.rb:165:in '__send__'"] +
           BT_MIDDLE +
           ["#{MINITEST_BASE_DIR}/mini/test.rb:29",
            "-e:1"])
@@ -111,7 +111,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
         2) Error:
       FakeNamedTestXX#test_this_is_non_ascii_failure_message:
       RuntimeError: ЁЁЁ
-          FILE:LINE:in `test_this_is_non_ascii_failure_message'
+          FILE:LINE:in 'test_this_is_non_ascii_failure_message'
 
       2 runs, 1 assertions, 1 failures, 1 errors, 0 skips
     EOM
@@ -263,7 +263,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
         1) Error:
       FakeNamedTestXX#test_error:
       RuntimeError: unhandled exception
-          FILE:LINE:in \`test_error\'
+          FILE:LINE:in \'test_error\'
 
       2 runs, 1 assertions, 0 failures, 1 errors, 0 skips
     EOM
@@ -291,7 +291,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
         1) Error:
       FakeNamedTestXX#test_something:
       RuntimeError: unhandled exception
-          FILE:LINE:in \`teardown\'
+          FILE:LINE:in \'teardown\'
 
       1 runs, 1 assertions, 0 failures, 1 errors, 0 skips
     EOM
@@ -1261,12 +1261,12 @@ class TestMinitestUnitRecording < MetaMetaMetaTestCase
       Error:
       FakeNamedTestXX#test_method:
       AnError: AnError
-          FILE:LINE:in `test_method'
+          FILE:LINE:in 'test_method'
 
       Error:
       FakeNamedTestXX#test_method:
       RuntimeError: unhandled exception
-          FILE:LINE:in `teardown'
+          FILE:LINE:in 'teardown'
     "
 
     assert_equal exp.strip, normalize_output(first_reporter.results.first.to_s).strip

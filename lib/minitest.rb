@@ -960,7 +960,7 @@ module Minitest
   # Represents run failures.
 
   class Assertion < Exception
-    RE = /in .(?:assert|refute|flunk|pass|fail|raise|must|wont)/ # :nodoc:
+    RE = /in [`'](?:[^']+[#.])?(?:assert|refute|flunk|pass|fail|raise|must|wont)/ # :nodoc:
 
     def error # :nodoc:
       self
