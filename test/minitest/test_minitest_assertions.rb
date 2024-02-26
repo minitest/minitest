@@ -762,12 +762,13 @@ class TestMinitestAssertions < Minitest::Test
       Class: <SomeError>
       Message: <\"blah\">
       ---Backtrace---
-      FILE:LINE:in \`block in test_assert_raises_default_triggered\'
+      FILE:LINE:in \'block in test_assert_raises_default_triggered\'
       ---------------
     EOM
 
     actual = e.message.gsub(/^.+:\d+/, "FILE:LINE")
     actual.gsub!(RE_LEVELS, "") unless jruby?
+    actual.gsub!(/[`']block in (?:TestMinitestAssertions#)?/, "'block in ")
 
     assert_equal expected, actual
   end
@@ -841,12 +842,13 @@ class TestMinitestAssertions < Minitest::Test
       Class: <AnError>
       Message: <\"some message\">
       ---Backtrace---
-      FILE:LINE:in \`block in test_assert_raises_subclass_triggered\'
+      FILE:LINE:in \'block in test_assert_raises_subclass_triggered\'
       ---------------
     EOM
 
     actual = e.message.gsub(/^.+:\d+/, "FILE:LINE")
     actual.gsub!(RE_LEVELS, "") unless jruby?
+    actual.gsub!(/[`']block in (?:TestMinitestAssertions#)?/, "'block in ")
 
     assert_equal expected.chomp, actual
   end
@@ -863,12 +865,13 @@ class TestMinitestAssertions < Minitest::Test
       Class: <SyntaxError>
       Message: <\"icky\">
       ---Backtrace---
-      FILE:LINE:in \`block in test_assert_raises_triggered_different\'
+      FILE:LINE:in \'block in test_assert_raises_triggered_different\'
       ---------------
     EOM
 
     actual = e.message.gsub(/^.+:\d+/, "FILE:LINE")
     actual.gsub!(RE_LEVELS, "") unless jruby?
+    actual.gsub!(/[`']block in (?:TestMinitestAssertions#)?/, "'block in ")
 
     assert_equal expected, actual
   end
@@ -886,12 +889,13 @@ class TestMinitestAssertions < Minitest::Test
       Class: <SyntaxError>
       Message: <\"icky\">
       ---Backtrace---
-      FILE:LINE:in \`block in test_assert_raises_triggered_different_msg\'
+      FILE:LINE:in \'block in test_assert_raises_triggered_different_msg\'
       ---------------
     EOM
 
     actual = e.message.gsub(/^.+:\d+/, "FILE:LINE")
     actual.gsub!(RE_LEVELS, "") unless jruby?
+    actual.gsub!(/[`']block in (?:TestMinitestAssertions#)?/, "'block in ")
 
     assert_equal expected.chomp, actual
   end
