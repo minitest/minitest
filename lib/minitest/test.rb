@@ -52,9 +52,10 @@ module Minitest
     end
 
     ##
-    # Call this at the top of your tests when you want to run your
-    # tests in parallel. In doing so, you're admitting that you rule
-    # and your tests are awesome.
+    # Call this at the top of your tests (inside the +Minitest::Test+
+    # subclass or +describe+ block) when you want to run your tests in
+    # parallel. In doing so, you're admitting that you rule and your
+    # tests are awesome.
 
     def self.parallelize_me!
       include Minitest::Parallel::Test
