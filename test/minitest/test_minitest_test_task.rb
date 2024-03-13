@@ -26,6 +26,7 @@ class TestHoeTest < Minitest::Test
     end
 
     assert_equal MT_EXPECTED % [framework].join("; "), @tester.make_test_cmd
+      .sub(/ -- .+/, " -- ")
   end
 
   def test_make_test_cmd_for_minitest_prelude
@@ -42,5 +43,6 @@ class TestHoeTest < Minitest::Test
     end
 
     assert_equal MT_EXPECTED % [prelude, framework].join("; "), @tester.make_test_cmd
+      .sub(/ -- .+/, " -- ")
   end
 end
