@@ -1,3 +1,15 @@
+=== 5.22.3 / 2024-03-13
+
+* 1 minor enhancement:
+
+  * MASSIVE improvement of minitest's pride plugin output: Frequencies doubled! Sine waves shifted!! Comments improved!!! Colors rotated!!!! (havenwood)
+
+* 3 bug fixes:
+
+  * Improved wording on Minitest::Test#parallelize_me! to clarify it goes INSIDE your test class/describe.
+  * Minor changes to tests to pass when tests ran with extra flags (eg -p).
+  * Support Ruby 3.4's new error message format. (mame)
+
 === 5.22.2 / 2024-02-07
 
 * 1 bug fix:
