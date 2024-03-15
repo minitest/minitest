@@ -56,7 +56,7 @@ class MetaMetaMetaTestCase < Minitest::Test
   def run_tu_with_fresh_reporter flags = %w[--seed 42]
     options = Minitest.process_args flags
 
-    @output = StringIO.new("".encode('UTF-8'))
+    @output = StringIO.new("".encode(Encoding::UTF_8))
 
     self.reporter = Minitest::CompositeReporter.new
     reporter << Minitest::SummaryReporter.new(@output, options)

@@ -34,6 +34,9 @@ jobs:
             ruby: ruby
           - os: macos-latest
             ruby: ruby
+          - os: ubuntu-latest
+            ruby: ruby
+            rubyopt: "--enable-frozen-string-literal"
 
     steps:
       - name: repo checkout
@@ -76,5 +79,5 @@ jobs:
 
       - name: rake test:isolated
         run: |
-          rake test:isolated
+          rake test:isolated RUBYOPT="${{ matrix.rubyopt }}"
         timeout-minutes: 3
