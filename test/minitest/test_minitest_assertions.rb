@@ -379,7 +379,7 @@ class TestMinitestAssertions < Minitest::Test
           EOM
 
     assert_triggered msg do
-      x = "bad-utf8-\xF1.txt".force_encoding "ASCII"
+      x = "bad-utf8-\xF1.txt".dup.force_encoding Encoding::ASCII
       y = x.dup.force_encoding "binary" # TODO: switch to .b when 1.9 dropped
       @tc.assert_equal x, y
     end
@@ -1646,14 +1646,14 @@ class TestMinitestAssertionHelpers < Minitest::Test
   end
 
   def test_mu_pp_for_diff_str_bad_encoding
-    str = "\666".force_encoding Encoding::UTF_8
+    str = "\666".dup.force_encoding Encoding::UTF_8
     exp = "# encoding: UTF-8\n#    valid: false\n\"\\xB6\""
 
     assert_mu_pp_for_diff exp, str, :raw
   end
 
   def test_mu_pp_for_diff_str_bad_encoding_both
-    str = "\666A\\n\nB".force_encoding Encoding::UTF_8
+    str = "\666A\\n\nB".dup.force_encoding Encoding::UTF_8
     exp = "# encoding: UTF-8\n#    valid: false\n\"\\xB6A\\\\n\\nB\""
 
     assert_mu_pp_for_diff exp, str, :raw
@@ -1700,7 +1700,7 @@ class TestMinitestAssertionHelpers < Minitest::Test
   end
 
   def test_mu_pp_str_bad_encoding
-    str = "\666".force_encoding Encoding::UTF_8
+    str = "\666".dup.force_encoding Encoding::UTF_8
     exp = "# encoding: UTF-8\n#    valid: false\n\"\\xB6\""
 
     assert_mu_pp exp, str, :raw

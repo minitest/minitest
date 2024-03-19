@@ -94,7 +94,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
       end
 
       def test_this_is_non_ascii_failure_message
-        fail 'ЁЁЁ'.force_encoding('ASCII-8BIT')
+        fail 'ЁЁЁ'.dup.force_encoding(Encoding::BINARY)
       end
     end
 
