@@ -167,10 +167,10 @@ module Minitest
 
     # might have been removed/replaced during init_plugins:
     summary = reporter.reporters.grep(SummaryReporter).first
-    return empty_run! options if summary && summary.count == 0
 
     reporter.report
 
+    return empty_run! options if summary && summary.count == 0
     reporter.passed?
   end
 
