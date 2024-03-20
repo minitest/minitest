@@ -279,10 +279,13 @@ class Object
 
   def stub name, val_or_callable, *block_args, **block_kwargs, &block
     new_name = "__minitest_stub__#{name}"
+    singleton_has_stubbing_method = singleton_methods.map(&:to_s).include?( name.to_s )
 
     metaclass = class << self; self; end
 
     if respond_to? name and not methods.map(&:to_s).include? name.to_s then
+      # this mean that 'name' is a public method which is expected
+      # to be defined dynamically somewhere inside ancestors chain
       metaclass.send :define_method, name do |*args, **kwargs|
         super(*args, **kwargs)
       end
@@ -322,8 +325,8 @@ class Object
 
     block[self]
   ensure
-    metaclass.send :undef_method, name
-    metaclass.send :alias_method, name, new_name
-    metaclass.send :undef_method, new_name
+    metaclass.send :remove_method, name
+    metaclass.send :alias_method, name, new_name if singleton_has_stubbing_method
+    metaclass.send :remove_method, new_name
   end
 end
