@@ -148,6 +148,10 @@ module Minitest
     Minitest.seed = options[:seed]
     srand Minitest.seed
 
+    if options[:error_on_warning]
+      require "minitest/error_on_warning"
+    end
+
     reporter = CompositeReporter.new
     reporter << SummaryReporter.new(options[:io], options)
     reporter << ProgressReporter.new(options[:io], options) unless options[:quiet]
@@ -251,6 +255,19 @@ module Minitest
 
       opts.on "-S", "--skip CODES", String, "Skip reporting of certain types of results (eg E)." do |s|
         options[:skip] = s.chars.to_a
+      end
+
+      opts.on "-Werror", String, "Turn Ruby warnings into errors" do |s|
+        case s
+        when "error"
+          options[:error_on_warning] = true
+          $VERBOSE = true
+          ::Warning[:deprecated] if ::Warning.respond_to?(:[]=) # Ruby 2.7+
+        else
+          if ::Warning.respond_to?(:[]=) # Ruby 2.7+
+            ::Warning[s.to_sym] = true
+          end
+        end
       end
 
       unless extensions.empty?
@@ -992,6 +1009,15 @@ module Minitest
   class Skip < Assertion
     def result_label # :nodoc:
       "Skipped"
+    end
+  end
+
+  ##
+  # Assertion raised on warning when running in -Werror mode.
+
+  class UnexpectedWarning < Assertion
+    def result_label # :nodoc:
+      "Warning"
     end
   end
 
