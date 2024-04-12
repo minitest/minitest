@@ -816,7 +816,7 @@ class TestMinitestStub < Minitest::Test
   # [:value,  :block_call, :args] =>  N/A
 
   class Bar
-    def call
+    def call(&_) # to ignore unused block
       puts "hi"
     end
   end
