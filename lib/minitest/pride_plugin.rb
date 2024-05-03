@@ -1,27 +1,29 @@
 require "minitest"
 
 module Minitest
-  def self.plugin_pride_options opts, _options # :nodoc:
-    opts.on "-p", "--pride", "Pride. Show your testing pride!" do
-      PrideIO.pride!
-    end
-  end
-
-  def self.plugin_pride_init options # :nodoc:
-    if PrideIO.pride? then
-      klass = ENV["TERM"] =~ /^xterm|-256color$/ ? PrideLOL : PrideIO
-      io    = klass.new options[:io]
-
-      self.reporter.reporters.grep(Minitest::Reporter).each do |rep|
-        rep.io = io if rep.io.tty?
-      end
-    end
-  end
-
   ##
   # Show your testing pride!
 
   class PrideIO
+    Minitest.add_plugin self
+
+    def self.plugin_mt_options opts, _options # :nodoc:
+      opts.on "-p", "--pride", "Pride. Show your testing pride!" do
+        PrideIO.pride!
+      end
+    end
+
+    def self.plugin_mt_init options # :nodoc:
+      if PrideIO.pride? then
+        klass = ENV["TERM"] =~ /^xterm|-256color$/ ? PrideLOL : PrideIO
+        io    = klass.new options[:io]
+
+        Minitest.reporter.reporters.grep(Minitest::Reporter).each do |rep|
+          rep.io = io if rep.io.tty?
+        end
+      end
+    end
+
     ##
     # Activate the pride plugin. Called from both -p option and minitest/pride
 

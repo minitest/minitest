@@ -99,9 +99,9 @@ module Minitest
   end
 
   def self.init_plugins options # :nodoc:
-    self.extensions.each do |name|
+    self.extensions.each do |recv, name|
       msg = "plugin_#{name}_init"
-      send msg, options if self.respond_to? msg
+      recv.send msg, options if recv.respond_to? msg
     end
   end
 
@@ -119,8 +119,12 @@ module Minitest
       seen[name] = true
 
       require plugin_path
-      self.extensions << name
+      self.extensions << [self, name]
     end
+  end
+
+  def self.add_plugin plugin
+    self.extensions << [plugin, "mt"]
   end
 
   ##
@@ -257,9 +261,9 @@ module Minitest
         opts.separator ""
         opts.separator "Known extensions: #{extensions.join(", ")}"
 
-        extensions.each do |meth|
+        extensions.each do |recv, meth|
           msg = "plugin_#{meth}_options"
-          send msg, opts, options if self.respond_to?(msg)
+          recv.send msg, opts, options if recv.respond_to?(msg)
         end
       end
 
