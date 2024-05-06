@@ -198,6 +198,11 @@ module Minitest
       assert obj.empty?, msg
     end
 
+    def _where # :nodoc:
+      where = Minitest.filter_backtrace(caller).first
+      where = where.split(/:in /, 2).first # clean up noise
+    end
+
     E = "" # :nodoc:
 
     ##
@@ -221,10 +226,7 @@ module Minitest
         if Minitest::VERSION =~ /^6/ then
           refute_nil exp, "Use assert_nil if expecting nil."
         else
-          where = Minitest.filter_backtrace(caller).first
-          where = where.split(/:in /, 2).first # clean up noise
-
-          warn "DEPRECATED: Use assert_nil if expecting nil from #{where}. This will fail in Minitest 6."
+          warn "DEPRECATED: Use assert_nil if expecting nil from #{_where}. This will fail in Minitest 6."
         end
       end
 
@@ -449,12 +451,13 @@ module Minitest
 
     ##
     # Fails unless +obj+ responds to +meth+.
+    # include_all defaults to false to match Object#respond_to?
 
-    def assert_respond_to obj, meth, msg = nil
+    def assert_respond_to obj, meth, msg = nil, include_all: false
       msg = message(msg) {
         "Expected #{mu_pp(obj)} (#{obj.class}) to respond to ##{meth}"
       }
-      assert obj.respond_to?(meth), msg
+      assert obj.respond_to?(meth, include_all), msg
     end
 
     ##
@@ -474,9 +477,7 @@ module Minitest
     # Fails unless the call returns a true value
 
     def assert_send send_ary, m = nil
-      where = Minitest.filter_backtrace(caller).first
-      where = where.split(/:in /, 2).first # clean up noise
-      warn "DEPRECATED: assert_send. From #{where}"
+      warn "DEPRECATED: assert_send. From #{_where}"
 
       recv, msg, *args = send_ary
       m = message(m) {
@@ -807,11 +808,12 @@ module Minitest
 
     ##
     # Fails if +obj+ responds to the message +meth+.
+    # include_all defaults to false to match Object#respond_to?
 
-    def refute_respond_to obj, meth, msg = nil
+    def refute_respond_to obj, meth, msg = nil, include_all: false
       msg = message(msg) { "Expected #{mu_pp(obj)} to not respond to #{meth}" }
 
-      refute obj.respond_to?(meth), msg
+      refute obj.respond_to?(meth, include_all), msg
     end
 
     ##
@@ -830,10 +832,10 @@ module Minitest
     # gets listed at the end of the run but doesn't cause a failure
     # exit code.
 
-    def skip msg = nil, bt = caller
+    def skip msg = nil, _ignored = nil
       msg ||= "Skipped, no message given"
       @skip = true
-      raise Minitest::Skip, msg, bt
+      raise Minitest::Skip, msg
     end
 
     ##

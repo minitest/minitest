@@ -1,3 +1,97 @@
+=== 5.22.3 / 2024-03-13
+
+* 1 minor enhancement:
+
+  * MASSIVE improvement of minitest's pride plugin output: Frequencies doubled! Sine waves shifted!! Comments improved!!! Colors rotated!!!! (havenwood)
+
+* 3 bug fixes:
+
+  * Improved wording on Minitest::Test#parallelize_me! to clarify it goes INSIDE your test class/describe.
+  * Minor changes to tests to pass when tests ran with extra flags (eg -p).
+  * Support Ruby 3.4's new error message format. (mame)
+
+=== 5.22.2 / 2024-02-07
+
+* 1 bug fix:
+
+  * Third time's a charm? Remember: 'ensure' is almost always the
+    wrong way to go (for results... it's great for cleaning up).
+
+=== 5.22.1 / 2024-02-06
+
+* 1 bug fix:
+
+  * Don't exit non-zero if no tests ran and no filter (aka, the test file is empty).
+    (I'm starting to think the exit 1 thing for @tenderlove was a mistake...)
+
+=== 5.22.0 / 2024-02-05
+
+* 1 minor enhancement:
+
+  * Added "did you mean" output if your --name filter matches nothing. (tenderlove)
+
+* 2 bug fixes:
+
+  * Big cleanup of test filtering. Much prettier / more functional.
+  * Fix situation where Assertion#location can't find the location. (pftg)
+
+=== 5.21.2 / 2024-01-17
+
+* 1 bug fix:
+
+  * Fixed bug in Minitest::Compress#compress formatting w/ nested patterns. Now recurses properly.
+
+=== 5.21.1 / 2024-01-11
+
+* 1 bug fix:
+
+  * Rails' default backtrace filter can't currently work with caller_locations, so reverting back to caller.
+
+=== 5.21.0 / 2024-01-11
+
+* 10 minor enhancements:
+
+  * Add include_all kw arg to assert_respond_to and refute_respond_to.
+  * Added --quiet flag to skip ProgressReporter (prints the dots). Minor speedup.
+  * Added Minitest::Compress#compress and added it to UnexpectedError.
+  * Added ability to initialize BacktraceFilter w/ custom regexp.
+  * Filter failure backtraces using backtrace_filter before calculating location. (thomasmarshall)
+  * Make BacktraceFilter#filter compatible with locations (still compares strings).
+  * Optimized Assertion#location ~30%.
+  * Output relative paths for all failures/errors/backtraces.
+  * Refactored location information in assertions, now using locations.
+  * Removed thread and mutex_m dependencies. (hsbt, eregon)
+
+* 2 bug fixes:
+
+  * Drop undocumented bt arg in #skip. Dunno why that ever happened, prolly for testing?
+  * Fix mock to work with ruby debugger enabled. (keithlayne)
+
+=== 5.20.0 / 2023-09-06
+
+* 1 minor enhancement:
+
+  * Optionally allow autorun exit hook to remain active in forked child. (casperisfine)
+
+=== 5.19.0 / 2023-07-26
+
+* 2 minor enhancements:
+
+  * Add metadata lazy accessor to Runnable / Result. (matteeyah)
+  * Only load minitest/unit (aka ancient MiniTest compatibility layer) if \ENV[\"MT_COMPAT\"]
+
+* 1 bug fix:
+
+  * Minitest::TestTask enthusiastically added itself to default. (ParadoxV5)
+
+=== 5.18.1 / 2023-06-16
+
+* 3 bug fixes:
+
+  * Avoid extra string allocations when filtering tests. (tenderlove)
+  * Only mention deprecated \ENV[\'N\'] if it is an integer string.
+  * Push up test_order to Minitest::Runnable to fix minitest/hell. (koic)
+
 === 5.18.0 / 2023-03-04
 
 * 2 major enhancements:
@@ -189,7 +283,7 @@
 
 * 3 bug fixes:
 
-  * Check `option[:filter]` klass before match. Fixes 2.6 warning. (y-yagi)
+  * Check \option[:filter] klass before match. Fixes 2.6 warning. (y-yagi)
   * Fixed Assertions#diff from recalculating if set to nil
   * Fixed spec section of readme to not use deprecated global expectations. (CheezItMan)
 

@@ -9,6 +9,7 @@ lib/minitest.rb
 lib/minitest/assertions.rb
 lib/minitest/autorun.rb
 lib/minitest/benchmark.rb
+lib/minitest/compress.rb
 lib/minitest/expectations.rb
 lib/minitest/hell.rb
 lib/minitest/mock.rb

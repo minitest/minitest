@@ -10,7 +10,7 @@ module Minitest # :nodoc:
   class Mock
     alias :__respond_to? :respond_to?
 
-    overridden_methods = %w[
+    overridden_methods = %i[
       ===
       class
       inspect
@@ -23,8 +23,10 @@ module Minitest # :nodoc:
       to_s
     ]
 
+    overridden_methods << :singleton_method_added if defined?(::DEBUGGER__)
+
     instance_methods.each do |m|
-      undef_method m unless overridden_methods.include?(m.to_s) || m =~ /^__/
+      undef_method m unless overridden_methods.include?(m) || m =~ /^__/
     end
 
     overridden_methods.map(&:to_sym).each do |method_id|

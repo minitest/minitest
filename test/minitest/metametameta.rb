@@ -8,16 +8,17 @@ class Minitest::Test
   end
 
   def with_empty_backtrace_filter
-    original = Minitest.backtrace_filter
-
-    obj = Minitest::BacktraceFilter.new
-    def obj.filter _bt
-      []
+    with_backtrace_filter Minitest::BacktraceFilter.new %r%.% do
+      yield
     end
+  end
+
+  def with_backtrace_filter filter
+    original = Minitest.backtrace_filter
 
     Minitest::Test.io_lock.synchronize do # try not to trounce in parallel
       begin
-        Minitest.backtrace_filter = obj
+        Minitest.backtrace_filter = filter
         yield
       ensure
         Minitest.backtrace_filter = original
@@ -55,7 +56,7 @@ class MetaMetaMetaTestCase < Minitest::Test
   def run_tu_with_fresh_reporter flags = %w[--seed 42]
     options = Minitest.process_args flags
 
-    @output = StringIO.new("".encode('UTF-8'))
+    @output = StringIO.new("".encode(Encoding::UTF_8))
 
     self.reporter = Minitest::CompositeReporter.new
     reporter << Minitest::SummaryReporter.new(@output, options)
@@ -105,15 +106,20 @@ class MetaMetaMetaTestCase < Minitest::Test
     output.gsub!(/0x[A-Fa-f0-9]+/, "0xXXX")
     output.gsub!(/ +$/, "")
 
+    file = ->(s) { s.start_with?("/") ? "FULLFILE" : "FILE" }
+
     if windows? then
       output.gsub!(/\[(?:[A-Za-z]:)?[^\]:]+:\d+\]/, "[FILE:LINE]")
-      output.gsub!(/^(\s+)(?:[A-Za-z]:)?[^:]+:\d+:in/, '\1FILE:LINE:in')
+      output.gsub!(/^(\s+)(?:[A-Za-z]:)?[^:]+:\d+:in [`']/, '\1FILE:LINE:in \'')
     else
-      output.gsub!(/\[[^\]:]+:\d+\]/, "[FILE:LINE]")
-      output.gsub!(/^(\s+)[^:]+:\d+:in/, '\1FILE:LINE:in')
+      output.gsub!(/\[([^\]:]+):\d+\]/)         {     "[#{file[$1]}:LINE]"   }
+      output.gsub!(/^(\s+)([^:]+):\d+:in [`']/) { "#{$1}#{file[$2]}:LINE:in '" }
     end
 
-    output.gsub!(/( at )[^:]+:\d+/, '\1[FILE:LINE]')
+    output.gsub!(/in [`']block in (?:([^']+)[#.])?/, "in 'block in")
+    output.gsub!(/in [`'](?:([^']+)[#.])?/, "in '")
+
+    output.gsub!(/( at )[^:]+:\d+/) { "#{$1}[#{file[$2]}:LINE]" } # eval?
 
     output
   end

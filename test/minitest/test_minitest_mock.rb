@@ -686,7 +686,7 @@ class TestMinitestStub < Minitest::Test
   end
 
   def test_stub_yield_self
-    obj = "foo"
+    obj = +"foo"
 
     val = obj.stub :to_s, "bar" do |s|
       s.to_s
@@ -769,7 +769,7 @@ class TestMinitestStub < Minitest::Test
     end
 
     exp = jruby? ? /Undefined method nope_nope_nope for '#{self.class}::Time'/ :
-      /undefined method `nope_nope_nope' for( class)? `#{self.class}::Time'/
+      /undefined method [`']nope_nope_nope' for( class)? [`']#{self.class}::Time'/
     assert_match exp, e.message
   end
 
@@ -857,7 +857,7 @@ class TestMinitestStub < Minitest::Test
   # [:value,  :block_call, :args] =>  N/A
 
   class Bar
-    def call
+    def call(&_) # to ignore unused block
       puts "hi"
     end
   end
@@ -997,7 +997,7 @@ class TestMinitestStub < Minitest::Test
   def test_stub_lambda_block_call_5
     @assertion_count += 1
     rs = nil
-    io = StringIO.new "", "w"
+    io = StringIO.new(+"", "w")
     File.stub5 :open, lambda { |p, m, &blk| blk and blk.call io } do
       File.open "foo.txt", "r" do |f|
         rs = f && f.write("woot")
@@ -1012,7 +1012,7 @@ class TestMinitestStub < Minitest::Test
 
     @assertion_count += 1
     rs = nil
-    io = StringIO.new "", "w"
+    io = StringIO.new(+"", "w")
     File.stub6 :open, lambda { |p, m, &blk| blk.call io } do
       File.open "foo.txt", "r" do |f|
         rs = f.write("woot")
@@ -1025,7 +1025,7 @@ class TestMinitestStub < Minitest::Test
   def test_stub_lambda_block_call_args_5
     @assertion_count += 1
     rs = nil
-    io = StringIO.new "", "w"
+    io = StringIO.new(+"", "w")
     File.stub5(:open, lambda { |p, m, &blk| blk and blk.call io }, :WTF?) do
       File.open "foo.txt", "r" do |f|
         rs = f.write("woot")
@@ -1040,7 +1040,7 @@ class TestMinitestStub < Minitest::Test
 
     @assertion_count += 1
     rs = nil
-    io = StringIO.new "", "w"
+    io = StringIO.new(+"", "w")
     File.stub6(:open, lambda { |p, m, &blk| blk.call io }, :WTF?) do
       File.open "foo.txt", "r" do |f|
         rs = f.write("woot")
@@ -1055,7 +1055,7 @@ class TestMinitestStub < Minitest::Test
 
     @assertion_count += 2
     rs = nil
-    io = StringIO.new "", "w"
+    io = StringIO.new(+"", "w")
     @tc.assert_raises ArgumentError do
       File.stub6_2(:open, lambda { |p, m, &blk| blk.call io }, :WTF?) do
         File.open "foo.txt", "r" do |f|
@@ -1105,7 +1105,7 @@ class TestMinitestStub < Minitest::Test
   def test_stub_value_block_args_5
     @assertion_count += 2
     rs = nil
-    io = StringIO.new "", "w"
+    io = StringIO.new(+"", "w")
     File.stub5 :open, :value, io do
       result = File.open "foo.txt", "r" do |f|
         rs = f.write("woot")
@@ -1124,7 +1124,7 @@ class TestMinitestStub < Minitest::Test
         end
       end
     end
-    exp = /undefined method `write' for nil/
+    exp = /undefined method [`']write' for nil/
     assert_match exp, e.message
   end
 
@@ -1133,7 +1133,7 @@ class TestMinitestStub < Minitest::Test
 
     @assertion_count += 2
     rs = nil
-    io = StringIO.new "", "w"
+    io = StringIO.new(+"", "w")
     assert_deprecated do
       File.stub6 :open, :value, io do
         result = File.open "foo.txt", "r" do |f|
@@ -1151,7 +1151,7 @@ class TestMinitestStub < Minitest::Test
 
     @assertion_count += 2
     rs = nil
-    io = StringIO.new "", "w"
+    io = StringIO.new(+"", "w")
     @tc.assert_raises ArgumentError do
       File.stub6_2 :open, :value, io do
         result = File.open "foo.txt", "r" do |f|

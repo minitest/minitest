@@ -379,7 +379,7 @@ class TestMinitestAssertions < Minitest::Test
           EOM
 
     assert_triggered msg do
-      x = "bad-utf8-\xF1.txt".force_encoding "ASCII"
+      x = "bad-utf8-\xF1.txt".dup.force_encoding Encoding::ASCII
       y = x.dup.force_encoding "binary" # TODO: switch to .b when 1.9 dropped
       @tc.assert_equal x, y
     end
@@ -762,12 +762,13 @@ class TestMinitestAssertions < Minitest::Test
       Class: <SomeError>
       Message: <\"blah\">
       ---Backtrace---
-      FILE:LINE:in \`block in test_assert_raises_default_triggered\'
+      FILE:LINE:in \'block in test_assert_raises_default_triggered\'
       ---------------
     EOM
 
     actual = e.message.gsub(/^.+:\d+/, "FILE:LINE")
     actual.gsub!(RE_LEVELS, "") unless jruby?
+    actual.gsub!(/[`']block in (?:TestMinitestAssertions#)?/, "'block in ")
 
     assert_equal expected, actual
   end
@@ -841,12 +842,13 @@ class TestMinitestAssertions < Minitest::Test
       Class: <AnError>
       Message: <\"some message\">
       ---Backtrace---
-      FILE:LINE:in \`block in test_assert_raises_subclass_triggered\'
+      FILE:LINE:in \'block in test_assert_raises_subclass_triggered\'
       ---------------
     EOM
 
     actual = e.message.gsub(/^.+:\d+/, "FILE:LINE")
     actual.gsub!(RE_LEVELS, "") unless jruby?
+    actual.gsub!(/[`']block in (?:TestMinitestAssertions#)?/, "'block in ")
 
     assert_equal expected.chomp, actual
   end
@@ -863,12 +865,13 @@ class TestMinitestAssertions < Minitest::Test
       Class: <SyntaxError>
       Message: <\"icky\">
       ---Backtrace---
-      FILE:LINE:in \`block in test_assert_raises_triggered_different\'
+      FILE:LINE:in \'block in test_assert_raises_triggered_different\'
       ---------------
     EOM
 
     actual = e.message.gsub(/^.+:\d+/, "FILE:LINE")
     actual.gsub!(RE_LEVELS, "") unless jruby?
+    actual.gsub!(/[`']block in (?:TestMinitestAssertions#)?/, "'block in ")
 
     assert_equal expected, actual
   end
@@ -886,12 +889,13 @@ class TestMinitestAssertions < Minitest::Test
       Class: <SyntaxError>
       Message: <\"icky\">
       ---Backtrace---
-      FILE:LINE:in \`block in test_assert_raises_triggered_different_msg\'
+      FILE:LINE:in \'block in test_assert_raises_triggered_different_msg\'
       ---------------
     EOM
 
     actual = e.message.gsub(/^.+:\d+/, "FILE:LINE")
     actual.gsub!(RE_LEVELS, "") unless jruby?
+    actual.gsub!(/[`']block in (?:TestMinitestAssertions#)?/, "'block in ")
 
     assert_equal expected.chomp, actual
   end
@@ -933,6 +937,16 @@ class TestMinitestAssertions < Minitest::Test
   def test_assert_respond_to_triggered
     assert_triggered 'Expected "blah" (String) to respond to #rawr!.' do
       @tc.assert_respond_to "blah", :rawr!
+    end
+  end
+
+  def test_assert_respond_to__include_all
+    @tc.assert_respond_to @tc, :exit, include_all: true
+  end
+
+  def test_assert_respond_to__include_all_triggered
+    assert_triggered(/Expected .+::DummyTest. to respond to #exit\?/) do
+      @tc.assert_respond_to @tc, :exit?, include_all: true
     end
   end
 
@@ -1153,18 +1167,14 @@ class TestMinitestAssertions < Minitest::Test
   def test_class_asserts_match_refutes
     @assertion_count = 0
 
-    methods = Minitest::Assertions.public_instance_methods
-    methods.map!(&:to_s) if Symbol === methods.first
+    methods = Minitest::Assertions.public_instance_methods.map(&:to_s)
 
     # These don't have corresponding refutes _on purpose_. They're
     # useless and will never be added, so don't bother.
     ignores = %w[assert_output assert_raises assert_send
                  assert_silent assert_throws assert_mock]
 
-    # These are test/unit methods. I'm not actually sure why they're still here
-    ignores += %w[assert_no_match assert_not_equal assert_not_nil
-                  assert_not_same assert_nothing_raised
-                  assert_nothing_thrown assert_raise]
+    ignores += %w[assert_allocations] # for minitest-gcstats
 
     asserts = methods.grep(/^assert/).sort - ignores
     refutes = methods.grep(/^refute/).sort - ignores
@@ -1444,6 +1454,16 @@ class TestMinitestAssertions < Minitest::Test
     end
   end
 
+  def test_refute_respond_to__include_all
+    @tc.refute_respond_to "blah", :missing, include_all: true
+  end
+
+  def test_refute_respond_to__include_all_triggered
+    assert_triggered(/Expected .*DummyTest.* to not respond to exit./) do
+      @tc.refute_respond_to @tc, :exit, include_all: true
+    end
+  end
+
   def test_refute_same
     @tc.refute_same 1, 2
   end
@@ -1626,14 +1646,14 @@ class TestMinitestAssertionHelpers < Minitest::Test
   end
 
   def test_mu_pp_for_diff_str_bad_encoding
-    str = "\666".force_encoding Encoding::UTF_8
+    str = "\666".dup.force_encoding Encoding::UTF_8
     exp = "# encoding: UTF-8\n#    valid: false\n\"\\xB6\""
 
     assert_mu_pp_for_diff exp, str, :raw
   end
 
   def test_mu_pp_for_diff_str_bad_encoding_both
-    str = "\666A\\n\nB".force_encoding Encoding::UTF_8
+    str = "\666A\\n\nB".dup.force_encoding Encoding::UTF_8
     exp = "# encoding: UTF-8\n#    valid: false\n\"\\xB6A\\\\n\\nB\""
 
     assert_mu_pp_for_diff exp, str, :raw
@@ -1680,7 +1700,7 @@ class TestMinitestAssertionHelpers < Minitest::Test
   end
 
   def test_mu_pp_str_bad_encoding
-    str = "\666".force_encoding Encoding::UTF_8
+    str = "\666".dup.force_encoding Encoding::UTF_8
     exp = "# encoding: UTF-8\n#    valid: false\n\"\\xB6\""
 
     assert_mu_pp exp, str, :raw

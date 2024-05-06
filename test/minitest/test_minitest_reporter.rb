@@ -31,7 +31,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
 
   def setup
     super
-    self.io = StringIO.new("")
+    self.io = StringIO.new(+"")
     self.r  = new_composite_reporter
   end
 
@@ -46,6 +46,25 @@ class TestMinitestReporter < MetaMetaMetaTestCase
       @et = Minitest::Result.from @et
     end
     @et
+  end
+
+  def system_stack_error_test
+    unless defined? @sse then
+
+      ex = SystemStackError.new
+
+      pre  = ("a".."c").to_a
+      mid  = ("aa".."ad").to_a * 67
+      post = ("d".."f").to_a
+      ary  = pre + mid + post
+
+      ex.set_backtrace ary
+
+      @sse = Minitest::Test.new(:woot)
+      @sse.failures << Minitest::UnexpectedError.new(ex)
+      @sse = Minitest::Result.from @sse
+    end
+    @sse
   end
 
   def fail_test
@@ -63,6 +82,12 @@ class TestMinitestReporter < MetaMetaMetaTestCase
 
   def passing_test
     @pt ||= Minitest::Result.from Minitest::Test.new(:woot)
+  end
+
+  def passing_test_with_metadata
+    test = Minitest::Test.new(:woot)
+    test.metadata[:meta] = :data
+    @pt ||= Minitest::Result.from test
   end
 
   def skip_test
@@ -159,6 +184,29 @@ class TestMinitestReporter < MetaMetaMetaTestCase
 
   def test_record_pass
     r.record passing_test
+
+    assert_equal ".", io.string
+    assert_empty r.results
+    assert_equal 1, r.count
+    assert_equal 0, r.assertions
+  end
+
+  def test_record_pass_with_metadata
+    reporter = self.r
+
+    def reporter.metadata
+      @metadata
+    end
+
+    def reporter.record result
+      super
+      @metadata = result.metadata if result.metadata?
+    end
+
+    r.record passing_test_with_metadata
+
+    exp = { :meta => :data }
+    assert_equal exp, reporter.metadata
 
     assert_equal ".", io.string
     assert_empty r.results
@@ -276,8 +324,44 @@ class TestMinitestReporter < MetaMetaMetaTestCase
         1) Error:
       Minitest::Test#woot:
       RuntimeError: no
-          FILE:LINE:in `error_test'
-          FILE:LINE:in `test_report_error'
+          FILE:LINE:in 'error_test'
+          FILE:LINE:in 'test_report_error'
+
+      1 runs, 0 assertions, 0 failures, 1 errors, 0 skips
+    EOM
+
+    assert_equal exp, normalize_output(io.string)
+  end
+
+  def test_report_error__sse
+    r.start
+    r.record system_stack_error_test
+    r.report
+
+    exp = clean <<-EOM
+      Run options:
+
+      # Running:
+
+      E
+
+      Finished in 0.00
+
+        1) Error:
+      Minitest::Test#woot:
+      SystemStackError: 274 -> 12
+          a
+          b
+          c
+           +->> 67 cycles of 4 lines:
+           | aa
+           | ab
+           | ac
+           | ad
+           +-<<
+          d
+          e
+          f
 
       1 runs, 0 assertions, 0 failures, 1 errors, 0 skips
     EOM
@@ -308,5 +392,49 @@ class TestMinitestReporter < MetaMetaMetaTestCase
     EOM
 
     assert_equal exp, normalize_output(io.string)
+  end
+
+  def test_report_failure_uses_backtrace_filter
+    filter = Minitest::BacktraceFilter.new
+    def filter.filter _bt
+      ["foo.rb:123:in 'foo'"]
+    end
+
+    with_backtrace_filter filter do
+      r.start
+      r.record fail_test
+      r.report
+    end
+
+    exp = "Minitest::Test#woot [foo.rb:123]"
+
+    assert_includes io.string, exp
+  end
+
+  def test_report_failure_uses_backtrace_filter_complex_sorbet
+    backtrace = <<~EOBT
+      /Users/user/.gem/ruby/3.2.2/gems/minitest-5.20.0/lib/minitest/assertions.rb:183:in 'assert'
+      example_test.rb:9:in 'assert_false'
+      /Users/user/.gem/ruby/3.2.2/gems/sorbet-runtime-0.5.11068/lib/types/private/methods/call_validation.rb:256:in 'bind_call'
+      /Users/user/.gem/ruby/3.2.2/gems/sorbet-runtime-0.5.11068/lib/types/private/methods/call_validation.rb:256:in 'validate_call'
+      /Users/user/.gem/ruby/3.2.2/gems/sorbet-runtime-0.5.11068/lib/types/private/methods/_methods.rb:275:in 'block in _on_method_added'
+      example_test.rb:25:in 'test_something'
+      /Users/user/.gem/ruby/3.2.2/gems/minitest-5.20.0/lib/minitest/test.rb:94:in 'block (3 levels) in run'
+      /Users/user/.gem/ruby/3.2.2/gems/minitest-5.20.0/lib/minitest/test.rb:191:in 'capture_exceptions'
+      /Users/user/.gem/ruby/3.2.2/gems/minitest-5.20.0/lib/minitest/test.rb:89:in 'block (2 levels) in run'
+      ... so many lines ...
+    EOBT
+
+    filter = Minitest::BacktraceFilter.new %r%lib/minitest|gems/sorbet%
+
+    with_backtrace_filter filter do
+      begin
+        assert_equal 1, 2
+      rescue Minitest::Assertion => e
+        e.set_backtrace backtrace.lines.map(&:chomp)
+
+        assert_match "example_test.rb:25", e.location
+      end
+    end
   end
 end

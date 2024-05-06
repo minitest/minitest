@@ -28,24 +28,24 @@ class TestMinitestUnit < MetaMetaMetaTestCase
   basedir = Pathname.new(File.expand_path "lib/minitest") + "mini"
   basedir = basedir.relative_path_from(pwd).to_s
   MINITEST_BASE_DIR = basedir[/\A\./] ? basedir : "./#{basedir}"
-  BT_MIDDLE = ["#{MINITEST_BASE_DIR}/test.rb:161:in `each'",
-               "#{MINITEST_BASE_DIR}/test.rb:158:in `each'",
-               "#{MINITEST_BASE_DIR}/test.rb:139:in `run'",
-               "#{MINITEST_BASE_DIR}/test.rb:106:in `run'"]
+  BT_MIDDLE = ["#{MINITEST_BASE_DIR}/test.rb:161:in 'each'",
+               "#{MINITEST_BASE_DIR}/test.rb:158:in 'each'",
+               "#{MINITEST_BASE_DIR}/test.rb:139:in 'run'",
+               "#{MINITEST_BASE_DIR}/test.rb:106:in 'run'"]
 
   def test_filter_backtrace
     # this is a semi-lame mix of relative paths.
     # I cheated by making the autotest parts not have ./
-    bt = (["lib/autotest.rb:571:in `add_exception'",
-           "test/test_autotest.rb:62:in `test_add_exception'",
-           "#{MINITEST_BASE_DIR}/test.rb:165:in `__send__'"] +
+    bt = (["lib/autotest.rb:571:in 'add_exception'",
+           "test/test_autotest.rb:62:in 'test_add_exception'",
+           "#{MINITEST_BASE_DIR}/test.rb:165:in '__send__'"] +
           BT_MIDDLE +
           ["#{MINITEST_BASE_DIR}/test.rb:29",
            "test/test_autotest.rb:422"])
     bt = util_expand_bt bt
 
-    ex = ["lib/autotest.rb:571:in `add_exception'",
-          "test/test_autotest.rb:62:in `test_add_exception'"]
+    ex = ["lib/autotest.rb:571:in 'add_exception'",
+          "test/test_autotest.rb:62:in 'test_add_exception'"]
     ex = util_expand_bt ex
 
     Minitest::Test.io_lock.synchronize do # try not to trounce in parallel
@@ -56,7 +56,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
   end
 
   def test_filter_backtrace_all_unit
-    bt = (["#{MINITEST_BASE_DIR}/test.rb:165:in `__send__'"] +
+    bt = (["#{MINITEST_BASE_DIR}/test.rb:165:in '__send__'"] +
           BT_MIDDLE +
           ["#{MINITEST_BASE_DIR}/test.rb:29"])
     ex = bt.clone
@@ -65,7 +65,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
   end
 
   def test_filter_backtrace_unit_starts
-    bt = (["#{MINITEST_BASE_DIR}/test.rb:165:in `__send__'"] +
+    bt = (["#{MINITEST_BASE_DIR}/test.rb:165:in '__send__'"] +
           BT_MIDDLE +
           ["#{MINITEST_BASE_DIR}/mini/test.rb:29",
            "-e:1"])
@@ -94,7 +94,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
       end
 
       def test_this_is_non_ascii_failure_message
-        fail 'ЁЁЁ'.force_encoding('ASCII-8BIT')
+        fail 'ЁЁЁ'.dup.force_encoding(Encoding::BINARY)
       end
     end
 
@@ -111,7 +111,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
         2) Error:
       FakeNamedTestXX#test_this_is_non_ascii_failure_message:
       RuntimeError: ЁЁЁ
-          FILE:LINE:in `test_this_is_non_ascii_failure_message'
+          FILE:LINE:in 'test_this_is_non_ascii_failure_message'
 
       2 runs, 1 assertions, 1 failures, 1 errors, 0 skips
     EOM
@@ -263,7 +263,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
         1) Error:
       FakeNamedTestXX#test_error:
       RuntimeError: unhandled exception
-          FILE:LINE:in \`test_error\'
+          FILE:LINE:in \'test_error\'
 
       2 runs, 1 assertions, 0 failures, 1 errors, 0 skips
     EOM
@@ -291,7 +291,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
         1) Error:
       FakeNamedTestXX#test_something:
       RuntimeError: unhandled exception
-          FILE:LINE:in \`teardown\'
+          FILE:LINE:in \'teardown\'
 
       1 runs, 1 assertions, 0 failures, 1 errors, 0 skips
     EOM
@@ -1089,16 +1089,26 @@ class TestMinitestUnitTestCase < Minitest::Test
 
   def test_autorun_does_not_affect_fork_success_status
     @assertion_count = 0
-    skip "windows doesn't have skip" unless Process.respond_to?(:fork)
+    skip "windows doesn't have fork" unless Process.respond_to?(:fork)
     Process.waitpid(fork {})
     assert_equal true, $?.success?
   end
 
   def test_autorun_does_not_affect_fork_exit_status
     @assertion_count = 0
-    skip "windows doesn't have skip" unless Process.respond_to?(:fork)
+    skip "windows doesn't have fork" unless Process.respond_to?(:fork)
     Process.waitpid(fork { exit 42 })
     assert_equal 42, $?.exitstatus
+  end
+
+  def test_autorun_optionally_can_affect_fork_exit_status
+    @assertion_count = 0
+    skip "windows doesn't have fork" unless Process.respond_to?(:fork)
+    Minitest.allow_fork = true
+    Process.waitpid(fork { exit 42 })
+    refute_equal 42, $?.exitstatus
+  ensure
+    Minitest.allow_fork = false
   end
 end
 
@@ -1251,12 +1261,12 @@ class TestMinitestUnitRecording < MetaMetaMetaTestCase
       Error:
       FakeNamedTestXX#test_method:
       AnError: AnError
-          FILE:LINE:in `test_method'
+          FILE:LINE:in 'test_method'
 
       Error:
       FakeNamedTestXX#test_method:
       RuntimeError: unhandled exception
-          FILE:LINE:in `teardown'
+          FILE:LINE:in 'teardown'
     "
 
     assert_equal exp.strip, normalize_output(first_reporter.results.first.to_s).strip
@@ -1268,5 +1278,98 @@ class TestMinitestUnitRecording < MetaMetaMetaTestCase
         skip "not yet"
       end
     end
+  end
+end
+
+class TestUnexpectedError < Minitest::Test
+  def assert_compress exp, input
+    e = Minitest::UnexpectedError.new RuntimeError.new
+
+    exp = exp.lines.map(&:chomp) if String === exp
+    act = e.compress input
+
+    assert_equal exp, act
+  end
+
+  ACT1 = %w[ a b c b c b c b c d ]
+
+  def test_normal
+    assert_compress <<~EXP, %w[ a b c b c b c b c d ]
+          a
+           +->> 4 cycles of 2 lines:
+           | b
+           | c
+           +-<<
+          d
+        EXP
+  end
+
+  def test_normal2
+    assert_compress <<~EXP, %w[ a b c b c b c b c ]
+          a
+           +->> 4 cycles of 2 lines:
+           | b
+           | c
+           +-<<
+        EXP
+  end
+
+  def test_longer_c_than_b
+    # the extra c in the front makes the overall length longer sorting it first
+    assert_compress <<~EXP, %w[ c a b c b c b c b c b d ]
+          c
+          a
+          b
+           +->> 4 cycles of 2 lines:
+           | c
+           | b
+           +-<<
+          d
+        EXP
+  end
+
+  def test_1_line_cycles
+    assert_compress <<~EXP, %w[ c a b c b c b c b c b b b d ]
+          c
+          a
+           +->> 4 cycles of 2 lines:
+           | b
+           | c
+           +-<<
+           +->> 3 cycles of 1 lines:
+           | b
+           +-<<
+          d
+        EXP
+  end
+
+  def test_sanity3
+    pre  = ("aa".."am").to_a
+    mid  = ("a".."z").to_a * 67
+    post = ("aa".."am").to_a
+    ary  = pre + mid + post
+
+    exp = pre +
+      [" +->> 67 cycles of 26 lines:"] +
+      ("a".."z").map { |s| " | #{s}" } +
+      [" +-<<"] +
+      post
+
+    assert_compress exp, ary
+  end
+
+  def test_absurd_patterns
+    assert_compress <<~EXP, %w[ a b c b c a b c b c a b c ]
+           +->> 2 cycles of 5 lines:
+           | a
+           |  +->> 2 cycles of 2 lines:
+           |  | b
+           |  | c
+           |  +-<<
+           +-<<
+          a
+          b
+          c
+        EXP
   end
 end
