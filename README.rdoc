@@ -406,22 +406,23 @@ Using our example above, here is how we might implement MyCI:
 
 === What versions are compatible with what? Or what versions are supported?
 
-Minitest is a dependency of rails, which until fairly recently had an
+Minitest is a dependency of rails, which until very recently had an
 overzealous backwards compatibility policy. As such, I'm stuck
 supporting versions of ruby that are long past EOL. Hopefully I'll be
 able to support only current versions of ruby sometime in the near
 future.
 
-(As of 2023-03-05)
+(As of 2024-05-10)
 
 Current versions of rails: (https://endoflife.date/rails)
 
-  | rails | min ruby | rec ruby | minitest | status   |  EOL Date  |
-  |-------+----------+----------+----------+----------+------------|
-  |   7.0 | >= 2.7   |      3.1 | >= 5.1   | Current  | 2025-06-01?|
-  |   6.1 | >= 2.5   |      3.0 | >= 5.1   | Maint    | 2024-06-01?|
-  |   6.0 | >= 2.5   |      2.6 | >= 5.1   | Security | 2023-06-01 |
-  |   5.2 | >= 2.2.2 |      2.5 | ~> 5.1   | EOL      | 2022-06-01 |
+  | rails | min ruby | minitest | status   |  EOL Date  |
+  |-------+----------+----------+----------+------------|
+  |   7.1 | >= 2.7   | >= 5.1   | Current  | 2026-06-01?|
+  |   7.0 | >= 2.7   | >= 5.1   | Maint    | 2025-06-01?|
+  |   6.1 | >= 2.5   | >= 5.1   | Security | 2024-06-01?|
+  |   6.0 | >= 2.5   | >= 5.1   | EOL      | 2023-06-01 |
+  |   5.2 | >= 2.2.2 | ~> 5.1   | EOL      | 2022-06-01 |
 
 If you want to look at the requirements for a specific version, run:
 
@@ -431,12 +432,13 @@ Current versions of ruby: (https://endoflife.date/ruby)
 
   | ruby | Status  |   EOL Date |
   |------+---------+------------|
-  |  3.2 | Current | 2026-03-31 |
-  |  3.1 | Maint   | 2025-03-31 |
-  |  3.0 | Maint   | 2024-03-31 |
-  |  2.7 | Security| 2023-03-31 |
+  |  3.3 | Current | 2027-03-31 |
+  |  3.2 | Maint   | 2026-03-31 |
+  |  3.1 | Security| 2025-03-31 |
+  |  3.0 | EOL     | 2024-03-31 |
+  |  2.7 | EOL     | 2023-03-31 |
   |  2.6 | EOL     | 2022-03-31 |
-  |  2.5 | EOL     | 2021-03-31 |
+  |  2.5 | EOL     | 2021-03-31 | DO YOU SEE WHAT I'M STUCK WITH???
 
 === How to test SimpleDelegates?
 
