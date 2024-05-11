@@ -73,4 +73,9 @@ task :bugs do
   sh "for f in bug*.rb ; do echo $f; echo; #{Gem.ruby} -Ilib $f && rm $f ; done"
 end
 
+Minitest::TestTask.create :testW0 do |t|
+  t.warning = false
+  t.test_prelude = "$-w = nil"
+end
+
 # vim: syntax=Ruby
