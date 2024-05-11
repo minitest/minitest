@@ -33,6 +33,7 @@ task :specs do
     /_includes/                            => "_include",
     /(must|wont)_(.*_of|nil|silent|empty)/ => '\1_be_\2',
     /must_raises/                          => "must_raise",
+    /(must|wont)_pattern/                  => '\1_pattern_match',
     /(must|wont)_predicate/                => '\1_be',
     /(must|wont)_path_exists/              => 'path_\1_exist',
   }
