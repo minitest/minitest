@@ -114,7 +114,7 @@ module Minitest # :nodoc:
       self.test_globs   = ["test/**/test_*.rb",
                            "test/**/*_test.rb"]
       self.test_prelude = nil
-      self.verbose      = Rake.application.options.trace || Rake.verbose
+      self.verbose      = Rake.application.options.trace || Rake.verbose == true
       self.warning      = true
     end
 
