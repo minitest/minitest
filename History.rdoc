@@ -1,3 +1,16 @@
+=== 5.23.0 / 2024-05-15
+
+* 3 minor enhancements:
+
+  * Added -Werror to raise on any warning output. (byroot)
+  * Added UnexpectedWarning as a failure summary type, added count to output if activated.
+  * Added minitest/manual_plugins.rb w/ new Minitest.load method. (tenderlove)
+
+* 2 bug fixes:
+
+  * Allow empty_run! and reporter to display summary for empty runs. (zzak)
+  * Make test task verbose using either rake's -v or -t (was just -t).
+
 === 5.22.3 / 2024-03-13
 
 * 1 minor enhancement:
