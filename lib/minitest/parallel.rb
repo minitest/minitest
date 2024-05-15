@@ -16,7 +16,7 @@ module Minitest
 
       def initialize size
         @size  = size
-        @queue = Queue.new
+        @queue = Thread::Queue.new
         @pool  = nil
       end
 
