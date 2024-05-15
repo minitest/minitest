@@ -284,18 +284,14 @@ describe Minitest::Spec do
   end
 
   it "needs to warn on equality with nil" do
-    @assertion_count += 1 # extra test
+    @assertion_count = 3
+    @assertion_count += 2 unless error_on_warn? # 2 extra assertions
 
-    out, err = capture_io do
+    exp = /DEPRECATED: Use assert_nil if expecting nil from .* This will fail in Minitest 6./
+
+    assert_deprecation exp do
       assert_success _(nil).must_equal(nil)
     end
-
-    exp = "DEPRECATED: Use assert_nil if expecting nil from #{__FILE__}:#{__LINE__-3}. " \
-      "This will fail in Minitest 6.\n"
-    exp = "" if $-w.nil?
-
-    assert_empty out
-    assert_equal exp, err
   end
 
   it "needs to verify floats outside a delta" do
@@ -576,7 +572,8 @@ describe Minitest::Spec do
 
     it "can NOT use must_equal in a thread. It must use expect in a thread" do
       skip "N/A" if ENV["MT_NO_EXPECTATIONS"]
-      assert_raises RuntimeError do
+
+      assert_raises RuntimeError, Minitest::UnexpectedWarning do
         capture_io do
           Thread.new { (1 + 1).must_equal 2 }.join
         end
@@ -586,9 +583,9 @@ describe Minitest::Spec do
     it "fails gracefully when expectation used outside of `it`" do
       skip "N/A" if ENV["MT_NO_EXPECTATIONS"]
 
-      @assertion_count += 1
+      @assertion_count += 2 # assert_match is compound
 
-      e = assert_raises RuntimeError do
+      e = assert_raises RuntimeError, Minitest::UnexpectedWarning do
         capture_io do
           Thread.new { # forces ctx to be nil
             describe("woot") do
@@ -598,17 +595,21 @@ describe Minitest::Spec do
         end
       end
 
-      assert_equal "Calling #must_equal outside of test.", e.message
+      exp = "Calling #must_equal outside of test."
+      exp = "DEPRECATED: global use of must_equal from" if error_on_warn?
+
+      assert_match exp, e.message
     end
 
     it "deprecates expectation used without _" do
       skip "N/A" if ENV["MT_NO_EXPECTATIONS"]
 
-      @assertion_count += 3
+      @assertion_count += 1
+      @assertion_count += 2 unless error_on_warn?
 
       exp = /DEPRECATED: global use of must_equal from/
 
-      assert_output "", exp do
+      assert_deprecation exp do
         (1 + 1).must_equal 2
       end
     end
@@ -618,12 +619,13 @@ describe Minitest::Spec do
     it "deprecates expectation used without _ with empty backtrace_filter" do
       skip "N/A" if ENV["MT_NO_EXPECTATIONS"]
 
-      @assertion_count += 3
+      @assertion_count += 1
+      @assertion_count += 2 unless error_on_warn?
 
       exp = /DEPRECATED: global use of must_equal from/
 
       with_empty_backtrace_filter do
-        assert_output "", exp do
+        assert_deprecation exp do
           (1 + 1).must_equal 2
         end
       end

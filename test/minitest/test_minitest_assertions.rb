@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 require "minitest/autorun"
+require_relative "metametameta"
 
 if defined? Encoding then
   e = Encoding.default_external
@@ -33,7 +34,6 @@ class TestMinitestAssertions < Minitest::Test
 
   class DummyTest
     include Minitest::Assertions
-    # include Minitest::Reportable # TODO: why do I really need this?
 
     attr_accessor :assertions, :failure
 
@@ -56,15 +56,6 @@ class TestMinitestAssertions < Minitest::Test
   def teardown
     assert_equal(@assertion_count, @tc.assertions,
                  "expected #{@assertion_count} assertions to be fired during the test, not #{@tc.assertions}")
-  end
-
-  def assert_deprecated name
-    dep = /DEPRECATED: #{name}. From #{__FILE__}:\d+(?::.*)?/
-    dep = "" if $-w.nil?
-
-    assert_output nil, dep do
-      yield
-    end
   end
 
   def assert_triggered expected, klass = Minitest::Assertion
@@ -301,7 +292,7 @@ class TestMinitestAssertions < Minitest::Test
       err_re = /Use assert_nil if expecting nil from .*test_minitest_\w+.rb/
       err_re = "" if $-w.nil?
 
-      assert_output "", err_re do
+      assert_deprecation err_re do
         @tc.assert_equal nil, nil
       end
     end
@@ -975,15 +966,23 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_send
-    assert_deprecated :assert_send do
+    @assertion_count = 0 if error_on_warn?
+    assert_deprecation(/DEPRECATED: assert_send/) do
       @tc.assert_send [1, :<, 2]
     end
   end
 
   def test_assert_send_bad
-    assert_deprecated :assert_send do
-      assert_triggered "Expected 1.>(*[2]) to return true." do
+    if error_on_warn? then
+      @assertion_count = 0
+      assert_deprecation(/DEPRECATED: assert_send/) do
         @tc.assert_send [1, :>, 2]
+      end
+    else
+      assert_triggered "Expected 1.>(*[2]) to return true." do
+        assert_deprecation(/DEPRECATED: assert_send/) do
+          @tc.assert_send [1, :>, 2]
+        end
       end
     end
   end
@@ -1502,7 +1501,7 @@ class TestMinitestAssertions < Minitest::Test
     d0 = Time.now
     d1 = d0 + 86_400 # I am an idiot
 
-    assert_output "", /Stale skip_until \"not yet\" at .*?:\d+$/ do
+    assert_deprecation(/Stale skip_until \"not yet\" at .*?:\d+$/) do
       assert_skip_until d0, "not yet"
     end
 

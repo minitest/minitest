@@ -25,8 +25,19 @@ class Minitest::Test
       end
     end
   end
-end
 
+  def error_on_warn?
+    defined?(Minitest::ErrorOnWarning)
+  end
+
+  def assert_deprecation re = /DEPRECATED/
+    assert_output "", re do
+      yield
+    end
+  rescue Minitest::UnexpectedWarning => e # raised if -Werror was used
+    assert_match re, e.message
+  end
+end
 
 class FakeNamedTest < Minitest::Test
   @@count = 0

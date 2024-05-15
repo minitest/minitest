@@ -1126,19 +1126,19 @@ class TestMinitestGuard < Minitest::Test
   end
 
   def test_rubinius_eh
-    assert_output "", /DEPRECATED/ do
+    assert_deprecation do
       assert self.class.rubinius? "rbx"
     end
-    assert_output "", /DEPRECATED/ do
+    assert_deprecation do
       assert self.rubinius? "rbx"
     end
   end
 
   def test_maglev_eh
-    assert_output "", /DEPRECATED/ do
+    assert_deprecation do
       assert self.class.maglev? "maglev"
     end
-    assert_output "", /DEPRECATED/ do
+    assert_deprecation do
       assert self.maglev? "maglev"
     end
   end

@@ -423,9 +423,11 @@ class TestMinitestMock < Minitest::Test
       arg1, arg2, arg3 = :bar, [1, 2, 3], { :a => "a" }
       mock = Minitest::Mock.new
 
-      assert_output nil, /Using MT_KWARGS_HAC. yet passing kwargs/ do
+      assert_deprecation(/Using MT_KWARGS_HAC. yet passing kwargs/) do
         mock.expect :foo, nil, [{}], k1: arg1, k2: arg2, k3: arg3
       end
+
+      skip "-Werror" if error_on_warn? # mock above raised, so this is dead
 
       mock.foo({}, k1: arg1, k2: arg2, k3: arg3)
 

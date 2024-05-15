@@ -253,6 +253,20 @@ module Minitest
         options[:skip] = s.chars.to_a
       end
 
+      ruby27plus = ::Warning.respond_to?(:[]=)
+
+      opts.on "-W[error]", String, "Turn Ruby warnings into errors" do |s|
+        options[:Werror] = true
+        case s
+        when "error", "all", nil then
+          require "minitest/error_on_warning"
+          $VERBOSE = true
+          ::Warning[:deprecated] = true if ruby27plus
+        else
+          ::Warning[s.to_sym] = true if ruby27plus # check validity of category
+        end
+      end
+
       unless extensions.empty?
         opts.separator ""
         opts.separator "Known extensions: #{extensions.join(", ")}"
@@ -783,6 +797,11 @@ module Minitest
     attr_accessor :errors
 
     ##
+    # Total number of tests that warned.
+
+    attr_accessor :warnings
+
+    ##
     # Total number of tests that where skipped.
 
     attr_accessor :skips
@@ -797,6 +816,7 @@ module Minitest
       self.total_time = nil
       self.failures   = nil
       self.errors     = nil
+      self.warnings   = nil
       self.skips      = nil
     end
 
@@ -825,6 +845,7 @@ module Minitest
       self.total_time = Minitest.clock_time - start_time
       self.failures   = aggregate[Assertion].size
       self.errors     = aggregate[UnexpectedError].size
+      self.warnings   = aggregate[UnexpectedWarning].size
       self.skips      = aggregate[Skip].size
     end
   end
@@ -899,6 +920,8 @@ module Minitest
       extra = "\n\nYou have skipped tests. Run with --verbose for details." if
         results.any?(&:skipped?) unless
         options[:verbose] or options[:show_skips] or ENV["MT_NO_SKIP_MSG"]
+
+      extra.prepend ", %d warnings" % [warnings] if options[:Werror]
 
       "%d runs, %d assertions, %d failures, %d errors, %d skips%s" %
         [count, assertions, failures, errors, skips, extra]
@@ -1035,6 +1058,15 @@ module Minitest
   end
 
   ##
+  # Assertion raised on warning when running in -Werror mode.
+
+  class UnexpectedWarning < Assertion
+    def result_label # :nodoc:
+      "Warning"
+    end
+  end
+
+  ##
   # Provides a simple set of guards that you can use in your tests
   # to skip execution if it is not applicable. These methods are
   # mixed into Test as both instance and class methods so you
@@ -1107,7 +1139,7 @@ module Minitest
 
   class BacktraceFilter
 
-    MT_RE = %r%lib/minitest% #:nodoc:
+    MT_RE = %r%lib/minitest|internal:warning% #:nodoc:
 
     attr_accessor :regexp
 
