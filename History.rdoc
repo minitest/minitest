@@ -1,3 +1,9 @@
+=== 5.23.1 / 2024-05-21
+
+* 1 bug fix:
+
+  * Fully qualify the Queue class to avoid conflicts with other libraries. (rafaelfranca)
+
 === 5.23.0 / 2024-05-15
 
 * 3 minor enhancements:
