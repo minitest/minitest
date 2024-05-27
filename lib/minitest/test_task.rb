@@ -238,7 +238,7 @@ module Minitest # :nodoc:
 
       task "#{name}:deps" => "#{name}:isolated" # now just an alias
 
-      desc "Show bottom 25 tests wrt time."
+      desc "Run the test suite and report the slowest 25 tests."
       task "#{name}:slow" do
         sh ["rake #{name} A=-v",
             "egrep '#test_.* s = .'",
