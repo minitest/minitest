@@ -98,13 +98,6 @@ module Minitest
     @@after_run << block
   end
 
-  def self.init_plugins options # :nodoc:
-    self.extensions.each do |name|
-      msg = "plugin_#{name}_init"
-      send msg, options if self.respond_to? msg
-    end
-  end
-
   def self.load_plugins # :nodoc:
     return unless self.extensions.empty?
 
@@ -123,88 +116,11 @@ module Minitest
     end
   end
 
-  ##
-  # This is the top-level run method. Everything starts from here. It
-  # tells each Runnable sub-class to run, and each of those are
-  # responsible for doing whatever they do.
-  #
-  # The overall structure of a run looks like this:
-  #
-  #   Minitest.autorun
-  #     Minitest.run(args)
-  #       Minitest.__run(reporter, options)
-  #         Runnable.runnables.each
-  #           runnable_klass.run(reporter, options)
-  #             self.runnable_methods.each
-  #               self.run_one_method(self, runnable_method, reporter)
-  #                 Minitest.run_one_method(klass, runnable_method)
-  #                   klass.new(runnable_method).run
-
-  def self.run args = []
-    self.load_plugins unless args.delete("--no-plugins") || ENV["MT_NO_PLUGINS"]
-
-    options = process_args args
-
-    Minitest.seed = options[:seed]
-    srand Minitest.seed
-
-    reporter = CompositeReporter.new
-    reporter << SummaryReporter.new(options[:io], options)
-    reporter << ProgressReporter.new(options[:io], options) unless options[:quiet]
-
-    self.reporter = reporter # this makes it available to plugins
-    self.init_plugins options
-    self.reporter = nil # runnables shouldn't depend on the reporter, ever
-
-    self.parallel_executor.start if parallel_executor.respond_to?(:start)
-    reporter.start
-    begin
-      __run reporter, options
-    rescue Interrupt
-      warn "Interrupted. Exiting..."
+  def self.init_plugins options # :nodoc:
+    self.extensions.each do |name|
+      msg = "plugin_#{name}_init"
+      send msg, options if self.respond_to? msg
     end
-    self.parallel_executor.shutdown
-
-    # might have been removed/replaced during init_plugins:
-    summary = reporter.reporters.grep(SummaryReporter).first
-
-    reporter.report
-
-    return empty_run! options if summary && summary.count == 0
-    reporter.passed?
-  end
-
-  def self.empty_run! options # :nodoc:
-    filter = options[:filter]
-    return true unless filter # no filter, but nothing ran == success
-
-    warn "Nothing ran for filter: %s" % [filter]
-
-    require "did_you_mean" # soft dependency, punt if it doesn't load
-
-    ms = Runnable.runnables.flat_map(&:runnable_methods)
-    cs = DidYouMean::SpellChecker.new(dictionary: ms).correct filter
-
-    warn DidYouMean::Formatter.message_for cs unless cs.empty?
-  rescue LoadError
-    # do nothing
-  end
-
-  ##
-  # Internal run method. Responsible for telling all Runnable
-  # sub-classes to run.
-
-  def self.__run reporter, options
-    suites = Runnable.runnables.shuffle
-    parallel, serial = suites.partition { |s| s.test_order == :parallel }
-
-    # If we run the parallel tests before the serial tests, the parallel tests
-    # could run in parallel with the serial tests. This would be bad because
-    # the serial tests won't lock around Reporter#record. Run the serial tests
-    # first, so that after they complete, the parallel tests will lock when
-    # recording results.
-    serial.map { |suite| suite.run reporter, options } +
-      parallel.map { |suite| suite.run reporter, options }
   end
 
   def self.process_args args = [] # :nodoc:
@@ -301,6 +217,93 @@ module Minitest
     }.join " "
 
     options
+  end
+
+  ##
+  # This is the top-level run method. Everything starts from here. It
+  # tells each Runnable sub-class to run, and each of those are
+  # responsible for doing whatever they do.
+  #
+  # The overall structure of a run looks like this:
+  #
+  #   Minitest.autorun
+  #     Minitest.run(args)
+  #       Minitest.load_plugins
+  #       Minitest.process_args
+  #       Minitest.init_plugins
+  #       Minitest.__run(reporter, options)
+  #         Runnable.runnables.each
+  #           runnable_klass.run(reporter, options)
+  #             self.runnable_methods.each
+  #               self.run_one_method(self, runnable_method, reporter)
+  #                 Minitest.run_one_method(klass, runnable_method)
+  #                   klass.new(runnable_method).run
+
+  def self.run args = []
+    self.load_plugins unless args.delete("--no-plugins") || ENV["MT_NO_PLUGINS"]
+
+    options = process_args args
+
+    Minitest.seed = options[:seed]
+    srand Minitest.seed
+
+    reporter = CompositeReporter.new
+    reporter << SummaryReporter.new(options[:io], options)
+    reporter << ProgressReporter.new(options[:io], options) unless options[:quiet]
+
+    self.reporter = reporter # this makes it available to plugins
+    self.init_plugins options
+    self.reporter = nil # runnables shouldn't depend on the reporter, ever
+
+    self.parallel_executor.start if parallel_executor.respond_to?(:start)
+    reporter.start
+    begin
+      __run reporter, options
+    rescue Interrupt
+      warn "Interrupted. Exiting..."
+    end
+    self.parallel_executor.shutdown
+
+    # might have been removed/replaced during init_plugins:
+    summary = reporter.reporters.grep(SummaryReporter).first
+
+    reporter.report
+
+    return empty_run! options if summary && summary.count == 0
+    reporter.passed?
+  end
+
+  def self.empty_run! options # :nodoc:
+    filter = options[:filter]
+    return true unless filter # no filter, but nothing ran == success
+
+    warn "Nothing ran for filter: %s" % [filter]
+
+    require "did_you_mean" # soft dependency, punt if it doesn't load
+
+    ms = Runnable.runnables.flat_map(&:runnable_methods)
+    cs = DidYouMean::SpellChecker.new(dictionary: ms).correct filter
+
+    warn DidYouMean::Formatter.message_for cs unless cs.empty?
+  rescue LoadError
+    # do nothing
+  end
+
+  ##
+  # Internal run method. Responsible for telling all Runnable
+  # sub-classes to run.
+
+  def self.__run reporter, options
+    suites = Runnable.runnables.shuffle
+    parallel, serial = suites.partition { |s| s.test_order == :parallel }
+
+    # If we run the parallel tests before the serial tests, the parallel tests
+    # could run in parallel with the serial tests. This would be bad because
+    # the serial tests won't lock around Reporter#record. Run the serial tests
+    # first, so that after they complete, the parallel tests will lock when
+    # recording results.
+    serial.map { |suite| suite.run reporter, options } +
+      parallel.map { |suite| suite.run reporter, options }
   end
 
   def self.filter_backtrace bt # :nodoc:
