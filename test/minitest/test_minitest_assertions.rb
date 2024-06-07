@@ -957,8 +957,8 @@ class TestMinitestAssertions < Minitest::Test
       @tc.assert_same 1, 2
     end
 
-    s1 = "blah"
-    s2 = "blah"
+    s1 = +"blah"
+    s2 = +"blah"
 
     assert_triggered 'Expected "blah" (oid=N) to be the same as "blah" (oid=N).' do
       @tc.assert_same s1, s2
