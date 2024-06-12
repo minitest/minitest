@@ -99,11 +99,9 @@ module Minitest
   end
 
   def self.load_plugins # :nodoc:
-    return unless self.extensions.empty?
+    return unless defined? Gem
 
     seen = {}
-
-    require "rubygems" unless defined? Gem
 
     Gem.find_files("minitest/*_plugin.rb").each do |plugin_path|
       name = File.basename plugin_path, "_plugin.rb"
