@@ -1,6 +1,12 @@
 require "shellwords"
 require "rbconfig"
-require "rake/tasklib"
+
+begin
+  require "rake/tasklib"
+rescue LoadError => e
+  warn e.message
+  return
+end
 
 module Minitest # :nodoc:
 

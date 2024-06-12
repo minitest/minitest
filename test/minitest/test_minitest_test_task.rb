@@ -1,5 +1,11 @@
 require "minitest/autorun"
-require "hoe"
+
+begin
+  require "hoe"
+rescue LoadError => e
+  warn e.message
+  return
+end
 
 require "minitest/test_task"
 
