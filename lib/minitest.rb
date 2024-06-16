@@ -98,6 +98,14 @@ module Minitest
     @@after_run << block
   end
 
+  ##
+  # Register a plugin to be used. Does NOT require / load it.
+
+  def self.register_plugin name_or_mod
+    self.extensions << name_or_mod
+    nil
+  end
+
   def self.load_plugins # :nodoc:
     return unless defined? Gem
 
@@ -115,9 +123,20 @@ module Minitest
   end
 
   def self.init_plugins options # :nodoc:
-    self.extensions.each do |name|
-      msg = "plugin_#{name}_init"
-      send msg, options if self.respond_to? msg
+    self.extensions.each do |mod_or_meth|
+      case mod_or_meth
+      when Symbol, String then
+        name = mod_or_meth
+        msg = "plugin_#{name}_init"
+        next unless self.respond_to? msg
+        send msg, options
+      when Module then
+        recv = mod_or_meth
+        next unless recv.respond_to? :minitest_plugin_init
+        recv.minitest_plugin_init options
+      else
+        raise ArgumentError, "blahblah %p" % [mod_or_meth]
+      end
     end
   end
 
@@ -185,9 +204,19 @@ module Minitest
         opts.separator ""
         opts.separator "Known extensions: #{extensions.join(", ")}"
 
-        extensions.each do |meth|
-          msg = "plugin_#{meth}_options"
-          send msg, opts, options if self.respond_to?(msg)
+        extensions.each do |mod_or_meth|
+          case mod_or_meth
+          when Symbol, String then
+            meth = mod_or_meth
+            msg = "plugin_#{meth}_options"
+            send msg, opts, options if respond_to?(msg)
+          when Module
+            recv = mod_or_meth
+            next unless recv.respond_to? :minitest_plugin_options
+            recv.minitest_plugin_options opts, options
+          else
+            raise ArgumentError, "blahblah %p" % [mod_or_meth]
+          end
         end
       end
 
