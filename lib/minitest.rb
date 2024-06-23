@@ -135,7 +135,7 @@ module Minitest
         next unless recv.respond_to? :minitest_plugin_init
         recv.minitest_plugin_init options
       else
-        raise ArgumentError, "blahblah %p" % [mod_or_meth]
+        raise ArgumentError, "plugin is %p, but it must be a symbol, string or module" % [mod_or_meth]
       end
     end
   end
@@ -215,7 +215,7 @@ module Minitest
             next unless recv.respond_to? :minitest_plugin_options
             recv.minitest_plugin_options opts, options
           else
-            raise ArgumentError, "blahblah %p" % [mod_or_meth]
+            raise ArgumentError, "plugin is %p, but it must be a symbol, string or module" % [mod_or_meth]
           end
         end
       end
