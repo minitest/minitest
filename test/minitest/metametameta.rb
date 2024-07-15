@@ -3,10 +3,6 @@ require "stringio"
 require "minitest/autorun"
 
 class Minitest::Test
-  def clean s
-    s.gsub(/^ {6}/, "")
-  end
-
   def with_empty_backtrace_filter
     with_backtrace_filter Minitest::BacktraceFilter.new %r%.% do
       yield
@@ -94,7 +90,7 @@ class MetaMetaMetaTestCase < Minitest::Test
   end
 
   def assert_report expected, flags = %w[--seed 42], &block
-    header = clean <<-EOM
+    header = <<~EOM
       Run options: #{flags.map { |s| s =~ /\|/ ? s.inspect : s }.join " "}
 
       # Running:

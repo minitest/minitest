@@ -79,10 +79,6 @@ class TestMinitestAssertions < Minitest::Test
     end
   end
 
-  def clean s
-    s.gsub(/^ {6,10}/, "")
-  end
-
   def non_verbose
     orig_verbose = $VERBOSE
     $VERBOSE = false
@@ -188,7 +184,7 @@ class TestMinitestAssertions < Minitest::Test
 
     o1 = c.new "a"
     o2 = c.new "b"
-    msg = clean <<-EOS
+    msg = <<~EOS
           --- expected
           +++ actual
           @@ -1 +1 @@
@@ -748,7 +744,7 @@ class TestMinitestAssertions < Minitest::Test
       end
     end
 
-    expected = clean <<-EOM.chomp
+    expected = <<~EOM.chomp
       [StandardError] exception expected, not
       Class: <SomeError>
       Message: <\"blah\">
@@ -828,7 +824,7 @@ class TestMinitestAssertions < Minitest::Test
       end
     end
 
-    expected = clean <<-EOM
+    expected = <<~EOM
       [SomeError] exception expected, not
       Class: <AnError>
       Message: <\"some message\">
@@ -851,7 +847,7 @@ class TestMinitestAssertions < Minitest::Test
       end
     end
 
-    expected = clean <<-EOM.chomp
+    expected = <<~EOM.chomp
       [RuntimeError] exception expected, not
       Class: <SyntaxError>
       Message: <\"icky\">
@@ -874,7 +870,7 @@ class TestMinitestAssertions < Minitest::Test
       end
     end
 
-    expected = clean <<-EOM
+    expected = <<~EOM
       XXX.
       [RuntimeError] exception expected, not
       Class: <SyntaxError>

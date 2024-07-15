@@ -248,7 +248,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
     r.start
     r.report
 
-    exp = clean <<-EOM
+    exp = <<~EOM
       Run options:
 
       # Running:
@@ -268,7 +268,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
     r.record passing_test
     r.report
 
-    exp = clean <<-EOM
+    exp = <<~EOM
       Run options:
 
       # Running:
@@ -288,7 +288,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
     r.record fail_test
     r.report
 
-    exp = clean <<-EOM
+    exp = <<~EOM
       Run options:
 
       # Running:
@@ -312,7 +312,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
     r.record error_test
     r.report
 
-    exp = clean <<-EOM
+    exp = <<~EOM
       Run options:
 
       # Running:
@@ -338,7 +338,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
     r.record system_stack_error_test
     r.report
 
-    exp = clean <<-EOM
+    exp = <<~EOM
       Run options:
 
       # Running:
@@ -377,7 +377,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
       r.report
     end
 
-    exp = clean <<-EOM
+    exp = <<~EOM
       Run options:
 
       # Running:

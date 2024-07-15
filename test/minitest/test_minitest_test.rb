@@ -100,7 +100,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
       end
     end
 
-    expected = clean <<-EOM
+    expected = <<~EOM
       FE
 
       Finished in 0.00
@@ -234,7 +234,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       end
     end
 
-    expected = clean <<-EOM
+    expected = <<~EOM
       .
 
       Finished in 0.00
@@ -257,7 +257,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       end
     end
 
-    expected = clean <<-EOM
+    expected = <<~EOM
       .E
 
       Finished in 0.00
@@ -285,7 +285,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       end
     end
 
-    expected = clean <<-EOM
+    expected = <<~EOM
       E
 
       Finished in 0.00
@@ -304,7 +304,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
   def test_run_failing
     setup_basic_tu
 
-    expected = clean <<-EOM
+    expected = <<~EOM
       .F
 
       Finished in 0.00
@@ -339,7 +339,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
   def test_run_failing_filtered
     setup_basic_tu
 
-    expected = clean <<-EOM
+    expected = <<~EOM
       .
 
       Finished in 0.00
@@ -376,7 +376,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_filtered_including_suite_name
-    expected = clean <<-EOM
+    expected = <<~EOM
       .
 
       Finished in 0.00
@@ -388,7 +388,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_filtered_including_suite_name_string
-    expected = clean <<-EOM
+    expected = <<~EOM
       .
 
       Finished in 0.00
@@ -400,7 +400,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_filtered_string_method_only
-    expected = clean <<-EOM
+    expected = <<~EOM
       ..
 
       Finished in 0.00
@@ -414,7 +414,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
   def test_run_failing_excluded
     setup_basic_tu
 
-    expected = clean <<-EOM
+    expected = <<~EOM
       .
 
       Finished in 0.00
@@ -426,7 +426,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_filtered_excluding_suite_name
-    expected = clean <<-EOM
+    expected = <<~EOM
       .
 
       Finished in 0.00
@@ -438,7 +438,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_filtered_excluding_suite_name_string
-    expected = clean <<-EOM
+    expected = <<~EOM
       .
 
       Finished in 0.00
@@ -450,7 +450,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_filtered_excluding_string_method_only
-    expected = clean <<-EOM
+    expected = <<~EOM
 
 
       Finished in 0.00
@@ -469,7 +469,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       end
     end
 
-    expected = clean <<-EOM
+    expected = <<~EOM
       .
 
       Finished in 0.00
@@ -492,7 +492,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       end
     end
 
-    expected = clean <<-EOM
+    expected = <<~EOM
       .S
 
       Finished in 0.00
@@ -519,7 +519,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       end
     end
 
-    expected = clean <<-EOM
+    expected = <<~EOM
       FakeNamedTestXX#test_something = 0.00 s = .
       FakeNamedTestXX#test_skip = 0.00 s = S
 
@@ -547,7 +547,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       end
     end
 
-    expected = clean <<-EOM
+    expected = <<~EOM
       .S
 
       Finished in 0.00
@@ -587,7 +587,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       end
     end
 
-    expected = clean <<-EOM
+    expected = <<~EOM
       Running wacky! tests
       ..
 
@@ -654,7 +654,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       end
     end
 
-    expected = clean <<-EOM
+    expected = <<~EOM
       ..
 
       Finished in 0.00
@@ -1260,7 +1260,7 @@ class TestMinitestUnitRecording < MetaMetaMetaTestCase
 
     run_tu_with_fresh_reporter
 
-    exp = clean "
+    exp = <<~EOM
       Error:
       FakeNamedTestXX#test_method:
       AnError: AnError
@@ -1270,7 +1270,7 @@ class TestMinitestUnitRecording < MetaMetaMetaTestCase
       FakeNamedTestXX#test_method:
       RuntimeError: unhandled exception
           FILE:LINE:in 'teardown'
-    "
+    EOM
 
     assert_equal exp.strip, normalize_output(first_reporter.results.first.to_s).strip
   end
