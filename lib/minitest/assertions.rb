@@ -846,7 +846,7 @@ module Minitest
 
     def skip_until y,m,d,msg
       skip msg if Time.now < Time.local(y, m, d)
-      where = caller.first.rpartition(':in').reject(&:empty?).first
+      where = caller.first.rpartition(":in").reject(&:empty?).first
       warn "Stale skip_until %p at %s" % [msg, where]
     end
 

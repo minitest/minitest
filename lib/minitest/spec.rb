@@ -4,7 +4,7 @@ class Module # :nodoc:
   def infect_an_assertion meth, new_name, dont_flip = false # :nodoc:
     block = dont_flip == :block
     dont_flip = false if block
-    target_obj = block ? '_{obj.method}' : '_(obj)'
+    target_obj = block ? "_{obj.method}" : "_(obj)"
 
     # https://eregon.me/blog/2021/02/13/correct-delegation-in-ruby-2-27-3.html
     # Drop this when we can drop ruby 2.6 (aka after rails 6.1 EOL, ~2024-06)

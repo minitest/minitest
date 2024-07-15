@@ -270,9 +270,9 @@ module Minitest # :nodoc:
       args  = []
       args << "-I#{libs.join(File::PATH_SEPARATOR)}" unless libs.empty?
       args << "-w" if warning
-      args << '-e'
+      args << "-e"
       args << "'#{runner}'"
-      args << '--'
+      args << "--"
       args << extra_args.map(&:shellescape)
 
       args.join " "

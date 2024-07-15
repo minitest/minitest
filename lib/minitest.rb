@@ -941,7 +941,7 @@ module Minitest
     end
 
     def to_s # :nodoc:
-      aggregated_results(StringIO.new(''.b)).string
+      aggregated_results(StringIO.new("".b)).string
     end
 
     def summary # :nodoc:
