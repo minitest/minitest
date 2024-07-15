@@ -1171,9 +1171,12 @@ module Minitest
 
     MT_RE = %r%lib/minitest|internal:warning% #:nodoc:
 
+    ##
+    # The regular expression to use to filter backtraces. Defaults to +MT_RE+.
+
     attr_accessor :regexp
 
-    def initialize regexp = MT_RE
+    def initialize regexp = MT_RE # :nodoc:
       self.regexp = regexp
     end
 

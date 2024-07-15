@@ -1,6 +1,6 @@
 module Minitest
 
-  module ErrorOnWarning
+  module ErrorOnWarning # :nodoc:
     def warn(message, category: nil)
       message = "[#{category}] #{message}" if category
       raise UnexpectedWarning, message
