@@ -16,6 +16,8 @@ if defined? Encoding then
 end
 
 class Minitest::Runnable
+  attr_reader :gc_stats # only needed if running w/ minitest-gcstats
+
   def whatever # faked for testing
     assert true
   end
@@ -813,6 +815,7 @@ class TestMinitestRunnable < Minitest::Test
     new_tc = Marshal.load Marshal.dump @tc
 
     ivars = new_tc.instance_variables.map(&:to_s).sort
+    ivars.delete "@gc_stats" # only needed if running w/ minitest-gcstats
     assert_equal expected_ivars, ivars
     assert_equal "whatever",     new_tc.name
     assert_equal 42,             new_tc.assertions
