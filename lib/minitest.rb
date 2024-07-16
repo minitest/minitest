@@ -945,16 +945,18 @@ module Minitest
     end
 
     def summary # :nodoc:
-      extra = ""
+      extra = []
 
-      extra = "\n\nYou have skipped tests. Run with --verbose for details." if
+      extra << ", %d warnings" % [warnings] if options[:Werror]
+
+      extra << "\n\nYou have skipped tests. Run with --verbose for details." if
         results.any?(&:skipped?) unless
-        options[:verbose] or options[:show_skips] or ENV["MT_NO_SKIP_MSG"]
-
-      extra.prepend ", %d warnings" % [warnings] if options[:Werror]
+        options[:verbose]        or
+        options[:show_skips]     or
+        ENV["MT_NO_SKIP_MSG"]
 
       "%d runs, %d assertions, %d failures, %d errors, %d skips%s" %
-        [count, assertions, failures, errors, skips, extra]
+        [count, assertions, failures, errors, skips, extra.join]
     end
   end
 
