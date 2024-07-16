@@ -11,12 +11,12 @@ module Minitest
     def compress orig
       ary = orig
 
-      eswo = ->(ary, n, off) { # each_slice_with_offset
+      eswo = ->(a, n, off) { # each_slice_with_offset
         if off.zero? then
-          ary.each_slice n
+          a.each_slice n
         else
           # [ ...off... [...n...] [...n...] ... ]
-          front, back = ary.take(off), ary.drop(off)
+          front, back = a.take(off), a.drop(off)
           [front].chain back.each_slice n
         end
       }
@@ -29,16 +29,16 @@ module Minitest
 
         order = index
           .reject { |k, v| v.size == 1 }          # { b: [1 3 5], c: [2 4 6] }
-          .sort_by { |k, ary|                     ### sort by max dist + min offset
-            d = ary.each_cons(2).sum { |a, b| b-a }
-            [-d, ary.first]
+          .sort_by { |k, a1|                      ### sort by max dist + min offset
+            d = a1.each_cons(2).sum { |a2, b| b-a2 }
+            [-d, a1.first]
           }                                       # b: [1 3 5] c: [2 4 6]
 
         ranges = order
-          .map { |k, ary|                         # [[1..2 3..4] [2..3 4..5]]
-            ary
+          .map { |k, a1|                          # [[1..2 3..4] [2..3 4..5]]
+            a1
               .each_cons(2)
-              .map { |a, b| a..b-1 }
+              .map { |a2, b| a2..b-1 }
           }
 
         big_ranges = ranges
