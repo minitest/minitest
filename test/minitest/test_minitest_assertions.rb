@@ -27,8 +27,6 @@ class TestMinitestAssertions < Minitest::Test
   # which is not threadsafe. Nearly every method in here is an
   # assertion test so it isn't worth splitting it out further.
 
-  RUBY18 = !defined? Encoding
-
   # not included in JRuby
   RE_LEVELS = /\(\d+ levels\) /
 
@@ -351,7 +349,7 @@ class TestMinitestAssertions < Minitest::Test
       y = x.dup.force_encoding "binary" # TODO: switch to .b when 1.9 dropped
       @tc.assert_equal x, y
     end
-  end unless RUBY18
+  end
 
   def test_assert_equal_string_encodings_both_different
     msg = <<-EOM.gsub(/^ {10}/, "")
@@ -370,7 +368,7 @@ class TestMinitestAssertions < Minitest::Test
       y = x.dup.force_encoding "binary" # TODO: switch to .b when 1.9 dropped
       @tc.assert_equal x, y
     end
-  end unless RUBY18
+  end
 
   def test_assert_equal_unescape_newlines
     msg = <<-'EOM'.gsub(/^ {10}/, "") # NOTE single quotes on heredoc
@@ -425,7 +423,7 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_in_epsilon_triggered_negative_case
-    x = (RUBY18 and not maglev?) ? "0.1" : "0.100000xxx"
+    x = "0.100000xxx"
     y = "0.1"
     assert_triggered "Expected |-1.1 - -1| (#{x}) to be <= #{y}." do
       @tc.assert_in_epsilon(-1.1, -1, 0.1)
