@@ -12,9 +12,6 @@ class ExampleA; end
 class ExampleB < ExampleA; end
 
 describe Minitest::Spec do
-  # helps to deal with 2.4 deprecation of Fixnum for Integer
-  Int = 1.class
-
   # do not parallelize this suite... it just can"t handle it.
 
   def assert_triggered expected = "blah", klass = Minitest::Assertion
@@ -399,12 +396,12 @@ describe Minitest::Spec do
   it "needs to verify instances of a class" do
     assert_success _(42).wont_be_instance_of(String)
 
-    assert_triggered "Expected 42 to not be a kind of #{Int.name}." do
-      _(42).wont_be_kind_of Int
+    assert_triggered "Expected 42 to not be a kind of Integer." do
+      _(42).wont_be_kind_of Integer
     end
 
-    assert_triggered "msg.\nExpected 42 to not be an instance of #{Int.name}." do
-      _(42).wont_be_instance_of Int, "msg"
+    assert_triggered "msg.\nExpected 42 to not be an instance of Integer." do
+      _(42).wont_be_instance_of Integer, "msg"
     end
   end
 
@@ -414,26 +411,26 @@ describe Minitest::Spec do
     assert_success _(42).wont_be_kind_of(String)
     assert_success _(proc {}).wont_be_kind_of(String)
 
-    assert_triggered "Expected 42 to not be a kind of #{Int.name}." do
-      _(42).wont_be_kind_of Int
+    assert_triggered "Expected 42 to not be a kind of Integer." do
+      _(42).wont_be_kind_of Integer
     end
 
-    assert_triggered "msg.\nExpected 42 to not be a kind of #{Int.name}." do
-      _(42).wont_be_kind_of Int, "msg"
+    assert_triggered "msg.\nExpected 42 to not be a kind of Integer." do
+      _(42).wont_be_kind_of Integer, "msg"
     end
   end
 
   it "needs to verify kinds of objects" do
     @assertion_count += 3 # extra test
 
-    assert_success _(6 * 7).must_be_kind_of(Int)
+    assert_success _(6 * 7).must_be_kind_of(Integer)
     assert_success _(6 * 7).must_be_kind_of(Numeric)
 
-    assert_triggered "Expected 42 to be a kind of String, not #{Int.name}." do
+    assert_triggered "Expected 42 to be a kind of String, not Integer." do
       _(6 * 7).must_be_kind_of String
     end
 
-    assert_triggered "msg.\nExpected 42 to be a kind of String, not #{Int.name}." do
+    assert_triggered "msg.\nExpected 42 to be a kind of String, not Integer." do
       _(6 * 7).must_be_kind_of String, "msg"
     end
 
@@ -656,9 +653,9 @@ describe Minitest::Spec do
   end
 
   it "needs to verify types of objects" do
-    assert_success _(6 * 7).must_be_instance_of(Int)
+    assert_success _(6 * 7).must_be_instance_of(Integer)
 
-    exp = "Expected 42 to be an instance of String, not #{Int.name}."
+    exp = "Expected 42 to be an instance of String, not Integer."
 
     assert_triggered exp do
       _(6 * 7).must_be_instance_of String
@@ -702,11 +699,11 @@ describe Minitest::Spec do
   it "needs to verify using respond_to" do
     assert_success _(42).must_respond_to(:+)
 
-    assert_triggered "Expected 42 (#{Int.name}) to respond to #clear." do
+    assert_triggered "Expected 42 (Integer) to respond to #clear." do
       _(42).must_respond_to :clear
     end
 
-    assert_triggered "msg.\nExpected 42 (#{Int.name}) to respond to #clear." do
+    assert_triggered "msg.\nExpected 42 (Integer) to respond to #clear." do
       _(42).must_respond_to :clear, "msg"
     end
   end
