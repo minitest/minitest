@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 require "pathname"
 require "minitest/metametameta"
 
@@ -96,7 +94,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
       end
 
       def test_this_is_non_ascii_failure_message
-        fail 'ЁЁЁ'.dup.force_encoding(Encoding::BINARY)
+        fail "ЁЁЁ".dup.force_encoding(Encoding::BINARY)
       end
     end
 
@@ -107,8 +105,8 @@ class TestMinitestUnit < MetaMetaMetaTestCase
 
         1) Failure:
       FakeNamedTestXX#test_this_is_not_ascii_assertion [FILE:LINE]:
-      Expected: \"ЁЁЁ\"
-        Actual: \"ёёё\"
+      Expected: "ЁЁЁ"
+        Actual: "ёёё"
 
         2) Error:
       FakeNamedTestXX#test_this_is_non_ascii_failure_message:
@@ -166,7 +164,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
   end
 
   def util_expand_bt bt
-    bt.map { |f| (f =~ /^\./) ? File.expand_path(f) : f }
+    bt.map { |f| f.start_with?(".") ? File.expand_path(f) : f }
   end
 end
 
@@ -265,7 +263,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
         1) Error:
       FakeNamedTestXX#test_error:
       RuntimeError: unhandled exception
-          FILE:LINE:in \'test_error\'
+          FILE:LINE:in 'test_error'
 
       2 runs, 1 assertions, 0 failures, 1 errors, 0 skips
     EOM
@@ -293,7 +291,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
         1) Error:
       FakeNamedTestXX#test_something:
       RuntimeError: unhandled exception
-          FILE:LINE:in \'teardown\'
+          FILE:LINE:in 'teardown'
 
       1 runs, 1 assertions, 0 failures, 1 errors, 0 skips
     EOM
@@ -702,7 +700,7 @@ class TestMinitestUnitOrder < MetaMetaMetaTestCase
 
     run_tu_with_fresh_reporter
 
-    expected = [:before_setup, :setup]
+    expected = %i[before_setup setup]
     assert_equal expected, call_order
   end
 
@@ -724,7 +722,7 @@ class TestMinitestUnitOrder < MetaMetaMetaTestCase
 
     run_tu_with_fresh_reporter
 
-    expected = [:teardown, :after_teardown]
+    expected = %i[teardown after_teardown]
     assert_equal expected, call_order
   end
 
@@ -755,7 +753,7 @@ class TestMinitestUnitOrder < MetaMetaMetaTestCase
 
     run_tu_with_fresh_reporter
 
-    expected = [:before_teardown, :teardown, :after_teardown]
+    expected = %i[before_teardown teardown after_teardown]
     assert_equal expected, call_order
   end
 
@@ -782,7 +780,7 @@ class TestMinitestUnitOrder < MetaMetaMetaTestCase
     run_tu_with_fresh_reporter
 
     # Once for the parent class, once for the child
-    expected = [:setup_method, :test, :teardown_method] * 2
+    expected = %i[setup_method test teardown_method] * 2
 
     assert_equal expected, call_order
   end
@@ -948,9 +946,8 @@ class TestMinitestRunnable < Minitest::Test
 
   def test_spec_marshal_with_exception__worse_error_typeerror
     worse_error_klass = Class.new(StandardError) do
-      # problem #1: anonymous subclass can'tmarshal, fails sanitize_exception
+      # problem #1: anonymous subclass can't marshal, fails sanitize_exception
       def initialize(record = nil)
-
         super(record.first)
       end
     end

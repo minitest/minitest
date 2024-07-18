@@ -126,7 +126,7 @@ class MetaMetaMetaTestCase < Minitest::Test
     output.gsub!(/in [`']block in (?:([^']+)[#.])?/, "in 'block in")
     output.gsub!(/in [`'](?:([^']+)[#.])?/, "in '")
 
-    output.gsub!(/( at )[^:]+:\d+/) { "#{$1}[#{file[$2]}:LINE]" } # eval?
+    output.gsub!(/( at )([^:]+):\d+/) { "#{$1}[#{file[$2]}:LINE]" } # eval?
 
     output
   end

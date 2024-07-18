@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 require "minitest/autorun"
 require_relative "metametameta"
 
@@ -131,9 +129,11 @@ class TestMinitestAssertions < Minitest::Test
   def test_assert_equal_different_collection_array_hex_invisible
     object1 = Object.new
     object2 = Object.new
-    msg = "No visible difference in the Array#inspect output.
+    msg = <<~EOM.chomp
+           No visible difference in the Array#inspect output.
            You should look at the implementation of #== on Array or its members.
-           [#<Object:0xXXXXXX>]".gsub(/^ +/, "")
+           [#<Object:0xXXXXXX>]
+        EOM
     assert_triggered msg do
       @tc.assert_equal [object1], [object2]
     end
@@ -143,9 +143,11 @@ class TestMinitestAssertions < Minitest::Test
     h1, h2 = {}, {}
     h1[1] = Object.new
     h2[1] = Object.new
-    msg = "No visible difference in the Hash#inspect output.
+    msg = <<~EOM.chomp
+           No visible difference in the Hash#inspect output.
            You should look at the implementation of #== on Hash or its members.
-           {1=>#<Object:0xXXXXXX>}".gsub(/^ +/, "")
+           {1=>#<Object:0xXXXXXX>}
+         EOM
 
     assert_triggered msg do
       @tc.assert_equal h1, h2
@@ -186,8 +188,8 @@ class TestMinitestAssertions < Minitest::Test
           --- expected
           +++ actual
           @@ -1 +1 @@
-          -#<#<Class:0xXXXXXX>:0xXXXXXX @name=\"a\">
-          +#<#<Class:0xXXXXXX>:0xXXXXXX @name=\"b\">
+          -#<#<Class:0xXXXXXX>:0xXXXXXX @name="a">
+          +#<#<Class:0xXXXXXX>:0xXXXXXX @name="b">
           EOS
 
     assert_triggered msg do
@@ -199,9 +201,11 @@ class TestMinitestAssertions < Minitest::Test
     o1 = Object.new
     o2 = Object.new
 
-    msg = "No visible difference in the Object#inspect output.
+    msg = <<~EOM.chomp
+           No visible difference in the Object#inspect output.
            You should look at the implementation of #== on Object or its members.
-           #<Object:0xXXXXXX>".gsub(/^ +/, "")
+           #<Object:0xXXXXXX>
+          EOM
 
     assert_triggered msg do
       @tc.assert_equal o1, o2
@@ -209,12 +213,13 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_equal_different_long
-    msg = "--- expected
+    msg = <<~EOM
+           --- expected
            +++ actual
            @@ -1 +1 @@
-           -\"hahahahahahahahahahahahahahahahahahahaha\"
-           +\"blahblahblahblahblahblahblahblahblahblah\"
-           ".gsub(/^ +/, "")
+           -"hahahahahahahahahahahahahahahahahahahaha"
+           +"blahblahblahblahblahblahblahblahblahblah"
+          EOM
 
     assert_triggered msg do
       o1 = "haha" * 10
@@ -225,9 +230,11 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_equal_different_long_invisible
-    msg = "No visible difference in the String#inspect output.
+    msg = <<~EOM.chomp
+           No visible difference in the String#inspect output.
            You should look at the implementation of #== on String or its members.
-           \"blahblahblahblahblahblahblahblahblahblah\"".gsub(/^ +/, "")
+           "blahblahblahblahblahblahblahblahblahblah"
+          EOM
 
     assert_triggered msg do
       o1 = "blah" * 10
@@ -240,13 +247,14 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_equal_different_long_msg
-    msg = "message.
+    msg = <<~EOM
+           message.
            --- expected
            +++ actual
            @@ -1 +1 @@
-           -\"hahahahahahahahahahahahahahahahahahahaha\"
-           +\"blahblahblahblahblahblahblahblahblahblah\"
-           ".gsub(/^ +/, "")
+           -"hahahahahahahahahahahahahahahahahahahaha"
+           +"blahblahblahblahblahblahblahblahblahblah"
+          EOM
 
     assert_triggered msg do
       o1 = "haha" * 10
@@ -299,13 +307,13 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_equal_string_bug791
-    exp = <<-'EOF'.gsub(/^ {10}/, "") # note single quotes
+    exp = <<~EOF
           --- expected
           +++ actual
           @@ -1,2 +1 @@
           -"\\n
           -"
-          +"\\\"
+          +"\\"
         EOF
 
     exp = "Expected: \"\\\\n\"\n  Actual: \"\\\\\""
@@ -315,13 +323,13 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_equal_string_both_escaped_unescaped_newlines
-    msg = <<-EOM.gsub(/^ {10}/, "")
+    msg = <<~EOM
           --- expected
           +++ actual
           @@ -1,2 +1 @@
-          -\"A\\n
-          -B\"
-          +\"A\\n\\\\nB\"
+          -"A\\n
+          -B"
+          +"A\\n\\\\nB"
           EOM
 
     assert_triggered msg do
@@ -333,7 +341,7 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_equal_string_encodings
-    msg = <<-EOM.gsub(/^ {10}/, "")
+    msg = <<~EOM
           --- expected
           +++ actual
           @@ -1,3 +1,3 @@
@@ -352,7 +360,7 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_equal_string_encodings_both_different
-    msg = <<-EOM.gsub(/^ {10}/, "")
+    msg = <<~EOM
           --- expected
           +++ actual
           @@ -1,3 +1,3 @@
@@ -371,7 +379,7 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_equal_unescape_newlines
-    msg = <<-'EOM'.gsub(/^ {10}/, "") # NOTE single quotes on heredoc
+    msg = <<~'EOM' # NOTE single quotes on heredoc
           --- expected
           +++ actual
           @@ -1,2 +1,2 @@
@@ -713,6 +721,7 @@ class TestMinitestAssertions < Minitest::Test
       end
     end
   end
+
   def test_assert_predicate
     @tc.assert_predicate "", :empty?
   end
@@ -745,9 +754,9 @@ class TestMinitestAssertions < Minitest::Test
     expected = <<~EOM.chomp
       [StandardError] exception expected, not
       Class: <SomeError>
-      Message: <\"blah\">
+      Message: <"blah">
       ---Backtrace---
-      FILE:LINE:in \'block in test_assert_raises_default_triggered\'
+      FILE:LINE:in 'block in test_assert_raises_default_triggered'
       ---------------
     EOM
 
@@ -825,9 +834,9 @@ class TestMinitestAssertions < Minitest::Test
     expected = <<~EOM
       [SomeError] exception expected, not
       Class: <AnError>
-      Message: <\"some message\">
+      Message: <"some message">
       ---Backtrace---
-      FILE:LINE:in \'block in test_assert_raises_subclass_triggered\'
+      FILE:LINE:in 'block in test_assert_raises_subclass_triggered'
       ---------------
     EOM
 
@@ -848,9 +857,9 @@ class TestMinitestAssertions < Minitest::Test
     expected = <<~EOM.chomp
       [RuntimeError] exception expected, not
       Class: <SyntaxError>
-      Message: <\"icky\">
+      Message: <"icky">
       ---Backtrace---
-      FILE:LINE:in \'block in test_assert_raises_triggered_different\'
+      FILE:LINE:in 'block in test_assert_raises_triggered_different'
       ---------------
     EOM
 
@@ -872,9 +881,9 @@ class TestMinitestAssertions < Minitest::Test
       XXX.
       [RuntimeError] exception expected, not
       Class: <SyntaxError>
-      Message: <\"icky\">
+      Message: <"icky">
       ---Backtrace---
-      FILE:LINE:in \'block in test_assert_raises_triggered_different_msg\'
+      FILE:LINE:in 'block in test_assert_raises_triggered_different_msg'
       ---------------
     EOM
 
@@ -1542,9 +1551,11 @@ class TestMinitestAssertionHelpers < Minitest::Test
   end
 
   def test_diff_equal
-    msg = "No visible difference in the String#inspect output.
+    msg = <<~EOM.chomp
+           No visible difference in the String#inspect output.
            You should look at the implementation of #== on String or its members.
-           \"blahblahblahblahblahblahblahblahblahblah\"".gsub(/^ +/, "")
+           "blahblahblahblahblahblahblahblahblahblah"
+          EOM
 
     o1 = "blah" * 10
     o2 = "blah" * 10
@@ -1556,7 +1567,7 @@ class TestMinitestAssertionHelpers < Minitest::Test
   end
 
   def test_diff_str_mixed
-    msg = <<-'EOM'.gsub(/^ {10}/, "") # NOTE single quotes on heredoc
+    msg = <<~'EOM' # NOTE single quotes on heredoc
           --- expected
           +++ actual
           @@ -1 +1 @@
@@ -1571,7 +1582,7 @@ class TestMinitestAssertionHelpers < Minitest::Test
   end
 
   def test_diff_str_multiline
-    msg = <<-'EOM'.gsub(/^ {10}/, "") # NOTE single quotes on heredoc
+    msg = <<~EOM
           --- expected
           +++ actual
           @@ -1,2 +1,2 @@
@@ -1587,7 +1598,7 @@ class TestMinitestAssertionHelpers < Minitest::Test
   end
 
   def test_diff_str_simple
-    msg = <<-'EOM'.gsub(/^ {10}/, "").chomp # NOTE single quotes on heredoc
+    msg = <<~EOM.chomp
           Expected: "A"
             Actual: "B"
           EOM

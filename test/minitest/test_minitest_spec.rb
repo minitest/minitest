@@ -1,4 +1,3 @@
-# encoding: utf-8
 require "minitest/metametameta"
 require "stringio"
 
@@ -217,7 +216,7 @@ describe Minitest::Spec do
 
     bad = %w[not raise throw send output be_silent]
 
-    expected_wonts = expected_musts.map { |m| m.sub(/must/, "wont") }.sort
+    expected_wonts = expected_musts.map { |m| m.sub("must", "wont") }.sort
     expected_wonts.reject! { |m| m =~ /wont_#{Regexp.union(*bad)}/ }
 
     _(musts).must_equal expected_musts
@@ -1015,8 +1014,9 @@ class TestMeta < MetaMetaMetaTestCase
       z = describe "second thingy" do end
     end
 
-    test_methods = ["test_0001_top level it",
-                    "test_0002_не латинские &いった α, β, γ, δ, ε hello!!! world",
+    test_methods = [
+                     "test_0001_top level it",
+                     "test_0002_не латинские &いった α, β, γ, δ, ε hello!!! world",
                    ].sort
 
     assert_equal test_methods, [x1, x2]

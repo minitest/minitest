@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 require "rbconfig"
 require "tempfile"
 require "stringio"
@@ -29,12 +27,12 @@ module Minitest
     def self.diff
       return @diff if defined? @diff
 
-      @diff = if (RbConfig::CONFIG["host_os"] =~ /mswin|mingw/ &&
-                  system("diff.exe", __FILE__, __FILE__)) then
+      @diff = if (RbConfig::CONFIG["host_os"] =~ /mswin|mingw/ and
+                  system "diff.exe", __FILE__, __FILE__) then
                 "diff.exe -u"
-              elsif system("gdiff", __FILE__, __FILE__)
+              elsif system "gdiff", __FILE__, __FILE__ then
                 "gdiff -u" # solaris and kin suck
-              elsif system("diff", __FILE__, __FILE__)
+              elsif system "diff", __FILE__, __FILE__ then
                 "diff -u"
               else
                 nil
@@ -79,10 +77,10 @@ module Minitest
           if result.empty? then
             klass = exp.class
             result = [
-                      "No visible difference in the #{klass}#inspect output.\n",
-                      "You should look at the implementation of #== on ",
-                      "#{klass} or its members.\n",
-                      expect,
+                       "No visible difference in the #{klass}#inspect output.\n",
+                       "You should look at the implementation of #== on ",
+                       "#{klass} or its members.\n",
+                       expect,
                      ].join
           end
         end
@@ -167,9 +165,9 @@ module Minitest
           :itself                                     # leave it alone
         end
 
-      str.
-        gsub(/\\?\\n/, &process).
-        gsub(/:0x[a-fA-F0-9]{4,}/m, ":0xXXXXXX") # anonymize hex values
+      str
+        .gsub(/\\?\\n/, &process)
+        .gsub(/:0x[a-fA-F0-9]{4,}/m, ":0xXXXXXX") # anonymize hex values
     end
 
     ##
@@ -200,7 +198,7 @@ module Minitest
 
     def _where # :nodoc:
       where = Minitest.filter_backtrace(caller).first
-      where = where.split(/:in /, 2).first # clean up noise
+      where = where.split(":in ", 2).first # clean up noise
     end
 
     E = "" # :nodoc:
@@ -292,7 +290,7 @@ module Minitest
 
     def assert_match matcher, obj, msg = nil
       msg = message(msg) { "Expected #{mu_pp matcher} to match #{mu_pp obj}" }
-      assert_respond_to matcher, :"=~"
+      assert_respond_to matcher, :=~
       matcher = Regexp.new Regexp.escape matcher if String === matcher
       assert matcher =~ obj, msg
 
@@ -506,7 +504,7 @@ module Minitest
         begin
           yield
         rescue ThreadError => e       # wtf?!? 1.8 + threads == suck
-          default += ", not \:#{e.message[/uncaught throw \`(\w+?)\'/, 1]}"
+          default += ", not :#{e.message[/uncaught throw \`(\w+?)\'/, 1]}"
         rescue ArgumentError => e     # 1.9 exception
           raise e unless e.message.include?("uncaught throw")
           default += ", not #{e.message.split(/ /).last}"
@@ -607,12 +605,12 @@ module Minitest
 
     def exception_details e, msg
       [
-       "#{msg}",
-       "Class: <#{e.class}>",
-       "Message: <#{e.message.inspect}>",
-       "---Backtrace---",
-       "#{Minitest.filter_backtrace(e.backtrace).join("\n")}",
-       "---------------",
+        msg,
+        "Class: <#{e.class}>",
+        "Message: <#{e.message.inspect}>",
+        "---Backtrace---",
+        Minitest.filter_backtrace(e.backtrace),
+        "---------------",
       ].join "\n"
     end
 
@@ -735,7 +733,7 @@ module Minitest
 
     def refute_match matcher, obj, msg = nil
       msg = message(msg) { "Expected #{mu_pp matcher} to not match #{mu_pp obj}" }
-      assert_respond_to matcher, :"=~"
+      assert_respond_to matcher, :=~
       matcher = Regexp.new Regexp.escape matcher if String === matcher
       refute matcher =~ obj, msg
     end

@@ -59,12 +59,10 @@ module Minitest
 
     def print o
       case o
-      when "." then
+      when ".", "S" then
         io.print pride o
       when "E", "F" then
         io.print "#{ESC}41m#{ESC}37m#{o}#{NND}"
-      when "S" then
-        io.print pride o
       else
         io.print o
       end
@@ -72,11 +70,9 @@ module Minitest
 
     def puts *o # :nodoc:
       o.map! { |s|
-        s.to_s.sub(/Finished/) {
+        s.to_s.sub("Finished") {
           @index = 0
-          "Fabulous run".split(//).map { |c|
-            pride(c)
-          }.join
+          "Fabulous run".chars.map { |c| pride(c) }.join
         }
       }
 

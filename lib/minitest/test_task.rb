@@ -169,7 +169,7 @@ module Minitest # :nodoc:
     def define # :nodoc:
       desc "Run the test suite. Use N, X, A, and TESTOPTS to add flags/args."
       task name do
-        ruby make_test_cmd, verbose:verbose
+        ruby make_test_cmd, verbose: verbose
       end
 
       desc "Print out the test command. Good for profiling and other tools."

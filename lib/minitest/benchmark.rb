@@ -83,7 +83,7 @@ module Minitest
     def assert_performance validation, &work
       range = self.class.bench_range
 
-      io.print "#{self.name}"
+      io.print self.name
 
       times = []
 
@@ -418,7 +418,6 @@ module Minitest
         assert_performance_exponential threshold, &work
       end
     end
-
 
     ##
     # Create a benchmark that verifies that the performance is logarithmic.

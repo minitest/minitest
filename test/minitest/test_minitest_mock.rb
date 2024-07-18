@@ -113,8 +113,6 @@ class TestMinitestMock < Minitest::Test
   end
 
   def test_expectations_can_be_satisfied_via_public_send
-    skip "Doesn't run on 1.8" if RUBY_VERSION < "1.9"
-
     @mock.public_send :foo
     @mock.public_send :meaning_of_life
 
@@ -181,7 +179,7 @@ class TestMinitestMock < Minitest::Test
     @mock.expect :kind_of?, true, [String]
     @mock.expect :==, true, [1]
 
-    assert @mock.kind_of?(String), "didn't mock :kind_of\?"
+    assert @mock.kind_of?(String), "didn't mock :kind_of?"
     assert @mock == 1, "didn't mock :=="
   end
 
@@ -397,7 +395,7 @@ class TestMinitestMock < Minitest::Test
   def test_mock_block_is_passed_keyword_args__args__old_style_bad
     arg1, arg2, arg3 = :bar, [1, 2, 3], { :a => "a" }
     mock = Minitest::Mock.new
-    mock.expect :foo, nil, [{k1: arg1, k2: arg2, k3: arg3}]
+    mock.expect :foo, nil, [{ k1: arg1, k2: arg2, k3: arg3 }]
 
     e = assert_raises ArgumentError do
       mock.foo(k1: arg1, k2: arg2, k3: arg3)
@@ -410,7 +408,7 @@ class TestMinitestMock < Minitest::Test
     with_kwargs_env do
       arg1, arg2, arg3 = :bar, [1, 2, 3], { :a => "a" }
       mock = Minitest::Mock.new
-      mock.expect :foo, nil, [{k1: arg1, k2: arg2, k3: arg3}]
+      mock.expect :foo, nil, [{ k1: arg1, k2: arg2, k3: arg3 }]
 
       mock.foo(k1: arg1, k2: arg2, k3: arg3)
 
@@ -444,7 +442,7 @@ class TestMinitestMock < Minitest::Test
       mock.foo(k1: arg1, k2: arg2)
     end
 
-    assert_equal "mocked method :foo expects 3 keyword arguments, got %p" % {k1: arg1, k2: arg2}, e.message
+    assert_equal "mocked method :foo expects 3 keyword arguments, got %p" % { k1: arg1, k2: arg2 }, e.message
   end
 
   def test_mock_block_is_passed_keyword_args__args_bad_extra
@@ -456,7 +454,7 @@ class TestMinitestMock < Minitest::Test
       mock.foo(k1: arg1, k2: arg2, k3: arg3)
     end
 
-    assert_equal "mocked method :foo expects 2 keyword arguments, got %p" % {k1: arg1, k2: arg2, k3: arg3}, e.message
+    assert_equal "mocked method :foo expects 2 keyword arguments, got %p" % { k1: arg1, k2: arg2, k3: arg3 }, e.message
   end
 
   def test_mock_block_is_passed_keyword_args__args_bad_key
@@ -497,8 +495,8 @@ class TestMinitestMock < Minitest::Test
 
   def test_mock_forward_keyword_arguments
     mock = Minitest::Mock.new
-    mock.expect(:foo, nil) { |bar:| bar == 'bar' }
-    mock.foo(bar: 'bar')
+    mock.expect(:foo, nil) { |bar:| bar == "bar" }
+    mock.foo(bar: "bar")
     assert_mock mock
   end
 
@@ -532,7 +530,7 @@ class TestMinitestMock < Minitest::Test
     mock = Minitest::Mock.new
 
     e = assert_raises(ArgumentError) do
-      mock.expect :foo, nil, kwargs:1 do
+      mock.expect :foo, nil, kwargs: 1 do
         true
       end
     end
@@ -657,7 +655,7 @@ class TestMinitestStub < Minitest::Test
     end
   end
 
-  def test_stub_value
+  def test_stub_value__literal
     assert_stub 42
   end
 
@@ -729,8 +727,11 @@ class TestMinitestStub < Minitest::Test
       end
     end
 
-    exp = jruby? ? /Undefined method nope_nope_nope for '#{self.class}::Time'/ :
-      /undefined method [`']nope_nope_nope' for( class)? [`']#{self.class}::Time'/
+    exp = if jruby? then
+            /Undefined method nope_nope_nope for '#{self.class}::Time'/
+          else
+            /undefined method [`']nope_nope_nope' for( class)? [`']#{self.class}::Time'/
+          end
     assert_match exp, e.message
   end
 
@@ -753,7 +754,7 @@ class TestMinitestStub < Minitest::Test
     mock = Minitest::Mock.new
     rs = nil
 
-    File.stub :open, true, mock, kw:42 do
+    File.stub :open, true, mock, kw: 42 do
       File.open "foo.txt", "r" do |f, kw:|
         rs = kw
       end
@@ -761,8 +762,6 @@ class TestMinitestStub < Minitest::Test
 
     @tc.assert_equal 42, rs
   end
-
-  alias test_stub_value__old test_stub_value # TODO: remove/rename
 
   ## Permutation Sets:
 
@@ -836,7 +835,7 @@ class TestMinitestStub < Minitest::Test
   end
 
   class Keywords
-    def self.args req, kw1:, kw2:24
+    def self.args req, kw1:, kw2: 24
       [req, kw1, kw2]
     end
   end

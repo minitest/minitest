@@ -67,9 +67,8 @@ module Minitest
   # Registers Minitest to run at process exit
 
   def self.autorun
-    if Object.const_defined?(:Warning) && Warning.respond_to?(:[]=)
-      Warning[:deprecated] = true
-    end
+    Warning[:deprecated] = true if
+      Object.const_defined?(:Warning) && Warning.respond_to?(:[]=)
 
     at_exit {
       next if $! and not ($!.kind_of? SystemExit and $!.success?)
@@ -142,7 +141,7 @@ module Minitest
 
   def self.process_args args = [] # :nodoc:
     options = {
-               :io => $stdout,
+                :io => $stdout,
               }
     orig_args = args.dup
 
@@ -406,8 +405,8 @@ module Minitest
       pos = options[:filter]
       neg = options[:exclude]
 
-      pos = Regexp.new $1 if pos.is_a?(String) && pos =~ %r%/(.*)/%
-      neg = Regexp.new $1 if neg.is_a?(String) && neg =~ %r%/(.*)/%
+      pos = Regexp.new $1 if pos.kind_of?(String) && pos =~ %r%/(.*)/%
+      neg = Regexp.new $1 if neg.kind_of?(String) && neg =~ %r%/(.*)/%
 
       filtered_methods = self.runnable_methods
         .select { |m| !pos ||  pos === m || pos === "#{self}##{m}"  }
@@ -752,7 +751,7 @@ module Minitest
   # own.
 
   class ProgressReporter < Reporter
-    def prerecord klass, name #:nodoc:
+    def prerecord klass, name # :nodoc:
       if options[:verbose] then
         io.print "%s#%s = " % [klass.name, name]
         io.flush
@@ -890,10 +889,8 @@ module Minitest
   # own.
 
   class SummaryReporter < StatisticsReporter
-    # :stopdoc:
-    attr_accessor :sync
-    attr_accessor :old_sync
-    # :startdoc:
+    attr_accessor :sync     # :nodoc:
+    attr_accessor :old_sync # :nodoc:
 
     def start # :nodoc:
       super
@@ -1127,7 +1124,7 @@ module Minitest
 
     def maglev? platform = defined?(RUBY_ENGINE) && RUBY_ENGINE
       where = Minitest.filter_backtrace(caller).first
-      where = where.split(/:in /, 2).first # clean up noise
+      where = where.split(":in ", 2).first # clean up noise
       warn "DEPRECATED: `maglev?` called from #{where}. This will fail in Minitest 6."
       "maglev" == platform
     end
@@ -1151,7 +1148,7 @@ module Minitest
 
     def rubinius? platform = defined?(RUBY_ENGINE) && RUBY_ENGINE
       where = Minitest.filter_backtrace(caller).first
-      where = where.split(/:in /, 2).first # clean up noise
+      where = where.split(":in ", 2).first # clean up noise
       warn "DEPRECATED: `rubinius?` called from #{where}. This will fail in Minitest 6."
       "rbx" == platform
     end
@@ -1171,7 +1168,7 @@ module Minitest
 
   class BacktraceFilter
 
-    MT_RE = %r%lib/minitest|internal:warning% #:nodoc:
+    MT_RE = %r%lib/minitest|internal:warning% # :nodoc:
 
     ##
     # The regular expression to use to filter backtraces. Defaults to +MT_RE+.

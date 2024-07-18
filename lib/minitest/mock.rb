@@ -174,7 +174,7 @@ module Minitest # :nodoc:
       expected_args, expected_kwargs, retval, val_block =
         expected_call.values_at(:args, :kwargs, :retval, :block)
 
-      expected_kwargs = kwargs.map { |ak, av| [ak, Object] }.to_h if
+      expected_kwargs = kwargs.to_h { |ak, av| [ak, Object] } if
         Hash == expected_kwargs
 
       if val_block then
@@ -212,10 +212,10 @@ module Minitest # :nodoc:
         raise MockExpectationError, fmt % [sym, expected_kwargs.keys, kwargs.keys]
       end
 
-      zipped_kwargs = expected_kwargs.map { |ek, ev|
+      zipped_kwargs = expected_kwargs.to_h { |ek, ev|
         av = kwargs[ek]
         [ek, [ev, av]]
-      }.to_h
+      }
 
       fully_matched = zipped_kwargs.all? { |ek, (ev, av)|
         ev === av or ev == av
@@ -228,8 +228,8 @@ module Minitest # :nodoc:
 
       @actual_calls[sym] << {
         :retval => retval,
-        :args => zipped_args.map { |e, a| e === a ? e : a },
-        :kwargs => zipped_kwargs.map { |k, (e, a)| [k, e === a ? e : a] }.to_h,
+        :args   => zipped_args.map { |e, a| e === a ? e : a },
+        :kwargs => zipped_kwargs.to_h { |k, (e, a)| [k, e === a ? e : a] },
       }
 
       retval
