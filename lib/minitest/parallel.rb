@@ -24,7 +24,7 @@ module Minitest
       # Start the executor
 
       def start
-        @pool  = size.times.map {
+        @pool  = Array.new(size) {
           Thread.new(@queue) do |queue|
             Thread.current.abort_on_exception = true
             while (job = queue.pop)

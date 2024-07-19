@@ -215,8 +215,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_test
-    @tu =
-    Class.new FakeNamedTest do
+    @tu = Class.new FakeNamedTest do
       attr_reader :foo
 
       def run
@@ -244,8 +243,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_error
-    @tu =
-    Class.new FakeNamedTest do
+    @tu = Class.new FakeNamedTest do
       def test_something
         assert true
       end
@@ -272,8 +270,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_error_teardown
-    @tu =
-    Class.new FakeNamedTest do
+    @tu = Class.new FakeNamedTest do
       def test_something
         assert true
       end
@@ -318,8 +315,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
   end
 
   def setup_basic_tu
-    @tu =
-    Class.new FakeNamedTest do
+    @tu = Class.new FakeNamedTest do
       def test_something
         assert true
       end
@@ -460,8 +456,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_passing
-    @tu =
-    Class.new FakeNamedTest do
+    @tu = Class.new FakeNamedTest do
       def test_something
         assert true
       end
@@ -479,8 +474,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_skip
-    @tu =
-    Class.new FakeNamedTest do
+    @tu = Class.new FakeNamedTest do
       def test_something
         assert true
       end
@@ -506,8 +500,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_skip_verbose
-    @tu =
-    Class.new FakeNamedTest do
+    @tu = Class.new FakeNamedTest do
       def test_something
         assert true
       end
@@ -534,8 +527,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_skip_show_skips
-    @tu =
-    Class.new FakeNamedTest do
+    @tu = Class.new FakeNamedTest do
       def test_something
         assert true
       end
@@ -561,8 +553,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
   end
 
   def test_run_with_other_runner
-    @tu =
-    Class.new FakeNamedTest do
+    @tu = Class.new FakeNamedTest do
       def self.run reporter, options = {}
         @reporter = reporter
         before_my_suite
@@ -634,8 +625,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
       main_latch.release
     }
 
-    @tu =
-    Class.new FakeNamedTest do
+    @tu = Class.new FakeNamedTest do
       parallelize_me!
 
       test_count.times do |i|
@@ -684,8 +674,8 @@ class TestMinitestUnitOrder < MetaMetaMetaTestCase
 
   def test_before_setup
     call_order = []
-    @tu =
-    Class.new FakeNamedTest do
+
+    @tu = Class.new FakeNamedTest do
       define_method :setup do
         super()
         call_order << :setup
@@ -706,8 +696,7 @@ class TestMinitestUnitOrder < MetaMetaMetaTestCase
 
   def test_after_teardown
     call_order = []
-    @tu =
-    Class.new FakeNamedTest do
+    @tu = Class.new FakeNamedTest do
       define_method :teardown do
         super()
         call_order << :teardown
@@ -728,8 +717,8 @@ class TestMinitestUnitOrder < MetaMetaMetaTestCase
 
   def test_all_teardowns_are_guaranteed_to_run
     call_order = []
-    @tu =
-    Class.new FakeNamedTest do
+
+    @tu = Class.new FakeNamedTest do
       define_method :after_teardown do
         super()
         call_order << :after_teardown

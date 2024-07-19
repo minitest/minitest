@@ -249,7 +249,7 @@ class Minitest::Spec < Minitest::Test
       pre, post = "let '#{name}' cannot ", ". Please use another name."
       methods = Minitest::Spec.instance_methods.map(&:to_s) - %w[subject]
       raise ArgumentError, "#{pre}begin with 'test'#{post}" if
-        name =~ /\Atest/
+        name.start_with? "test"
       raise ArgumentError, "#{pre}override a method in Minitest::Spec#{post}" if
         methods.include? name
 

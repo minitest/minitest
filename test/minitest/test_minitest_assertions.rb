@@ -283,7 +283,7 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_equal_does_not_allow_lhs_nil
-    if Minitest::VERSION =~ /^6/ then
+    if Minitest::VERSION >= "6" then
       warn "Time to strip the MT5 test"
 
       @assertion_count += 1

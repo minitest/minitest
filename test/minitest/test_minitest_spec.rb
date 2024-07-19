@@ -25,17 +25,17 @@ describe Minitest::Spec do
     msg.gsub!(/(\d\.\d{6})\d+/, '\1xxx') # normalize: ruby version, impl, platform
     msg.gsub!(/:0x[Xa-fA-F0-9]{4,}[ @].+?>/, ":0xXXXXXX@PATH>")
 
-    if expected
+    return unless expected
+
+    @assertion_count += 1
+    case expected
+    when String then
+      assert_equal expected, msg
+    when Regexp then
       @assertion_count += 1
-      case expected
-      when String then
-        assert_equal expected, msg
-      when Regexp then
-        @assertion_count += 1
-        assert_match expected, msg
-      else
-        flunk "Unknown: #{expected.inspect}"
-      end
+      assert_match expected, msg
+    else
+      flunk "Unknown: #{expected.inspect}"
     end
   end
 
@@ -192,7 +192,7 @@ describe Minitest::Spec do
     methods = Minitest::Expectations.public_instance_methods.grep(/must|wont/)
     methods.map!(&:to_s) if Symbol === methods.first
 
-    musts, wonts = methods.sort.partition { |m| m =~ /must/ }
+    musts, wonts = methods.sort.partition { |m| m.include? "must" }
 
     expected_musts = %w[must_be
                         must_be_close_to

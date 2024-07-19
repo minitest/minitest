@@ -323,7 +323,7 @@ module Minitest
 
     def sigma enum, &block
       enum = enum.map(&block) if block
-      enum.inject { |sum, n| sum + n }
+      enum.sum
     end
 
     ##

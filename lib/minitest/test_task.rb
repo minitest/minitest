@@ -296,7 +296,7 @@ class Integer # :nodoc:
   def threads_do(jobs) # :nodoc:
     q = Work.new jobs
 
-    self.times.map {
+    Array.new(times) {
       Thread.new do
         while job = q.pop # go until quit value
           yield job

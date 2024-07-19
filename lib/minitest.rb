@@ -239,7 +239,7 @@ module Minitest
     end
 
     options[:args] = orig_args.map { |s|
-      s =~ /[\s|&<>$()]/ ? s.inspect : s
+      s.match?(/[\s|&<>$()]/) ? s.inspect : s
     }.join " "
 
     options
@@ -488,7 +488,7 @@ module Minitest
     def marshal_dump # :nodoc:
       unless @@marshal_dump_warned then
         warn ["Minitest::Runnable#marshal_dump is deprecated.",
-              "You might be violating internals. From", caller.first].join " "
+              "You might be violating internals. From", caller(1..1).first].join " "
         @@marshal_dump_warned = true
       end
 
@@ -616,7 +616,7 @@ module Minitest
     # Did this run error?
 
     def error?
-      self.failures.any? { |f| UnexpectedError === f }
+      self.failures.any?(UnexpectedError)
     end
   end
 
@@ -752,10 +752,10 @@ module Minitest
 
   class ProgressReporter < Reporter
     def prerecord klass, name # :nodoc:
-      if options[:verbose] then
-        io.print "%s#%s = " % [klass.name, name]
-        io.flush
-      end
+      return unless options[:verbose]
+
+      io.print "%s#%s = " % [klass.name, name]
+      io.flush
     end
 
     def record result # :nodoc:
@@ -1133,14 +1133,14 @@ module Minitest
     # Is this running on mri?
 
     def mri? platform = RUBY_DESCRIPTION
-      /^ruby/ =~ platform
+      platform.start_with? "ruby"
     end
 
     ##
     # Is this running on macOS?
 
     def osx? platform = RUBY_PLATFORM
-      /darwin/ =~ platform
+      platform.include? "darwin"
     end
 
     ##

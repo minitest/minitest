@@ -486,8 +486,7 @@ class TestMinitestMock < Minitest::Test
     mock = Minitest::Mock.new
     block = proc { "bar" }
     mock.expect :foo, nil do |arg, &blk|
-      arg == "foo" &&
-      blk == block
+      arg == "foo" && blk == block
     end
     mock.foo "foo", &block
     assert_mock mock

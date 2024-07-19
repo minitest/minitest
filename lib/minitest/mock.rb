@@ -93,7 +93,7 @@ module Minitest # :nodoc:
     def expect name, retval, args = [], **kwargs, &blk
       name = name.to_sym
 
-      if block_given?
+      if blk then
         raise ArgumentError, "args ignored when block given" unless args.empty?
         raise ArgumentError, "kwargs ignored when block given" unless kwargs.empty?
         @expected_calls[name] << { :retval => retval, :block => blk }
@@ -106,7 +106,7 @@ module Minitest # :nodoc:
             kwargs = args.pop
           else
             unless @@KW_WARNED then
-              from = caller.first
+              from = caller(1..1).first
               warn "Using MT_KWARGS_HAC\K yet passing kwargs. From #{from}"
               @@KW_WARNED = true
             end

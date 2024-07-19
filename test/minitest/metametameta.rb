@@ -91,7 +91,7 @@ class MetaMetaMetaTestCase < Minitest::Test
 
   def assert_report expected, flags = %w[--seed 42], &block
     header = <<~EOM
-      Run options: #{flags.map { |s| s =~ /\|/ ? s.inspect : s }.join " "}
+      Run options: #{flags.map { |s| s.include?("|") ? s.inspect : s }.join " "}
 
       # Running:
 

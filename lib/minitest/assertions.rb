@@ -221,7 +221,7 @@ module Minitest
       result = assert exp == act, msg
 
       if nil == exp then
-        if Minitest::VERSION =~ /^6/ then
+        if Minitest::VERSION >= "6" then
           refute_nil exp, "Use assert_nil if expecting nil."
         else
           warn "DEPRECATED: Use assert_nil if expecting nil from #{_where}. This will fail in Minitest 6."
@@ -280,7 +280,8 @@ module Minitest
 
     def assert_kind_of cls, obj, msg = nil
       msg = message(msg) {
-        "Expected #{mu_pp(obj)} to be a kind of #{cls}, not #{obj.class}" }
+        "Expected #{mu_pp(obj)} to be a kind of #{cls}, not #{obj.class}"
+      }
 
       assert obj.kind_of?(cls), msg
     end
@@ -479,7 +480,8 @@ module Minitest
 
       recv, msg, *args = send_ary
       m = message(m) {
-        "Expected #{mu_pp(recv)}.#{msg}(*#{mu_pp(args)}) to return true" }
+        "Expected #{mu_pp(recv)}.#{msg}(*#{mu_pp(args)}) to return true"
+      }
       assert recv.__send__(msg, *args), m
     end
 
@@ -844,7 +846,7 @@ module Minitest
 
     def skip_until y,m,d,msg
       skip msg if Time.now < Time.local(y, m, d)
-      where = caller.first.rpartition(":in").reject(&:empty?).first
+      where = caller(1..1).first.rpartition(":in").reject(&:empty?).first
       warn "Stale skip_until %p at %s" % [msg, where]
     end
 

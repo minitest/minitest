@@ -8,13 +8,13 @@ module Minitest
   end
 
   def self.plugin_pride_init options # :nodoc:
-    if PrideIO.pride? then
-      klass = ENV["TERM"] =~ /^xterm|-256color$/ ? PrideLOL : PrideIO
-      io    = klass.new options[:io]
+    return unless PrideIO.pride?
 
-      self.reporter.reporters.grep(Minitest::Reporter).each do |rep|
-        rep.io = io if rep.io.tty?
-      end
+    klass = ENV["TERM"].match?(/^xterm|-256color$/) ? PrideLOL : PrideIO
+    io    = klass.new options[:io]
+
+    self.reporter.reporters.grep(Minitest::Reporter).each do |rep|
+      rep.io = io if rep.io.tty?
     end
   end
 
@@ -109,7 +109,7 @@ module Minitest
       #
       #   plot (3*sin(x)+3), (3*sin(x+2*pi/3)+3), (3*sin(x+4*pi/3)+3)
 
-      @colors = (6 * 7).times.map { |n|
+      @colors = Array.new(6 * 7) { |n|
         n *= 1.0 / 3
         r  = (3 * Math.sin(n           ) + 3).to_i
         g  = (3 * Math.sin(n + 4 * PI_3) + 3).to_i
