@@ -141,7 +141,7 @@ module Minitest # :nodoc:
 
     def verify
       @expected_calls.each do |name, expected|
-        actual = @actual_calls.fetch(name, nil)
+        actual = @actual_calls.fetch name, nil # defaults to []
         raise MockExpectationError, "expected #{__call name, expected[0]}" unless actual
         raise MockExpectationError, "expected #{__call name, expected[actual.size]}, got [#{__call name, actual}]" if
           actual.size < expected.size
@@ -150,7 +150,7 @@ module Minitest # :nodoc:
     end
 
     def method_missing sym, *args, **kwargs, &block # :nodoc:
-      unless @expected_calls.key?(sym) then
+      unless @expected_calls.key? sym then
         if @delegator && @delegator.respond_to?(sym)
           if kwargs.empty? then # FIX: drop this after 2.7 dead
             return @delegator.public_send(sym, *args, &block)
@@ -172,7 +172,7 @@ module Minitest # :nodoc:
       end
 
       expected_args, expected_kwargs, retval, val_block =
-        expected_call.values_at(:args, :kwargs, :retval, :block)
+        expected_call.values_at :args, :kwargs, :retval, :block
 
       expected_kwargs = kwargs.to_h { |ak, av| [ak, Object] } if
         Hash == expected_kwargs
@@ -197,7 +197,7 @@ module Minitest # :nodoc:
           [sym, expected_kwargs.size, kwargs]
       end
 
-      zipped_args = expected_args.zip(args)
+      zipped_args = expected_args.zip args
       fully_matched = zipped_args.all? { |mod, a|
         mod === a or mod == a
       }
@@ -238,7 +238,7 @@ module Minitest # :nodoc:
     def respond_to? sym, include_private = false # :nodoc:
       return true if @expected_calls.key? sym.to_sym
       return true if @delegator && @delegator.respond_to?(sym, include_private)
-      __respond_to?(sym, include_private)
+      __respond_to? sym, include_private
     end
   end
 end

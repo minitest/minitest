@@ -183,7 +183,7 @@ module Minitest # :nodoc:
 
         # 3 seems to be the magic number... (tho not by that much)
         bad, good, n = {}, [], (ENV.delete("K") || 3).to_i
-        file = ENV.delete("F")
+        file = ENV.delete "F"
         times = {}
 
         tt0 = Time.now
@@ -268,7 +268,7 @@ module Minitest # :nodoc:
       runner = runner.join "; "
 
       args  = []
-      args << "-I#{libs.join(File::PATH_SEPARATOR)}" unless libs.empty?
+      args << "-I#{libs.join File::PATH_SEPARATOR}" unless libs.empty?
       args << "-w" if warning
       args << "-e"
       args << "'#{runner}'"

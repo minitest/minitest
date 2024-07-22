@@ -185,7 +185,7 @@ module Minitest
         options[:skip] = s.chars.to_a
       end
 
-      ruby27plus = ::Warning.respond_to?(:[]=)
+      ruby27plus = ::Warning.respond_to? :[]=
 
       opts.on "-W[error]", String, "Turn Ruby warnings into errors" do |s|
         options[:Werror] = true
@@ -201,14 +201,14 @@ module Minitest
 
       unless extensions.empty?
         opts.separator ""
-        opts.separator "Known extensions: #{extensions.join(", ")}"
+        opts.separator "Known extensions: #{extensions.join ", "}"
 
         extensions.each do |mod_or_meth|
           case mod_or_meth
           when Symbol, String then
             meth = mod_or_meth
             msg = "plugin_#{meth}_options"
-            send msg, opts, options if respond_to?(msg)
+            send msg, opts, options if respond_to? msg
           when Module
             recv = mod_or_meth
             next unless recv.respond_to? :minitest_plugin_options
@@ -281,7 +281,7 @@ module Minitest
     self.init_plugins options
     self.reporter = nil # runnables shouldn't depend on the reporter, ever
 
-    self.parallel_executor.start if parallel_executor.respond_to?(:start)
+    self.parallel_executor.start if parallel_executor.respond_to? :start
     reporter.start
     begin
       __run reporter, options
@@ -616,7 +616,7 @@ module Minitest
     # Did this run error?
 
     def error?
-      self.failures.any?(UnexpectedError)
+      self.failures.any? UnexpectedError
     end
   end
 

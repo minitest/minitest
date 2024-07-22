@@ -236,7 +236,7 @@ module Minitest
 
     def fit_exponential xs, ys
       n     = xs.size
-      xys   = xs.zip(ys)
+      xys   = xs.zip ys
       sxlny = sigma(xys) { |x, y| x * Math.log(y) }
       slny  = sigma(xys) { |_, y| Math.log(y)     }
       sx2   = sigma(xys) { |x, _| x * x           }
@@ -258,7 +258,7 @@ module Minitest
 
     def fit_logarithmic xs, ys
       n     = xs.size
-      xys   = xs.zip(ys)
+      xys   = xs.zip ys
       slnx2 = sigma(xys) { |x, _| Math.log(x) ** 2 }
       slnx  = sigma(xys) { |x, _| Math.log(x)      }
       sylnx = sigma(xys) { |x, y| y * Math.log(x)  }
@@ -280,7 +280,7 @@ module Minitest
 
     def fit_linear xs, ys
       n   = xs.size
-      xys = xs.zip(ys)
+      xys = xs.zip ys
       sx  = sigma xs
       sy  = sigma ys
       sx2 = sigma(xs)  { |x|   x ** 2 }
@@ -302,7 +302,7 @@ module Minitest
 
     def fit_power xs, ys
       n       = xs.size
-      xys     = xs.zip(ys)
+      xys     = xs.zip ys
       slnxlny = sigma(xys) { |x, y| Math.log(x) * Math.log(y) }
       slnx    = sigma(xs)  { |x   | Math.log(x)               }
       slny    = sigma(ys)  { |   y| Math.log(y)               }

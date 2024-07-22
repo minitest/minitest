@@ -57,16 +57,16 @@ module Minitest
     def diff exp, act
       result = nil
 
-      expect, butwas = things_to_diff(exp, act)
+      expect, butwas = things_to_diff exp, act
 
       return "Expected: #{mu_pp exp}\n  Actual: #{mu_pp act}" unless
         expect
 
-      Tempfile.open("expect") do |a|
+      Tempfile.open "expect" do |a|
         a.puts expect
         a.flush
 
-        Tempfile.open("butwas") do |b|
+        Tempfile.open "butwas" do |b|
           b.puts butwas
           b.flush
 
@@ -191,7 +191,7 @@ module Minitest
     # Fails unless +obj+ is empty.
 
     def assert_empty obj, msg = nil
-      msg = message(msg) { "Expected #{mu_pp(obj)} to be empty" }
+      msg = message(msg) { "Expected #{mu_pp obj} to be empty" }
       assert_respond_to obj, :empty?
       assert obj.empty?, msg
     end
@@ -258,7 +258,7 @@ module Minitest
 
     def assert_includes collection, obj, msg = nil
       msg = message(msg) {
-        "Expected #{mu_pp(collection)} to include #{mu_pp(obj)}"
+        "Expected #{mu_pp collection} to include #{mu_pp obj}"
       }
       assert_respond_to collection, :include?
       assert collection.include?(obj), msg
@@ -269,7 +269,7 @@ module Minitest
 
     def assert_instance_of cls, obj, msg = nil
       msg = message(msg) {
-        "Expected #{mu_pp(obj)} to be an instance of #{cls}, not #{obj.class}"
+        "Expected #{mu_pp obj} to be an instance of #{cls}, not #{obj.class}"
       }
 
       assert obj.instance_of?(cls), msg
@@ -280,7 +280,7 @@ module Minitest
 
     def assert_kind_of cls, obj, msg = nil
       msg = message(msg) {
-        "Expected #{mu_pp(obj)} to be a kind of #{cls}, not #{obj.class}"
+        "Expected #{mu_pp obj} to be a kind of #{cls}, not #{obj.class}"
       }
 
       assert obj.kind_of?(cls), msg
@@ -302,7 +302,7 @@ module Minitest
     # Fails unless +obj+ is nil
 
     def assert_nil obj, msg = nil
-      msg = message(msg) { "Expected #{mu_pp(obj)} to be nil" }
+      msg = message(msg) { "Expected #{mu_pp obj} to be nil" }
       assert obj.nil?, msg
     end
 
@@ -313,7 +313,7 @@ module Minitest
 
     def assert_operator o1, op, o2 = UNDEFINED, msg = nil
       return assert_predicate o1, op, msg if UNDEFINED == o2
-      msg = message(msg) { "Expected #{mu_pp(o1)} to be #{op} #{mu_pp(o2)}" }
+      msg = message(msg) { "Expected #{mu_pp o1} to be #{op} #{mu_pp o2}" }
       assert o1.__send__(op, o2), msg
     end
 
@@ -394,7 +394,7 @@ module Minitest
     #   str.must_be :empty?
 
     def assert_predicate o1, op, msg = nil
-      msg = message(msg) { "Expected #{mu_pp(o1)} to be #{op}" }
+      msg = message(msg) { "Expected #{mu_pp o1} to be #{op}" }
       assert o1.__send__(op), msg
     end
 
@@ -439,13 +439,13 @@ module Minitest
         raise
       rescue Exception => e
         flunk proc {
-          exception_details(e, "#{msg}#{mu_pp(exp)} exception expected, not")
+          exception_details(e, "#{msg}#{mu_pp exp} exception expected, not")
         }
       end
 
       exp = exp.first if exp.size == 1
 
-      flunk "#{msg}#{mu_pp(exp)} expected but nothing was raised."
+      flunk "#{msg}#{mu_pp exp} expected but nothing was raised."
     end
 
     ##
@@ -454,7 +454,7 @@ module Minitest
 
     def assert_respond_to obj, meth, msg = nil, include_all: false
       msg = message(msg) {
-        "Expected #{mu_pp(obj)} (#{obj.class}) to respond to ##{meth}"
+        "Expected #{mu_pp obj} (#{obj.class}) to respond to ##{meth}"
       }
       assert obj.respond_to?(meth, include_all), msg
     end
@@ -480,7 +480,7 @@ module Minitest
 
       recv, msg, *args = send_ary
       m = message(m) {
-        "Expected #{mu_pp(recv)}.#{msg}(*#{mu_pp(args)}) to return true"
+        "Expected #{mu_pp recv}.#{msg}(*#{mu_pp args}) to return true"
       }
       assert recv.__send__(msg, *args), m
     end
@@ -500,15 +500,15 @@ module Minitest
     # Fails unless the block throws +sym+
 
     def assert_throws sym, msg = nil
-      default = "Expected #{mu_pp(sym)} to have been thrown"
+      default = "Expected #{mu_pp sym} to have been thrown"
       caught = true
-      value = catch(sym) do
+      value = catch sym do
         begin
           yield
         rescue ThreadError => e       # wtf?!? 1.8 + threads == suck
           default += ", not :#{e.message[/uncaught throw \`(\w+?)\'/, 1]}"
         rescue ArgumentError => e     # 1.9 exception
-          raise e unless e.message.include?("uncaught throw")
+          raise e unless e.message.include? "uncaught throw"
           default += ", not #{e.message.split(/ /).last}"
         rescue NameError => e         # 1.8 exception
           raise e unless e.name == sym
@@ -655,7 +655,7 @@ module Minitest
     # Fails if +test+ is truthy.
 
     def refute test, msg = nil
-      msg ||= message { "Expected #{mu_pp(test)} to not be truthy" }
+      msg ||= message { "Expected #{mu_pp test} to not be truthy" }
       assert !test, msg
     end
 
@@ -663,7 +663,7 @@ module Minitest
     # Fails if +obj+ is empty.
 
     def refute_empty obj, msg = nil
-      msg = message(msg) { "Expected #{mu_pp(obj)} to not be empty" }
+      msg = message(msg) { "Expected #{mu_pp obj} to not be empty" }
       assert_respond_to obj, :empty?
       refute obj.empty?, msg
     end
@@ -675,7 +675,7 @@ module Minitest
 
     def refute_equal exp, act, msg = nil
       msg = message(msg) {
-        "Expected #{mu_pp(act)} to not be equal to #{mu_pp(exp)}"
+        "Expected #{mu_pp act} to not be equal to #{mu_pp exp}"
       }
       refute exp == act, msg
     end
@@ -706,7 +706,7 @@ module Minitest
 
     def refute_includes collection, obj, msg = nil
       msg = message(msg) {
-        "Expected #{mu_pp(collection)} to not include #{mu_pp(obj)}"
+        "Expected #{mu_pp collection} to not include #{mu_pp obj}"
       }
       assert_respond_to collection, :include?
       refute collection.include?(obj), msg
@@ -717,7 +717,7 @@ module Minitest
 
     def refute_instance_of cls, obj, msg = nil
       msg = message(msg) {
-        "Expected #{mu_pp(obj)} to not be an instance of #{cls}"
+        "Expected #{mu_pp obj} to not be an instance of #{cls}"
       }
       refute obj.instance_of?(cls), msg
     end
@@ -726,7 +726,7 @@ module Minitest
     # Fails if +obj+ is a kind of +cls+.
 
     def refute_kind_of cls, obj, msg = nil
-      msg = message(msg) { "Expected #{mu_pp(obj)} to not be a kind of #{cls}" }
+      msg = message(msg) { "Expected #{mu_pp obj} to not be a kind of #{cls}" }
       refute obj.kind_of?(cls), msg
     end
 
@@ -744,7 +744,7 @@ module Minitest
     # Fails if +obj+ is nil.
 
     def refute_nil obj, msg = nil
-      msg = message(msg) { "Expected #{mu_pp(obj)} to not be nil" }
+      msg = message(msg) { "Expected #{mu_pp obj} to not be nil" }
       refute obj.nil?, msg
     end
 
@@ -766,7 +766,7 @@ module Minitest
 
       begin
         yield
-        flunk("NoMatchingPatternError expected, but nothing was raised.")
+        flunk "NoMatchingPatternError expected, but nothing was raised."
       rescue NoMatchingPatternError
         pass
       end
@@ -780,7 +780,7 @@ module Minitest
 
     def refute_operator o1, op, o2 = UNDEFINED, msg = nil
       return refute_predicate o1, op, msg if UNDEFINED == o2
-      msg = message(msg) { "Expected #{mu_pp(o1)} to not be #{op} #{mu_pp(o2)}" }
+      msg = message(msg) { "Expected #{mu_pp o1} to not be #{op} #{mu_pp o2}" }
       refute o1.__send__(op, o2), msg
     end
 
@@ -802,7 +802,7 @@ module Minitest
     #   str.wont_be :empty?
 
     def refute_predicate o1, op, msg = nil
-      msg = message(msg) { "Expected #{mu_pp(o1)} to not be #{op}" }
+      msg = message(msg) { "Expected #{mu_pp o1} to not be #{op}" }
       refute o1.__send__(op), msg
     end
 
@@ -811,7 +811,7 @@ module Minitest
     # include_all defaults to false to match Object#respond_to?
 
     def refute_respond_to obj, meth, msg = nil, include_all: false
-      msg = message(msg) { "Expected #{mu_pp(obj)} to not respond to #{meth}" }
+      msg = message(msg) { "Expected #{mu_pp obj} to not respond to #{meth}" }
 
       refute obj.respond_to?(meth, include_all), msg
     end

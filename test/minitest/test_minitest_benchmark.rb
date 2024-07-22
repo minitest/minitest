@@ -17,7 +17,7 @@ class TestMinitestBenchmark < Minitest::Test
   def test_cls_runnable_methods
     assert_equal [], Minitest::Benchmark.runnable_methods
 
-    c = Class.new(Minitest::Benchmark) do
+    c = Class.new Minitest::Benchmark do
       def bench_blah
       end
     end

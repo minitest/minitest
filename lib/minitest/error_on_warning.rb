@@ -7,5 +7,5 @@ module Minitest
     end
   end
 
-  ::Warning.singleton_class.prepend(ErrorOnWarning)
+  ::Warning.singleton_class.prepend ErrorOnWarning
 end

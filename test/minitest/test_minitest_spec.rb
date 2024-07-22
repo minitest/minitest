@@ -16,7 +16,7 @@ describe Minitest::Spec do
   def assert_triggered expected = "blah", klass = Minitest::Assertion
     @assertion_count += 1
 
-    e = assert_raises(klass) do
+    e = assert_raises klass do
       yield
     end
 
@@ -584,7 +584,7 @@ describe Minitest::Spec do
       e = assert_raises RuntimeError, Minitest::UnexpectedWarning do
         capture_io do
           Thread.new { # forces ctx to be nil
-            describe("woot") do
+            describe "woot" do
               (1 + 1).must_equal 2
             end
           }.join
@@ -681,7 +681,7 @@ describe Minitest::Spec do
     assert_success _(41).must_be(:<, 42)
 
     assert_triggered "Expected 42 to be < 41." do
-      _(42).must_be(:<, 41)
+      _(42).must_be :<, 41
     end
   end
 
@@ -749,9 +749,9 @@ describe Minitest::Spec, :let do
   it "doesn't raise an error if it is just another let" do
     v = proc do
       describe :outer do
-        let(:bar)
+        let :bar
         describe :inner do
-          let(:bar)
+          let :bar
         end
       end
       :good

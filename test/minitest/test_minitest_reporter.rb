@@ -33,7 +33,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
 
   def error_test
     unless defined? @et then
-      @et = Minitest::Test.new(:woot)
+      @et = Minitest::Test.new :woot
       @et.failures << Minitest::UnexpectedError.new(begin
                                                       raise "no"
                                                     rescue => e
@@ -56,7 +56,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
 
       ex.set_backtrace ary
 
-      @sse = Minitest::Test.new(:woot)
+      @sse = Minitest::Test.new :woot
       @sse.failures << Minitest::UnexpectedError.new(ex)
       @sse = Minitest::Result.from @sse
     end
@@ -65,7 +65,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
 
   def fail_test
     unless defined? @ft then
-      @ft = Minitest::Test.new(:woot)
+      @ft = Minitest::Test.new :woot
       @ft.failures <<   begin
                           raise Minitest::Assertion, "boo"
                         rescue Minitest::Assertion => e
@@ -81,14 +81,14 @@ class TestMinitestReporter < MetaMetaMetaTestCase
   end
 
   def passing_test_with_metadata
-    test = Minitest::Test.new(:woot)
+    test = Minitest::Test.new :woot
     test.metadata[:meta] = :data
     @pt ||= Minitest::Result.from test
   end
 
   def skip_test
     unless defined? @st then
-      @st = Minitest::Test.new(:woot)
+      @st = Minitest::Test.new :woot
       @st.failures << begin
                         raise Minitest::Skip
                       rescue Minitest::Assertion => e

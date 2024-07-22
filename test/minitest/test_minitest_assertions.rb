@@ -761,7 +761,7 @@ class TestMinitestAssertions < Minitest::Test
     EOM
 
     actual = e.message.gsub(/^.+:\d+/, "FILE:LINE")
-    actual.gsub!(RE_LEVELS, "") unless jruby?
+    actual.gsub! RE_LEVELS, "" unless jruby?
     actual.gsub!(/[`']block in (?:TestMinitestAssertions#)?/, "'block in ")
 
     assert_equal expected, actual
@@ -841,7 +841,7 @@ class TestMinitestAssertions < Minitest::Test
     EOM
 
     actual = e.message.gsub(/^.+:\d+/, "FILE:LINE")
-    actual.gsub!(RE_LEVELS, "") unless jruby?
+    actual.gsub! RE_LEVELS, "" unless jruby?
     actual.gsub!(/[`']block in (?:TestMinitestAssertions#)?/, "'block in ")
 
     assert_equal expected.chomp, actual
@@ -864,7 +864,7 @@ class TestMinitestAssertions < Minitest::Test
     EOM
 
     actual = e.message.gsub(/^.+:\d+/, "FILE:LINE")
-    actual.gsub!(RE_LEVELS, "") unless jruby?
+    actual.gsub! RE_LEVELS, "" unless jruby?
     actual.gsub!(/[`']block in (?:TestMinitestAssertions#)?/, "'block in ")
 
     assert_equal expected, actual
@@ -888,7 +888,7 @@ class TestMinitestAssertions < Minitest::Test
     EOM
 
     actual = e.message.gsub(/^.+:\d+/, "FILE:LINE")
-    actual.gsub!(RE_LEVELS, "") unless jruby?
+    actual.gsub! RE_LEVELS, "" unless jruby?
     actual.gsub!(/[`']block in (?:TestMinitestAssertions#)?/, "'block in ")
 
     assert_equal expected.chomp, actual
@@ -1157,8 +1157,8 @@ class TestMinitestAssertions < Minitest::Test
 
     non_verbose do
       out, err = capture_subprocess_io do
-        system("echo hi")
-        system("echo bye! 1>&2")
+        system "echo hi"
+        system "echo bye! 1>&2"
       end
 
       assert_equal "hi\n", out

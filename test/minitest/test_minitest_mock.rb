@@ -10,8 +10,9 @@ end
 
 class TestMinitestMock < Minitest::Test
   def setup
-    @mock = Minitest::Mock.new.expect(:foo, nil)
-    @mock.expect(:meaning_of_life, 42)
+    @mock = Minitest::Mock.new
+      .expect(:foo, nil)
+      .expect(:meaning_of_life, 42)
   end
 
   def test_create_stub_method
@@ -36,14 +37,14 @@ class TestMinitestMock < Minitest::Test
   end
 
   def test_allow_expectations_to_be_added_after_creation
-    @mock.expect(:bar, true)
+    @mock.expect :bar, true
     assert @mock.bar
   end
 
   def test_not_verify_if_new_expected_method_is_not_called
     @mock.foo
     @mock.meaning_of_life
-    @mock.expect(:bar, true)
+    @mock.expect :bar, true
 
     util_verify_bad "expected bar() => true"
   end
@@ -51,7 +52,7 @@ class TestMinitestMock < Minitest::Test
   def test_blow_up_on_wrong_number_of_arguments
     @mock.foo
     @mock.meaning_of_life
-    @mock.expect(:sum, 3, [1, 2])
+    @mock.expect :sum, 3, [1, 2]
 
     e = assert_raises ArgumentError do
       @mock.sum
@@ -63,7 +64,7 @@ class TestMinitestMock < Minitest::Test
   def test_return_mock_does_not_raise
     retval = Minitest::Mock.new
     mock = Minitest::Mock.new
-    mock.expect(:foo, retval)
+    mock.expect :foo, retval
     mock.foo
 
     assert_mock mock
@@ -72,8 +73,8 @@ class TestMinitestMock < Minitest::Test
   def test_mock_args_does_not_raise
     arg = Minitest::Mock.new
     mock = Minitest::Mock.new
-    mock.expect(:foo, nil, [arg])
-    mock.foo(arg)
+    mock.expect :foo, nil, [arg]
+    mock.foo arg
 
     assert_mock mock
   end
@@ -122,10 +123,10 @@ class TestMinitestMock < Minitest::Test
   def test_blow_up_on_wrong_arguments
     @mock.foo
     @mock.meaning_of_life
-    @mock.expect(:sum, 3, [1, 2])
+    @mock.expect :sum, 3, [1, 2]
 
     e = assert_raises MockExpectationError do
-      @mock.sum(2, 4)
+      @mock.sum 2, 4
     end
 
     exp = "mocked method :sum called with unexpected arguments [2, 4]"
@@ -161,8 +162,8 @@ class TestMinitestMock < Minitest::Test
     a = Minitest::Mock.new
     b = Minitest::Mock.new
 
-    a.expect(:foo, :a)
-    b.expect(:foo, :b)
+    a.expect :foo, :a
+    b.expect :foo, :b
 
     assert_equal :a, a.foo
     assert_equal :b, b.foo
@@ -170,7 +171,7 @@ class TestMinitestMock < Minitest::Test
 
   def test_do_not_create_stub_method_on_new_mocks
     a = Minitest::Mock.new
-    a.expect(:foo, :a)
+    a.expect :foo, :a
 
     assert !Minitest::Mock.new.respond_to?(:foo)
   end
@@ -316,7 +317,7 @@ class TestMinitestMock < Minitest::Test
       k1 == arg1 && k2 == arg2 && k3 == arg3
     end
 
-    mock.foo(k1: arg1, k2: arg2, k3: arg3)
+    mock.foo k1: arg1, k2: arg2, k3: arg3
 
     assert_mock mock
   end
@@ -329,7 +330,7 @@ class TestMinitestMock < Minitest::Test
     end
 
     e = assert_raises ArgumentError do
-      mock.foo(k1: arg1, k2: arg2)
+      mock.foo k1: arg1, k2: arg2
     end
 
     # basically testing ruby ... need ? for ruby < 2.7 :(
@@ -344,7 +345,7 @@ class TestMinitestMock < Minitest::Test
     end
 
     e = assert_raises ArgumentError do
-      mock.foo(k1: arg1, k2: arg2, k3: arg3)
+      mock.foo k1: arg1, k2: arg2, k3: arg3
     end
 
     # basically testing ruby ... need ? for ruby < 2.7 :(
@@ -359,7 +360,7 @@ class TestMinitestMock < Minitest::Test
     end
 
     e = assert_raises MockExpectationError do
-      mock.foo(k1: arg1, k2: arg2, k3: :BAD!)
+      mock.foo k1: arg1, k2: arg2, k3: :BAD!
     end
 
     exp = "mocked method :foo failed block w/ [] {:k1=>:bar, :k2=>[1, 2, 3], :k3=>:BAD!}"
@@ -371,7 +372,7 @@ class TestMinitestMock < Minitest::Test
     mock = Minitest::Mock.new
     mock.expect :foo, nil, k1: arg1, k2: arg2, k3: arg3
 
-    mock.foo(k1: arg1, k2: arg2, k3: arg3)
+    mock.foo k1: arg1, k2: arg2, k3: arg3
 
     assert_mock mock
   end
@@ -398,7 +399,7 @@ class TestMinitestMock < Minitest::Test
     mock.expect :foo, nil, [{ k1: arg1, k2: arg2, k3: arg3 }]
 
     e = assert_raises ArgumentError do
-      mock.foo(k1: arg1, k2: arg2, k3: arg3)
+      mock.foo k1: arg1, k2: arg2, k3: arg3
     end
 
     assert_equal "mocked method :foo expects 1 arguments, got []", e.message
@@ -410,7 +411,7 @@ class TestMinitestMock < Minitest::Test
       mock = Minitest::Mock.new
       mock.expect :foo, nil, [{ k1: arg1, k2: arg2, k3: arg3 }]
 
-      mock.foo(k1: arg1, k2: arg2, k3: arg3)
+      mock.foo k1: arg1, k2: arg2, k3: arg3
 
       assert_mock mock
     end
@@ -439,7 +440,7 @@ class TestMinitestMock < Minitest::Test
     mock.expect :foo, nil, k1: arg1, k2: arg2, k3: arg3
 
     e = assert_raises ArgumentError do
-      mock.foo(k1: arg1, k2: arg2)
+      mock.foo k1: arg1, k2: arg2
     end
 
     assert_equal "mocked method :foo expects 3 keyword arguments, got %p" % { k1: arg1, k2: arg2 }, e.message
@@ -451,7 +452,7 @@ class TestMinitestMock < Minitest::Test
     mock.expect :foo, nil, k1: arg1, k2: arg2
 
     e = assert_raises ArgumentError do
-      mock.foo(k1: arg1, k2: arg2, k3: arg3)
+      mock.foo k1: arg1, k2: arg2, k3: arg3
     end
 
     assert_equal "mocked method :foo expects 2 keyword arguments, got %p" % { k1: arg1, k2: arg2, k3: arg3 }, e.message
@@ -463,7 +464,7 @@ class TestMinitestMock < Minitest::Test
     mock.expect :foo, nil, k1: arg1, k2: arg2, k3: arg3
 
     e = assert_raises MockExpectationError do
-      mock.foo(k1: arg1, k2: arg2, BAD: arg3)
+      mock.foo k1: arg1, k2: arg2, BAD: arg3
     end
 
     assert_includes e.message, "unexpected keywords [:k1, :k2, :k3]"
@@ -476,7 +477,7 @@ class TestMinitestMock < Minitest::Test
     mock.expect :foo, nil, k1: arg1, k2: arg2, k3: arg3
 
     e = assert_raises MockExpectationError do
-      mock.foo(k1: arg1, k2: :BAD!, k3: arg3)
+      mock.foo k1: arg1, k2: :BAD!, k3: arg3
     end
 
     assert_match(/unexpected keyword arguments.* vs .*:k2=>:BAD!/, e.message)
@@ -495,7 +496,7 @@ class TestMinitestMock < Minitest::Test
   def test_mock_forward_keyword_arguments
     mock = Minitest::Mock.new
     mock.expect(:foo, nil) { |bar:| bar == "bar" }
-    mock.foo(bar: "bar")
+    mock.foo bar: "bar"
     assert_mock mock
   end
 
@@ -514,7 +515,7 @@ class TestMinitestMock < Minitest::Test
   def test_mock_block_raises_if_args_passed
     mock = Minitest::Mock.new
 
-    e = assert_raises(ArgumentError) do
+    e = assert_raises ArgumentError do
       mock.expect :foo, nil, [:a, :b, :c] do
         true
       end
@@ -528,7 +529,7 @@ class TestMinitestMock < Minitest::Test
   def test_mock_block_raises_if_kwargs_passed
     mock = Minitest::Mock.new
 
-    e = assert_raises(ArgumentError) do
+    e = assert_raises ArgumentError do
       mock.expect :foo, nil, kwargs: 1 do
         true
       end
@@ -541,7 +542,7 @@ class TestMinitestMock < Minitest::Test
 
   def test_mock_returns_retval_when_called_with_block
     mock = Minitest::Mock.new
-    mock.expect(:foo, 32) do
+    mock.expect :foo, 32 do
       true
     end
 
@@ -560,7 +561,7 @@ class TestMinitestMock < Minitest::Test
 
   def test_mock_called_via_send
     mock = Minitest::Mock.new
-    mock.expect(:foo, true)
+    mock.expect :foo, true
 
     mock.send :foo
     assert_mock mock
@@ -568,7 +569,7 @@ class TestMinitestMock < Minitest::Test
 
   def test_mock_called_via___send__
     mock = Minitest::Mock.new
-    mock.expect(:foo, true)
+    mock.expect :foo, true
 
     mock.__send__ :foo
     assert_mock mock
@@ -576,9 +577,9 @@ class TestMinitestMock < Minitest::Test
 
   def test_mock_called_via_send_with_args
     mock = Minitest::Mock.new
-    mock.expect(:foo, true, [1, 2, 3])
+    mock.expect :foo, true, [1, 2, 3]
 
-    mock.send(:foo, 1, 2, 3)
+    mock.send :foo, 1, 2, 3
     assert_mock mock
   end
 
@@ -711,7 +712,7 @@ class TestMinitestStub < Minitest::Test
       end
     end
 
-    val = dynamic.stub(:found, true) do |s|
+    val = dynamic.stub :found, true do |s|
       s.found
     end
 
@@ -736,7 +737,7 @@ class TestMinitestStub < Minitest::Test
 
   def test_mock_with_yield
     mock = Minitest::Mock.new
-    mock.expect(:write, true) do
+    mock.expect :write, true do
       true
     end
     rs = nil
@@ -974,7 +975,7 @@ class TestMinitestStub < Minitest::Test
     io = StringIO.new(+"", "w")
     File.stub6 :open, lambda { |p, m, &blk| blk.call io } do
       File.open "foo.txt", "r" do |f|
-        rs = f.write("woot")
+        rs = f.write "woot"
       end
     end
     @tc.assert_equal 4, rs
@@ -987,7 +988,7 @@ class TestMinitestStub < Minitest::Test
     io = StringIO.new(+"", "w")
     File.stub5(:open, lambda { |p, m, &blk| blk and blk.call io }, :WTF?) do
       File.open "foo.txt", "r" do |f|
-        rs = f.write("woot")
+        rs = f.write "woot"
       end
     end
     @tc.assert_equal 4, rs
@@ -1002,7 +1003,7 @@ class TestMinitestStub < Minitest::Test
     io = StringIO.new(+"", "w")
     File.stub6(:open, lambda { |p, m, &blk| blk.call io }, :WTF?) do
       File.open "foo.txt", "r" do |f|
-        rs = f.write("woot")
+        rs = f.write "woot"
       end
     end
     @tc.assert_equal 4, rs
@@ -1018,7 +1019,7 @@ class TestMinitestStub < Minitest::Test
     @tc.assert_raises ArgumentError do
       File.stub6_2(:open, lambda { |p, m, &blk| blk.call io }, :WTF?) do
         File.open "foo.txt", "r" do |f|
-          rs = f.write("woot")
+          rs = f.write "woot"
         end
       end
     end
@@ -1067,7 +1068,7 @@ class TestMinitestStub < Minitest::Test
     io = StringIO.new(+"", "w")
     File.stub5 :open, :value, io do
       result = File.open "foo.txt", "r" do |f|
-        rs = f.write("woot")
+        rs = f.write "woot"
       end
       @tc.assert_equal :value, result
     end
@@ -1096,7 +1097,7 @@ class TestMinitestStub < Minitest::Test
     assert_deprecated do
       File.stub6 :open, :value, io do
         result = File.open "foo.txt", "r" do |f|
-          rs = f.write("woot")
+          rs = f.write "woot"
         end
         @tc.assert_equal :value, result
       end

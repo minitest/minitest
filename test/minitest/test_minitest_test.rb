@@ -49,7 +49,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
     ex = util_expand_bt ex
 
     Minitest::Test.io_lock.synchronize do # try not to trounce in parallel
-      fu = Minitest.filter_backtrace(bt)
+      fu = Minitest.filter_backtrace bt
 
       assert_equal ex, fu
     end
@@ -60,7 +60,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
           BT_MIDDLE +
           ["#{MINITEST_BASE_DIR}/test.rb:29"])
     ex = bt.clone
-    fu = Minitest.filter_backtrace(bt)
+    fu = Minitest.filter_backtrace bt
     assert_equal ex, fu
   end
 
@@ -208,7 +208,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
   def test_class_runnables
     @assertion_count = 0
 
-    tc = Class.new(Minitest::Test)
+    tc = Class.new Minitest::Test
 
     assert_equal 1, Minitest::Test.runnables.size
     assert_equal [tc], Minitest::Test.runnables
@@ -352,14 +352,14 @@ class TestMinitestRunner < MetaMetaMetaTestCase
         assert a
       end
     end
-    Object.const_set(:Alpha, alpha)
+    Object.const_set :Alpha, alpha
 
     beta = Class.new FakeNamedTest do
       define_method :test_something do
         assert true
       end
     end
-    Object.const_set(:Beta, beta)
+    Object.const_set :Beta, beta
 
     @tus = [alpha, beta]
 
@@ -652,18 +652,18 @@ class TestMinitestRunner < MetaMetaMetaTestCase
 
     skip if Minitest.parallel_executor.size < 2 # locks up test runner if 1 CPU
 
-    assert_report(expected) do |reporter|
-      reporter.extend(Module.new {
-        define_method("record") do |result|
+    assert_report expected do |reporter|
+      reporter.extend Module.new {
+        define_method :record do |result|
           super(result)
           wait_latch.release
         end
 
-        define_method("report") do
+        define_method :report do
           wait_latch.await
           super()
         end
-      })
+      }
     end
     assert thread.join
   end
@@ -934,7 +934,7 @@ class TestMinitestRunnable < Minitest::Test
   end
 
   def test_spec_marshal_with_exception__worse_error_typeerror
-    worse_error_klass = Class.new(StandardError) do
+    worse_error_klass = Class.new StandardError do
       # problem #1: anonymous subclass can't marshal, fails sanitize_exception
       def initialize(record = nil)
         super(record.first)
@@ -1078,21 +1078,21 @@ class TestMinitestUnitTestCase < Minitest::Test
 
   def test_autorun_does_not_affect_fork_success_status
     @assertion_count = 0
-    skip "windows doesn't have fork" unless Process.respond_to?(:fork)
+    skip "windows doesn't have fork" unless Process.respond_to? :fork
     Process.waitpid(fork {})
     assert_equal true, $?.success?
   end
 
   def test_autorun_does_not_affect_fork_exit_status
     @assertion_count = 0
-    skip "windows doesn't have fork" unless Process.respond_to?(:fork)
+    skip "windows doesn't have fork" unless Process.respond_to? :fork
     Process.waitpid(fork { exit 42 })
     assert_equal 42, $?.exitstatus
   end
 
   def test_autorun_optionally_can_affect_fork_exit_status
     @assertion_count = 0
-    skip "windows doesn't have fork" unless Process.respond_to?(:fork)
+    skip "windows doesn't have fork" unless Process.respond_to? :fork
     Minitest.allow_fork = true
     Process.waitpid(fork { exit 42 })
     refute_equal 42, $?.exitstatus

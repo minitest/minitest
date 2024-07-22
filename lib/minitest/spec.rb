@@ -8,7 +8,7 @@ class Module # :nodoc:
 
     # https://eregon.me/blog/2021/02/13/correct-delegation-in-ruby-2-27-3.html
     # Drop this when we can drop ruby 2.6 (aka after rails 6.1 EOL, ~2024-06)
-    kw_extra = "ruby2_keywords %p" % [new_name] if respond_to?(:ruby2_keywords, true)
+    kw_extra = "ruby2_keywords %p" % [new_name] if respond_to? :ruby2_keywords, true
 
     # warn "%-22p -> %p %p" % [meth, new_name, dont_flip]
     self.class_eval <<-EOM, __FILE__, __LINE__ + 1
@@ -268,7 +268,7 @@ class Minitest::Spec < Minitest::Test
     end
 
     def create name, desc # :nodoc:
-      cls = Class.new(self) do
+      cls = Class.new self do
         @name = name
         @desc = desc
 

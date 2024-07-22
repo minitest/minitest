@@ -25,9 +25,9 @@ module Minitest
 
       def start
         @pool  = Array.new(size) {
-          Thread.new(@queue) do |queue|
+          Thread.new @queue do |queue|
             Thread.current.abort_on_exception = true
-            while (job = queue.pop)
+            while job = queue.pop do
               klass, method, reporter = job
               reporter.synchronize { reporter.prerecord klass, method }
               result = Minitest.run_one_method klass, method
