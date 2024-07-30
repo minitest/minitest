@@ -817,7 +817,7 @@ class TestMinitestStub < Minitest::Test
   # [:value,  :block_call, :args] =>  N/A
 
   class Bar
-    def call(&_) # to ignore unused block
+    def call &_ # to ignore unused block
       puts "hi"
     end
   end
@@ -849,7 +849,7 @@ class TestMinitestStub < Minitest::Test
   def test_stub__hash_as_last_real_arg
     with_kwargs_env do
       token = Object.new
-      def token.create_with_retry u, p; raise "shouldn't see this"; end
+      def token.create_with_retry _u, _p; raise "shouldn't see this"; end
 
       controller = Object.new
       controller.define_singleton_method :create do |u, p|

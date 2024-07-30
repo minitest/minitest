@@ -719,7 +719,7 @@ module Minitest
       true
     end
 
-    def synchronize(&block) # :nodoc:
+    def synchronize &block # :nodoc:
       @mutex.synchronize(&block)
     end
   end

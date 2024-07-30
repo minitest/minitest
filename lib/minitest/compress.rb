@@ -50,7 +50,7 @@ module Minitest
         culprits = big_ranges
           .map { |r|
             eswo[ary, r.size, r.begin]            # [o1 s1 s1 s2 s2]
-              .chunk_while { |a,b| a == b }       # [[o1] [s1 s1] [s2 s2]]
+              .chunk_while { |a, b| a == b }      # [[o1] [s1 s1] [s2 s2]]
               .map { |a| [a.size, a.first] }      # [[1 o1] [2 s1] [2 s2]]
           }
           .select { |chunks|

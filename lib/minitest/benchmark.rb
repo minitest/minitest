@@ -47,8 +47,6 @@ module Minitest
 
     def self.bench_linear min, max, step = 10
       (min..max).step(step).to_a
-    rescue LocalJumpError # 1.8.6
-      r = []; (min..max).step(step) { |n| r << n }; r
     end
 
     ##

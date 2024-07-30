@@ -307,16 +307,10 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_equal_string_bug791
-    exp = <<~EOF
-          --- expected
-          +++ actual
-          @@ -1,2 +1 @@
-          -"\\n
-          -"
-          +"\\"
-        EOF
-
-    exp = "Expected: \"\\\\n\"\n  Actual: \"\\\\\""
+    exp = <<~EOM.chomp
+            Expected: "\\\\n"
+              Actual: "\\\\"
+          EOM
     assert_triggered exp do
       @tc.assert_equal "\\n", "\\"
     end
@@ -354,7 +348,7 @@ class TestMinitestAssertions < Minitest::Test
 
     assert_triggered msg do
       x = "bad-utf8-\xF1.txt"
-      y = x.dup.force_encoding "binary" # TODO: switch to .b when 1.9 dropped
+      y = x.dup.b
       @tc.assert_equal x, y
     end
   end
@@ -373,7 +367,7 @@ class TestMinitestAssertions < Minitest::Test
 
     assert_triggered msg do
       x = "bad-utf8-\xF1.txt".dup.force_encoding Encoding::ASCII
-      y = x.dup.force_encoding "binary" # TODO: switch to .b when 1.9 dropped
+      y = x.dup.b
       @tc.assert_equal x, y
     end
   end

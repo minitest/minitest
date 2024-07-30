@@ -197,8 +197,8 @@ module Minitest
     end
 
     def _where # :nodoc:
-      where = Minitest.filter_backtrace(caller).first
-      where = where.split(":in ", 2).first # clean up noise
+      Minitest.filter_backtrace(caller).first
+        .split(":in ", 2).first # clean up noise
     end
 
     E = "" # :nodoc:
@@ -621,7 +621,7 @@ module Minitest
     # you to put time-bombs in your tests if you need to keep
     # something around until a later date lest you forget about it.
 
-    def fail_after y,m,d,msg
+    def fail_after y, m, d, msg
       flunk msg if Time.now > Time.local(y, m, d)
     end
 
@@ -844,7 +844,7 @@ module Minitest
     # date, but still holds you accountable and prevents you from
     # forgetting it.
 
-    def skip_until y,m,d,msg
+    def skip_until y, m, d, msg
       skip msg if Time.now < Time.local(y, m, d)
       where = caller(1..1).first.rpartition(":in").reject(&:empty?).first
       warn "Stale skip_until %p at %s" % [msg, where]

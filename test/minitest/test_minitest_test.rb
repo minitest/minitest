@@ -1,4 +1,3 @@
-require "pathname"
 require "minitest/metametameta"
 
 if defined? Encoding then
@@ -24,10 +23,7 @@ end
 class TestMinitestUnit < MetaMetaMetaTestCase
   parallelize_me!
 
-  pwd = Pathname.new File.expand_path Dir.pwd
-  basedir = Pathname.new(File.expand_path "lib/minitest") + "mini"
-  basedir = basedir.relative_path_from(pwd).to_s
-  MINITEST_BASE_DIR = basedir[/\A\./] ? basedir : "./#{basedir}"
+  MINITEST_BASE_DIR = "./lib/minitest/mini"
   BT_MIDDLE = ["#{MINITEST_BASE_DIR}/test.rb:161:in 'each'",
                "#{MINITEST_BASE_DIR}/test.rb:158:in 'each'",
                "#{MINITEST_BASE_DIR}/test.rb:139:in 'run'",
@@ -94,7 +90,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
       end
 
       def test_this_is_non_ascii_failure_message
-        fail "ЁЁЁ".dup.force_encoding(Encoding::BINARY)
+        raise "ЁЁЁ".dup.force_encoding(Encoding::BINARY)
       end
     end
 
@@ -866,11 +862,11 @@ class TestMinitestRunnable < Minitest::Test
   end
 
   def test_spec_marshal_with_exception_nameerror
-    klass = describe("whatever") {
-      it("raises nameerror") {
+    klass = describe "whatever" do
+      it "raises NameError" do
         NOPE::does_not_exist
-      }
-    }
+      end
+    end
 
     rm = klass.runnable_methods.first
 
@@ -936,7 +932,7 @@ class TestMinitestRunnable < Minitest::Test
   def test_spec_marshal_with_exception__worse_error_typeerror
     worse_error_klass = Class.new StandardError do
       # problem #1: anonymous subclass can't marshal, fails sanitize_exception
-      def initialize(record = nil)
+      def initialize record = nil
         super(record.first)
       end
     end
@@ -1019,7 +1015,7 @@ class TestMinitestUnitTestCase < Minitest::Test
     $VERBOSE = orig_verbose
   end
 
-  def sample_test_case(rand)
+  def sample_test_case rand
     srand rand
     Class.new FakeNamedTest do
       100.times do |i|
@@ -1168,7 +1164,7 @@ class TestMinitestUnitRecording < MetaMetaMetaTestCase
     bogus_reporter = Class.new do      # doesn't subclass AbstractReporter
       def start; @success = false; end
       # def prerecord klass, name; end # doesn't define full API
-      def record result; @success = true; end
+      def record _result; @success = true; end
       def report; end
       def passed?; end
       def results; end

@@ -289,7 +289,7 @@ class Minitest::Spec < Minitest::Test
     end
 
     attr_reader :desc # :nodoc:
-    alias :specify :it
+    alias specify it
 
     ##
     # Rdoc... why are you so dumb?

@@ -8,7 +8,7 @@ module Minitest # :nodoc:
   # All mock objects are an instance of Mock
 
   class Mock
-    alias :__respond_to? :respond_to?
+    alias __respond_to? respond_to?
 
     overridden_methods = %i[
       ===
