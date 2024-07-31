@@ -1,15 +1,13 @@
 require "minitest/metametameta"
 
-if defined? Encoding then
-  e = Encoding.default_external
-  if e != Encoding::UTF_8 then
-    warn ""
-    warn ""
-    warn "NOTE: External encoding #{e} is not UTF-8. Tests WILL fail."
-    warn "      Run tests with `RUBYOPT=-Eutf-8 rake` to avoid errors."
-    warn ""
-    warn ""
-  end
+e = Encoding.default_external
+if e != Encoding::UTF_8 then
+  warn ""
+  warn ""
+  warn "NOTE: External encoding #{e} is not UTF-8. Tests WILL fail."
+  warn "      Run tests with `RUBYOPT=-Eutf-8 rake` to avoid errors."
+  warn ""
+  warn ""
 end
 
 class Minitest::Runnable
@@ -988,8 +986,6 @@ class TestMinitestUnitTestCase < Minitest::Test
   # do not call parallelize_me! - teardown accesses @tc._assertions
   # which is not threadsafe. Nearly every method in here is an
   # assertion test so it isn't worth splitting it out further.
-
-  RUBY18 = !defined? Encoding
 
   def setup
     super

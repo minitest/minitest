@@ -1,16 +1,14 @@
 require "minitest/autorun"
 require_relative "metametameta"
 
-if defined? Encoding then
-  e = Encoding.default_external
-  if e != Encoding::UTF_8 then
-    warn ""
-    warn ""
-    warn "NOTE: External encoding #{e} is not UTF-8. Tests WILL fail."
-    warn "      Run tests with `RUBYOPT=-Eutf-8 rake` to avoid errors."
-    warn ""
-    warn ""
-  end
+e = Encoding.default_external
+if e != Encoding::UTF_8 then
+  warn ""
+  warn ""
+  warn "NOTE: External encoding #{e} is not UTF-8. Tests WILL fail."
+  warn "      Run tests with `RUBYOPT=-Eutf-8 rake` to avoid errors."
+  warn ""
+  warn ""
 end
 
 SomeError = Class.new Exception

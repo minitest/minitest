@@ -125,20 +125,15 @@ module Minitest
     # See Minitest::Test.make_my_diffs_pretty!
 
     def mu_pp obj
-      s = obj.inspect
+      s = obj.inspect.encode Encoding.default_external
 
-      if defined? Encoding then
-        s = s.encode Encoding.default_external
+      return s unless String === obj &&
+        (obj.encoding != Encoding.default_external || !obj.valid_encoding?)
 
-        if String === obj && (obj.encoding != Encoding.default_external ||
-                              !obj.valid_encoding?) then
-          enc = "# encoding: #{obj.encoding}"
-          val = "#    valid: #{obj.valid_encoding?}"
-          s = "#{enc}\n#{val}\n#{s}"
-        end
-      end
+      enc = "# encoding: #{obj.encoding}"
+      val = "#    valid: #{obj.valid_encoding?}"
 
-      s
+      [enc, val, s].join "\n"
     end
 
     ##
