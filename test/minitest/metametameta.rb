@@ -27,6 +27,7 @@ class Minitest::Test
   end
 
   def assert_deprecation re = /DEPRECATED/
+    re = // if $-w.nil? # "skip" if running `rake testW0`
     assert_output "", re do
       yield
     end
