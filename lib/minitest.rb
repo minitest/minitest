@@ -1157,7 +1157,7 @@ module Minitest
     # Is this running on windows?
 
     def windows? platform = RUBY_PLATFORM
-      /mswin|mingw/ =~ platform
+      /mswin|mingw/.match? platform
     end
   end
 
@@ -1188,9 +1188,9 @@ module Minitest
 
       return bt.dup if $DEBUG || ENV["MT_DEBUG"]
 
-      new_bt = bt.take_while { |line| line.to_s !~ regexp }
-      new_bt = bt.select     { |line| line.to_s !~ regexp } if new_bt.empty?
-      new_bt = bt.dup                                       if new_bt.empty?
+      new_bt = bt.take_while { |line| !regexp.match? line.to_s }
+      new_bt = bt.select     { |line| !regexp.match? line.to_s } if new_bt.empty?
+      new_bt = bt.dup                                            if new_bt.empty?
 
       new_bt
     end
