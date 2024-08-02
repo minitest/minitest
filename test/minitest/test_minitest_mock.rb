@@ -276,7 +276,7 @@ class TestMinitestMock < Minitest::Test
 
     e = assert_raises(MockExpectationError) { mock.verify }
 
-    exp = "expected foo(:kw=>false) => nil, got [foo(:kw=>true) => nil]"
+    exp = "expected foo(#{{ :kw => false }.inspect.delete('{}')}) => nil, got [foo(#{{ :kw => true }.inspect.delete('{}')}) => nil]"
 
     assert_equal exp, e.message
   end
@@ -363,7 +363,7 @@ class TestMinitestMock < Minitest::Test
       mock.foo k1: arg1, k2: arg2, k3: :BAD!
     end
 
-    exp = "mocked method :foo failed block w/ [] {:k1=>:bar, :k2=>[1, 2, 3], :k3=>:BAD!}"
+    exp = "mocked method :foo failed block w/ [] #{{ :k1 => :bar, :k2 => [1, 2, 3], :k3 => :BAD! }.inspect}"
     assert_equal exp, e.message
   end
 
@@ -479,8 +479,8 @@ class TestMinitestMock < Minitest::Test
     e = assert_raises MockExpectationError do
       mock.foo k1: arg1, k2: :BAD!, k3: arg3
     end
-
-    assert_match(/unexpected keyword arguments.* vs .*:k2=>:BAD!/, e.message)
+    assert_match(/unexpected keyword arguments.* vs /, e.message)
+    assert_includes e.message, "vs #{{ :k1 => arg1, :k2 => :BAD!, :k3 => arg3 }.inspect}"
   end
 
   def test_mock_block_is_passed_function_block

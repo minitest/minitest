@@ -141,10 +141,12 @@ class TestMinitestAssertions < Minitest::Test
     h1, h2 = {}, {}
     h1[1] = Object.new
     h2[1] = Object.new
+    invisible_hex_obj = Object.new
+    invisible_hex_obj.define_singleton_method(:inspect) { '#<Object:0xXXXXXX>' }
     msg = <<~EOM.chomp
            No visible difference in the Hash#inspect output.
            You should look at the implementation of #== on Hash or its members.
-           {1=>#<Object:0xXXXXXX>}
+           #{{ 1 => invisible_hex_obj }.inspect}
          EOM
 
     assert_triggered msg do
