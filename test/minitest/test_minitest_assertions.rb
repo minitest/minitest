@@ -125,43 +125,43 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_equal_different_collection_array_hex_invisible
-    object1 = Object.new
-    object2 = Object.new
+    exp = Object.new
+    act = Object.new
     msg = <<~EOM.chomp
            No visible difference in the Array#inspect output.
            You should look at the implementation of #== on Array or its members.
            [#<Object:0xXXXXXX>]
         EOM
     assert_triggered msg do
-      @tc.assert_equal [object1], [object2]
+      @tc.assert_equal [exp], [act]
     end
   end
 
   def test_assert_equal_different_collection_hash_hex_invisible
-    h1, h2 = {}, {}
-    h1[1] = Object.new
-    h2[1] = Object.new
-    act_obj = h2[1]
+    exp, act = {}, {}
+    exp[1] = Object.new
+    act[1] = Object.new
+    act_obj = act[1]
     # TODO: switch to endless when 2.7 is dropped
     act_obj.define_singleton_method(:inspect) { "#<Object:0xXXXXXX>" }
-    msg = <<~EOM.chomp % [h2]
+    msg = <<~EOM.chomp % [act]
            No visible difference in the Hash#inspect output.
            You should look at the implementation of #== on Hash or its members.
            %p
          EOM
 
     assert_triggered msg do
-      @tc.assert_equal h1, h2
+      @tc.assert_equal exp, act
     end
   end
 
   def test_assert_equal_different_diff_deactivated
     without_diff do
       assert_triggered util_msg("haha" * 10, "blah" * 10) do
-        o1 = "haha" * 10
-        o2 = "blah" * 10
+        exp = "haha" * 10
+        act = "blah" * 10
 
-        @tc.assert_equal o1, o2
+        @tc.assert_equal exp, act
       end
     end
   end
@@ -183,8 +183,8 @@ class TestMinitestAssertions < Minitest::Test
       def initialize s; @name = s; end
     end
 
-    o1 = c.new "a"
-    o2 = c.new "b"
+    exp = c.new "a"
+    act = c.new "b"
     msg = <<~EOS
           --- expected
           +++ actual
@@ -194,13 +194,13 @@ class TestMinitestAssertions < Minitest::Test
           EOS
 
     assert_triggered msg do
-      @tc.assert_equal o1, o2
+      @tc.assert_equal exp, act
     end
   end
 
   def test_assert_equal_different_hex_invisible
-    o1 = Object.new
-    o2 = Object.new
+    exp = Object.new
+    act = Object.new
 
     msg = <<~EOM.chomp
            No visible difference in the Object#inspect output.
@@ -209,7 +209,7 @@ class TestMinitestAssertions < Minitest::Test
           EOM
 
     assert_triggered msg do
-      @tc.assert_equal o1, o2
+      @tc.assert_equal exp, act
     end
   end
 
@@ -223,10 +223,10 @@ class TestMinitestAssertions < Minitest::Test
           EOM
 
     assert_triggered msg do
-      o1 = "haha" * 10
-      o2 = "blah" * 10
+      exp = "haha" * 10
+      act = "blah" * 10
 
-      @tc.assert_equal o1, o2
+      @tc.assert_equal exp, act
     end
   end
 
@@ -238,12 +238,12 @@ class TestMinitestAssertions < Minitest::Test
           EOM
 
     assert_triggered msg do
-      o1 = "blah" * 10
-      o2 = "blah" * 10
-      def o1.== _
+      exp = "blah" * 10
+      act = "blah" * 10
+      def exp.== _
         false
       end
-      @tc.assert_equal o1, o2
+      @tc.assert_equal exp, act
     end
   end
 
@@ -258,9 +258,9 @@ class TestMinitestAssertions < Minitest::Test
           EOM
 
     assert_triggered msg do
-      o1 = "haha" * 10
-      o2 = "blah" * 10
-      @tc.assert_equal o1, o2, "message"
+      exp = "haha" * 10
+      act = "blah" * 10
+      @tc.assert_equal exp, act, "message"
     end
   end
 
@@ -348,9 +348,9 @@ class TestMinitestAssertions < Minitest::Test
           EOM
 
     assert_triggered msg do
-      x = "bad-utf8-\xF1.txt"
-      y = x.dup.b
-      @tc.assert_equal x, y
+      exp = "bad-utf8-\xF1.txt"
+      act = exp.dup.b
+      @tc.assert_equal exp, act
     end
   end
 
@@ -367,9 +367,9 @@ class TestMinitestAssertions < Minitest::Test
           EOM
 
     assert_triggered msg do
-      x = "bad-utf8-\xF1.txt".dup.force_encoding Encoding::ASCII
-      y = x.dup.b
-      @tc.assert_equal x, y
+      exp = "bad-utf8-\xF1.txt".dup.force_encoding Encoding::ASCII
+      act = exp.dup.b
+      @tc.assert_equal exp, act
     end
   end
 
