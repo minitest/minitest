@@ -141,10 +141,13 @@ class TestMinitestAssertions < Minitest::Test
     h1, h2 = {}, {}
     h1[1] = Object.new
     h2[1] = Object.new
-    msg = <<~EOM.chomp
+    act_obj = h2[1]
+    # TODO: switch to endless when 2.7 is dropped
+    act_obj.define_singleton_method(:inspect) { "#<Object:0xXXXXXX>" }
+    msg = <<~EOM.chomp % [h2]
            No visible difference in the Hash#inspect output.
            You should look at the implementation of #== on Hash or its members.
-           {1=>#<Object:0xXXXXXX>}
+           %p
          EOM
 
     assert_triggered msg do
