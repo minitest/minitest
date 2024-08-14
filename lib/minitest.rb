@@ -414,8 +414,22 @@ module Minitest
 
       return if filtered_methods.empty?
 
-      with_info_handler reporter do
+      t0 = name = nil
+
+      handler = lambda do
+        unless reporter.passed? then
+          warn "Current results:"
+          warn reporter.reporters.grep(SummaryReporter).first
+        end
+
+        warn "Current: %s#%s %.2fs" % [self, name, Minitest.clock_time - t0]
+      end
+
+      with_info_handler reporter, handler do
         filtered_methods.each do |method_name|
+          name = method_name
+          t0 = Minitest.clock_time
+
           run_one_method self, method_name, reporter
         end
       end
@@ -440,16 +454,7 @@ module Minitest
       :random
     end
 
-    def self.with_info_handler reporter, &block # :nodoc:
-      handler = lambda do
-        unless reporter.passed? then
-          warn "Current results:"
-          warn ""
-          warn reporter.reporters.first
-          warn ""
-        end
-      end
-
+    def self.with_info_handler reporter, handler, &block # :nodoc:
       on_signal ::Minitest.info_signal, handler, &block
     end
 

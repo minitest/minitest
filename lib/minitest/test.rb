@@ -85,20 +85,18 @@ module Minitest
     # Runs a single test with setup/teardown hooks.
 
     def run
-      with_info_handler do
-        time_it do
-          capture_exceptions do
-            SETUP_METHODS.each do |hook|
-              self.send hook
-            end
-
-            self.send self.name
+      time_it do
+        capture_exceptions do
+          SETUP_METHODS.each do |hook|
+            self.send hook
           end
 
-          TEARDOWN_METHODS.each do |hook|
-            capture_exceptions do
-              self.send hook
-            end
+          self.send self.name
+        end
+
+        TEARDOWN_METHODS.each do |hook|
+          capture_exceptions do
+            self.send hook
           end
         end
       end
@@ -228,16 +226,6 @@ module Minitest
 
       Marshal.dump ne                           # can raise TypeError
       ne
-    end
-
-    def with_info_handler &block # :nodoc:
-      t0 = Minitest.clock_time
-
-      handler = lambda do
-        warn "\nCurrent: %s#%s %.2fs" % [self.class, self.name, Minitest.clock_time - t0]
-      end
-
-      self.class.on_signal ::Minitest.info_signal, handler, &block
     end
 
     include LifecycleHooks
