@@ -1,3 +1,18 @@
+=== 5.25.0 / 2024-08-13
+
+* 2 minor enhancements:
+
+  * Fixed some inefficiencies filtering and matching (mostly backtraces).
+  * Refactored siginfo handler to reduce runtime costs. Saved ~30%!
+
+* 5 bug fixes:
+
+  * Added missing rdoc to get back to 100% coverage.
+  * Cleaning up ancient code checking for defined?(Encoding) and the like.
+  * Disambiguated some shadowed variables in minitest/compress.
+  * Fixed an ironic bug if using string-literals AND Werror.
+  * Improve description of test:slow task. (stomar)
+
 === 5.24.1 / 2024-06-29
 
 * 1 bug fix:
