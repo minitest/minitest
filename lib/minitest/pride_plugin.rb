@@ -10,7 +10,7 @@ module Minitest
   def self.plugin_pride_init options # :nodoc:
     return unless PrideIO.pride?
 
-    klass = ENV["TERM"].match?(/^xterm|-256color$/) ? PrideLOL : PrideIO
+    klass = ENV["TERM"] =~ /^xterm|-256color$/ ? PrideLOL : PrideIO
     io    = klass.new options[:io]
 
     self.reporter.reporters.grep(Minitest::Reporter).each do |rep|
