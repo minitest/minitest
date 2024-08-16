@@ -1,3 +1,10 @@
+=== 5.25.1 / 2024-08-16
+
+* 2 bug fixes:
+
+  * Fix incompatibility caused by minitest-hooks & rails invading minitest internals.
+  * Revert change from =~ to match? to allow for nil if $TERM undefined.
+
 === 5.25.0 / 2024-08-13
 
 * 2 minor enhancements:
