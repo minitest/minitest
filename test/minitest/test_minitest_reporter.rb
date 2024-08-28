@@ -2,7 +2,7 @@ require "minitest/autorun"
 require "minitest/metametameta"
 require "forwardable"
 
-class Runnable
+class FakeTest < Minitest::Test
   def woot
     assert true
   end
@@ -33,7 +33,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
 
   def error_test
     unless defined? @et then
-      @et = Minitest::Test.new :woot
+      @et = FakeTest.new :woot
       @et.failures << Minitest::UnexpectedError.new(begin
                                                       raise "no"
                                                     rescue => e
@@ -56,7 +56,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
 
       ex.set_backtrace ary
 
-      @sse = Minitest::Test.new :woot
+      @sse = FakeTest.new :woot
       @sse.failures << Minitest::UnexpectedError.new(ex)
       @sse = Minitest::Result.from @sse
     end
@@ -65,7 +65,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
 
   def fail_test
     unless defined? @ft then
-      @ft = Minitest::Test.new :woot
+      @ft = FakeTest.new :woot
       @ft.failures <<   begin
                           raise Minitest::Assertion, "boo"
                         rescue Minitest::Assertion => e
@@ -77,18 +77,18 @@ class TestMinitestReporter < MetaMetaMetaTestCase
   end
 
   def passing_test
-    @pt ||= Minitest::Result.from Minitest::Test.new(:woot)
+    @pt ||= Minitest::Result.from FakeTest.new(:woot)
   end
 
   def passing_test_with_metadata
-    test = Minitest::Test.new :woot
+    test = FakeTest.new :woot
     test.metadata[:meta] = :data
     @pt ||= Minitest::Result.from test
   end
 
   def skip_test
     unless defined? @st then
-      @st = Minitest::Test.new :woot
+      @st = FakeTest.new :woot
       @st.failures << begin
                         raise Minitest::Skip
                       rescue Minitest::Assertion => e
@@ -294,7 +294,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
       Finished in 0.00
 
         1) Failure:
-      Minitest::Test#woot [FILE:LINE]:
+      FakeTest#woot [FILE:LINE]:
       boo
 
       1 runs, 0 assertions, 1 failures, 0 errors, 0 skips
@@ -318,7 +318,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
       Finished in 0.00
 
         1) Error:
-      Minitest::Test#woot:
+      FakeTest#woot:
       RuntimeError: no
           FILE:LINE:in 'error_test'
           FILE:LINE:in 'test_report_error'
@@ -344,7 +344,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
       Finished in 0.00
 
         1) Error:
-      Minitest::Test#woot:
+      FakeTest#woot:
       SystemStackError: 274 -> 12
           a
           b
@@ -402,7 +402,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
       r.report
     end
 
-    exp = "Minitest::Test#woot [foo.rb:123]"
+    exp = "FakeTest#woot [foo.rb:123]"
 
     assert_includes io.string, exp
   end
