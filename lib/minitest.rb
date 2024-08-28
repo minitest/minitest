@@ -6,7 +6,8 @@ require_relative "minitest/parallel"
 require_relative "minitest/compress"
 
 ##
-# :include: README.rdoc
+# The top-level namespace for Minitest. Also the location of the main
+# runtime. See +Minitest.run+ for more information.
 
 module Minitest
   VERSION = "5.25.1" # :nodoc:
