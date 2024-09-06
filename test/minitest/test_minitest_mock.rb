@@ -724,6 +724,47 @@ class TestMinitestStub < Minitest::Test
     @tc.assert_equal false, dynamic.found
   end
 
+  module ModuleWithDynamicMethod    
+    @virtual_method_enabled = false
+
+    module_function
+
+    def enable_virtual_method
+      @virtual_method_enabled = true
+    end
+
+    def disable_virtual_method
+      @virtual_method_enabled = false
+    end
+
+    def current_strategies
+      @strategies.keys
+    end
+
+    def respond_to_missing?(name, *)
+      @virtual_method_enabled and name == :virtual
+    end
+
+    def method_missing(name, *args, &block)
+      return super unless @virtual_method_enabled and name == :virtual
+
+      "it's a virtual result"
+    end
+  end
+
+  def test_dynamic_method_on_modules
+    @assertion_count = 3
+
+    ModuleWithDynamicMethod.enable_virtual_method
+    @tc.assert_equal "it's a virtual result", ModuleWithDynamicMethod.virtual
+    ModuleWithDynamicMethod.stub(:virtual, "stubbed") do
+      @tc.assert_equal "stubbed", ModuleWithDynamicMethod.virtual
+    end
+    ModuleWithDynamicMethod.disable_virtual_method
+
+    @tc.assert_equal false, ModuleWithDynamicMethod.respond_to?(:virtual)
+  end
+
   def test_stub_NameError
     e = @tc.assert_raises NameError do
       Time.stub :nope_nope_nope, 42 do
