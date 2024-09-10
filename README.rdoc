@@ -418,11 +418,11 @@ Current versions of rails: (https://endoflife.date/rails)
 
   | rails | min ruby | minitest | status   |  EOL Date  |
   |-------+----------+----------+----------+------------|
-  |   7.1 | >= 2.7   | >= 5.1   | Current  | 2026-06-01?|
+  |   7.2 | >= 3.1   | >= 5.1   | Current  | 2027-06-01?|
+  |   7.1 | >= 2.7   | >= 5.1   | Maint    | 2026-06-01?|
   |   7.0 | >= 2.7   | >= 5.1   | Maint    | 2025-06-01?|
-  |   6.1 | >= 2.5   | >= 5.1   | Security | 2024-06-01?|
+  |   6.1 | >= 2.5   | >= 5.1   | Security | 2024-08-15?|
   |   6.0 | >= 2.5   | >= 5.1   | EOL      | 2023-06-01 |
-  |   5.2 | >= 2.2.2 | ~> 5.1   | EOL      | 2022-06-01 |
 
 If you want to look at the requirements for a specific version, run:
 
