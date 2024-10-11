@@ -81,8 +81,9 @@ module Kernel
 
   def describe desc, *additional_desc, &block # :doc:
     stack = Minitest::Spec.describe_stack
-    name  = [stack.last, desc, *additional_desc].compact.join("::")
-    sclas = stack.last || if Class === self && kind_of?(Minitest::Spec::DSL) then
+    is_spec_class = Class === self && kind_of?(Minitest::Spec::DSL)
+    name  = [(self if stack.empty? && is_spec_class), stack.last, desc, *additional_desc].compact.join("::")
+    sclas = stack.last || if is_spec_class then
                             self
                           else
                             Minitest::Spec.spec_type desc, *additional_desc
