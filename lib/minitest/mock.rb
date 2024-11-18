@@ -30,6 +30,7 @@ module Minitest # :nodoc:
     end
 
     overridden_methods.map(&:to_sym).each do |method_id|
+      old_w, $-w = $-w, nil
       define_method method_id do |*args, **kwargs, &b|
         if @expected_calls.key? method_id then
           if kwargs.empty? then # FIX: drop this after 2.7 dead
@@ -45,6 +46,8 @@ module Minitest # :nodoc:
           end
         end
       end
+    ensure
+      $-w = old_w
     end
 
     def initialize delegator = nil # :nodoc:
