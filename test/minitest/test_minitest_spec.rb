@@ -952,6 +952,23 @@ class TestMeta < MetaMetaMetaTestCase
     assert_equal "ExampleB::random_method", spec_b.name
   end
 
+  def test_name_inside_class
+    spec_a = nil
+    spec_b = nil
+    inside_class_example = Class.new Minitest::Spec
+    Object.const_set :InsideClassExample, inside_class_example
+    inside_class_example.class_eval do
+      spec_a = describe "a" do
+        spec_b = describe "b" do; end
+      end
+    end
+
+    assert_equal "InsideClassExample::a", spec_a.name
+    assert_equal "InsideClassExample::a::b", spec_b.name
+  ensure
+    Object.send :remove_const, :InsideClassExample
+  end
+
   def test_structure
     x, y, z, * = util_structure
 

@@ -83,6 +83,7 @@ module Kernel
     stack = Minitest::Spec.describe_stack
     is_spec_class = Class === self && kind_of?(Minitest::Spec::DSL)
     name  = [stack.last, desc, *additional_desc]
+    name.prepend self if stack.empty? && is_spec_class
     sclas =
       stack.last                 \
       || (is_spec_class && self) \
