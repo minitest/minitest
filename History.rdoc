@@ -1,3 +1,12 @@
+=== 5.25.2 / 2024-11-21
+
+* 4 bug fixes:
+
+  * Include class name in spec name. (thomasmarshall)
+  * Fixed 'redefining object_id' warning from ruby 3.4. (mattbrictson)
+  * Minitest top-level namespace no longer includes entire contents of README.rdoc. Too much!
+  * Refactored spec's describe to more cleanly determine the superclass and name
+
 === 5.25.1 / 2024-08-16
 
 * 2 bug fixes:
