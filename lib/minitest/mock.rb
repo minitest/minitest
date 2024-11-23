@@ -145,8 +145,8 @@ module Minitest # :nodoc:
     def verify
       @expected_calls.each do |name, expected|
         actual = @actual_calls.fetch name, nil # defaults to []
-        raise MockExpectationError, "expected #{__call name, expected[0]}" unless actual
-        raise MockExpectationError, "expected #{__call name, expected[actual.size]}, got [#{__call name, actual}]" if
+        raise MockExpectationError, "Expected #{__call name, expected[0]}" unless actual
+        raise MockExpectationError, "Expected #{__call name, expected[actual.size]}, got [#{__call name, actual}]" if
           actual.size < expected.size
       end
       true
@@ -248,11 +248,25 @@ end
 
 module Minitest::Assertions
   ##
-  # Assert that the mock verifies correctly.
+  # Assert that the mock verifies correctly and fail if not.
 
-  def assert_mock mock
+  def assert_mock mock, msg = nil
     assert mock.verify
+  rescue MockExpectationError => e
+    msg = message(msg) { e.message }
+    flunk msg
   end
+end
+
+module Minitest::Expectations
+  ##
+  # See Minitest::Assertions#assert_mock.
+  #
+  #    _(collection).must_verify
+  #
+  # :method: must_verify
+
+  infect_an_assertion :assert_mock, :must_verify, :unary
 end
 
 ##

@@ -212,9 +212,10 @@ describe Minitest::Spec do
                         must_raise
                         must_respond_to
                         must_throw
+                        must_verify
                         path_must_exist]
 
-    bad = %w[not raise throw send output be_silent]
+    bad = %w[not raise throw send output be_silent verify]
 
     expected_wonts = expected_musts.map { |m| m.sub("must", "wont") }.sort
     expected_wonts.reject! { |m| m =~ /wont_#{Regexp.union(*bad)}/ }

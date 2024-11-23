@@ -26,7 +26,7 @@ class TestMinitestMock < Minitest::Test
   def test_blow_up_if_not_called
     @mock.foo
 
-    util_verify_bad "expected meaning_of_life() => 42"
+    util_verify_bad "Expected meaning_of_life() => 42"
   end
 
   def test_not_blow_up_if_everything_called
@@ -46,7 +46,7 @@ class TestMinitestMock < Minitest::Test
     @mock.meaning_of_life
     @mock.expect :bar, true
 
-    util_verify_bad "expected bar() => true"
+    util_verify_bad "Expected bar() => true"
   end
 
   def test_blow_up_on_wrong_number_of_arguments
@@ -184,6 +184,73 @@ class TestMinitestMock < Minitest::Test
     assert @mock == 1, "didn't mock :=="
   end
 
+  def test_assert_mock__pass
+    mock = Minitest::Mock.new
+    mock.expect :loose_expectation, true, [Integer]
+    mock.loose_expectation 1
+
+    result = assert_mock mock
+
+    assert_equal true, result
+  end
+
+  def assert_bad_mock klass, msg
+    mock = Minitest::Mock.new
+    mock.expect :foo, nil, [:bar]
+    mock.expect :foo, nil, [:baz]
+
+    mock.foo :bar
+
+    e = assert_raises klass do
+      yield mock
+    end
+
+    assert_equal msg, e.message
+  end
+
+  def test_verify__error
+    exp = "Expected foo(:baz) => nil, got [foo(:bar) => nil]"
+    assert_bad_mock MockExpectationError, exp do |mock|
+      mock.verify
+    end
+  end
+
+  def test_assert_mock__fail
+    exp = "Expected foo(:baz) => nil, got [foo(:bar) => nil]."
+    assert_bad_mock Minitest::Assertion, exp do |mock|
+      assert_mock mock
+    end
+  end
+
+  def test_assert_mock__fail_msg
+    exp = "BLAH.\nExpected foo(:baz) => nil, got [foo(:bar) => nil]."
+    assert_bad_mock Minitest::Assertion, exp do |mock|
+      assert_mock mock, "BLAH"
+    end
+  end
+
+  def test_assert_mock__fail_exp
+    exp = "Expected foo(:baz) => nil, got [foo(:bar) => nil]."
+    assert_bad_mock Minitest::Assertion, exp do |mock|
+      describe "X" do
+        it "y" do
+          _(mock).must_verify
+        end
+      end.new(:blah).send(:test_0001_y)
+    end
+  end
+
+  def test_assert_mock__fail_exp_msg
+    exp = "BLAH.\nExpected foo(:baz) => nil, got [foo(:bar) => nil]."
+    assert_bad_mock Minitest::Assertion, exp do |mock|
+      describe "X" do
+        it "y" do
+          _(mock).must_verify "BLAH"
+        end
+      end.new(:blah).send(:test_0001_y)
+    end
+  end
+
   def test_verify_allows_called_args_to_be_loosely_specified
     mock = Minitest::Mock.new
     mock.expect :loose_expectation, true, [Integer]
@@ -238,7 +305,7 @@ class TestMinitestMock < Minitest::Test
 
     e = assert_raises(MockExpectationError) { mock.verify }
 
-    exp = "expected foo(:baz) => nil, got [foo(:bar) => nil]"
+    exp = "Expected foo(:baz) => nil, got [foo(:bar) => nil]"
 
     assert_equal exp, e.message
   end
@@ -252,7 +319,7 @@ class TestMinitestMock < Minitest::Test
 
     e = assert_raises(MockExpectationError) { mock.verify }
 
-    exp = "expected foo(:bar) => nil, got [foo(:bar) => nil]"
+    exp = "Expected foo(:bar) => nil, got [foo(:bar) => nil]"
 
     assert_equal exp, e.message
   end
@@ -276,7 +343,7 @@ class TestMinitestMock < Minitest::Test
 
     e = assert_raises(MockExpectationError) { mock.verify }
 
-    exp = "expected foo(%p) => nil, got [foo(%p) => nil]" \
+    exp = "Expected foo(%p) => nil, got [foo(%p) => nil]" \
       % [{ :kw => false }, { :kw => true  }]
 
     assert_equal exp.delete("{}"), e.message
