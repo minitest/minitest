@@ -1,3 +1,13 @@
+=== 5.25.3 / 2024-12-03
+
+* 5 bug fixes:
+
+  * Fixed assert_mock to fail instead of raise on unmet mock expectations.
+  * Fixed assert_mock to take an optional message argument.
+  * Fixed formatting of unmet mock expectation messages.
+  * Fixed missing must_verify expectation to match assert_mock.
+  * minitest/pride: Fixed to use true colors with *-direct terminals (bk2204)
+
 === 5.25.2 / 2024-11-21
 
 * 4 bug fixes:
