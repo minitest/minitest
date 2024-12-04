@@ -1,3 +1,9 @@
+=== 5.25.4 / 2024-12-03
+
+* 1 bug fix:
+
+  * Fix for must_verify definition if only requiring minitest/mock (but why?).
+
 === 5.25.3 / 2024-12-03
 
 * 5 bug fixes:
