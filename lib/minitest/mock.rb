@@ -266,7 +266,8 @@ module Minitest::Expectations
   #
   # :method: must_verify
 
-  infect_an_assertion :assert_mock, :must_verify, :unary
+  infect_an_assertion :assert_mock, :must_verify, :unary if
+    defined?(infect_an_assertion)
 end
 
 ##
