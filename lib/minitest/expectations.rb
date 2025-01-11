@@ -125,7 +125,7 @@ module Minitest::Expectations
   infect_an_assertion :assert_output, :must_output, :block
 
   ##
-  # See Minitest::Assertions#assert_pattern_match
+  # See Minitest::Assertions#assert_pattern
   #
   #    _ { ... }.must_pattern_match [...]
   #
@@ -293,7 +293,7 @@ module Minitest::Expectations
   infect_an_assertion :refute_operator, :wont_be, :reverse
 
   ##
-  # See Minitest::Assertions#refute_pattern_match
+  # See Minitest::Assertions#refute_pattern
   #
   #    _ { ... }.wont_pattern_match [...]
   #
