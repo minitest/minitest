@@ -9,8 +9,8 @@ module Minitest
 
   class Test < Runnable
     require "minitest/assertions"
-    include Minitest::Assertions
     include Minitest::Reportable
+    include Minitest::Assertions
 
     def class_name # :nodoc:
       self.class.name # for Minitest::Reportable
