@@ -157,6 +157,24 @@ class TestMinitestUnit < MetaMetaMetaTestCase
     refute_predicate test, :skipped?
   end
 
+  def test_skipped_is_reachable
+    test_class = Class.new FakeNamedTest do
+      def test_omg
+        skip
+      ensure
+        flunk unless skipped?
+      end
+    end
+
+    test = test_class.new :test_omg
+    test.run
+
+    refute_predicate test, :error?
+    refute_predicate test, :passed?
+
+    assert_predicate test, :skipped?
+  end
+
   def util_expand_bt bt
     bt.map { |f| f.start_with?(".") ? File.expand_path(f) : f }
   end
