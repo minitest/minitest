@@ -412,33 +412,36 @@ supporting versions of ruby that are long past EOL. Hopefully I'll be
 able to support only current versions of ruby sometime in the near
 future.
 
-(As of 2024-05-10)
+(As of 2025-02-03)
 
 Current versions of rails: (https://endoflife.date/rails)
 
   | rails | min ruby | minitest | status   |  EOL Date  |
   |-------+----------+----------+----------+------------|
-  |   7.1 | >= 2.7   | >= 5.1   | Current  | 2026-06-01?|
-  |   7.0 | >= 2.7   | >= 5.1   | Maint    | 2025-06-01?|
-  |   6.1 | >= 2.5   | >= 5.1   | Security | 2024-06-01?|
+  |   8.0 | >= 3.2   | >= 5.1   | Current  | 2026-11-07 |
+  |   7.2 | >= 3.1   | >= 5.1   | Current  | 2026-08-09 |
+  |   7.1 | >= 2.7   | >= 5.1   | Security | 2025-10-01 |
+  |   7.0 | >= 2.7   | >= 5.1   | Security | 2025-04-01 |
+  |   6.1 | >= 2.5   | >= 5.1   | EOL      | 2024-10-01 |
   |   6.0 | >= 2.5   | >= 5.1   | EOL      | 2023-06-01 |
   |   5.2 | >= 2.2.2 | ~> 5.1   | EOL      | 2022-06-01 |
 
 If you want to look at the requirements for a specific version, run:
 
-    gem spec -r --ruby rails -v 7.0.0
+    gem spec -r --ruby rails -v 8.0.0
 
 Current versions of ruby: (https://endoflife.date/ruby)
 
   | ruby | Status  |   EOL Date |
   |------+---------+------------|
-  |  3.3 | Current | 2027-03-31 |
-  |  3.2 | Maint   | 2026-03-31 |
-  |  3.1 | Security| 2025-03-31 |
+  |  3.4 | Current | 2028-03-31 |
+  |  3.3 | Maint   | 2027-03-31 |
+  |  3.2 | Security| 2026-03-31 |
+  |  3.1 | EOL     | 2025-03-31 |
   |  3.0 | EOL     | 2024-03-31 |
   |  2.7 | EOL     | 2023-03-31 |
   |  2.6 | EOL     | 2022-03-31 |
-  |  2.5 | EOL     | 2021-03-31 | DO YOU SEE WHAT I'M STUCK WITH???
+  |  2.5 | EOL     | 2021-03-31 |
 
 === How to test SimpleDelegates?
 
