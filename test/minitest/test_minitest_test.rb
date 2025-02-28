@@ -1371,4 +1371,27 @@ class TestUnexpectedError < Minitest::Test
           c
         EXP
   end
+
+  def test_detailed_message
+    skip "Ruby #{RUBY_VERSION} doesn't support Exception#detailed_message" unless 
+      Exception.instance_methods.include?(:detailed_message)
+
+    exception_class = Class.new(StandardError) do
+      def detailed_message(**options)
+        "Enhanced error message (#{self.class})"
+      end
+
+      def message
+        "Original message"
+      end
+    end
+
+    exception = exception_class.new
+    unexpected_error = Minitest::UnexpectedError.new(exception)
+
+    message = unexpected_error.message
+    assert_includes message, "Enhanced error message"
+    refute_includes message, "Original message"
+    refute_includes message, "(#{exception.class})"
+  end
 end
