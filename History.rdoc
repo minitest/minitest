@@ -1,3 +1,12 @@
+=== 5.25.5 / 2025-03-12
+
+* 4 bug fixes:
+
+  * Bumped minimum ruby to 2.7.
+  * Fixed expectation docs for must/wont_pattern_match. (jaredcwhite)
+  * Reorder Minitest::Test.ancestors to allow reaching Minitest::Assertions#skipped? (Edouard-chin)
+  * Update the ruby and rails compatibility tables. (bquorning)
+
 === 5.25.4 / 2024-12-03
 
 * 1 bug fix:
