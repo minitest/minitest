@@ -44,8 +44,16 @@ module Minitest # :nodoc:
     WINDOWS = RbConfig::CONFIG["host_os"] =~ /mswin|mingw/ # :nodoc:
 
     ##
-    # Create several test-oriented tasks under +name+. Takes an
-    # optional block to customize variables.
+    # Create several test-oriented tasks under +name+ (default:
+    # "test"). Takes an optional block to customize variables.
+    # Examples:
+    #
+    #   Minitest::TestTask.create # named "test", all defaults
+    #
+    #   Minitest::TestTask.create do |t|
+    #     t.warning = false # my tests are noisy
+    #     t.framework = %(require_relative "./test/helper.rb")
+    #   end
 
     def self.create name = :test, &block
       task = new name
@@ -69,9 +77,18 @@ module Minitest # :nodoc:
 
     ##
     # The code to load the framework. Defaults to requiring
-    # minitest/autorun...
+    # minitest/autorun.
     #
-    # Why do I have this as an option?
+    # If you have a test helper file that requires minitest/autorun
+    # and anything else your project standardizes on, then you'll
+    # probably want to change this to:
+    #
+    #   Minitest::TestTask.create do |t|
+    #     t.framework = %(require_relative "./test/helper.rb")
+    #   end
+    #
+    # or something similar. NOTE: if you do this, then helper must
+    # require "minitest/autorun" at the top to start the tests.
 
     attr_accessor :framework
 
@@ -100,6 +117,11 @@ module Minitest # :nodoc:
 
     ##
     # Optional: Additional ruby to run before the test framework is loaded.
+    # Example:
+    #
+    #   Minitest::TestTask.create "test:cov" do |t|
+    #     t.test_prelude = %(require "simplecov")
+    #   end
 
     attr_accessor :test_prelude
 
