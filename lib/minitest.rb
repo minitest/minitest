@@ -1084,7 +1084,14 @@ module Minitest
     def message # :nodoc:
       bt = Minitest.filter_backtrace(self.backtrace).join("\n    ")
         .gsub(BASE_RE, "")
-      "#{self.error.class}: #{self.error.message}\n    #{bt}"
+      error_message = if self.error.respond_to?(:detailed_message)
+                        # detailed_message includes he error class name in parentheses
+                        # which we don't want since we're already including the class name
+                        self.error.detailed_message.sub(/ \(#{self.error.class}\)$/, '')
+                      else
+                        self.error.message
+                      end
+      "#{self.error.class}: #{error_message}\n    #{bt}"
     end
 
     def result_label # :nodoc:
