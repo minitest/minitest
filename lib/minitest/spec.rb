@@ -38,7 +38,11 @@ class Module # :nodoc:
   end
 end
 
-Minitest::Expectation = Struct.new :target, :ctx # :nodoc:
+# :stopdoc:
+module Minitest # fucking hell rdoc...
+  Expectation = Struct.new :target, :ctx
+end
+# :startdoc:
 
 ##
 # Kernel extensions for minitest
