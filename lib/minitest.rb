@@ -259,12 +259,13 @@ module Minitest
   #       Minitest.process_args
   #       Minitest.init_plugins
   #       Minitest.__run(reporter, options)
-  #         Runnable.runnables.each
+  #         Runnable.runnables.each |runnable_klass|
   #           runnable_klass.run(reporter, options)
-  #             self.runnable_methods.each
-  #               self.run_one_method(self, runnable_method, reporter)
-  #                 Minitest.run_one_method(klass, runnable_method)
-  #                   klass.new(runnable_method).run
+  #             filtered_methods = runnable_methods.select {...}.reject {...}
+  #             filtered_methods.each |runnable_method|
+  #               runnable_klass.run_one_method(self, runnable_method, reporter)
+  #                 Minitest.run_one_method(runnable_klass, runnable_method)
+  #                   runnable_klass.new(runnable_method).run
 
   def self.run args = []
     self.load_plugins unless args.delete("--no-plugins") || ENV["MT_NO_PLUGINS"]
