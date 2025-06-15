@@ -289,9 +289,7 @@ class Minitest::Spec < Minitest::Test
       defined?(@name) ? @name : super
     end
 
-    def to_s # :nodoc:
-      name # Can't alias due to 1.8.7, not sure why
-    end
+    alias to_s name
 
     attr_reader :desc # :nodoc:
     alias specify it
