@@ -287,6 +287,7 @@ module Minitest
     reporter.start
     begin
       __run reporter, options
+      finished = true
     rescue Interrupt
       warn "Interrupted. Exiting..."
     end
@@ -297,8 +298,8 @@ module Minitest
 
     reporter.report
 
-    return empty_run! options if summary && summary.count == 0
-    reporter.passed?
+    return empty_run! options if finished && summary && summary.count == 0
+    finished and reporter.passed?
   end
 
   def self.empty_run! options # :nodoc:
