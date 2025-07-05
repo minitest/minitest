@@ -710,8 +710,6 @@ describe Minitest::Spec do
 end
 
 describe Minitest::Spec, :let do
-  i_suck_and_my_tests_are_order_dependent!
-
   def _count
     $let_count ||= 0
   end
@@ -722,21 +720,21 @@ describe Minitest::Spec, :let do
   end
 
   it "is evaluated once per example" do
-    _(_count).must_equal 0
+    exp = _count + 1
 
-    _(count).must_equal 1
-    _(count).must_equal 1
+    _(count).must_equal exp
+    _(count).must_equal exp
 
-    _(_count).must_equal 1
+    _(_count).must_equal exp
   end
 
   it "is REALLY evaluated once per example" do
-    _(_count).must_equal 1
+    exp = _count + 1
 
-    _(count).must_equal 2
-    _(count).must_equal 2
+    _(count).must_equal exp
+    _(count).must_equal exp
 
-    _(_count).must_equal 2
+    _(_count).must_equal exp
   end
 
   it 'raises an error if the name begins with "test"' do
