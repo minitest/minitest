@@ -1371,4 +1371,39 @@ class TestUnexpectedError < Minitest::Test
           c
         EXP
   end
+
+  def test_detailed_message
+    skip "Ruby #{RUBY_VERSION} doesn't support Exception#detailed_message" unless
+      Exception.method_defined?(:detailed_message)
+
+    begin
+      1.zeor?
+    rescue NoMethodError => exception
+      unexpected_error = Minitest::UnexpectedError.new(exception)
+
+      message = unexpected_error.detailed_message
+      assert_includes message, "undefined method"
+      assert_includes message, "Did you mean?"
+    end
+  end
+
+  def test_detailed_message_fallback_to_message
+    skip "Ruby #{RUBY_VERSION} doesn't support Exception#detailed_message" unless
+      Exception.method_defined?(:detailed_message)
+
+    exception_class = Class.new(StandardError) do
+      def message
+        "An error occurred"
+      end
+
+      def detailed_message(**_options)
+        raise "`detailed_message` raised an error"
+      end
+    end
+
+    unexpected_error = Minitest::UnexpectedError.new(exception_class.new)
+
+    message = unexpected_error.detailed_message
+    assert_includes message, "An error occurred"
+  end
 end
