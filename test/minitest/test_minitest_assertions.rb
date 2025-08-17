@@ -318,13 +318,13 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_equal_string_both_escaped_unescaped_newlines
-    msg = <<~EOM
+    msg = <<~'EOM' # NOTE: single quotes on heredoc
           --- expected
           +++ actual
           @@ -1,2 +1 @@
-          -"A\\n
+          -"A\n
           -B"
-          +"A\\n\\\\nB"
+          +"A\n\\nB"
           EOM
 
     assert_triggered msg do
