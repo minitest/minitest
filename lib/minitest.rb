@@ -3,6 +3,7 @@ require "stringio"
 require "etc"
 
 require_relative "minitest/parallel"
+require_relative "minitest/serial"
 require_relative "minitest/compress"
 
 ##
@@ -29,14 +30,18 @@ module Minitest
   cattr_accessor :seed
 
   ##
-  # Parallel test executor
+  # Test executor
 
-  cattr_accessor :parallel_executor
+  cattr_accessor :executor
 
   warn "DEPRECATED: use MT_CPU instead of N for parallel test runs" if ENV["N"] && ENV["N"].to_i > 0
   n_threads = (ENV["MT_CPU"] || ENV["N"] || Etc.nprocessors).to_i
 
-  self.parallel_executor = Parallel::Executor.new n_threads
+  if n_threads > 1
+    self.executor = Parallel::Executor.new n_threads
+  else
+    self.executor = Serial::Executor.new
+  end
 
   ##
   # Filter object for backtraces.
@@ -283,7 +288,7 @@ module Minitest
     self.init_plugins options
     self.reporter = nil # runnables shouldn't depend on the reporter, ever
 
-    self.parallel_executor.start if parallel_executor.respond_to? :start
+    self.executor.start if executor.respond_to? :start
     reporter.start
     begin
       __run reporter, options
@@ -291,7 +296,7 @@ module Minitest
     rescue Interrupt
       warn "Interrupted. Exiting..."
     end
-    self.parallel_executor.shutdown
+    self.executor.shutdown if executor.respond_to? :shutdown
 
     # might have been removed/replaced during init_plugins:
     summary = reporter.reporters.grep(SummaryReporter).first
