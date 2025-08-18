@@ -62,11 +62,11 @@ module Minitest
       return "Expected: #{mu_pp exp}\n  Actual: #{mu_pp act}" unless
         expect
 
-      Tempfile.open "expect" do |a|
+      Tempfile.create "expect" do |a|
         a.puts expect
         a.flush
 
-        Tempfile.open "butwas" do |b|
+        Tempfile.create "butwas" do |b|
           b.puts butwas
           b.flush
 
