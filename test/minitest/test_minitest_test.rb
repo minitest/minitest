@@ -621,7 +621,25 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     end
   end
 
+  def test_run_serial
+    io = StringIO.new
+    reporter = Minitest::ProgressReporter.new(io)
+    executor = Minitest::Serial::Executor.new
+
+    test_unit = Class.new Minitest::Test do
+      def test_something
+        assert true
+      end
+    end
+
+    executor << [test_unit, :test_something, reporter]
+    assert_equal io.string, "."
+  end
+
   def test_run_parallel
+    skip if Minitest.executor.is_a?(Minitest::Serial::Executor) # locks up test runner if 1 CPU
+    skip if Minitest.executor.is_a?(Minitest::Parallel::Executor) && Minitest.executor.size < 2 # locks up test runner if 1 CPU
+
     test_count = 2
     test_latch = Latch.new test_count
     wait_latch = Latch.new test_count
@@ -661,8 +679,6 @@ class TestMinitestRunner < MetaMetaMetaTestCase
 
       2 runs, 2 assertions, 0 failures, 0 errors, 0 skips
     EOM
-
-    skip if Minitest.parallel_executor.size < 2 # locks up test runner if 1 CPU
 
     assert_report expected do |reporter|
       reporter.extend Module.new {
