@@ -677,7 +677,7 @@ module Minitest
       return location if passed? and not skipped?
 
       failures.map { |failure|
-        "#{failure.result_label}:\n#{self.location}:\n#{failure.message}\n"
+        "#{failure.result_label}:\n#{self.location}:\n#{failure.detailed_message}\n"
       }.join "\n"
     end
   end
@@ -1044,6 +1044,10 @@ module Minitest
     def result_label # :nodoc:
       "Failure"
     end
+
+    def detailed_message # :nodoc:
+      message
+    end
   end
 
   ##
@@ -1081,16 +1085,34 @@ module Minitest
       self.error.backtrace
     end
 
-    BASE_RE = %r%#{Dir.pwd}/% # :nodoc:
-
     def message # :nodoc:
-      bt = Minitest.filter_backtrace(self.backtrace).join("\n    ")
-        .gsub(BASE_RE, "")
-      "#{self.error.class}: #{self.error.message}\n    #{bt}"
+      format_with_backtrace(self.error.message)
+    end
+
+    if Exception.method_defined?(:detailed_message)
+      def detailed_message # :nodoc:
+        format_with_backtrace(cleaned_up_detailed_message)
+      end
     end
 
     def result_label # :nodoc:
       "Error"
+    end
+
+    private
+
+    def cleaned_up_detailed_message
+      self.error.detailed_message(highlight: false).sub(/ \(#{self.error.class}\)$/, "")
+    rescue
+      self.error.message
+    end
+
+    BASE_RE = %r%#{Dir.pwd}/% # :nodoc:
+
+    def format_with_backtrace(message)
+      bt = Minitest.filter_backtrace(self.backtrace).join("\n    ")
+        .gsub(BASE_RE, "")
+      "#{self.error.class}: #{message}\n    #{bt}"
     end
   end
 
