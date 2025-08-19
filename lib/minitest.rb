@@ -400,9 +400,8 @@ module Minitest
     reset
 
     ##
-    # Responsible for running all runnable methods in a given class,
-    # each in its own instance. Each instance is passed to the
-    # reporter to record.
+    # Responsible for filtering runnable methods for a particular test class,
+    # then asks "run_all_methods" to run them.
 
     def self.run reporter, options = {}
       pos = options[:filter]
@@ -411,11 +410,18 @@ module Minitest
       pos = Regexp.new $1 if pos.kind_of?(String) && pos =~ %r%/(.*)/%
       neg = Regexp.new $1 if neg.kind_of?(String) && neg =~ %r%/(.*)/%
 
-      filtered_methods = self.runnable_methods
+      self.run_all_methods self, self.runnable_methods
         .select { |m| !pos ||  pos === m || pos === "#{self}##{m}"  }
-        .reject { |m|  neg && (neg === m || neg === "#{self}##{m}") }
+        .reject { |m|  neg && (neg === m || neg === "#{self}##{m}") }, reporter
+    end
 
-      return if filtered_methods.empty?
+    ##
+    # Responsible for running all runnable methods in a given class,
+    # each in its own instance. Each instance is passed to the
+    # reporter to record.
+
+    def self.run_all_methods klass, methods, reporter
+      return if methods.empty?
 
       t0 = name = nil
 
@@ -429,7 +435,7 @@ module Minitest
       end
 
       with_info_handler reporter do
-        filtered_methods.each do |method_name|
+        methods.each do |method_name|
           name = method_name
           t0 = Minitest.clock_time
 
@@ -460,6 +466,8 @@ module Minitest
     def self.with_info_handler reporter, &block # :nodoc:
       on_signal ::Minitest.info_signal, @_info_handler, &block
     end
+
+    private_class_method :with_info_handler
 
     SIGNALS = Signal.list # :nodoc:
 
