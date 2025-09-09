@@ -36,7 +36,7 @@ module Minitest
   warn "DEPRECATED: use MT_CPU instead of N for parallel test runs" if ENV["N"] && ENV["N"].to_i > 0
   n_threads = (ENV["MT_CPU"] || ENV["N"] || Etc.nprocessors).to_i
 
-  self.parallel_executor = Parallel::Executor.new n_threads
+  self.parallel_executor = Parallel::Executor.new n_threads if n_threads > 1
 
   ##
   # Filter object for backtraces.
@@ -291,7 +291,7 @@ module Minitest
     rescue Interrupt
       warn "Interrupted. Exiting..."
     end
-    self.parallel_executor.shutdown
+    self.parallel_executor.shutdown if parallel_executor.respond_to? :shutdown
 
     # might have been removed/replaced during init_plugins:
     summary = reporter.reporters.grep(SummaryReporter).first

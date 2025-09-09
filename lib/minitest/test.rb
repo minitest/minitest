@@ -58,6 +58,7 @@ module Minitest
     # tests are awesome.
 
     def self.parallelize_me!
+      return unless Minitest.parallel_executor
       include Minitest::Parallel::Test
       extend Minitest::Parallel::Test::ClassMethods
     end
