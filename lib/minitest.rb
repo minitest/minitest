@@ -1081,7 +1081,7 @@ module Minitest
       self.error.backtrace
     end
 
-    BASE_RE = %r%#{Dir.pwd}/% # :nodoc:
+    BASE_RE = %r%#{Regexp.escape Dir.pwd}/% # :nodoc:
 
     def message # :nodoc:
       bt = Minitest.filter_backtrace(self.backtrace).join("\n    ")
