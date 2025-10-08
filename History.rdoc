@@ -1,3 +1,24 @@
+=== 5.26.0 / 2025-10-07
+
+The Seattle.rb Nerd Party, Slightly Tipsy Edition!
+
+* 2 minor enhancements:
+
+  * Added extra documentation to Minitest::TestTask options.
+  * Make parallelize_me! a no-op when n_threads=1.
+
+* 9 bug fixes:
+
+  * Bypass parallel_executor entirely when n_threads=1.
+  * Don't require rubygems in Rakefile... it is 2025.
+  * Ensure that minitest exits non-zero on Interrupt. (tavianator)
+  * Fix Minitest.run sequence rdoc to include loop vars and read consistently.
+  * Fix call to parallel_executor.shutdown when it isn't defined.
+  * Removed some 1.8/1.9-based code from the assertions and expectations.
+  * Still fighting with rdoc? Yup. Still fighting with rdoc...
+  * Switched assert_equal's diff from Tempfile.open to Tempfile.create.
+  * Use Regexp.escape for BASE_RE in case pwd has special chars. (astra_1993)
+
 === 5.25.5 / 2025-03-12
 
 * 4 bug fixes:
