@@ -411,6 +411,7 @@ module Minitest
       pos = Regexp.new $1 if pos.kind_of?(String) && pos =~ %r%/(.*)/%
       neg = Regexp.new $1 if neg.kind_of?(String) && neg =~ %r%/(.*)/%
 
+      # at most 1-2% slower than a 1-pass version, stop optimizing this
       filtered_methods = self.runnable_methods
         .select { |m| !pos ||  pos === m || pos === "#{self}##{m}"  }
         .reject { |m|  neg && (neg === m || neg === "#{self}##{m}") }
