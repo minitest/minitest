@@ -2,25 +2,27 @@
 ###############################################################################
 describe Thingy do                     # class TestThingy < Minitest::Test
   before do                            #   def setup
-    do_some_setup                      #     super
-  end                                  #     do_some_setup
-                                       #   end
-  it "should do the first thing" do    #
-    1.must_equal 1                     #   def test_first_thing
-  end                                  #     assert_equal 1, 1
-                                       #   end
-  describe SubThingy do                # end
-    before do                          #
-      do_more_setup                    # class TestSubThingy < TestThingy
-    end                                #   def setup
                                        #     super
-    it "should do the second thing" do #     do_more_setup
-      2.must_equal 2                   #   end
-    end                                #
-  end                                  #   def test_second_thing
-end                                    #     assert_equal 2, 2
-                                       #   end
+    do_some_setup                      #     do_some_setup
+  end                                  #   end
+                                       #
+  it "should do the first thing" do    #   def test_first_thing
+    _(1).must_equal 1                  #     assert_equal 1, 1
+  end                                  #   end
                                        # end
+                                       #
+  describe SubThingy do                # class TestSubThingy < TestThingy
+    before do                          #   def setup
+                                       #     super
+      do_more_setup                    #     do_more_setup
+    end                                #   end
+                                       #
+    it "should do the second thing" do #   def test_second_thing
+      _(2).must_equal 2                #     assert_equal 2, 2
+    end                                #   end
+  end                                  # end
+end                                    #
+                                       #
 ###############################################################################
 # runs 2 specs                         # runs 3 tests
 ###############################################################################
@@ -33,7 +35,7 @@ class ThingySpec < Minitest::Spec
   end
 
   def test_should_do_the_first_thing
-    assert_equal 1, 1
+    _(1).must_equal 1
   end
 end
 
@@ -47,6 +49,6 @@ class SubThingySpec < ThingySpec
   remove_method :test_should_do_the_first_thing
 
   def test_should_do_the_second_thing
-    assert_equal 2, 2
+    _(2).must_equal 2
   end
 end
