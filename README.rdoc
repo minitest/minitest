@@ -95,7 +95,9 @@ Given that you'd like to test the following class:
 
 === Unit tests
 
-Define your tests as methods beginning with +test_+.
+Define your tests as methods beginning with +test_+. Use
+{assertions}[/minitest/Minitest/Assertions.html] to test for results
+or state.
 
   require "minitest/autorun"
 
@@ -118,6 +120,9 @@ Define your tests as methods beginning with +test_+.
   end
 
 === Specs
+
+Use {expectations}[/minitest/Minitest/Expectations.html] to check
+results or state. They must be wrapped in a value call (eg +_+).
 
   require "minitest/autorun"
 
@@ -146,7 +151,7 @@ For matchers support check out:
 
 === Benchmarks
 
-Add benchmarks to your tests.
+Add {benchmarks}[/minitest/Minitest/Benchmark.html] to your tests.
 
   # optionally run benchmarks, good for CI-only work!
   require "minitest/benchmark" if ENV["BENCH"]
