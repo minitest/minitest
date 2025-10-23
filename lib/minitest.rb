@@ -574,7 +574,7 @@ module Minitest
     def skipped?
       raise NotImplementedError, "subclass responsibility"
     end
-  end
+  end # Runnable
 
   ##
   # Shared code for anything that can get passed to a Reporter. See
@@ -626,7 +626,7 @@ module Minitest
     def error?
       self.failures.any? UnexpectedError
     end
-  end
+  end # Reportable
 
   ##
   # This represents a test result in a clean way that can be
@@ -680,7 +680,7 @@ module Minitest
         "#{failure.result_label}:\n#{self.location}:\n#{failure.message}\n"
       }.join "\n"
     end
-  end
+  end # Result
 
   ##
   # Defines the API for Reporters. Subclass this and override whatever
@@ -730,7 +730,7 @@ module Minitest
     def synchronize &block # :nodoc:
       @mutex.synchronize(&block)
     end
-  end
+  end # AbstractReportera
 
   class Reporter < AbstractReporter # :nodoc:
     ##
@@ -885,7 +885,7 @@ module Minitest
       self.warnings   = aggregate[UnexpectedWarning].size
       self.skips      = aggregate[Skip].size
     end
-  end
+  end # StatisticsReporter
 
   ##
   # A reporter that prints the header, summary, and failure details at
@@ -963,7 +963,7 @@ module Minitest
       "%d runs, %d assertions, %d failures, %d errors, %d skips%s" %
         [count, assertions, failures, errors, skips, extra.join]
     end
-  end
+  end # SummaryReporter
 
   ##
   # Dispatch to multiple reporters as one.
@@ -1014,7 +1014,7 @@ module Minitest
     def report # :nodoc:
       self.reporters.each(&:report)
     end
-  end
+  end # CompositeReporter
 
   ##
   # Represents run failures.
