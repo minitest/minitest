@@ -1,3 +1,5 @@
+require "thread"
+
 module Minitest
   module Parallel # :nodoc:
 
