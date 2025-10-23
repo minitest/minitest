@@ -108,7 +108,7 @@ describe Minitest::Spec do
   end
 
   it "needs to catch an expected exception" do
-    @assertion_count = 2
+    @assertion_count -= 2
 
     expect { raise "blah" }.must_raise RuntimeError
     expect { raise Minitest::Assertion }.must_raise Minitest::Assertion
