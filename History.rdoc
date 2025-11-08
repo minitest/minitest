@@ -1,3 +1,14 @@
+=== 5.26.1 / 2025-11-08
+
+The Ocean Shores, Slightly Less Tipsy Edition!
+
+* 3 bug fixes:
+
+  * Add links to API doco in README.
+  * Add missing require thread.
+  * Bumped ruby version to include 4.0 (trunk). (hsbt)
+    (see also 5.14.2)
+
 === 5.26.0 / 2025-10-07
 
 The Seattle.rb Nerd Party, Slightly Tipsy Edition!
