@@ -217,7 +217,7 @@ module Minitest
 
       if nil == exp then
         if Minitest::VERSION >= "6" then
-          refute_nil exp, "Use assert_nil if expecting nil."
+          flunk "Use assert_nil if expecting nil."
         else
           warn "DEPRECATED: Use assert_nil if expecting nil from #{_where}. This will fail in Minitest 6."
         end
