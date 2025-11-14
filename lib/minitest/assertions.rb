@@ -687,8 +687,8 @@ module Minitest
     # For comparing Floats.  Fails if +exp+ and +act+ have a relative error
     # less than +epsilon+.
 
-    def refute_in_epsilon a, b, epsilon = 0.001, msg = nil
-      refute_in_delta a, b, a * epsilon, msg
+    def refute_in_epsilon exp, act, epsilon = 0.001, msg = nil
+      refute_in_delta exp, act, [exp.abs, act.abs].min * epsilon, msg
     end
 
     ##
