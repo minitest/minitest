@@ -939,6 +939,16 @@ class TestMeta < MetaMetaMetaTestCase
     assert_equal "ExampleB::random_method::addl_context", spec_c.name
   end
 
+  def test_inspect
+    spec_a = describe ExampleA do; end
+    spec_b = describe ExampleB, :random_method do; end
+    spec_c = describe ExampleB, :random_method, :addl_context do; end
+
+    assert_equal "ExampleA", spec_a.inspect
+    assert_equal "ExampleB::random_method", spec_b.inspect
+    assert_equal "ExampleB::random_method::addl_context", spec_c.inspect
+  end
+
   def test_name2
     assert_equal "NamedExampleA", NamedExampleA.name
     assert_equal "NamedExampleB", NamedExampleB.name

@@ -290,6 +290,7 @@ class Minitest::Spec < Minitest::Test
     end
 
     alias to_s name
+    alias inspect name
 
     attr_reader :desc # :nodoc:
     alias specify it
