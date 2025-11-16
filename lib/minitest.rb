@@ -147,26 +147,32 @@ module Minitest
     orig_args = args.dup
 
     OptionParser.new do |opts|
-      opts.banner  = "minitest options:"
+      opts.program_name = "minitest"
       opts.version = Minitest::VERSION
+
+      opts.banner = [
+        "Usage: rake test [A=options]        (see Minitest::TestTask for more options)",
+        "minitest [paths] [options]   (with minitest-sprint gem)",
+        "ruby path/to/test.rb [options]\n\n",
+      ].join "\n   or: "
 
       opts.on "-h", "--help", "Display this help." do
         puts opts
         exit
       end
 
-      opts.on "--no-plugins", "Bypass minitest plugin auto-loading (or set $MT_NO_PLUGINS)."
+      opts.on "--no-plugins", "Bypass minitest plugin auto-loading (or env: MT_NO_PLUGINS=1)."
 
-      desc = "Sets random seed. Also via env. Eg: SEED=n rake"
+      desc = "Sets random seed. Also via env, eg: SEED=42"
       opts.on "-s", "--seed SEED", Integer, desc do |m|
-        options[:seed] = m.to_i
+        options[:seed] = m
       end
 
-      opts.on "-v", "--verbose", "Verbose. Show progress processing files." do
+      opts.on "-v", "--verbose", "Verbose. Print each name as they run." do
         options[:verbose] = true
       end
 
-      opts.on "-q", "--quiet", "Quiet. Show no progress processing files." do
+      opts.on "-q", "--quiet", "Quiet. Show no dots while processing files." do
         options[:quiet] = true
       end
 
@@ -174,13 +180,22 @@ module Minitest
         options[:show_skips] = true
       end
 
-      opts.on "-n", "--name PATTERN", "Filter run on /regexp/ or string." do |a|
+      opts.on "-n", "--name PATTERN", "Include /regexp/ or string for run." do |a|
         options[:filter] = a
       end
 
       opts.on "-e", "--exclude PATTERN", "Exclude /regexp/ or string from run." do |a|
         options[:exclude] = a
       end
+
+      # omg wtf
+      def opts.short_alias(from, to) = top.short[to] = top.short[from]
+      def opts.long_alias(from, to)  = top.long[to]  = top.long[from]
+
+      # these will work but won't show up in --help output:
+      opts.long_alias  "name", "include"
+      opts.short_alias "n",       "i"
+      opts.short_alias "e",       "x"
 
       opts.on "-S", "--skip CODES", String, "Skip reporting of certain types of results (eg E)." do |s|
         options[:skip] = s.chars.to_a
