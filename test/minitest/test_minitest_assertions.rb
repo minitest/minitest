@@ -1280,10 +1280,14 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_refute_in_epsilon_triggered
-    assert_triggered "Expected |10000 - 9990| (10) to not be <= 10.0." do
-      @tc.refute_in_epsilon 10_000, 9990
+    assert_triggered "Expected |10000 - 9991| (9) to not be <= 9.991." do
+      @tc.refute_in_epsilon 10_000, 9991
       flunk
     end
+  end
+
+  def test_refute_in_epsilon_minimum
+    @tc.refute_in_epsilon 10_000, 9990
   end
 
   def test_refute_includes
