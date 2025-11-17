@@ -11,7 +11,7 @@ Hoe.spec "minitest" do
 
   license "MIT"
 
-  require_ruby_version ">= 2.7"
+  require_ruby_version ">= 3.1"
 end
 
 desc "Find missing expectations"

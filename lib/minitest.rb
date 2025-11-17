@@ -189,12 +189,8 @@ module Minitest
       end
 
       # omg wtf
-      def opts.short_alias(from, to)
-        top.short[to] = top.short[from]
-      end
-      def opts.long_alias(from, to)
-        top.long[to]  = top.long[from]
-      end
+      def opts.short_alias(from, to) = top.short[to] = top.short[from]
+      def opts.long_alias(from, to)  = top.long[to]  = top.long[from]
 
       # these will work but won't show up in --help output:
       opts.long_alias  "name", "include"
