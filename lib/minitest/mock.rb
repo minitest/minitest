@@ -33,17 +33,9 @@ module Minitest # :nodoc:
       old_w, $-w = $-w, nil
       define_method method_id do |*args, **kwargs, &b|
         if @expected_calls.key? method_id then
-          if kwargs.empty? then # FIX: drop this after 2.7 dead
-            method_missing(method_id, *args, &b)
-          else
-            method_missing(method_id, *args, **kwargs, &b)
-          end
+          method_missing(method_id, *args, **kwargs, &b)
         else
-          if kwargs.empty? then # FIX: drop this after 2.7 dead
-            super(*args, &b)
-          else
-            super(*args, **kwargs, &b)
-          end
+          super(*args, **kwargs, &b)
         end
       end
     ensure
@@ -155,11 +147,7 @@ module Minitest # :nodoc:
     def method_missing sym, *args, **kwargs, &block # :nodoc:
       unless @expected_calls.key? sym then
         if @delegator && @delegator.respond_to?(sym)
-          if kwargs.empty? then # FIX: drop this after 2.7 dead
-            return @delegator.public_send(sym, *args, &block)
-          else
-            return @delegator.public_send(sym, *args, **kwargs, &block)
-          end
+          return @delegator.public_send(sym, *args, **kwargs, &block)
         else
           raise NoMethodError, "unmocked method %p, expected one of %p" %
             [sym, @expected_calls.keys.sort_by(&:to_s)]
@@ -320,18 +308,10 @@ class Object
     else
       metaclass.send :define_method, name do |*args, **kwargs, &blk|
         if val_or_callable.respond_to? :call then
-          if kwargs.empty? then # FIX: drop this after 2.7 dead
-            val_or_callable.call(*args, &blk)
-          else
-            val_or_callable.call(*args, **kwargs, &blk)
-          end
+          val_or_callable.call(*args, **kwargs, &blk)
         else
           if blk then
-            if block_kwargs.empty? then # FIX: drop this after 2.7 dead
-              blk.call(*block_args)
-            else
-              blk.call(*block_args, **block_kwargs)
-            end
+            blk.call(*block_args, **block_kwargs)
           end
           val_or_callable
         end

@@ -201,17 +201,15 @@ module Minitest
         options[:skip] = s.chars.to_a
       end
 
-      ruby27plus = ::Warning.respond_to? :[]=
-
       opts.on "-W[error]", String, "Turn Ruby warnings into errors" do |s|
         options[:Werror] = true
         case s
         when "error", "all", nil then
           require "minitest/error_on_warning"
           $VERBOSE = true
-          ::Warning[:deprecated] = true if ruby27plus
+          ::Warning[:deprecated] = true
         else
-          ::Warning[s.to_sym] = true if ruby27plus # check validity of category
+          ::Warning[s.to_sym] = true # check validity of category
         end
       end
 

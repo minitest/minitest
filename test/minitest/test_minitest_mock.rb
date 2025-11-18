@@ -368,11 +368,7 @@ class TestMinitestMock < Minitest::Test
     end
 
     assert_silent do
-      if RUBY_VERSION > "3" then
-        mock.foo arg1, arg2, arg3
-      else
-        mock.foo arg1, arg2, **arg3 # oddity just for ruby 2.7
-      end
+      mock.foo arg1, arg2, arg3
     end
 
     assert_mock mock
@@ -401,8 +397,8 @@ class TestMinitestMock < Minitest::Test
       mock.foo k1: arg1, k2: arg2
     end
 
-    # basically testing ruby ... need ? for ruby < 2.7 :(
-    assert_match(/missing keyword: :?k3/, e.message)
+    # basically testing ruby
+    assert_match(/missing keyword: :k3/, e.message)
   end
 
   def test_mock_block_is_passed_keyword_args__block_bad_extra
@@ -416,8 +412,7 @@ class TestMinitestMock < Minitest::Test
       mock.foo k1: arg1, k2: arg2, k3: arg3
     end
 
-    # basically testing ruby ... need ? for ruby < 2.7 :(
-    assert_match(/unknown keyword: :?k3/, e.message)
+    assert_match(/unknown keyword: :k3/, e.message)
   end
 
   def test_mock_block_is_passed_keyword_args__block_bad_value

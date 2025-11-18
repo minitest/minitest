@@ -142,8 +142,7 @@ class TestMinitestAssertions < Minitest::Test
     exp[1] = Object.new
     act[1] = Object.new
     act_obj = act[1]
-    # TODO: switch to endless when 2.7 is dropped
-    act_obj.define_singleton_method(:inspect) { "#<Object:0xXXXXXX>" }
+    def act_obj.inspect = "#<Object:0xXXXXXX>"
     msg = <<~EOM.chomp % [act]
            No visible difference in the Hash#inspect output.
            You should look at the implementation of #== on Hash or its members.
