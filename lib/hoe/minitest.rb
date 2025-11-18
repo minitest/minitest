@@ -11,7 +11,8 @@ module Hoe::Minitest
 
   def initialize_minitest
     unless minitest? then
-      dir = "../../minitest/dev/lib"
+      dir = File.expand_path "../..", __FILE__
+
       Hoe.add_include_dirs dir if File.directory? dir
     end
 
