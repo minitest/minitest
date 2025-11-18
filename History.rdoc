@@ -1,3 +1,13 @@
+=== 5.26.2 / 2025-11-17
+
+* 5 bug fixes:
+
+  * Bumped minimum ruby to 3.1.
+  * Alias Spec#name to #inspect for cleaner output in repls.
+  * Fix pathing for Hoe::Minitest initialization to be more generic.
+  * Fixed refute_in_epsilon to use min of abs values. (wtn)
+  * Improved options processing and usage output to be more clear.
+
 === 5.26.1 / 2025-11-08
 
 The Ocean Shores, Slightly Less Tipsy Edition!
