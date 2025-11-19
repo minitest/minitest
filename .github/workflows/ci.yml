@@ -11,7 +11,7 @@ name: CI
 jobs:
   test:
     name: >-
-      test ${{ matrix.os }} ${{ matrix.ruby }} ${{ matrix.rubyopt }}
+      ${{ matrix.task }} ${{ matrix.os }} ${{ matrix.ruby }} ${{ matrix.rubyopt }}
 
     runs-on: ${{ matrix.os }}
     if: |
@@ -22,6 +22,8 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
+        task:
+          - test
         ruby:
           - '3.1'
           - '3.2'
@@ -36,6 +38,9 @@ jobs:
           - os: ubuntu-latest
             ruby: ruby
             rubyopt: "--enable-frozen-string-literal"
+          - os: ubuntu-latest
+            ruby: ruby
+            task: "test:isolated"
 
     steps:
       - name: repo checkout
@@ -52,31 +57,5 @@ jobs:
 
       - name: rake test
         run: |
-          rake test
-        timeout-minutes: 3
-
-  isolated:
-    name: >-
-      test:isolated ${{ matrix.os }} ${{ matrix.ruby }}
-
-    runs-on: ubuntu-latest
-    if: |
-      !(   contains(github.event.pull_request.title,  '[ci skip]')
-        || contains(github.event.pull_request.title,  '[skip ci]'))
-    steps:
-      - name: repo checkout
-        uses: actions/checkout@v4
-
-      - name: load ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ruby
-          bundler: none
-
-      - name: install hoe
-        run: gem install hoe -N
-
-      - name: rake test:isolated
-        run: |
-          rake test:isolated RUBYOPT="${{ matrix.rubyopt }}"
+          rake ${{ matrix.task }} RUBYOPT="${{ matrix.rubyopt }}"
         timeout-minutes: 3
