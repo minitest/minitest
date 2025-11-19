@@ -33,10 +33,13 @@ jobs:
         include:
           - os: windows-latest
             ruby: ruby
+            task: test
           - os: macos-latest
             ruby: ruby
+            task: test
           - os: ubuntu-latest
             ruby: ruby
+            task: test
             rubyopt: "--enable-frozen-string-literal"
           - os: ubuntu-latest
             ruby: ruby
