@@ -196,6 +196,12 @@ module Minitest
         .split(":in ", 2).first # clean up noise
     end
 
+    def _caller_uplevel
+      backtrace = caller
+      real_caller = Minitest.filter_backtrace(caller).first
+      backtrace.index(real_caller)
+    end
+
     E = "" # :nodoc:
 
     ##
@@ -219,7 +225,7 @@ module Minitest
         if Minitest::VERSION >= "6" then
           refute_nil exp, "Use assert_nil if expecting nil."
         else
-          warn "DEPRECATED: Use assert_nil if expecting nil from #{_where}. This will fail in Minitest 6."
+          warn "DEPRECATED: Use assert_nil if expecting nil. This will fail in Minitest 6.", uplevel: _caller_uplevel
         end
       end
 
@@ -471,7 +477,7 @@ module Minitest
     # Fails unless the call returns a true value
 
     def assert_send send_ary, m = nil
-      warn "DEPRECATED: assert_send. From #{_where}"
+      warn "DEPRECATED: assert_send.", uplevel: _caller_uplevel
 
       recv, msg, *args = send_ary
       m = message(m) {
