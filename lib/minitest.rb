@@ -205,7 +205,7 @@ module Minitest
         options[:Werror] = true
         case s
         when "error", "all", nil then
-          require "minitest/error_on_warning"
+          require_relative "minitest/error_on_warning"
           $VERBOSE = true
           ::Warning[:deprecated] = true
         else
@@ -1248,4 +1248,4 @@ module Minitest
   # :startdoc:
 end
 
-require "minitest/test"
+require_relative "minitest/test"

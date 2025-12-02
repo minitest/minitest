@@ -1,4 +1,4 @@
-require "minitest"
+require_relative "../minitest"
 
 ARGV << "--no-plugins"
 

@@ -11,7 +11,7 @@ unless defined?(Minitest) then
   module Minitest # :nodoc:
   end
   MiniTest = Minitest # :nodoc: # prevents minitest.rb from requiring back to us
-  require "minitest"
+  require_relative "../minitest"
 end
 
 MiniTest = Minitest unless defined?(MiniTest)

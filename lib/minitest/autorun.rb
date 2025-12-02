@@ -1,6 +1,6 @@
-require "minitest"
-require "minitest/spec"
-require "minitest/mock"
-require "minitest/hell" if ENV["MT_HELL"]
+require_relative "../minitest"
+require_relative "spec"
+require_relative "mock"
+require_relative "hell" if ENV["MT_HELL"]
 
 Minitest.autorun

@@ -651,7 +651,7 @@ class TestMinitestMock < Minitest::Test
 
 end
 
-require "minitest/metametameta"
+require_relative "metametameta"
 
 class TestMinitestStub < Minitest::Test
   # Do not parallelize since we're calling stub on class methods

@@ -1,4 +1,4 @@
-require "minitest"
+require_relative "../minitest"
 
 module Minitest
   def self.plugin_pride_options opts, _options # :nodoc:

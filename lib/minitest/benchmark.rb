@@ -1,5 +1,5 @@
-require "minitest/test"
-require "minitest/spec"
+require_relative "test"
+require_relative "spec"
 
 module Minitest
   ##

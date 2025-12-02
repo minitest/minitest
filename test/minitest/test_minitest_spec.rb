@@ -1,4 +1,4 @@
-require "minitest/metametameta"
+require_relative "metametameta"
 require "stringio"
 
 class MiniSpecA < Minitest::Spec; end

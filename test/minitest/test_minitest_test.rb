@@ -1,4 +1,4 @@
-require "minitest/metametameta"
+require_relative "metametameta"
 
 e = Encoding.default_external
 if e != Encoding::UTF_8 then

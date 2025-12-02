@@ -1,4 +1,4 @@
-require "minitest" unless defined? Minitest::Runnable
+require_relative "../minitest" unless defined? Minitest::Runnable
 
 module Minitest
   ##
@@ -8,7 +8,7 @@ module Minitest
   # See Minitest::Assertions
 
   class Test < Runnable
-    require "minitest/assertions"
+    require_relative "assertions"
     include Minitest::Reportable
     include Minitest::Assertions
 
@@ -235,4 +235,4 @@ module Minitest
   end # Test
 end
 
-require "minitest/unit" if ENV["MT_COMPAT"] # compatibility layer only
+require_relative "unit" if ENV["MT_COMPAT"] # compatibility layer only

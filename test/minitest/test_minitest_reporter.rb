@@ -1,5 +1,5 @@
 require "minitest/autorun"
-require "minitest/metametameta"
+require_relative "metametameta"
 require "forwardable"
 
 class FakeTest < Minitest::Test

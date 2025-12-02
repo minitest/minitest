@@ -1,4 +1,4 @@
-require "minitest/parallel"
+require_relative "parallel"
 
 class Minitest::Test
   parallelize_me!
