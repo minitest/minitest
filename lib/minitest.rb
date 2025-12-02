@@ -188,14 +188,14 @@ module Minitest
         options[:exclude] = a
       end
 
-      # omg wtf
-      def opts.short_alias(from, to) = top.short[to] = top.short[from]
-      def opts.long_alias(from, to)  = top.long[to]  = top.long[from]
+      # part of my unofficial embedded gem "makeoptparseworkwell"
+      def opts.topdict(name)   = (name.length > 1 ? top.long : top.short)
+      def opts.alias(from, to) = (dict = topdict(from) ; dict[to] = dict[from])
 
       # these will work but won't show up in --help output:
-      opts.long_alias  "name", "include"
-      opts.short_alias "n",       "i"
-      opts.short_alias "e",       "x"
+      opts.alias "name", "include"
+      opts.alias "n",    "i"
+      opts.alias "e",    "x"
 
       opts.on "-S", "--skip CODES", String, "Skip reporting of certain types of results (eg E)." do |s|
         options[:skip] = s.chars.to_a
