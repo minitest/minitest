@@ -29,10 +29,11 @@ class TestMinitestReporter < MetaMetaMetaTestCase
     super
     self.io = StringIO.new(+"")
     self.r  = new_composite_reporter
+    @et = @ft = @pt = @st = @sse = nil
   end
 
   def error_test
-    unless defined? @et then
+    unless @et then
       @et = FakeTest.new :woot
       @et.failures << Minitest::UnexpectedError.new(begin
                                                       raise "no"
@@ -45,7 +46,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
   end
 
   def system_stack_error_test
-    unless defined? @sse then
+    unless @sse then
 
       ex = SystemStackError.new
 
@@ -64,7 +65,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
   end
 
   def fail_test
-    unless defined? @ft then
+    unless @ft then
       @ft = FakeTest.new :woot
       @ft.failures <<   begin
                           raise Minitest::Assertion, "boo"
@@ -87,7 +88,7 @@ class TestMinitestReporter < MetaMetaMetaTestCase
   end
 
   def skip_test
-    unless defined? @st then
+    unless @st then
       @st = FakeTest.new :woot
       @st.failures << begin
                         raise Minitest::Skip
