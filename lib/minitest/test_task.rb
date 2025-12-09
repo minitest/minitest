@@ -303,13 +303,8 @@ module Minitest # :nodoc:
 end
 
 class Work < Queue # :nodoc:
-  def initialize jobs = [] # :nodoc:
-    super()
-
-    jobs.each do |job|
-      self << job
-    end
-
+  def initialize jobs # :nodoc:
+    super
     close
   end
 end
