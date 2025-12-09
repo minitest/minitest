@@ -291,7 +291,7 @@ class TestMinitestAssertions < Minitest::Test
         @tc.assert_equal nil, nil
       end
     else
-      err_re = /Use assert_nil if expecting nil from .*test_minitest_\w+.rb/
+      err_re = /.*?test_minitest_\w+.rb:\d+: warning: DEPRECATED: Use assert_nil if expecting nil. This will fail in Minitest 6./
       err_re = "" if $-w.nil?
 
       assert_deprecation err_re do

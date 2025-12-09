@@ -284,7 +284,7 @@ describe Minitest::Spec do
     @assertion_count = 3
     @assertion_count += 2 unless error_on_warn? # 2 extra assertions
 
-    exp = /DEPRECATED: Use assert_nil if expecting nil from .* This will fail in Minitest 6./
+    exp = /.*?test_minitest_\w+.rb:\d+: warning: DEPRECATED: Use assert_nil if expecting nil. This will fail in Minitest 6./
 
     assert_deprecation exp do
       assert_success _(nil).must_equal(nil)
