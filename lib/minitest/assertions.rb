@@ -374,15 +374,12 @@ module Minitest
     # error.
 
     def assert_pattern
-      raise NotImplementedError, "only available in Ruby 3.0+" unless RUBY_VERSION >= "3.0"
       flunk "assert_pattern requires a block to capture errors." unless block_given?
 
-      begin # TODO: remove after ruby 2.6 dropped
-        yield
-        pass
-      rescue NoMatchingPatternError => e
-        flunk e.message
-      end
+      yield
+      pass
+    rescue NoMatchingPatternError => e
+      flunk e.message
     end
 
     ##
@@ -757,15 +754,12 @@ module Minitest
     # other exceptions will be raised as normal and generate a test error.
 
     def refute_pattern
-      raise NotImplementedError, "only available in Ruby 3.0+" unless RUBY_VERSION >= "3.0"
       flunk "refute_pattern requires a block to capture errors." unless block_given?
 
-      begin
-        yield
-        flunk "NoMatchingPatternError expected, but nothing was raised."
-      rescue NoMatchingPatternError
-        pass
-      end
+      yield
+      flunk "NoMatchingPatternError expected, but nothing was raised."
+    rescue NoMatchingPatternError
+      pass
     end
 
     ##

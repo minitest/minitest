@@ -1073,48 +1073,24 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_pattern
-    if RUBY_VERSION > "3" then
-      @tc.assert_pattern do
-        exp = if RUBY_VERSION.start_with? "3.0"
-                "(eval):1: warning: One-line pattern matching is experimental, and the behavior may change in future versions of Ruby!\n"
-              else
-                ""
-              end
-        assert_output nil, exp do
-          eval "[1,2,3] => [Integer, Integer, Integer]" # eval to escape parser for ruby<3
-        end
-      end
-    else
-      @assertion_count = 0
-
-      assert_raises NotImplementedError do
-        @tc.assert_pattern do
-          # do nothing
-        end
+    @tc.assert_pattern do
+      assert_output nil, "" do
+        [1,2,3] => [Integer, Integer, Integer]
       end
     end
   end
 
   def test_assert_pattern_traps_nomatchingpatternerror
-    skip unless RUBY_VERSION > "3"
-    exp = if RUBY_VERSION.start_with? "3.0" then
-            "[1, 2, 3]" # terrible error message!
-          else
-            /length mismatch/
-          end
+    exp = /length mismatch/
 
     assert_triggered exp do
       @tc.assert_pattern do
-        capture_io do # 3.0 is noisy
-          eval "[1,2,3] => [Integer, Integer]" # eval to escape parser for ruby<3
-        end
+        [1,2,3] => [Integer, Integer]
       end
     end
   end
 
   def test_assert_pattern_raises_other_exceptions
-    skip unless RUBY_VERSION >= "3.0"
-
     @assertion_count = 0
 
     assert_raises RuntimeError do
@@ -1125,8 +1101,6 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_pattern_with_no_block
-    skip unless RUBY_VERSION >= "3.0"
-
     assert_triggered "assert_pattern requires a block to capture errors." do
       @tc.assert_pattern
     end
@@ -1385,38 +1359,20 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_refute_pattern
-    if RUBY_VERSION >= "3.0"
-      @tc.refute_pattern do
-        capture_io do # 3.0 is noisy
-          eval "[1,2,3] => [Integer, Integer, String]"
-        end
-      end
-    else
-      @assertion_count = 0
-
-      assert_raises NotImplementedError do
-        @tc.refute_pattern do
-          eval "[1,2,3] => [Integer, Integer, String]"
-        end
-      end
+    @tc.refute_pattern do
+      [1,2,3] => [Integer, Integer, String]
     end
   end
 
   def test_refute_pattern_expects_nomatchingpatternerror
-    skip unless RUBY_VERSION > "3"
-
     assert_triggered(/NoMatchingPatternError expected, but nothing was raised./) do
       @tc.refute_pattern do
-        capture_io do # 3.0 is noisy
-          eval "[1,2,3] => [Integer, Integer, Integer]"
-        end
+        [1,2,3] => [Integer, Integer, Integer]
       end
     end
   end
 
   def test_refute_pattern_raises_other_exceptions
-    skip unless RUBY_VERSION >= "3.0"
-
     @assertion_count = 0
 
     assert_raises RuntimeError do
@@ -1427,8 +1383,6 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_refute_pattern_with_no_block
-    skip unless RUBY_VERSION >= "3.0"
-
     assert_triggered "refute_pattern requires a block to capture errors." do
       @tc.refute_pattern
     end

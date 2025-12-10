@@ -148,25 +148,13 @@ describe Minitest::Spec do
   it "needs to pattern match" do
     @assertion_count = 1
 
-    if RUBY_VERSION > "3" then
-      expect { good_pattern }.must_pattern_match
-    else
-      assert_raises NotImplementedError do
-        expect {}.must_pattern_match
-      end
-    end
+    expect { good_pattern }.must_pattern_match
   end
 
   it "needs to error on bad pattern match" do
-    skip unless RUBY_VERSION > "3"
-
     @assertion_count = 1
 
-    exp = if RUBY_VERSION.start_with? "3.0"
-            "[1, 2, 3]" # terrible error message!
-          else
-            /length mismatch/
-          end
+    exp = /length mismatch/
 
     assert_triggered exp do
       expect { bad_pattern }.must_pattern_match
