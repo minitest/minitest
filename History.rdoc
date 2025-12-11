@@ -1,3 +1,22 @@
+=== 5.27.0 / 2025-12-11
+
+* 1 major enhancement:
+
+  * Adding post install message announcing the EOL for minitest 5!
+
+* 2 minor enhancements:
+
+  * Removed TestTask::Work#initialize since Queue can now initialize with an Enumerable! AMAZING!
+  * Use Kernel#warn uplevel argument for nicer warnings. (byroot)
+
+* 5 bug fixes:
+
+  * Cleaned up option aliasing a tad.
+  * Removed obsolete conditional for prerecord
+  * Removed obsolete guards around Warning.
+  * Removed obsolete version guards for pattern matching assertions.
+  * Switched all internal requires to require_relative.
+
 === 5.26.2 / 2025-11-17
 
 * 5 bug fixes:
