@@ -795,40 +795,6 @@ class BetterError < RuntimeError # like better_error w/o infecting RuntimeError
 end
 
 class TestMinitestRunnable < Minitest::Test
-  def setup_marshal klass
-    tc = klass.new "whatever"
-    tc.assertions = 42
-    tc.failures << "a failure"
-
-    yield tc if block_given?
-
-    def tc.setup
-      @blah = "blah"
-    end
-    tc.setup
-
-    @tc = Minitest::Result.from tc
-  end
-
-  def assert_marshal expected_ivars
-    new_tc = Marshal.load Marshal.dump @tc
-
-    ivars = new_tc.instance_variables.map(&:to_s).sort
-    ivars.delete "@gc_stats" # only needed if running w/ minitest-gcstats
-    assert_equal expected_ivars, ivars
-    assert_equal "whatever",     new_tc.name
-    assert_equal 42,             new_tc.assertions
-    assert_equal ["a failure"],  new_tc.failures
-
-    yield new_tc if block_given?
-  end
-
-  def test_marshal
-    setup_marshal Minitest::Runnable
-
-    assert_marshal %w[@NAME @assertions @failures @klass @source_location @time]
-  end
-
   def test_spec_marshal
     klass = describe("whatever") { it("passes") { assert true } }
     rm = klass.runnable_methods.first
@@ -985,18 +951,6 @@ class TestMinitestRunnable < Minitest::Test
     assert_equal @tc.assertions, over_the_wire.assertions
     assert_equal @tc.failures,   over_the_wire.failures
     assert_equal @tc.klass,      over_the_wire.klass
-  end
-end
-
-class TestMinitestTest < TestMinitestRunnable
-  def test_dup
-    setup_marshal Minitest::Test do |tc|
-      tc.time = 3.14
-    end
-
-    assert_marshal %w[@NAME @assertions @failures @klass @source_location @time] do |new_tc|
-      assert_in_epsilon 3.14, new_tc.time
-    end
   end
 end
 

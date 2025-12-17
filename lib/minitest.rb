@@ -504,22 +504,6 @@ module Minitest
       @@runnables
     end
 
-    @@marshal_dump_warned = false
-
-    def marshal_dump # :nodoc:
-      unless @@marshal_dump_warned then
-        warn ["Minitest::Runnable#marshal_dump is deprecated.",
-              "You might be violating internals. From", caller(1..1).first].join " "
-        @@marshal_dump_warned = true
-      end
-
-      [self.name, self.failures, self.assertions, self.time]
-    end
-
-    def marshal_load ary # :nodoc:
-      self.name, self.failures, self.assertions, self.time = ary
-    end
-
     def failure # :nodoc:
       self.failures.first
     end
@@ -650,9 +634,6 @@ module Minitest
 
   class Result < Runnable
     include Minitest::Reportable
-
-    undef_method :marshal_dump
-    undef_method :marshal_load
 
     ##
     # The class name of the test result.
