@@ -971,7 +971,7 @@ class TestMinitestUnitTestCase < Minitest::Test
 
   def teardown
     assert_equal(@assertion_count, @tc.assertions,
-                 "expected #{@assertion_count} assertions to be fired during the test, not #{@tc.assertions}") if @tc.passed?
+                 message { "expected #{@assertion_count} assertions to be fired during the test, not #{@tc.assertions}" }) if @tc.passed?
   end
 
   def non_verbose
@@ -1100,35 +1100,6 @@ class TestMinitestUnitRecording < MetaMetaMetaTestCase
     recorded = first_reporter.results.map(&:failures).flatten.map { |f| f.error.class }
 
     assert_equal expected, recorded
-  end
-
-  def test_run_with_bogus_reporter
-    # https://github.com/seattlerb/minitest/issues/659
-    # TODO: remove test for minitest 6
-    @tu = Class.new FakeNamedTest do
-      def test_method
-        assert true
-      end
-    end
-
-    bogus_reporter = Class.new do      # doesn't subclass AbstractReporter
-      def start; @success = false; end
-      # def prerecord klass, name; end # doesn't define full API
-      def record _result; @success = true; end
-      def report; end
-      def passed?; end
-      def results; end
-      def success?; @success; end
-    end.new
-
-    self.reporter = Minitest::CompositeReporter.new
-    reporter << bogus_reporter
-
-    Minitest::Runnable.runnables.delete @tu
-
-    @tu.run reporter, {}
-
-    assert_predicate bogus_reporter, :success?
   end
 
   def test_record_passing

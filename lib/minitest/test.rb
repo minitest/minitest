@@ -12,10 +12,6 @@ module Minitest
     include Minitest::Reportable
     include Minitest::Assertions
 
-    def class_name # :nodoc:
-      self.class.name # for Minitest::Reportable
-    end
-
     PASSTHROUGH_EXCEPTIONS = [NoMemoryError, SignalException, SystemExit] # :nodoc:
 
     SETUP_METHODS = %w[ before_setup setup after_setup ] # :nodoc:
