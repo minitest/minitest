@@ -205,6 +205,12 @@ describe Minitest::Spec do
 
     bad = %w[not raise throw send output be_silent verify]
 
+    if methods.include? "must_infect" then # from test_minitest_mock.rb
+      expected_musts += %w[must_infect must_infect_without_flipping]
+      expected_musts.sort!
+      bad << "infect"
+    end
+
     expected_wonts = expected_musts.map { |m| m.sub("must", "wont") }.sort
     expected_wonts.reject! { |m| m =~ /wont_#{Regexp.union(*bad)}/ }
 
@@ -543,67 +549,6 @@ describe Minitest::Spec do
 
     it "can use expect in a thread" do
       Thread.new { _(1 + 1).must_equal 2 }.join
-    end
-
-    it "can NOT use must_equal in a thread. It must use expect in a thread" do
-      skip "N/A" if ENV["MT_NO_EXPECTATIONS"]
-
-      assert_raises RuntimeError, Minitest::UnexpectedWarning do
-        capture_io do
-          Thread.new { (1 + 1).must_equal 2 }.join
-        end
-      end
-    end
-
-    it "fails gracefully when expectation used outside of `it`" do
-      skip "N/A" if ENV["MT_NO_EXPECTATIONS"]
-
-      @assertion_count += 2 # assert_match is compound
-
-      e = assert_raises RuntimeError, Minitest::UnexpectedWarning do
-        capture_io do
-          Thread.new { # forces ctx to be nil
-            describe "woot" do
-              (1 + 1).must_equal 2
-            end
-          }.join
-        end
-      end
-
-      exp = "Calling #must_equal outside of test."
-      exp = "DEPRECATED: global use of must_equal from" if error_on_warn?
-
-      assert_match exp, e.message
-    end
-
-    it "deprecates expectation used without _" do
-      skip "N/A" if ENV["MT_NO_EXPECTATIONS"]
-
-      @assertion_count += 1
-      @assertion_count += 2 unless error_on_warn?
-
-      exp = /DEPRECATED: global use of must_equal from/
-
-      assert_deprecation exp do
-        (1 + 1).must_equal 2
-      end
-    end
-
-    # https://github.com/seattlerb/minitest/issues/837
-    # https://github.com/rails/rails/pull/39304
-    it "deprecates expectation used without _ with empty backtrace_filter" do
-      skip "N/A" if ENV["MT_NO_EXPECTATIONS"]
-
-      @assertion_count += 1
-      @assertion_count += 2 unless error_on_warn?
-
-      exp = /DEPRECATED: global use of must_equal from/
-
-      with_empty_backtrace_filter do
-        assert_deprecation exp do
-          (1 + 1).must_equal 2
-        end
-      end
     end
   end
 
@@ -1122,8 +1067,8 @@ describe Minitest::Spec, :infect_an_assertion do
     self.class.infect_mock.assert_infects exp, act, msg, foo: foo, bar: bar
   end
 
-  infect_an_assertion :assert_infects, :must_infect
-  infect_an_assertion :assert_infects, :must_infect_without_flipping, :dont_flip
+  Minitest::Expectations.infect_an_assertion :assert_infects, :must_infect
+  Minitest::Expectations.infect_an_assertion :assert_infects, :must_infect_without_flipping, :dont_flip
 
   it "infects assertions with kwargs" do
     mock = Minitest::Mock.new

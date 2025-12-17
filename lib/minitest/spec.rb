@@ -4,24 +4,12 @@ class Module # :nodoc:
   def infect_an_assertion meth, new_name, dont_flip = false # :nodoc:
     block = dont_flip == :block
     dont_flip = false if block
-    target_obj = block ? "_{obj.method}" : "_(obj)"
 
     # https://eregon.me/blog/2021/02/13/correct-delegation-in-ruby-2-27-3.html
     # Drop this when we can drop ruby 2.6 (aka after rails 6.1 EOL, ~2024-06)
     kw_extra = "ruby2_keywords %p" % [new_name] if respond_to? :ruby2_keywords, true
 
-    # warn "%-22p -> %p %p" % [meth, new_name, dont_flip]
     self.class_eval <<-EOM, __FILE__, __LINE__ + 1
-      def #{new_name} *args
-        where = Minitest.filter_backtrace(caller).first
-        where = where.split(/:in /, 2).first # clean up noise
-        Kernel.warn "DEPRECATED: global use of #{new_name} from #\{where}. Use #{target_obj}.#{new_name} instead. This will fail in Minitest 6."
-        Minitest::Expectation.new(self, Minitest::Spec.current).#{new_name}(*args)
-      end
-      #{kw_extra}
-    EOM
-
-    Minitest::Expectation.class_eval <<-EOM, __FILE__, __LINE__ + 1
       def #{new_name} *args
         raise "Calling ##{new_name} outside of test." unless ctx
         case
@@ -109,15 +97,6 @@ end
 # For a list of expectations, see Minitest::Expectations.
 
 class Minitest::Spec < Minitest::Test
-
-  def self.current # :nodoc:
-    Thread.current[:current_spec]
-  end
-
-  def initialize name # :nodoc:
-    super
-    Thread.current[:current_spec] = self
-  end
 
   ##
   # Oh look! A Minitest::Spec::DSL module! Eat your heart out DHH.
@@ -313,9 +292,6 @@ class Minitest::Spec < Minitest::Test
       # straight-expectation methods (on Object) because it stores its
       # test context, bypassing our hacky use of thread-local variables.
       #
-      # NOTE: At some point, the methods on Object will be deprecated
-      # and then removed.
-      #
       # It is also aliased to #value and #expect for your aesthetic
       # pleasure:
       #
@@ -329,11 +305,6 @@ class Minitest::Spec < Minitest::Test
 
       alias value _
       alias expect _
-
-      def before_setup # :nodoc:
-        super
-        Thread.current[:current_spec] = self
-      end
     end
 
     def self.extended obj # :nodoc:
@@ -348,6 +319,6 @@ end
 
 require_relative "expectations"
 
-class Object # :nodoc:
-  include Minitest::Expectations unless ENV["MT_NO_EXPECTATIONS"]
+class Minitest::Expectation
+  include Minitest::Expectations
 end
