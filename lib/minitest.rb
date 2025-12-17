@@ -1122,16 +1122,6 @@ module Minitest
     end
 
     ##
-    # Is this running on maglev?
-
-    def maglev? platform = defined?(RUBY_ENGINE) && RUBY_ENGINE
-      where = Minitest.filter_backtrace(caller).first
-      where = where.split(":in ", 2).first # clean up noise
-      warn "DEPRECATED: `maglev?` called from #{where}. This will fail in Minitest 6."
-      "maglev" == platform
-    end
-
-    ##
     # Is this running on mri?
 
     def mri? platform = RUBY_DESCRIPTION
@@ -1143,16 +1133,6 @@ module Minitest
 
     def osx? platform = RUBY_PLATFORM
       platform.include? "darwin"
-    end
-
-    ##
-    # Is this running on rubinius?
-
-    def rubinius? platform = defined?(RUBY_ENGINE) && RUBY_ENGINE
-      where = Minitest.filter_backtrace(caller).first
-      where = where.split(":in ", 2).first # clean up noise
-      warn "DEPRECATED: `rubinius?` called from #{where}. This will fail in Minitest 6."
-      "rbx" == platform
     end
 
     ##

@@ -288,12 +288,11 @@ describe Minitest::Spec do
       _(6 * 7.0).wont_be_close_to 42
     end
 
-    x = "1.0e-05"
-    assert_triggered "Expected |42 - 42.0| (0.0) to not be <= #{x}." do
+    assert_triggered "Expected |42 - 42.0| (0.0) to not be <= 1.0e-05." do
       _(6 * 7.0).wont_be_close_to 42, 0.00001
     end
 
-    assert_triggered "msg.\nExpected |42 - 42.0| (0.0) to not be <= #{x}." do
+    assert_triggered "msg.\nExpected |42 - 42.0| (0.0) to not be <= 1.0e-05." do
       _(6 * 7.0).wont_be_close_to 42, 0.00001, "msg"
     end
   end
@@ -303,17 +302,15 @@ describe Minitest::Spec do
 
     assert_success _(24).wont_be_within_epsilon(42)
 
-    x = "0.042"
-    assert_triggered "Expected |42 - 42.0| (0.0) to not be <= #{x}." do
+    assert_triggered "Expected |42 - 42.0| (0.0) to not be <= 0.042." do
       _(6 * 7.0).wont_be_within_epsilon 42
     end
 
-    x = "0.00042"
-    assert_triggered "Expected |42 - 42.0| (0.0) to not be <= #{x}." do
+    assert_triggered "Expected |42 - 42.0| (0.0) to not be <= 0.00042." do
       _(6 * 7.0).wont_be_within_epsilon 42, 0.00001
     end
 
-    assert_triggered "msg.\nExpected |42 - 42.0| (0.0) to not be <= #{x}." do
+    assert_triggered "msg.\nExpected |42 - 42.0| (0.0) to not be <= 0.00042." do
       _(6 * 7.0).wont_be_within_epsilon 42, 0.00001, "msg"
     end
   end
@@ -327,12 +324,11 @@ describe Minitest::Spec do
       _(1.0 / 100).must_be_close_to 0.0
     end
 
-    x = "1.0e-06"
-    assert_triggered "Expected |0.0 - 0.001| (0.001) to be <= #{x}." do
+    assert_triggered "Expected |0.0 - 0.001| (0.001) to be <= 1.0e-06." do
       _(1.0 / 1000).must_be_close_to 0.0, 0.000001
     end
 
-    assert_triggered "msg.\nExpected |0.0 - 0.001| (0.001) to be <= #{x}." do
+    assert_triggered "msg.\nExpected |0.0 - 0.001| (0.001) to be <= 1.0e-06." do
       _(1.0 / 1000).must_be_close_to 0.0, 0.000001, "msg"
     end
   end
