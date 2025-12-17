@@ -9,9 +9,11 @@ lib/minitest.rb
 lib/minitest/assertions.rb
 lib/minitest/autorun.rb
 lib/minitest/benchmark.rb
+lib/minitest/bisect.rb
 lib/minitest/compress.rb
 lib/minitest/error_on_warning.rb
 lib/minitest/expectations.rb
+lib/minitest/find_minimal_combination.rb
 lib/minitest/hell.rb
 lib/minitest/manual_plugins.rb
 lib/minitest/parallel.rb
@@ -25,6 +27,8 @@ lib/minitest/sprint_plugin.rb
 lib/minitest/test.rb
 lib/minitest/test_task.rb
 test/minitest/metametameta.rb
+test/minitest/test_bisect.rb
+test/minitest/test_find_minimal_combination.rb
 test/minitest/test_minitest_assertions.rb
 test/minitest/test_minitest_benchmark.rb
 test/minitest/test_minitest_reporter.rb

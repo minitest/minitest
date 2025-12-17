@@ -16,6 +16,12 @@ module Minitest
     # Process and run minitest cmdline.
 
     def self.run args = ARGV
+      if ARGV.delete("--bisect") or ARGV.delete("-b") then
+        require_relative "bisect"
+
+        return Minitest::Bisect.run ARGV
+      end
+
       Minitest::PathExpander.new(args).process { |f|
         require "./#{f}" if File.file? f
       }

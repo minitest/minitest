@@ -189,6 +189,8 @@ module Minitest
         options[:show_skips] = true
       end
 
+      opts.on "-b", "--bisect", "Run minitest in bisect-mode to isolate flaky tests."
+
       opts.on "-n", "--name PATTERN", "Include /regexp/ or string for run." do |a|
         options[:filter] = a
       end
