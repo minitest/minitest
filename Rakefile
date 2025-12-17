@@ -15,23 +15,6 @@ Hoe.spec "minitest" do
   require_ruby_version ">= 3.2"
 
   dependency "prism", "~> 1.5"
-
-  self.post_install_message = <<~EOM
-    NOTE: minitest 5 will be the last in the minitest family to support
-          ruby 1.8 to 2.7. If you need to keep using these versions,
-          you need to pin your dependency to minitest with something
-          like "~> 5.0". See History.rdoc to locate compatible
-          versions.
-
-          Further, minitest 6 will be dropping the following:
-
-          + MiniTest (it's been Minitest for >10 years)
-          + MiniTest::Unit
-          + MiniTest::Unit::TestCase
-          + assert_send (unless you argue for it well)
-          + assert_equal nil, obj
-          + mocks and stubs: moving minitest/mock.rb to its own gem
-  EOM
 end
 
 desc "Find missing expectations"
