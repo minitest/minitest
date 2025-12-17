@@ -200,7 +200,6 @@ describe Minitest::Spec do
                         must_raise
                         must_respond_to
                         must_throw
-                        must_verify
                         path_must_exist]
 
     bad = %w[not raise throw send output be_silent verify]
@@ -1059,36 +1058,36 @@ class ValueMonadTest < Minitest::Test
 end
 
 describe Minitest::Spec, :infect_an_assertion do
-  class << self
-    attr_accessor :infect_mock
+  attr_accessor :infect_mock
+
+  before do
+    mock = Object.new
+    mock.singleton_class.attr_accessor :a, :k
+    def mock.assert_infects *args, **kwargs
+      self.a, self.k = args, kwargs
+    end
+
+    self.infect_mock = mock
   end
 
   def assert_infects exp, act, msg = nil, foo: nil, bar: nil
-    self.class.infect_mock.assert_infects exp, act, msg, foo: foo, bar: bar
+    self.infect_mock.assert_infects exp, act, msg, foo: foo, bar: bar
   end
 
   Minitest::Expectations.infect_an_assertion :assert_infects, :must_infect
   Minitest::Expectations.infect_an_assertion :assert_infects, :must_infect_without_flipping, :dont_flip
 
   it "infects assertions with kwargs" do
-    mock = Minitest::Mock.new
-    mock.expect :assert_infects, true, [:exp, :act, nil], foo: :foo, bar: :bar
-
-    self.class.infect_mock = mock
-
     _(:act).must_infect :exp, foo: :foo, bar: :bar
 
-    assert_mock mock
+    assert_equal [:exp, :act, nil], infect_mock.a
+    assert_equal({foo: :foo, bar: :bar}, infect_mock.k)
   end
 
   it "infects assertions with kwargs (dont_flip)" do
-    mock = Minitest::Mock.new
-    mock.expect :assert_infects, true, [:act, :exp, nil], foo: :foo, bar: :bar
-
-    self.class.infect_mock = mock
-
     _(:act).must_infect_without_flipping :exp, foo: :foo, bar: :bar
 
-    assert_mock mock
+    assert_equal [:act, :exp, nil], infect_mock.a
+    assert_equal({foo: :foo, bar: :bar}, infect_mock.k)
   end
 end

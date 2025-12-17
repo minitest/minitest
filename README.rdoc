@@ -1,4 +1,4 @@
-= minitest/{test,spec,mock,benchmark}
+= minitest/{test,spec,benchmark}
 
 home :: https://minite.st/
 code :: https://github.com/minitest/minitest
@@ -11,7 +11,7 @@ vim  :: https://github.com/vim-test/vim-test
 == DESCRIPTION:
 
 minitest provides a complete suite of testing facilities supporting
-TDD, BDD, mocking, and benchmarking.
+TDD, BDD, and benchmarking.
 
     "I had a class with Jim Weirich on testing last week and we were
      allowed to choose our testing frameworks. Kirk Haines and I were
@@ -36,9 +36,6 @@ minitest/benchmark is an awesome way to assert the performance of your
 algorithms in a repeatable manner. Now you can assert that your newb
 co-worker doesn't replace your linear algorithm with an exponential
 one!
-
-minitest/mock by Steven Baker, is a beautifully tiny mock (and stub)
-object framework.
 
 minitest/pride shows pride in testing and adds coloring to your test
 output. I guess it is an example of how to write IO pipes too. :P
@@ -69,7 +66,6 @@ extract-method refactorings still apply.
 * minitest/autorun - the easy and explicit way to run all your tests.
 * minitest/test - a very fast, simple, and clean test system.
 * minitest/spec - a very fast, simple, and clean spec system.
-* minitest/mock - a simple and clean mock/stub system.
 * minitest/benchmark - an awesome way to assert your algorithm's performance.
 * minitest/pride - show your pride in testing!
 * minitest/test_task - a full-featured and clean rake task generator.
@@ -190,85 +186,6 @@ outputs something like:
   bench_other_algorithm	 0.061679	 0.792797	 7.869932
 
 Output is tab-delimited to make it easy to paste into a spreadsheet.
-
-=== Mocks
-
-Mocks and stubs defined using terminology by Fowler & Meszaros at
-https://www.martinfowler.com/bliki/TestDouble.html:
-
-"Mocks are pre-programmed with expectations which form a specification
-of the calls they are expected to receive. They can throw an exception
-if they receive a call they don't expect and are checked during
-verification to ensure they got all the calls they were expecting."
-
-  class MemeAsker
-    def initialize(meme)
-      @meme = meme
-    end
-
-    def ask(question)
-      method = question.tr(" ", "_") + "?"
-      @meme.__send__(method)
-    end
-  end
-
-  require "minitest/autorun"
-
-  describe MemeAsker, :ask do
-    describe "when passed an unpunctuated question" do
-      it "should invoke the appropriate predicate method on the meme" do
-        @meme = Minitest::Mock.new
-        @meme_asker = MemeAsker.new @meme
-        @meme.expect :will_it_blend?, :return_value
-
-        @meme_asker.ask "will it blend"
-
-        @meme.verify
-      end
-    end
-  end
-
-==== Multi-threading and Mocks
-
-Minitest mocks do not support multi-threading. If it works, fine, if it doesn't
-you can use regular ruby patterns and facilities like local variables. Here's
-an example of asserting that code inside a thread is run:
-
-  def test_called_inside_thread
-    called = false
-    pr = Proc.new { called = true }
-    thread = Thread.new(&pr)
-    thread.join
-    assert called, "proc not called"
-  end
-
-=== Stubs
-
-Mocks and stubs are defined using terminology by Fowler & Meszaros at
-https://www.martinfowler.com/bliki/TestDouble.html:
-
-"Stubs provide canned answers to calls made during the test".
-
-Minitest's stub method overrides a single method for the duration of
-the block.
-
-  def test_stale_eh
-    obj_under_test = Something.new
-
-    refute obj_under_test.stale?
-
-    Time.stub :now, Time.at(0) do   # stub goes away once the block is done
-      assert obj_under_test.stale?
-    end
-  end
-
-A note on stubbing: In order to stub a method, the method must
-actually exist prior to stubbing. Use a singleton method to create a
-new non-existing method:
-
-  def obj_under_test.fake_method
-    ...
-  end
 
 === Running Your Tests
 
@@ -765,8 +682,8 @@ rematch                     :: Declutter your test files from large hardcoded da
                                and update them automatically when your code changes.
 rspec2minitest              :: Easily translate any RSpec matchers to Minitest
                                assertions and expectations.
-stubberry                   :: Multiple stubbing 'berries', sweet and useful 
-                               stub helpers and assertions. ( stub_must, 
+stubberry                   :: Multiple stubbing 'berries', sweet and useful
+                               stub helpers and assertions. ( stub_must,
                                assert_method_called, stubbing ORM objects by id )
 
 == Unknown Extensions:

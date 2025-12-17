@@ -1,4 +1,3 @@
-.autotest
 History.rdoc
 Manifest.txt
 README.rdoc
@@ -14,7 +13,6 @@ lib/minitest/error_on_warning.rb
 lib/minitest/expectations.rb
 lib/minitest/hell.rb
 lib/minitest/manual_plugins.rb
-lib/minitest/mock.rb
 lib/minitest/parallel.rb
 lib/minitest/pride.rb
 lib/minitest/pride_plugin.rb
@@ -24,7 +22,6 @@ lib/minitest/test_task.rb
 test/minitest/metametameta.rb
 test/minitest/test_minitest_assertions.rb
 test/minitest/test_minitest_benchmark.rb
-test/minitest/test_minitest_mock.rb
 test/minitest/test_minitest_reporter.rb
 test/minitest/test_minitest_spec.rb
 test/minitest/test_minitest_test.rb
