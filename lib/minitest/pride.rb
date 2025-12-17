@@ -1,4 +1,4 @@
 require_relative "../minitest"
 
-Minitest.load_plugins
+Minitest.load :pride
 Minitest::PrideIO.pride!
