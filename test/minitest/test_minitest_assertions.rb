@@ -283,26 +283,8 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_equal_does_not_allow_lhs_nil
-    if Minitest::VERSION >= "6" then
-      warn "Time to strip the MT5 test"
-
-      @assertion_count += 1
-      assert_triggered(/Use assert_nil if expecting nil/) do
-        @tc.assert_equal nil, nil
-      end
-    else
-      err_re = /.*?test_minitest_\w+.rb:\d+: warning: DEPRECATED: Use assert_nil if expecting nil. This will fail in Minitest 6./
-      err_re = "" if $-w.nil?
-
-      assert_deprecation err_re do
-        @tc.assert_equal nil, nil
-      end
-    end
-  end
-
-  def test_assert_equal_does_not_allow_lhs_nil_triggered
-    assert_triggered "Expected: nil\n  Actual: false" do
-      @tc.assert_equal nil, false
+    assert_triggered(/Use assert_nil if expecting nil/) do
+      @tc.assert_equal nil, nil
     end
   end
 

@@ -268,15 +268,9 @@ describe Minitest::Spec do
     end
   end
 
-  it "needs to warn on equality with nil" do
-    @assertion_count = 3
-    @assertion_count += 2 unless error_on_warn? # 2 extra assertions
-
-    exp = /.*?test_minitest_\w+.rb:\d+: warning: DEPRECATED: Use assert_nil if expecting nil. This will fail in Minitest 6./
-
-    assert_deprecation exp do
-      assert_success _(nil).must_equal(nil)
-    end
+  it "needs to fail on equality with nil" do
+    @assertion_count -= 2
+    expect { _(nil).must_equal(nil) }.must_raise Minitest::Assertion
   end
 
   it "needs to verify floats outside a delta" do
