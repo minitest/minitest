@@ -1008,7 +1008,7 @@ class TestMinitestUnitTestCase < Minitest::Test
     @assertion_count = 0
 
     sample_test_case = Class.new FakeNamedTest do
-      def self.test_order; :sorted end
+      def self.run_order; :sorted end
       def test_test3; assert "does not matter" end
       def test_test2; assert "does not matter" end
       def test_test1; assert "does not matter" end
@@ -1018,14 +1018,14 @@ class TestMinitestUnitTestCase < Minitest::Test
     assert_equal expected, sample_test_case.runnable_methods
   end
 
-  def test_i_suck_and_my_tests_are_order_dependent_bang_sets_test_order_alpha
+  def test_i_suck_and_my_tests_are_order_dependent_bang_sets_run_order_alpha
     @assertion_count = 0
 
     shitty_test_case = Class.new FakeNamedTest
 
     shitty_test_case.i_suck_and_my_tests_are_order_dependent!
 
-    assert_equal :alpha, shitty_test_case.test_order
+    assert_equal :alpha, shitty_test_case.run_order
   end
 
   def test_i_suck_and_my_tests_are_order_dependent_bang_does_not_warn
@@ -1033,7 +1033,7 @@ class TestMinitestUnitTestCase < Minitest::Test
 
     shitty_test_case = Class.new FakeNamedTest
 
-    def shitty_test_case.test_order; :lol end
+    def shitty_test_case.run_order; :lol end
 
     assert_silent do
       shitty_test_case.i_suck_and_my_tests_are_order_dependent!

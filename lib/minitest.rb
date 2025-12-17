@@ -343,7 +343,7 @@ module Minitest
 
   def self.run_all_suites reporter, options
     suites = Runnable.runnables.shuffle
-    parallel, serial = suites.partition { |s| s.test_order == :parallel }
+    parallel, serial = suites.partition { |s| s.run_order == :parallel }
 
     # If we run the parallel tests before the serial tests, the parallel tests
     # could run in parallel with the serial tests. This would be bad because
@@ -482,7 +482,7 @@ module Minitest
     # Defines the order to run tests (:random by default). Override
     # this or use a convenience method to change it for your tests.
 
-    def self.test_order
+    def self.run_order
       :random
     end
 

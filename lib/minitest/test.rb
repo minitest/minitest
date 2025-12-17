@@ -30,8 +30,8 @@ module Minitest
 
     def self.i_suck_and_my_tests_are_order_dependent!
       class << self
-        undef_method :test_order if method_defined? :test_order
-        define_method :test_order do :alpha end
+        undef_method :run_order if method_defined? :run_order
+        define_method :run_order do :alpha end
       end
     end
 
@@ -61,20 +61,20 @@ module Minitest
 
     ##
     # Returns all instance methods starting with "test_". Based on
-    # #test_order, the methods are either sorted, randomized
+    # #run_order, the methods are either sorted, randomized
     # (default), or run in parallel.
 
     def self.runnable_methods
       methods = methods_matching(/^test_/)
 
-      case self.test_order
+      case self.run_order
       when :random, :parallel then
         srand Minitest.seed
         methods.sort.shuffle
       when :alpha, :sorted then
         methods.sort
       else
-        raise "Unknown test_order: #{self.test_order.inspect}"
+        raise "Unknown_order: %p" % [self.run_order]
       end
     end
 

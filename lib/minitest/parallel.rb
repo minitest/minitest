@@ -63,7 +63,7 @@ module Minitest
           Minitest.parallel_executor << [klass, method_name, reporter]
         end
 
-        def test_order
+        def run_order
           :parallel
         end
       end
