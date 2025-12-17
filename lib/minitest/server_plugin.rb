@@ -32,10 +32,12 @@ class Minitest::ServerReporter < Minitest::AbstractReporter
     r = result
     c = r.class
 
-    if defined?(Minitest::Result) && Minitest::Result === r then
+    case r
+    when Minitest::Result then
       file, = r.source_location
       cn = r.klass
     else
+      # TODO: remove? when is this used?
       file, = r.method(r.name).source_location
       cn = c.name
     end
