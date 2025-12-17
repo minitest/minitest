@@ -1554,10 +1554,10 @@ class TestMinitestAssertionHelpers < Minitest::Test
     assert_equal "blah1.\nblah2.", message("blah1") { "blah2" }.call
 
     message = proc { "blah1" }
-    assert_equal "blah1.\nblah2.", message(message) { "blah2" }.call
+    assert_equal "blah1", message(message) { "blah2" }.call
 
     message = message { "blah1" }
-    assert_equal "blah1.\nblah2.", message(message) { "blah2" }.call
+    assert_equal "blah1.", message(message) { "blah2" }.call
   end
 
   def test_message_deferred

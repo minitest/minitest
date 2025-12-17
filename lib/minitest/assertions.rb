@@ -195,14 +195,6 @@ module Minitest
         .split(":in ", 2).first # clean up noise
     end
 
-    def _caller_uplevel # :nodoc:
-      backtrace = caller
-      real_caller = Minitest.filter_backtrace(caller).first
-      backtrace.index(real_caller)
-    end
-
-    E = "" # :nodoc:
-
     ##
     # Fails unless <tt>exp == act</tt> printing the difference between
     # the two, if possible.
@@ -217,7 +209,7 @@ module Minitest
     # See also: Minitest::Assertions.diff
 
     def assert_equal exp, act, msg = nil
-      msg = message(msg, E) { diff exp, act }
+      msg = message(msg, nil) { diff exp, act }
 
       refute_nil exp, message { "Use assert_nil if expecting nil" } if exp.nil? # don't count
 
@@ -603,13 +595,16 @@ module Minitest
     end
 
     ##
-    # Returns a proc that will output +msg+ along with the default message.
+    # Returns a proc that delays generation of an output message. If
+    # +msg+ is a proc (eg, from another +message+ call) return +msg+
+    # as-is. Otherwise, return a proc that will output +msg+ along
+    # with the value of the result of the block passed to +message+.
 
-    def message msg = nil, ending = nil, &default
+    def message msg = nil, ending = ".", &default
+      return msg if Proc === msg
       proc {
-        msg = msg.call.chomp(".") if Proc === msg
         custom_message = "#{msg}.\n" unless msg.nil? or msg.to_s.empty?
-        "#{custom_message}#{default.call}#{ending || "."}"
+        "#{custom_message}#{default.call}#{ending}"
       }
     end
 
