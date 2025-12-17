@@ -462,21 +462,6 @@ module Minitest
     end
 
     ##
-    # +send_ary+ is a receiver, message and arguments.
-    #
-    # Fails unless the call returns a true value
-
-    def assert_send send_ary, m = nil
-      warn "DEPRECATED: assert_send.", uplevel: _caller_uplevel
-
-      recv, msg, *args = send_ary
-      m = message(m) {
-        "Expected #{mu_pp recv}.#{msg}(*#{mu_pp args}) to return true"
-      }
-      assert recv.__send__(msg, *args), m
-    end
-
-    ##
     # Fails if the block outputs anything to stderr or stdout.
     #
     # See also: #assert_output

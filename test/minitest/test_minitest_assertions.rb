@@ -944,28 +944,6 @@ class TestMinitestAssertions < Minitest::Test
     end
   end
 
-  def test_assert_send
-    @assertion_count = 0 if error_on_warn?
-    assert_deprecation(/DEPRECATED: assert_send/) do
-      @tc.assert_send [1, :<, 2]
-    end
-  end
-
-  def test_assert_send_bad
-    if error_on_warn? then
-      @assertion_count = 0
-      assert_deprecation(/DEPRECATED: assert_send/) do
-        @tc.assert_send [1, :>, 2]
-      end
-    else
-      assert_triggered "Expected 1.>(*[2]) to return true." do
-        assert_deprecation(/DEPRECATED: assert_send/) do
-          @tc.assert_send [1, :>, 2]
-        end
-      end
-    end
-  end
-
   def test_assert_silent
     @assertion_count = 2
 
@@ -1123,7 +1101,7 @@ class TestMinitestAssertions < Minitest::Test
 
     # These don't have corresponding refutes _on purpose_. They're
     # useless and will never be added, so don't bother.
-    ignores = %w[assert_output assert_raises assert_send
+    ignores = %w[assert_output assert_raises
                  assert_silent assert_throws assert_mock]
 
     ignores += %w[assert_allocations] # for minitest-gcstats
