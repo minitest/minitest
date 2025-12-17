@@ -191,8 +191,8 @@ module Minitest
 
       opts.on "-b", "--bisect", "Run minitest in bisect-mode to isolate flaky tests."
 
-      opts.on "-n", "--name PATTERN", "Include /regexp/ or string for run." do |a|
-        options[:filter] = a
+      opts.on "-i", "--include PATTERN", "Include /regexp/ or string for run." do |a|
+        options[:include] = a
       end
 
       opts.on "-e", "--exclude PATTERN", "Exclude /regexp/ or string from run." do |a|
@@ -204,9 +204,9 @@ module Minitest
       def opts.alias(from, to) = (dict = topdict(from) ; dict[to] = dict[from])
 
       # these will work but won't show up in --help output:
-      opts.alias "name", "include"
-      opts.alias "n",    "i"
-      opts.alias "e",    "x"
+      opts.alias "include", "name"
+      opts.alias "i",       "n"
+      opts.alias "e",       "x"
 
       opts.on "-S", "--skip CODES", String, "Skip reporting of certain types of results (eg E)." do |s|
         options[:skip] = s.chars.to_a
@@ -324,7 +324,7 @@ module Minitest
   end
 
   def self.empty_run! options # :nodoc:
-    filter = options[:filter]
+    filter = options[:include]
     return true unless filter # no filter, but nothing ran == success
 
     warn "Nothing ran for filter: %s" % [filter]
@@ -422,11 +422,11 @@ module Minitest
 
     ##
     # Returns an array of filtered +runnable_methods+. Uses
-    # options[:filter] (--name arguments) and options[:exclude]
+    # options[:include] (--include arguments) and options[:exclude]
     # (--exclude arguments) values to filter.
 
-    def self.filter_runnable_methods options
-      pos = options[:filter]
+    def self.filter_runnable_methods options={}
+      pos = options[:include]
       neg = options[:exclude]
 
       pos = Regexp.new $1 if pos.kind_of?(String) && pos =~ %r%/(.*)/%

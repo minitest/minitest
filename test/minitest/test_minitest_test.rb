@@ -342,6 +342,20 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     assert_instance_of Integer, Minitest.seed
   end
 
+  def test_filter_runnable_methods
+    cls = Class.new Minitest::Runnable
+    def cls.runnable_methods
+      %w[ x y z ]
+    end
+
+    assert_equal %w[x y z], cls.filter_runnable_methods
+    assert_equal %w[x y],   cls.filter_runnable_methods(exclude: "z")
+    assert_equal %w[x],     cls.filter_runnable_methods(include: "x")
+
+    assert_empty            cls.filter_runnable_methods(exclude: "/./")
+    assert_empty            cls.filter_runnable_methods(include: "x", exclude: "x")
+  end
+
   def test_run_failing_filtered
     setup_basic_tu
 
