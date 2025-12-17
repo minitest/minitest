@@ -457,7 +457,7 @@ module Minitest
         warn "Current: %s#%s %.2fs" % [self, name, Minitest.clock_time - t0]
       end
 
-      with_info_handler reporter do
+      with_info_handler do
         filtered_methods.each do |method_name|
           name = method_name
           t0 = Minitest.clock_time
@@ -486,7 +486,7 @@ module Minitest
       :random
     end
 
-    def self.with_info_handler reporter, &block # :nodoc:
+    def self.with_info_handler _reporter=nil, &block # :nodoc:
       on_signal ::Minitest.info_signal, @_info_handler, &block
     end
 
