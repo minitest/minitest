@@ -6,6 +6,7 @@ $:.unshift "lib" # to pick up lib/minitest/test_task.rb when minitest not instal
 Hoe.plugin :seattlerb
 Hoe.plugin :isolate
 Hoe.plugin :rdoc
+Hoe.plugin :cov
 
 Hoe.spec "minitest" do
   developer "Ryan Davis", "ryand-ruby@zenspider.com"
@@ -15,6 +16,8 @@ Hoe.spec "minitest" do
   require_ruby_version ">= 3.2"
 
   dependency "prism", "~> 1.5"
+
+  self.cov_filter = %w[ tmp ]
 end
 
 desc "Find missing expectations"
