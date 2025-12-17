@@ -1,3 +1,58 @@
+=== 6.0.0 / 2025-12-17
+
+This is a major release. Read this.
+
+Please give feedback here: https://github.com/minitest/minitest/issues/1040
+
+Oh god... here we go... (again)
+
+* 8 deaths in the family(!!):
+
+  * Deleted MiniTest and MiniTest::Unit::TestCase compatibility namespaces.
+  * Deleted all use of Marshal for serialization.
+  * Deleted maglev? and rubinius? guard methods. LOL.
+  * Deleted all minitest/spec expectations from Object. Use _/value/expect.
+  * Dropped minitest/mock.rb. This has been extracted to the minitest-mock gem.
+  * assert_equal(nil, value) no longer allowed. Use assert_nil to be explicit.
+  * Removed assert_send. Use assert_predicate or assert_operator.
+  * Removed Minitest::Test#class_name.
+
+* 7 major (oft incompatible) changes:
+
+  * Big: Major refactored MT6's run path!
+    * Minitest.__run -> Minitest.run_all_suites
+    * Runnable.run -> Runnable.run_suite & Runnable.filter_runnable_methods
+    * Runnable.run_one_method -> Runnable.run
+    * Removed Minitest.run_one_method (might bring it back to raise?)
+  * Removed deprecated ENV["N"] to specify number of parallel tests. Use MT_CPU.
+  * Renamed options[:filter] to options[:include], added --include cmdline option.
+    * --name is still handled, but that will be removed in the future.
+  * Renamed Minitest::Runnable#test_order to #run_order.
+  * If #message is passed a proc then that proc overrides all other output.
+    * They are no longer chained!
+    * And it does less for formatting of your output.
+  * Removed reporter arg from with_info_handler as it has never(?) been used. (HACK?)
+  * Plugin loading is now opt-in!
+    * Require the plugin in your test_helper.
+    * Or use Minitest.load :x
+    * Or call Minitest.load_plugins for the old autoloading behavior.
+
+* 5 additions:
+
+  * Added minitest-sprint's minitest cmdline, now with line support!
+  * Added minitest-bisect. Run with minitest --bisect or -b.
+  * Added minitest-server.
+  * Added minitest/complete to help with shell's tab-completion of tests.
+  * Vendored latest version of path_expander.
+
+* 5 other:
+
+  * Bumped to ruby 3.2+.
+  * Removed obsolete conditional for CompositeReporter#prerecord.
+  * Removed obsolete version guards around Minitest::Result in reporters.
+  * assert_operator and assert_predicate both call assert_respond_to first.
+  * Assertions reuse themselves a lot more. Bumps assertion count in some places.
+
 === 5.27.0 / 2025-12-11
 
 * 1 major enhancement:
