@@ -566,7 +566,7 @@ class TestMinitestRunner < MetaMetaMetaTestCase
 
   def test_run_with_other_runner
     @tu = Class.new FakeNamedTest do
-      def self.run reporter, options = {}
+      def self.run_suite reporter, options = {}
         @reporter = reporter
         before_my_suite
         super

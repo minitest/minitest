@@ -281,14 +281,13 @@ module Minitest
   #     Minitest.run(args)
   #       Minitest.process_args
   #       Minitest.init_plugins
-  #       Minitest.__run(reporter, options)
+  #       Minitest.run_all_suites(reporter, options)
   #         Runnable.runnables.each |runnable_klass|
-  #           runnable_klass.run(reporter, options)
-  #             filtered_methods = runnable_methods.select {...}.reject {...}
+  #           runnable_klass.run_suite(reporter, options)
+  #             filtered_methods = runnable_klass.filter_runnable_methods options
   #             filtered_methods.each |runnable_method|
-  #               runnable_klass.run_one_method(self, runnable_method, reporter)
-  #                 Minitest.run_one_method(runnable_klass, runnable_method)
-  #                   runnable_klass.new(runnable_method).run
+  #               runnable_klass.run(self, runnable_method, reporter)
+  #                 runnable_klass.new(runnable_method).run
 
   def self.run args = []
     options = process_args args
@@ -307,7 +306,7 @@ module Minitest
     self.parallel_executor.start if parallel_executor.respond_to? :start
     reporter.start
     begin
-      __run reporter, options
+      run_all_suites reporter, options
       finished = true
     rescue Interrupt
       warn "Interrupted. Exiting..."
@@ -343,7 +342,7 @@ module Minitest
   # Internal run method. Responsible for telling all Runnable
   # sub-classes to run.
 
-  def self.__run reporter, options
+  def self.run_all_suites reporter, options
     suites = Runnable.runnables.shuffle
     parallel, serial = suites.partition { |s| s.test_order == :parallel }
 
@@ -352,8 +351,8 @@ module Minitest
     # the serial tests won't lock around Reporter#record. Run the serial tests
     # first, so that after they complete, the parallel tests will lock when
     # recording results.
-    serial.map { |suite| suite.run reporter, options } +
-      parallel.map { |suite| suite.run reporter, options }
+    serial.map { |suite| suite.run_suite reporter, options } +
+      parallel.map { |suite| suite.run_suite reporter, options }
   end
 
   def self.filter_backtrace bt # :nodoc:
@@ -421,11 +420,11 @@ module Minitest
     reset
 
     ##
-    # Responsible for running all runnable methods in a given class,
-    # each in its own instance. Each instance is passed to the
-    # reporter to record.
+    # Returns an array of filtered +runnable_methods+. Uses
+    # options[:filter] (--name arguments) and options[:exclude]
+    # (--exclude arguments) values to filter.
 
-    def self.run reporter, options = {}
+    def self.filter_runnable_methods options
       pos = options[:filter]
       neg = options[:exclude]
 
@@ -433,9 +432,18 @@ module Minitest
       neg = Regexp.new $1 if neg.kind_of?(String) && neg =~ %r%/(.*)/%
 
       # at most 1-2% slower than a 1-pass version, stop optimizing this
-      filtered_methods = self.runnable_methods
+      self.runnable_methods
         .select { |m| !pos ||  pos === m || pos === "#{self}##{m}"  }
         .reject { |m|  neg && (neg === m || neg === "#{self}##{m}") }
+    end
+
+    ##
+    # Responsible for running all runnable methods in a given class,
+    # each in its own instance. Each instance is passed to the
+    # reporter to record.
+
+    def Runnable.run_suite reporter, options = {}
+      filtered_methods = filter_runnable_methods options
 
       return if filtered_methods.empty?
 
@@ -455,7 +463,7 @@ module Minitest
           name = method_name
           t0 = Minitest.clock_time
 
-          run_one_method self, method_name, reporter
+          run self, method_name, reporter
         end
       end
     end
@@ -466,9 +474,9 @@ module Minitest
     # that subclasses can specialize the running of an individual
     # test. See Minitest::ParallelTest::ClassMethods for an example.
 
-    def self.run_one_method klass, method_name, reporter
+    def Runnable.run klass, method_name, reporter
       reporter.prerecord klass, method_name
-      reporter.record Minitest.run_one_method(klass, method_name)
+      reporter.record klass.new(method_name).run
     end
 
     ##
@@ -1188,12 +1196,6 @@ module Minitest
   end
 
   self.backtrace_filter = BacktraceFilter.new
-
-  def self.run_one_method klass, method_name # :nodoc:
-    result = klass.new(method_name).run
-    raise "#{klass}#run _must_ return a Result" unless Result === result
-    result
-  end
 
   # :stopdoc:
 

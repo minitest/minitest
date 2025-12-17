@@ -79,7 +79,7 @@ class MetaMetaMetaTestCase < Minitest::Test
       @tus.each do |tu|
         Minitest::Runnable.runnables.delete tu
 
-        tu.run reporter, options
+        tu.run_suite reporter, options
       end
 
       reporter.report

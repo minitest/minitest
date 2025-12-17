@@ -32,7 +32,7 @@ module Minitest
             while job = queue.pop do
               klass, method, reporter = job
               reporter.synchronize { reporter.prerecord klass, method }
-              result = Minitest.run_one_method klass, method
+              result = klass.new(method).run
               reporter.synchronize { reporter.record result }
             end
           end
@@ -59,7 +59,7 @@ module Minitest
       def _synchronize; Minitest::Test.io_lock.synchronize { yield }; end # :nodoc:
 
       module ClassMethods # :nodoc:
-        def run_one_method klass, method_name, reporter
+        def run klass, method_name, reporter
           Minitest.parallel_executor << [klass, method_name, reporter]
         end
 
