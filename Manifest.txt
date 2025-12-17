@@ -17,6 +17,8 @@ lib/minitest/manual_plugins.rb
 lib/minitest/parallel.rb
 lib/minitest/pride.rb
 lib/minitest/pride_plugin.rb
+lib/minitest/server.rb
+lib/minitest/server_plugin.rb
 lib/minitest/spec.rb
 lib/minitest/sprint.rb
 lib/minitest/sprint_plugin.rb
@@ -29,3 +31,4 @@ test/minitest/test_minitest_reporter.rb
 test/minitest/test_minitest_spec.rb
 test/minitest/test_minitest_test.rb
 test/minitest/test_minitest_test_task.rb
+test/minitest/test_server.rb
