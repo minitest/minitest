@@ -168,8 +168,6 @@ module Minitest # :nodoc:
         ENV["TESTOPTS"]
       warn "FILTER is deprecated in Minitest::TestTask. Use A instead" if
         ENV["FILTER"]
-      warn "N is deprecated in Minitest::TestTask. Use MT_CPU instead" if
-        ENV["N"] && ENV["N"].to_i > 0
 
       lib_extras = (ENV["MT_LIB_EXTRAS"] || "").split File::PATH_SEPARATOR
       self.libs[0, 0] = lib_extras
@@ -179,8 +177,6 @@ module Minitest # :nodoc:
       extra_args.concat Shellwords.split(ENV["TESTOPTS"]) if ENV["TESTOPTS"]
       extra_args.concat Shellwords.split(ENV["FILTER"])   if ENV["FILTER"]
       extra_args.concat Shellwords.split(ENV["A"])        if ENV["A"]
-
-      ENV.delete "N" if ENV["N"]
 
       # TODO? RUBY_DEBUG = ENV["RUBY_DEBUG"]
       # TODO? ENV["RUBY_FLAGS"]
