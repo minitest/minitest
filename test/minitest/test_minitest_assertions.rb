@@ -165,14 +165,20 @@ class TestMinitestAssertions < Minitest::Test
     end
   end
 
-  def test_assert_equal_different_message
+  def test_assert_equal_string_message
     assert_triggered "whoops.\nExpected: 1\n  Actual: 2" do
+      @tc.assert_equal 1, 2, "whoops"
+    end
+  end
+
+  def test_assert_equal_different_message
+    assert_triggered "whoops." do
       @tc.assert_equal 1, 2, message { "whoops" }
     end
   end
 
   def test_assert_equal_different_lambda
-    assert_triggered "whoops.\nExpected: 1\n  Actual: 2" do
+    assert_triggered "whoops" do
       @tc.assert_equal 1, 2, lambda { "whoops" }
     end
   end
