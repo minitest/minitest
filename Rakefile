@@ -12,7 +12,7 @@ Hoe.spec "minitest" do
 
   license "MIT"
 
-  require_ruby_version ">= 3.1"
+  require_ruby_version ">= 3.2"
 
   dependency "prism", "~> 1.5"
 

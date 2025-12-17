@@ -714,7 +714,7 @@ Authors... Please send me a pull request with a description of your minitest ext
 
 == REQUIREMENTS:
 
-* Ruby 2.3+. No magic is involved. I hope.
+* Ruby 3.2+. No magic is involved. I hope.
 
 == INSTALL:
 
