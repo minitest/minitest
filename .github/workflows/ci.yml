@@ -58,6 +58,9 @@ jobs:
       - name: install hoe
         run: gem install hoe -N
 
+      - name: install prism
+        run: gem install prism -N --conservative
+
       - name: rake test
         run: |
           rake ${{ matrix.task }} RUBYOPT="${{ matrix.rubyopt }}"

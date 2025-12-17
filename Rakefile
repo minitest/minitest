@@ -4,6 +4,7 @@ require "hoe"
 $:.unshift "lib" # to pick up lib/minitest/test_task.rb when minitest not installed
 
 Hoe.plugin :seattlerb
+Hoe.plugin :isolate
 Hoe.plugin :rdoc
 
 Hoe.spec "minitest" do
@@ -12,6 +13,8 @@ Hoe.spec "minitest" do
   license "MIT"
 
   require_ruby_version ">= 3.1"
+
+  dependency "prism", "~> 1.5"
 
   self.post_install_message = <<~EOM
     NOTE: minitest 5 will be the last in the minitest family to support
