@@ -10,6 +10,7 @@ lib/minitest/assertions.rb
 lib/minitest/autorun.rb
 lib/minitest/benchmark.rb
 lib/minitest/bisect.rb
+lib/minitest/complete.rb
 lib/minitest/compress.rb
 lib/minitest/error_on_warning.rb
 lib/minitest/expectations.rb
