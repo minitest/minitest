@@ -507,10 +507,14 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_operator
+    @assertion_count += 1
+
     @tc.assert_operator 2, :>, 1
   end
 
   def test_assert_operator_bad_object
+    @assertion_count += 1
+
     bad = Object.new
     def bad.== _; true end
 
@@ -518,6 +522,8 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_operator_triggered
+    @assertion_count += 1
+
     assert_triggered "Expected 2 to be < 1." do
       @tc.assert_operator 2, :<, 1
     end
@@ -699,10 +705,14 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_assert_predicate
+    @assertion_count += 1
+
     @tc.assert_predicate "", :empty?
   end
 
   def test_assert_predicate_triggered
+    @assertion_count += 1
+
     assert_triggered 'Expected "blah" to be empty?.' do
       @tc.assert_predicate "blah", :empty?
     end
@@ -1302,10 +1312,14 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_refute_operator
+    @assertion_count += 1
+
     @tc.refute_operator 2, :<, 1
   end
 
   def test_refute_operator_bad_object
+    @assertion_count += 1
+
     bad = Object.new
     def bad.== _; true end
 
@@ -1313,6 +1327,8 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_refute_operator_triggered
+    @assertion_count += 1
+
     assert_triggered "Expected 2 to not be > 1." do
       @tc.refute_operator 2, :>, 1
     end
@@ -1349,10 +1365,14 @@ class TestMinitestAssertions < Minitest::Test
   end
 
   def test_refute_predicate
+    @assertion_count += 1
+
     @tc.refute_predicate "42", :empty?
   end
 
   def test_refute_predicate_triggered
+    @assertion_count += 1
+
     assert_triggered 'Expected "" to not be empty?.' do
       @tc.refute_predicate "", :empty?
     end
