@@ -17,6 +17,7 @@ lib/minitest/find_minimal_combination.rb
 lib/minitest/hell.rb
 lib/minitest/manual_plugins.rb
 lib/minitest/parallel.rb
+lib/minitest/path_expander.rb
 lib/minitest/pride.rb
 lib/minitest/pride_plugin.rb
 lib/minitest/server.rb
@@ -36,3 +37,4 @@ test/minitest/test_minitest_spec.rb
 test/minitest/test_minitest_test.rb
 test/minitest/test_minitest_test_task.rb
 test/minitest/test_server.rb
+test/minitest/test_path_expander.rb
