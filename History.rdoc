@@ -24,9 +24,9 @@ Oh god... here we go... (again)
     * Runnable.run -> Runnable.run_suite & Runnable.filter_runnable_methods
     * Runnable.run_one_method -> Runnable.run
     * Removed Minitest.run_one_method (might bring it back to raise?)
-  * Removed deprecated ENV["N"] to specify number of parallel tests. Use MT_CPU.
-  * Renamed options[:filter] to options[:include], added --include cmdline option.
-    * --name is still handled, but that will be removed in the future.
+  * Removed deprecated <tt>ENV["N"]</tt> to specify number of parallel tests. Use MT_CPU.
+  * Renamed +options[:filter]+ to +options[:include]+, added <tt>--include</tt> cmdline option.
+    * <tt>--name</tt> is still handled, but that will be removed in the future.
   * Renamed Minitest::Runnable#test_order to #run_order.
   * If #message is passed a proc then that proc overrides all other output.
     * They are no longer chained!
