@@ -187,9 +187,14 @@ module Minitest # :nodoc:
     end
 
     def define # :nodoc:
-      desc "Run the test suite. Use N, X, A, and TESTOPTS to add flags/args."
+      desc "Run the test suite. Use I, X, and A to add flags/args."
       task name do
         ruby make_test_cmd, verbose: verbose
+      end
+
+      desc "Run the test suite, filtering for 'FU' in name (focused units?)."
+      task "#{name}:fu" do
+        ruby make_test_cmd(include:"/FU/"), verbose: verbose
       end
 
       desc "Print out the test command. Good for profiling and other tools."
@@ -210,7 +215,7 @@ module Minitest # :nodoc:
 
         n.threads_do tests.sort do |path|
           t0 = Time.now
-          output = `#{Gem.ruby} #{make_test_cmd path} 2>&1`
+          output = `#{Gem.ruby} #{make_test_cmd path:path} 2>&1`
           t1 = Time.now - t0
 
           times[path] = t1
@@ -276,7 +281,9 @@ module Minitest # :nodoc:
     ##
     # Generate the test command-line.
 
-    def make_test_cmd globs = test_globs
+    def make_test_cmd **option
+      globs = option[:path] || test_globs
+
       tests = []
       tests.concat Dir[*globs].sort.shuffle # TODO: SEED -> srand first?
       tests.map! { |f| %(require "#{f}") }
@@ -286,6 +293,8 @@ module Minitest # :nodoc:
       runner << framework
       runner.concat tests
       runner = runner.join "; "
+
+      extra_args << "-i" << option[:include] if option[:include]
 
       args  = []
       args << "-I#{libs.join File::PATH_SEPARATOR}" unless libs.empty?
