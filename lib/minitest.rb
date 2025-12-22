@@ -464,7 +464,7 @@ module Minitest
           name = method_name
           t0 = Minitest.clock_time
 
-          run self, method_name, reporter
+          Runnable.run self, method_name, reporter
         end
       end
     end
