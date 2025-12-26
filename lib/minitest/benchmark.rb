@@ -17,7 +17,7 @@ module Minitest
       self.class.io
     end
 
-    def self.run reporter, options = {} # :nodoc:
+    def self.run klass, method_name, reporter # :nodoc:
       @io = reporter.io
       super
     end

@@ -25,6 +25,20 @@ class TestMinitestBenchmark < Minitest::Test
     assert_equal ["bench_blah"], c.runnable_methods
   end
 
+  def test_cls_run
+    c = Class.new Minitest::Benchmark do
+      def bench_dummy
+        assert true
+      end
+    end
+
+    reporter = Minitest::StatisticsReporter.new(StringIO.new(+""))
+
+    c.run c, "bench_dummy", reporter
+
+    assert_equal 1, reporter.count
+  end
+
   def test_cls_bench_range
     assert_equal [1, 10, 100, 1_000, 10_000], Minitest::Benchmark.bench_range
   end
