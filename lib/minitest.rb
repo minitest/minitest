@@ -169,7 +169,12 @@ module Minitest
 
       opts.on "-h", "--help", "Display this help." do
         puts opts
-        exit
+        exit! true
+      end
+
+      opts.on "-V", "--version", "Display the version." do
+        puts "#{opts.program_name} #{Minitest::VERSION}"
+        exit! true
       end
 
       desc = "Sets random seed. Also via env, eg: SEED=42"
