@@ -291,7 +291,7 @@ class Minitest::PathExpander < Minitest::VendoredPathExpander
 
     tests = tests_by_class
 
-    exit! if handle_missing_tests? tests
+    exit! 1 if handle_missing_tests? tests
 
     test_res = tests_to_regexp tests
     self.args << "-n" << "/#{test_res.join "|"}/"
@@ -377,6 +377,8 @@ class Minitest::PathExpander < Minitest::VendoredPathExpander
           end
         puts
       end
+      $stdout.flush
+      $stderr.flush
       true
     end
   end
