@@ -1,4 +1,5 @@
 require "prism"
+require "pathname" # for ruby 3
 
 module Minitest; end # :nodoc:
 
@@ -59,8 +60,10 @@ class Minitest::VendoredPathExpander
       else
         p
       end
-    }.flatten.sort.map { |s| s.to_s.delete_prefix "./" }
+    }.flatten.sort.map { |s| _normalize s }
   end
+
+  def _normalize(f) = Pathname.new(f).cleanpath.to_s # :nodoc:
 
   ##
   # Process a file into more arguments. Override this to add
@@ -251,8 +254,9 @@ class Minitest::PathExpander < Minitest::VendoredPathExpander
             end
           }
         next unless File.exist? f
+        f = _normalize f
         args << f                       # push path on lest it run whole dir
-        by_line[f] = ls
+        by_line[f] = ls                 # implies rejection
       end
     }
 
@@ -364,7 +368,8 @@ class Minitest::PathExpander < Minitest::VendoredPathExpander
         puts "Did you mean?"
         puts
         l = l.begin if l.is_a? Range
-        by_path[f]
+        by_path[f] and
+          by_path[f]
           .sort_by { |m| (m.line_s - l).abs }
           .first(2)
           .each do |m|
