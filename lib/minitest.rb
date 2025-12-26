@@ -162,9 +162,9 @@ module Minitest
       opts.version = Minitest::VERSION
 
       opts.banner = [
-        "Usage: rake test [A=options]        (see Minitest::TestTask for more options)",
-        "minitest [paths] [options]   (with minitest-sprint gem)",
-        "ruby path/to/test.rb [options]\n\n",
+        "Usage: minitest [paths]     [options]",
+        "ruby path/to/test.rb [options]",
+        "rake test          [A=options] (see Minitest::TestTask for more options)\n\n",
       ].join "\n   or: "
 
       opts.on "-h", "--help", "Display this help." do
