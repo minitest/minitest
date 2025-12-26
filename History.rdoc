@@ -1,3 +1,19 @@
+=== 6.0.1 / 2025-12-26
+
+* 1 minor enhancement:
+
+  * Added new rake task `test:fu` to Minitest::TestTask, to only run
+    tests with FU (focused units?) in their name. This should mostly
+    obviate the need for the minitest-focus plugin.
+
+* 5 bug fixes:
+
+  * Fixed --help and --version exiting 1. (grosser)
+  * Fixed method signature of Minitest::Benchmark.run. (flavorjones)
+  * Flush stdout/stderr before exit./bin/minitest -Ilib ./bug1046.rb:1 < /dev/null (grosser)
+  * Improved usage banner output by reordering and reformatting.
+  * Normalize paths while processing file.rb:line args.
+
 === 6.0.0 / 2025-12-17
 
 This is a major release. Read this.
