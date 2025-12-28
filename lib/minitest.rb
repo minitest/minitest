@@ -265,7 +265,7 @@ module Minitest
     unless options[:seed] then
       srand
       options[:seed] = (ENV["SEED"] || srand).to_i % 0xFFFF
-      orig_args << "--seed" << options[:seed].to_s
+      orig_args << "--seed=#{options[:seed]}"
     end
 
     options[:args] = orig_args.map { |s|
