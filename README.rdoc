@@ -604,6 +604,9 @@ minitest-happy              :: GLOBALLY ACTIVATE MINITEST PRIDE! RAWR!
 minitest-have_tag           :: Adds Minitest assertions to test for the existence of
                                HTML tags, including contents, within a provided string.
 minitest-heat               :: Reporting that builds a heat map of failure locations
+minitest-holdify            :: Stop maintaining large expected values in your
+                               test/fixture files! Hold them automatically.
+                               Update them effortlessly.
 minitest-hooks              :: Around and before_all/after_all/around_all hooks
 minitest-hyper              :: Pretty, single-page HTML reports for your Minitest runs
 minitest-implicit-subject   :: Implicit declaration of the test subject.
@@ -678,8 +681,6 @@ mongoid-minitest            :: Minitest matchers for Mongoid.
 mutant-minitest             :: Minitest integration for mutant.
 pry-rescue                  :: A pry plugin w/ minitest support. See
                                pry-rescue/minitest.rb.
-rematch                     :: Declutter your test files from large hardcoded data
-                               and update them automatically when your code changes.
 rspec2minitest              :: Easily translate any RSpec matchers to Minitest
                                assertions and expectations.
 stubberry                   :: Multiple stubbing 'berries', sweet and useful
