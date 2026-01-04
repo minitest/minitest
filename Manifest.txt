@@ -37,5 +37,5 @@ test/minitest/test_minitest_reporter.rb
 test/minitest/test_minitest_spec.rb
 test/minitest/test_minitest_test.rb
 test/minitest/test_minitest_test_task.rb
-test/minitest/test_server.rb
 test/minitest/test_path_expander.rb
+test/minitest/test_server.rb
