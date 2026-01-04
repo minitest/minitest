@@ -28,6 +28,7 @@ jobs:
           - '3.2'
           - '3.3'
           - '3.4'
+          - '4.0'
           - head
         include:
           - os: windows-latest
@@ -46,7 +47,7 @@ jobs:
 
     steps:
       - name: repo checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@main
 
       - name: load ruby
         uses: ruby/setup-ruby@v1
@@ -54,13 +55,19 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler: none
 
-      - name: install hoe
+      - name: install hoe if not hoe
         run: gem install hoe -N
+        if: ${{ github.event.repository.name != 'hoe' }}
 
-      - name: install prism
+      - name: install minitest if not minitest
+        run: gem install minitest -N
+        if: ${{ github.event.repository.name != 'minitest' }}
+
+      - name: install prism if minitest
         run: gem install prism -N --conservative
+        if: ${{ github.event.repository.name == 'minitest' }}
 
       - name: rake test
+        timeout-minutes: 3
         run: |
           rake ${{ matrix.task }} RUBYOPT="${{ matrix.rubyopt }}"
-        timeout-minutes: 3
