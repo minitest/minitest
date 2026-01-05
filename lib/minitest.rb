@@ -225,7 +225,13 @@ module Minitest
           $VERBOSE = true
           ::Warning[:deprecated] = true
         else
-          ::Warning[s.to_sym] = true # check validity of category
+          if ::Warning.categories.include? s.to_sym then
+            ::Warning[s.to_sym] = true
+          else
+            warn "Unknown warning category: %p" % [s]
+            warn "Known categories: %s" % [::Warning.categories.join(", ")]
+            exit!
+          end
         end
       end
 
