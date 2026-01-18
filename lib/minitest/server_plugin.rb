@@ -1,5 +1,3 @@
-require_relative "../minitest"
-
 module Minitest
   @server = false
 
