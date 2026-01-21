@@ -16,6 +16,7 @@ Hoe.spec "minitest" do
   require_ruby_version ">= 3.2"
 
   dependency "prism", "~> 1.5"
+  dependency "drb",   "~> 2.0"
 
   self.cov_filter = %w[ tmp ]
 end
