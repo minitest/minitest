@@ -16,7 +16,7 @@ module Minitest
     # Process and run minitest cmdline.
 
     def self.run args = ARGV
-      if ARGV.delete("--bisect") or ARGV.delete("-b") then
+      if args.delete("--bisect") or args.delete("-b") then
         require_relative "bisect"
 
         return Minitest::Bisect.run ARGV
