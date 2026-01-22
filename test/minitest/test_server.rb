@@ -1,12 +1,6 @@
 require "minitest/autorun"
-require "minitest/server"
-require "minitest/server_plugin"
-
-require "minitest"
-require "minitest/test"
-require "minitest/server"
-require "minitest/server_plugin"
-require "minitest/autorun"
+require_relative "../../lib/minitest/server"
+require_relative "../../lib/minitest/server_plugin"
 
 class BogoTests < Minitest::Test
   def pass_test
@@ -105,7 +99,7 @@ class ServerTest < Minitest::Test
   def test_error
     msg = <<~EOM.chomp
       RuntimeError: error
-          #{FILE}:21:in `error_test'
+          #{FILE}:##:in `error_test'
     EOM
 
     assert_run "error", [msg], 0
@@ -114,7 +108,7 @@ class ServerTest < Minitest::Test
   def test_error_unmarshalable__ivar
     msg = <<~EOM.chomp
       RuntimeError: error
-          #{FILE}:25:in `unmarshalable_ivar_test'
+          #{FILE}:##:in `unmarshalable_ivar_test'
     EOM
 
     assert_run "unmarshalable_ivar", [msg], 0
@@ -123,7 +117,7 @@ class ServerTest < Minitest::Test
   def test_error_unmarshalable__class
     msg = <<~EOM.chomp
       RuntimeError: Neutered Exception #<Class:0xXXXXXX>: error
-          #{FILE}:33:in `unmarshalable_class_test'
+          #{FILE}:##:in `unmarshalable_class_test'
     EOM
 
     assert_run "unmarshalable_class", [msg], 0
@@ -136,12 +130,15 @@ class ServerTest < Minitest::Test
   def assert_run type, e, n
     e[0] = e[0].sub "`", "'BogoTests#" if RUBY_VERSION > "3.4" if e[0]
 
-    act = Server.run type
-    act[-1] = 0 # time
-    act[-3].map!(&:message)
+    # client.minitest_result file, klass, method, fails, assertions, time
+    f, k, m, (msg,), a, _time = Server.run type
 
-    act[-3][0] = act[-3][0].gsub(/0x\h+/, "0xXXXXXX") if act[-3][0]
+    msg &&= msg
+      .message
+      .gsub(/0x\h+/, "0xXXXXXX")
+      .gsub(/:\d{2,}/, ":##")
 
+    act = [f, k, m, [msg].compact, a, 0]
     exp = ["test/minitest/test_server.rb", "BogoTests", "#{type}_test", e, n, 0]
 
     assert_equal exp, act
