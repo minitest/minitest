@@ -1225,3 +1225,4 @@ module Minitest
 end
 
 require_relative "minitest/test"
+Minitest.load :server
