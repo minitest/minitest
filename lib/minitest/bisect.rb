@@ -4,6 +4,8 @@ require "shellwords"
 require "rbconfig"
 require_relative "path_expander" # this is gonna break some shit?
 
+ENV["MINITEST_SERVER"] = "1"
+
 module Minitest; end # :nodoc:
 
 ##

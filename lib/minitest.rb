@@ -1225,3 +1225,7 @@ module Minitest
 end
 
 require_relative "minitest/test"
+if ENV["MINITEST_SERVER"] then
+  require_relative "minitest/server_plugin"
+  Minitest.register_plugin :server
+end
