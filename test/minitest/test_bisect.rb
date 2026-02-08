@@ -28,11 +28,8 @@ class TestMinitest::TestBisect < Minitest::Test
     rb    = %w[-Ilib:test]
     mt    = %w[--seed 42]
 
-    ruby = Minitest::Bisect::RUBY
-    body = "require \"./a.rb\" ; require \"./b.rb\" ; require \"./c.rb\""
-
-    exp = "#{ruby} -Ilib:test -e '#{body}' -- --seed 42"
-    act = bisect.build_files_cmd(files, rb, mt)
+    exp = "minitest -Ilib:test a.rb b.rb c.rb --seed 42"
+    act = bisect.build_files_cmd(files, rb, mt, cmd:"minitest")
 
     assert_equal exp, act
   end
@@ -202,13 +199,30 @@ class TestMinitest::TestBisect < Minitest::Test
 end
 
 class TestMinitest::TestBisect::TestPathExpander < Minitest::Test
+  def setup
+    @orig_i = $LOAD_PATH.dup
+    @orig_w = $VERBOSE
+    @orig_d = $DEBUG
+  end
+
+  def teardown
+    $LOAD_PATH.replace @orig_i
+    $VERBOSE = @orig_w
+    $DEBUG   = @orig_d
+  end
+
   def test_sanity
-    args = %w[1 -Iblah 2 -d 3 -w 4 5 6]
+    args = %w[1 -Iblah 2 -d 3 -w 4 5 6 lib/hoe] # lib to not have any test files
 
     mtbpe = Minitest::Bisect::PathExpander
     expander = mtbpe.new args
 
-    assert_equal %w[-Itest:lib], expander.rb_flags
+    files = expander.process.to_a # to_a forces process -> files
+
+    assert_empty files
+    assert_empty $LOAD_PATH - @orig_i
+    assert_equal %w[-Iblah -d -w], expander.rb_flags
+    assert_equal %w[1 2 3 4 5 6], args
     assert_same mtbpe::TEST_GLOB, expander.glob
   end
 
@@ -218,7 +232,7 @@ class TestMinitest::TestBisect::TestPathExpander < Minitest::Test
     expander = Minitest::Bisect::PathExpander.new args
 
     exp_files = %w[1 2 3 4 5 6]
-    exp_flags = %w[-Itest:lib -Iblah -d -w]
+    exp_flags = %w[-Iblah -d -w]
 
     files = expander.process_flags(args)
 
