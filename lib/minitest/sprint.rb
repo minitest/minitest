@@ -4,11 +4,12 @@ require "simplecov" if ENV["MT_COV"] || ARGV.delete("--simplecov")
 require_relative "autorun"
 require_relative "path_expander"
 
-##
-# Runs (Get it? It's fast!) your tests and makes it easier to rerun individual
-# failures.
-
 module Minitest
+
+  ##
+  # Runs (Get it? It's fast!) your tests and makes it easier to rerun
+  # individual failures.
+
   class Sprint
     # extracted version = "1.5.0"
 

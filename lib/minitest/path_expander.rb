@@ -178,7 +178,14 @@ class Minitest::VendoredPathExpander
     self
   end
 
+  ##
+  # Hook to run before process
+
   def pre_process = nil
+
+  ##
+  # Hook to run after process
+
   def post_process = nil
 
   ##
