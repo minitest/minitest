@@ -448,6 +448,9 @@ module Minitest
         data = [mu_pp(act), act.object_id, mu_pp(exp), exp.object_id]
         "Expected %s (oid=%d) to be the same as %s (oid=%d)" % data
       }
+
+      refute_nil exp, message { "Use assert_nil if expecting nil" } if exp.nil? # don't count
+
       assert exp.equal?(act), msg
     end
 

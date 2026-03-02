@@ -960,6 +960,12 @@ class TestMinitestAssertions < Minitest::Test
     end
   end
 
+  def test_assert_same__does_not_allow_lhs_nil
+    assert_triggered(/Use assert_nil if expecting nil/) do
+      @tc.assert_same nil, nil
+    end
+  end
+
   def test_assert_silent
     @assertion_count = 2
 
