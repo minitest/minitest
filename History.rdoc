@@ -1,3 +1,9 @@
+=== 6.0.3 / 2026-03-31
+
+* 1 bug fix:
+
+  * assert_same(nil, value) no longer allowed. Use assert_nil to be explicit. (paddor)
+
 === 6.0.2 / 2026-02-23
 
 * 7 bug fixes:
