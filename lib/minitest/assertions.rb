@@ -762,7 +762,7 @@ module Minitest
     #   str.wont_be :empty?
 
     def refute_predicate o1, op, msg = nil
-      assert_respond_to o1, op
+      assert_respond_to o1, op, include_all:true
       msg = message(msg) { "Expected #{mu_pp o1} to not be #{op}" }
       refute o1.__send__(op), msg
     end
