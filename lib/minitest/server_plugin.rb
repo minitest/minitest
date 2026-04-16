@@ -1,4 +1,4 @@
-require_relative "../minitest"
+require_relative "../minitest" unless defined? Minitest
 
 # :stopdoc:
 
