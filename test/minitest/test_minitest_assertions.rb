@@ -810,6 +810,66 @@ class TestMinitestAssertions < Minitest::Test
     end
   end
 
+  def test_assert_raises__string_msg
+    e = assert_raises Minitest::Assertion do
+      @tc.assert_raises RuntimeError, "assertion message" do
+        raise SomeError, "blah"
+      end
+    end
+
+    expected = <<~EOM.chomp
+      assertion message.
+      [RuntimeError] exception expected, not
+      Class: <SomeError>
+      Message: <"blah">
+      ---Backtrace---
+      FILE:LINE:in 'block in test_assert_raises__string_msg'
+      ---------------
+    EOM
+
+    actual = e.message.gsub(/^.+:\d+/, "FILE:LINE")
+    actual.gsub! RE_LEVELS, "" unless jruby?
+    actual.gsub!(/[`']block in (?:TestMinitestAssertions#)?/, "'block in ")
+
+    assert_equal expected, actual
+  end
+
+  def test_assert_raises__regexp_err
+    @assertion_count = 0
+
+    e = assert_raises TypeError do
+      @tc.assert_raises RuntimeError, %r%does not work%, "assertion message" do
+        raise SomeError, "blah"
+      end
+    end
+
+    expected = <<~EOM.chomp
+      class or module required for rescue clause. Got [RuntimeError, /does not work/]
+    EOM
+
+    actual = e.message
+
+    assert_equal expected, actual
+  end
+
+  def test_assert_raises__regexp_err_default
+    @assertion_count = 0
+
+    e = assert_raises TypeError do
+      @tc.assert_raises %r%does not work% do
+        raise "blah"
+      end
+    end
+
+    expected = <<~EOM.chomp
+      class or module required for rescue clause. Got [/does not work/]
+    EOM
+
+    actual = e.message
+
+    assert_equal expected, actual
+  end
+
   def test_assert_raises_subclass
     @tc.assert_raises StandardError do
       raise AnError

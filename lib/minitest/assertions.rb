@@ -381,6 +381,8 @@ module Minitest
       assert o1.__send__(op), msg
     end
 
+    NO_RE_MSG = "class or module required for rescue clause. Got %p"
+
     ##
     # Fails unless the block raises one of +exp+. Returns the
     # exception matched so you can check the message, attributes, etc.
@@ -409,6 +411,9 @@ module Minitest
 
       msg = "#{exp.pop}.\n" if String === exp.last
       exp << StandardError if exp.empty?
+
+      # TODO: remove this if https://bugs.ruby-lang.org/issues/22007 gets fixed
+      raise TypeError, NO_RE_MSG % [exp] unless exp.all? Module
 
       begin
         yield
