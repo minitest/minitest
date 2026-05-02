@@ -199,6 +199,17 @@ class TestPathExpander < Minitest::Test
                         "42")
   end
 
+  def test_process_args_absolute_path_with_line
+    test_args = ["#{Dir.pwd}/test/test_path_expander.rb:10"]
+    test_expander = Minitest::PathExpander.new test_args
+
+    files, flags = test_expander.process_args
+
+    assert_equal %w[test/test_path_expander.rb], files
+    assert_equal [], flags
+    assert_equal({ "test/test_path_expander.rb" => [10] }, test_expander.by_line)
+  end
+
   def test_process_args_root
     assert_process_args(%w[],
                         %w[-n /./],

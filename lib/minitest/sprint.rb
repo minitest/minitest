@@ -24,7 +24,7 @@ module Minitest
       end
 
       Minitest::PathExpander.new(args).process { |f|
-        require "./#{f}" if File.file? f
+        require File.expand_path(f) if File.file? f
       }
     end
 

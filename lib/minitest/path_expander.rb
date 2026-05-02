@@ -261,7 +261,7 @@ class Minitest::PathExpander < Minitest::VendoredPathExpander
             end
           }
         next unless File.exist? f
-        f = _normalize f
+        f = _normalize(f).delete_prefix "#{Dir.pwd}/"
         args << f                       # push path on lest it run whole dir
         by_line[f] = ls                 # implies rejection
       end
