@@ -106,9 +106,10 @@ module Minitest
     end
 
     ##
-    # Returns all instance methods starting with "test_". Based on
-    # #run_order, the methods are either sorted, randomized
-    # (default), or run in parallel.
+    # Returns all public instance methods starting with "test_".
+    # Methods with private or protected visibility are excluded,
+    # so they are not run as tests. Based on #run_order, the methods
+    # are either sorted, randomized (default), or run in parallel.
 
     def self.runnable_methods
       methods = methods_matching(/^test_/)

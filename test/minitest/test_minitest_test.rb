@@ -1054,6 +1054,23 @@ class TestMinitestTestAssertions < Minitest::Test
     assert_equal expected, sample_test_case.runnable_methods
   end
 
+  def test_runnable_methods_skips_non_public_methods
+    @assertion_count = 0
+
+    sample_test_case = Class.new FakeNamedTest do
+      def self.run_order; :sorted end
+      def test_public; assert "does not matter" end
+      private
+      def test_private; assert "does not matter" end
+    end
+    sample_test_case.class_eval do
+      protected
+      def test_protected; assert "does not matter" end
+    end
+
+    assert_equal %w[test_public], sample_test_case.runnable_methods
+  end
+
   def test_i_suck_and_my_tests_are_order_dependent_bang_sets_run_order_alpha
     @assertion_count = 0
 
