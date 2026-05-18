@@ -13,6 +13,7 @@ module Minitest
   VERSION = "6.0.6" # :nodoc:
 
   @@installed_at_exit ||= false
+  @@completed ||= false
   @@after_run = []
   @extensions = []
 
@@ -94,6 +95,40 @@ module Minitest
 
   def self.after_run &block
     @@after_run << block
+  end
+
+  ##
+  # Returns true once +Minitest.autorun+ has registered its +at_exit+
+  # hook. The hook is only installed once; subsequent +autorun+ calls
+  # are no-ops, but this predicate stays true.
+  #
+  # Useful for outside libraries that need to know whether
+  # +Minitest.run+ is scheduled to run later in the +at_exit+ chain
+  # (e.g. via +require "minitest/autorun"+) so they can defer their
+  # own work through +Minitest.after_run+ instead of fighting the
+  # +at_exit+ LIFO ordering.
+  #
+  # See also +Minitest.completed?+ and
+  # https://github.com/simplecov-ruby/simplecov/issues/1032.
+
+  def self.autorun_installed?
+    @@installed_at_exit
+  end
+
+  ##
+  # Returns true once +Minitest.run+ has finished a suite (whether
+  # the run passed, failed, or was interrupted past the report phase).
+  # Returns false before the first run completes.
+  #
+  # Pairs with +autorun_installed?+ to answer "is Minitest going to
+  # run tests after my +at_exit+ fires?" — that's
+  # +autorun_installed? && !completed?+.
+  #
+  # See also +Minitest.autorun_installed?+ and
+  # https://github.com/simplecov-ruby/simplecov/issues/1032.
+
+  def self.completed?
+    @@completed
   end
 
   ##
@@ -324,6 +359,8 @@ module Minitest
     summary = reporter.reporters.grep(SummaryReporter).first
 
     reporter.report
+
+    @@completed = true
 
     return empty_run! options if finished && summary && summary.count == 0
     finished and reporter.passed?

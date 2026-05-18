@@ -1315,3 +1315,86 @@ class TestUnexpectedError < Minitest::Test
         EXP
   end
 end
+
+##
+# Exercises +Minitest.autorun_installed?+ and +Minitest.completed?+
+# plus the +@@completed+ flag they expose. These tests mutate
+# Minitest-level class variables, so the class is NOT parallelized;
+# each test saves and restores the flags it touches.
+#
+# See https://github.com/simplecov-ruby/simplecov/issues/1032 for the
+# external use case driving these predicates.
+
+class TestMinitestLifecyclePredicates < Minitest::Test
+  def setup
+    super
+    @prev_installed = Minitest.class_variable_get(:@@installed_at_exit)
+    @prev_completed = Minitest.class_variable_get(:@@completed)
+  end
+
+  def teardown
+    Minitest.class_variable_set(:@@installed_at_exit, @prev_installed)
+    Minitest.class_variable_set(:@@completed, @prev_completed)
+    super
+  end
+
+  def set_state installed_at_exit:, completed:
+    Minitest.class_variable_set(:@@installed_at_exit, installed_at_exit)
+    Minitest.class_variable_set(:@@completed, completed)
+  end
+
+  def test_autorun_installed_eh_reflects_installed_at_exit_class_variable
+    set_state installed_at_exit: true, completed: false
+    assert Minitest.autorun_installed?
+
+    set_state installed_at_exit: false, completed: false
+    refute Minitest.autorun_installed?
+  end
+
+  def test_completed_eh_reflects_completed_class_variable
+    set_state installed_at_exit: true, completed: true
+    assert Minitest.completed?
+
+    set_state installed_at_exit: true, completed: false
+    refute Minitest.completed?
+  end
+
+  def test_predicates_are_independent_of_each_other
+    set_state installed_at_exit: true, completed: false
+    assert Minitest.autorun_installed?
+    refute Minitest.completed?
+
+    set_state installed_at_exit: false, completed: true
+    refute Minitest.autorun_installed?
+    assert Minitest.completed?
+  end
+
+  def test_completed_eh_is_false_during_active_run
+    # We're inside `Minitest.run` while this test executes — the
+    # `@@completed` flag isn't set until the run finishes emitting
+    # its report, so the live state should report not-yet-completed.
+    refute Minitest.completed?
+  end
+
+  def test_run_sets_completed_to_true_in_subprocess
+    skip "windows doesn't have fork" unless Process.respond_to? :fork
+
+    read_io, write_io = IO.pipe
+    pid = fork do
+      read_io.close
+      # Clear runnables in the child so `Minitest.run` doesn't try to
+      # re-execute the parent suite (including this test). We only
+      # need to drive the run pipeline through to the `@@completed`
+      # assignment.
+      Minitest::Runnable.runnables.clear
+      capture_io { Minitest.run %w[--seed 42] }
+      write_io.write Minitest.completed? ? "1" : "0"
+    end
+    write_io.close
+    Process.waitpid pid
+    assert_equal "1", read_io.read
+  ensure
+    read_io&.close
+    write_io&.close
+  end
+end
