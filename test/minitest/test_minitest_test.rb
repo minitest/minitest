@@ -1315,3 +1315,82 @@ class TestUnexpectedError < Minitest::Test
         EXP
   end
 end
+
+##
+# Exercises `Minitest.pending?` and the `@@completed` flag it depends on.
+# These tests mutate Minitest-level class variables, so the class is NOT
+# parallelized; each test saves and restores the flags it touches.
+#
+# See https://github.com/simplecov-ruby/simplecov/issues/1032 for the
+# external use case driving these predicates.
+
+class TestMinitestPending < Minitest::Test
+  def setup
+    super
+    @prev_installed = Minitest.class_variable_get(:@@installed_at_exit)
+    @prev_completed = Minitest.class_variable_get(:@@completed)
+  end
+
+  def teardown
+    Minitest.class_variable_set(:@@installed_at_exit, @prev_installed)
+    Minitest.class_variable_set(:@@completed, @prev_completed)
+    super
+  end
+
+  def set_state installed_at_exit:, completed:
+    Minitest.class_variable_set(:@@installed_at_exit, installed_at_exit)
+    Minitest.class_variable_set(:@@completed, completed)
+  end
+
+  def test_pending_eh_true_when_autorun_armed_and_run_not_completed
+    set_state installed_at_exit: true, completed: false
+    assert Minitest.pending?
+  end
+
+  def test_pending_eh_false_after_run_completes
+    set_state installed_at_exit: true, completed: true
+    refute Minitest.pending?
+  end
+
+  def test_pending_eh_false_before_autorun
+    set_state installed_at_exit: false, completed: false
+    refute Minitest.pending?
+  end
+
+  def test_pending_eh_false_when_completed_without_autorun
+    # Implausible in practice, but the predicate should not over-claim.
+    set_state installed_at_exit: false, completed: true
+    refute Minitest.pending?
+  end
+
+  def test_pending_during_active_run_is_true
+    # We're inside `Minitest.run` while this test executes — autorun is
+    # armed (it's what launched the suite) and `@@completed` has not yet
+    # been set, so the live state should report pending.
+    skip "Minitest.run was invoked without autorun" unless Minitest.class_variable_get(:@@installed_at_exit)
+    refute Minitest.class_variable_get(:@@completed), "Minitest.run already marked completed mid-run"
+    assert Minitest.pending?
+  end
+
+  def test_run_sets_completed_to_true_in_subprocess
+    skip "windows doesn't have fork" unless Process.respond_to? :fork
+
+    read_io, write_io = IO.pipe
+    pid = fork do
+      read_io.close
+      # `Minitest::Runnable.runnables.clear` keeps the child from re-running
+      # this test (and everything else loaded into the parent process); we
+      # only want to exercise the run pipeline so the `@@completed` flag
+      # flips.
+      Minitest::Runnable.runnables.clear
+      capture_io { Minitest.run %w[--seed 42] }
+      write_io.write Minitest.class_variable_get(:@@completed) ? "1" : "0"
+    end
+    write_io.close
+    Process.waitpid pid
+    assert_equal "1", read_io.read
+  ensure
+    read_io&.close
+    write_io&.close
+  end
+end

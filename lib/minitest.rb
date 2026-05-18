@@ -13,6 +13,7 @@ module Minitest
   VERSION = "6.0.6" # :nodoc:
 
   @@installed_at_exit ||= false
+  @@completed ||= false
   @@after_run = []
   @extensions = []
 
@@ -94,6 +95,24 @@ module Minitest
 
   def self.after_run &block
     @@after_run << block
+  end
+
+  ##
+  # Returns true between +Minitest.autorun+ being called and +Minitest.run+
+  # completing. Returns false otherwise: before autorun has been called, or
+  # after the suite has finished running.
+  #
+  # Useful for outside libraries that install their own +at_exit+ hooks and
+  # need to know whether to defer their work until after Minitest has run.
+  # For example, a coverage tool whose +at_exit+ would otherwise fire before
+  # Minitest's (since +at_exit+ is LIFO and the coverage tool was loaded
+  # second) can check +Minitest.pending?+ to decide whether to route its
+  # work through +Minitest.after_run+ instead.
+  #
+  # See https://github.com/simplecov-ruby/simplecov/issues/1032.
+
+  def self.pending?
+    @@installed_at_exit && !@@completed
   end
 
   ##
@@ -324,6 +343,8 @@ module Minitest
     summary = reporter.reporters.grep(SummaryReporter).first
 
     reporter.report
+
+    @@completed = true
 
     return empty_run! options if finished && summary && summary.count == 0
     finished and reporter.passed?
