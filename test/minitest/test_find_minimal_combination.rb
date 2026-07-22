@@ -1,5 +1,3 @@
-#!/usr/bin/ruby -w
-
 $: << "." << "lib"
 
 require "minitest/autorun"
