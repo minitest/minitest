@@ -10,7 +10,7 @@ require_relative "minitest/compress"
 # runtime. See +Minitest.run+ for more information.
 
 module Minitest
-  VERSION = "6.0.1" # :nodoc:
+  VERSION = "6.0.6" # :nodoc:
 
   @@installed_at_exit ||= false
   @@after_run = []
@@ -60,11 +60,14 @@ module Minitest
   cattr_accessor :info_signal
   self.info_signal = "INFO"
 
-  cattr_accessor :allow_fork
+  cattr_accessor :allow_fork # :nodoc:
   self.allow_fork = false
 
   ##
-  # Registers Minitest to run at process exit
+  # Registers Minitest to run at process exit. Usually called by
+  # requiring autorun:
+  #
+  #   require "minitest/autorun"
 
   def self.autorun
     Warning[:deprecated] = true
@@ -83,7 +86,15 @@ module Minitest
 
       exit_code = Minitest.run ARGV
     } unless @@installed_at_exit
+
     @@installed_at_exit = true
+  end
+
+  ##
+  # Returns true if Minitest.autorun has been called.
+
+  def self.installed_at_exit?
+    @@installed_at_exit
   end
 
   ##
@@ -194,7 +205,8 @@ module Minitest
         options[:show_skips] = true
       end
 
-      opts.on "-b", "--bisect", "Run minitest in bisect-mode to isolate flaky tests."
+      opts.on "-b", "--bisect", "Run minitest in bisect-mode to isolate flaky tests." if
+        File.basename($0).match?(/minitest/)
 
       opts.on "-i", "--include PATTERN", "Include /regexp/ or string for run." do |a|
         options[:include] = a
@@ -217,7 +229,7 @@ module Minitest
         options[:skip] = s.chars.to_a
       end
 
-      opts.on "-W[error]", String, "Turn Ruby warnings into errors" do |s|
+      opts.on "-W[<error>]", String, "Turn Ruby warnings into errors." do |s|
         options[:Werror] = true
         case s
         when "error", "all", nil then
@@ -300,6 +312,9 @@ module Minitest
   #             filtered_methods.each |runnable_method|
   #               runnable_klass.run(self, runnable_method, reporter)
   #                 runnable_klass.new(runnable_method).run
+  #
+  # See also:
+  # * Minitest::Test#run
 
   def self.run args = []
     options = process_args args
@@ -419,7 +434,7 @@ module Minitest
     end
 
     ##
-    # Returns all instance methods matching the pattern +re+.
+    # Returns all public instance methods matching the pattern +re+.
 
     def self.methods_matching re
       public_instance_methods(true).grep(re).map(&:to_s)
@@ -484,7 +499,7 @@ module Minitest
     # Runs a single method and has the reporter record the result.
     # This was considered internal API but is factored out of run so
     # that subclasses can specialize the running of an individual
-    # test. See Minitest::ParallelTest::ClassMethods for an example.
+    # test.
 
     def Runnable.run klass, method_name, reporter
       reporter.prerecord klass, method_name
@@ -1231,3 +1246,7 @@ module Minitest
 end
 
 require_relative "minitest/test"
+if ENV["MINITEST_SERVER"] then
+  require_relative "minitest/server_plugin"
+  Minitest.register_plugin :server
+end

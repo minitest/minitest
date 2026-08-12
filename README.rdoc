@@ -3,7 +3,7 @@
 home :: https://minite.st/
 code :: https://github.com/minitest/minitest
 bugs :: https://github.com/minitest/minitest/issues
-rdoc :: https://docs.seattlerb.org/minitest
+rdoc :: https://minite.st/docs/
 clog :: https://github.com/minitest/minitest/blob/master/History.rdoc
 emacs:: https://github.com/arthurnn/minitest-emacs
 vim  :: https://github.com/vim-test/vim-test
@@ -72,6 +72,12 @@ extract-method refactorings still apply.
 * Incredibly small and fast runner, but no bells and whistles.
 * Written by squishy human beings. Software can never be perfect. We will all eventually die.
 
+== AI Policy:
+
+AI is not allowed. Not in PRs, not in issues... just NO. See {my AI
+policy}[https://zenspider.com/ruby/2026/07/my-ai-policy.html] for more
+details. If it "smells of AI", it will be rejected.
+
 == RATIONALE:
 
 See design_rationale.rb to see how specs and tests work in minitest.
@@ -93,7 +99,7 @@ Given that you'd like to test the following class:
 === Unit tests
 
 Define your tests as methods beginning with +test_+. Use
-{assertions}[/minitest/Minitest/Assertions.html] to test for results
+{assertions}[Minitest/Assertions.html] to test for results
 or state.
 
   require "minitest/autorun"
@@ -118,7 +124,7 @@ or state.
 
 === Specs
 
-Use {expectations}[/minitest/Minitest/Expectations.html] to check
+Use {expectations}[Minitest/Expectations.html] to check
 results or state. They must be wrapped in a value call (eg +_+).
 
   require "minitest/autorun"
@@ -148,7 +154,7 @@ For matchers support check out:
 
 === Benchmarks
 
-Add {benchmarks}[/minitest/Minitest/Benchmark.html] to your tests.
+Add {benchmarks}[Minitest/Benchmark.html] to your tests.
 
   # optionally run benchmarks, good for CI-only work!
   require "minitest/benchmark" if ENV["BENCH"]
@@ -250,12 +256,13 @@ There are a bunch of variables you can supply to rake to modify the run.
 
     MT_LIB_EXTRAS :: Extra libs to dynamically override/inject for custom runs.
     N             :: -n: Tests to run (string or /regexp/).
+    I             :: -i: Tests to include (alias for N).
     X             :: -x: Tests to exclude (string or /regexp/).
     A             :: Any extra arguments. Honors shell quoting.
-    MT_CPU        :: How many threads to use for parallel test runs
+    MT_CPU        :: How many threads to use for parallel test runs.
     SEED          :: -s --seed Sets random seed.
-    TESTOPTS      :: Deprecated, same as A
-    FILTER        :: Deprecated, same as A
+    TESTOPTS      :: Deprecated, same as A.
+    FILTER        :: Deprecated, same as A.
 
 == Writing Extensions
 

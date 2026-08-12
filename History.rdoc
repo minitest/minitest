@@ -1,3 +1,41 @@
+=== 6.0.6 / 2026-04-30
+
+* 2 bug fixes:
+
+  * Fix using assert_equal/same/nil w/ BasicObject by comparing w/ `nil == exp`. (mtasaka)
+  * Removed private Assertions#_where as it is no longer used.
+
+=== 6.0.5 / 2026-04-20
+
+* 2 bug fixes:
+
+  * Avoid circular requires in lib/minitest/server_plugin.rb.
+  * Raise TypeError if assert_raises is passed anything but modules/classes.
+
+=== 6.0.4 / 2026-04-14
+
+* 1 bug fix:
+
+  * Fixed refute_predicate to call assert_respond_to w/ include_all:true like assert_predicate does. (jparker)
+
+=== 6.0.3 / 2026-03-31
+
+* 1 bug fix:
+
+  * assert_same(nil, value) no longer allowed. Use assert_nil to be explicit. (paddor)
+
+=== 6.0.2 / 2026-02-23
+
+* 7 bug fixes:
+
+  * Added missing drb dependency from minitest-server. (y-yagi)
+  * Cleaned up bisect's sub-commands to load files directly, not ruby+require.
+  * Fixed bisect to use same cmd ($0) to run tests as original invocation.
+  * load server_plugin if server is loaded. (y-yagi)
+  * Manipulate local args instead of ARGV in Sprint.run.
+  * Only show --bisect in usage if using minitest.
+  * Remove -Itest:lib from bisect's rb_flags since bin/minitest adds them.
+
 === 6.0.1 / 2025-12-26
 
 * 1 minor enhancement:

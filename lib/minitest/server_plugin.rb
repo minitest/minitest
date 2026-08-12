@@ -1,4 +1,6 @@
-require_relative "../minitest"
+require_relative "../minitest" unless defined? Minitest
+
+# :stopdoc:
 
 module Minitest
   @server = false
@@ -82,3 +84,5 @@ class Minitest::ServerReporter < Minitest::AbstractReporter
     @mt_server.report
   end
 end
+
+# :startdoc:

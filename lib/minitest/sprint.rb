@@ -1,14 +1,15 @@
-$LOAD_PATH.unshift "test", "lib"
+$LOAD_PATH.unshift "test", "lib", "."
 
 require "simplecov" if ENV["MT_COV"] || ARGV.delete("--simplecov")
 require_relative "autorun"
 require_relative "path_expander"
 
-##
-# Runs (Get it? It's fast!) your tests and makes it easier to rerun individual
-# failures.
-
 module Minitest
+
+  ##
+  # Runs (Get it? It's fast!) your tests and makes it easier to rerun
+  # individual failures.
+
   class Sprint
     # extracted version = "1.5.0"
 
@@ -16,14 +17,14 @@ module Minitest
     # Process and run minitest cmdline.
 
     def self.run args = ARGV
-      if ARGV.delete("--bisect") or ARGV.delete("-b") then
+      if args.delete("--bisect") or args.delete("-b") then
         require_relative "bisect"
 
         return Minitest::Bisect.run ARGV
       end
 
       Minitest::PathExpander.new(args).process { |f|
-        require "./#{f}" if File.file? f
+        require f
       }
     end
 

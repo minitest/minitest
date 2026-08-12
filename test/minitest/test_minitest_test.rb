@@ -18,7 +18,7 @@ class Minitest::Runnable
   end
 end
 
-class TestMinitestUnit < MetaMetaMetaTestCase
+class TestMinitestTest < MetaMetaMetaTestCase
   parallelize_me!
 
   MINITEST_BASE_DIR = "./lib/minitest/mini"
@@ -49,7 +49,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
     end
   end
 
-  def test_filter_backtrace_all_unit
+  def test_filter_backtrace_all_minitest
     bt = (["#{MINITEST_BASE_DIR}/test.rb:165:in '__send__'"] +
           BT_MIDDLE +
           ["#{MINITEST_BASE_DIR}/test.rb:29"])
@@ -58,7 +58,7 @@ class TestMinitestUnit < MetaMetaMetaTestCase
     assert_equal ex, fu
   end
 
-  def test_filter_backtrace_unit_starts
+  def test_filter_backtrace_minitest_starts
     bt = (["#{MINITEST_BASE_DIR}/test.rb:165:in '__send__'"] +
           BT_MIDDLE +
           ["#{MINITEST_BASE_DIR}/mini/test.rb:29",
@@ -113,6 +113,30 @@ class TestMinitestUnit < MetaMetaMetaTestCase
     Minitest::Test.io_lock.synchronize do # try not to trounce in parallel
       assert_report expected
     end
+  end
+
+  def test_cls_abstract_test_case!
+    abs_test_class = Class.new FakeNamedTest do
+      abstract_test_case!
+
+      define_method :test_method do
+        assert true
+      end
+    end
+
+    @tus = [
+      abs_test_class,
+      Class.new(abs_test_class),
+      Class.new(abs_test_class),
+    ]
+
+    assert_report <<~EOM
+      ..
+
+      Finished in 0.00
+
+      2 runs, 2 assertions, 0 failures, 0 errors, 0 skips
+    EOM
   end
 
   def test_passed_eh_teardown_good
@@ -178,9 +202,9 @@ class TestMinitestUnit < MetaMetaMetaTestCase
   def util_expand_bt bt
     bt.map { |f| f.start_with?(".") ? File.expand_path(f) : f }
   end
-end
+end # TestMinitestTest
 
-class TestMinitestUnitInherited < MetaMetaMetaTestCase
+class TestMinitestTestInherited < MetaMetaMetaTestCase
   def with_overridden_include
     Class.class_eval do
       def inherited_with_hacks _klass
@@ -212,7 +236,7 @@ class TestMinitestUnitInherited < MetaMetaMetaTestCase
       end
     end
   end
-end
+end # TestMinitestTestInherited
 
 class TestMinitestRunner < MetaMetaMetaTestCase
   # do not parallelize this suite... it just can't handle it.
@@ -693,10 +717,10 @@ class TestMinitestRunner < MetaMetaMetaTestCase
     end
     assert thread.join
   end
-end
+end # TestMinitestRunner
 
-class TestMinitestUnitOrder < MetaMetaMetaTestCase
-  # do not parallelize this suite... it just can't handle it.
+class TestMinitestTestOrder < MetaMetaMetaTestCase
+  parallelize_me!
 
   def test_before_setup
     call_order = []
@@ -799,7 +823,7 @@ class TestMinitestUnitOrder < MetaMetaMetaTestCase
 
     assert_equal expected, call_order
   end
-end
+end # TestMinitestTestOrder
 
 class BetterError < RuntimeError # like better_error w/o infecting RuntimeError
   def set_backtrace bt
@@ -966,12 +990,10 @@ class TestMinitestRunnable < Minitest::Test
     assert_equal @tc.failures,   over_the_wire.failures
     assert_equal @tc.klass,      over_the_wire.klass
   end
-end
+end # TestMinitestRunnable
 
-class TestMinitestUnitTestCase < Minitest::Test
-  # do not call parallelize_me! - teardown accesses @tc._assertions
-  # which is not threadsafe. Nearly every method in here is an
-  # assertion test so it isn't worth splitting it out further.
+class TestMinitestTestAssertions < Minitest::Test
+  parallelize_me!
 
   def setup
     super
@@ -1053,31 +1075,34 @@ class TestMinitestUnitTestCase < Minitest::Test
       shitty_test_case.i_suck_and_my_tests_are_order_dependent!
     end
   end
+end # TestMinitestAssertions
+
+class TestMinitestExitCode < Minitest::Test
+  # do not parallelize this suite... it just can't handle it. This has
+  # been minimized.
+  def setup
+    super
+    skip "windows doesn't have fork" unless Process.respond_to? :fork
+  end
 
   def test_autorun_does_not_affect_fork_success_status
-    @assertion_count = 0
-    skip "windows doesn't have fork" unless Process.respond_to? :fork
     Process.waitpid(fork {})
     assert_equal true, $?.success?
   end
 
   def test_autorun_does_not_affect_fork_exit_status
-    @assertion_count = 0
-    skip "windows doesn't have fork" unless Process.respond_to? :fork
     Process.waitpid(fork { exit 42 })
     assert_equal 42, $?.exitstatus
   end
 
   def test_autorun_optionally_can_affect_fork_exit_status
-    @assertion_count = 0
-    skip "windows doesn't have fork" unless Process.respond_to? :fork
     Minitest.allow_fork = true
     Process.waitpid(fork { exit 42 })
     refute_equal 42, $?.exitstatus
   ensure
     Minitest.allow_fork = false
   end
-end
+end # TestMinitestExitCode
 
 class TestMinitestGuard < Minitest::Test
   parallelize_me!
@@ -1103,8 +1128,8 @@ class TestMinitestGuard < Minitest::Test
   end
 end
 
-class TestMinitestUnitRecording < MetaMetaMetaTestCase
-  # do not parallelize this suite... it just can't handle it.
+class TestMinitestTestRecording < MetaMetaMetaTestCase
+  parallelize_me!
 
   def assert_run_record *expected, &block
     @tu = Class.new FakeNamedTest, &block

@@ -2,8 +2,10 @@ require "drb"
 require "tmpdir"
 require_relative "../minitest"
 
+# :stopdoc:
+
 class Minitest::Server
-  VERSION = "1.0.9"
+  # extracted version = "1.0.10"
 
   TOPDIR = Dir.pwd + "/"
 
@@ -43,3 +45,5 @@ class Minitest::Server
     # do nothing
   end
 end
+
+# :startdoc:

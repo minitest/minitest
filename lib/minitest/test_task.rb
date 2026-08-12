@@ -154,8 +154,11 @@ module Minitest # :nodoc:
     #
     # MT_LIB_EXTRAS :: Extra libs to dynamically override/inject for custom runs.
     # N             :: Tests to run (string or /regexp/).
+    # I             :: Tests to include (alias for N).
     # X             :: Tests to exclude (string or /regexp/).
     # A             :: Any extra arguments. Honors shell quoting.
+    # MT_CPU        :: How many threads to use for parallel test runs.
+    # SEED          :: Sets random seed.
     #
     # Deprecated:
     #

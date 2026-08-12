@@ -190,11 +190,6 @@ module Minitest
       assert_predicate obj, :empty?, msg
     end
 
-    def _where # :nodoc:
-      Minitest.filter_backtrace(caller).first
-        .split(":in ", 2).first # clean up noise
-    end
-
     ##
     # Fails unless <tt>exp == act</tt> printing the difference between
     # the two, if possible.
@@ -211,7 +206,7 @@ module Minitest
     def assert_equal exp, act, msg = nil
       msg = message(msg, nil) { diff exp, act }
 
-      refute_nil exp, message { "Use assert_nil if expecting nil" } if exp.nil? # don't count
+      refute_nil exp, message { "Use assert_nil if expecting nil" } if nil == exp # don't count
 
       assert exp == act, msg
     end
@@ -287,7 +282,7 @@ module Minitest
 
     def assert_nil obj, msg = nil
       msg = message(msg) { "Expected #{mu_pp obj} to be nil" }
-      assert obj.nil?, msg
+      assert nil == obj, msg
     end
 
     ##
@@ -381,6 +376,8 @@ module Minitest
       assert o1.__send__(op), msg
     end
 
+    NO_RE_MSG = "class or module required for rescue clause. Got %p" # :nodoc:
+
     ##
     # Fails unless the block raises one of +exp+. Returns the
     # exception matched so you can check the message, attributes, etc.
@@ -409,6 +406,9 @@ module Minitest
 
       msg = "#{exp.pop}.\n" if String === exp.last
       exp << StandardError if exp.empty?
+
+      # TODO: remove this if https://bugs.ruby-lang.org/issues/22007 gets fixed
+      raise TypeError, NO_RE_MSG % [exp] unless exp.all? Module
 
       begin
         yield
@@ -448,6 +448,9 @@ module Minitest
         data = [mu_pp(act), act.object_id, mu_pp(exp), exp.object_id]
         "Expected %s (oid=%d) to be the same as %s (oid=%d)" % data
       }
+
+      refute_nil exp, message { "Use assert_nil if expecting nil" } if nil == exp # don't count
+
       assert exp.equal?(act), msg
     end
 
@@ -603,7 +606,7 @@ module Minitest
     def message msg = nil, ending = ".", &default
       return msg if Proc === msg
       proc {
-        custom_message = "#{msg}.\n" unless msg.nil? or msg.to_s.empty?
+        custom_message = "#{msg}.\n" unless nil == msg or msg.to_s.empty?
         "#{custom_message}#{default.call}#{ending}"
       }
     end
@@ -704,7 +707,7 @@ module Minitest
 
     def refute_nil obj, msg = nil
       msg = message(msg) { "Expected #{mu_pp obj} to not be nil" }
-      refute obj.nil?, msg
+      refute nil == obj, msg
     end
 
     ##
@@ -759,7 +762,7 @@ module Minitest
     #   str.wont_be :empty?
 
     def refute_predicate o1, op, msg = nil
-      assert_respond_to o1, op
+      assert_respond_to o1, op, include_all:true
       msg = message(msg) { "Expected #{mu_pp o1} to not be #{op}" }
       refute o1.__send__(op), msg
     end

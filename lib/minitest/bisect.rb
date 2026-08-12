@@ -19,7 +19,7 @@ class Minitest::Bisect
 
     def initialize args = ARGV # :nodoc:
       super args, TEST_GLOB, "test"
-      self.rb_flags = %w[-Itest:lib]
+      self.rb_flags = %w[]
     end
 
     ##
@@ -126,7 +126,7 @@ class Minitest::Bisect
     puts "Final reproduction:"
     puts
 
-    system cmd.sub(/--server \d+/, "")
+    system({"MINITEST_SERVER" => "1"}, cmd.sub(/--server \d+/, "", ))
   ensure
     Minitest::Server.stop
   end
@@ -222,7 +222,7 @@ class Minitest::Bisect
   def time_it prompt, cmd # :nodoc:
     print prompt
     t0 = Time.now
-    system "#{cmd} #{SHH}"
+    system({"MINITEST_SERVER" => "1"}, "#{cmd} #{SHH}")
     puts " in %.2f sec" % (Time.now - t0)
   end
 
@@ -234,10 +234,8 @@ class Minitest::Bisect
     }.flatten.sort
   end
 
-  def build_files_cmd culprits, rb, mt # :nodoc:
-    tests = culprits.flatten.compact.map { |f| %(require "./#{f}") }.join " ; "
-
-    %(#{RUBY} #{rb.shelljoin} -e '#{tests}' -- #{mt.map(&:to_s).shelljoin})
+  def build_files_cmd culprits, rb, mt, cmd:$0 # :nodoc:
+    ([cmd] + rb + culprits + mt).shelljoin
   end
 
   def build_methods_cmd cmd, culprits = [], bad = nil # :nodoc:
