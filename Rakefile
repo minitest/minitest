@@ -6,7 +6,7 @@ $:.unshift "lib" # to pick up lib/minitest/test_task.rb when minitest not instal
 Hoe.plugin :seattlerb
 Hoe.plugin :isolate
 Hoe.plugin :rdoc
-Hoe.plugin :cov
+Hoe.plugin :cov if ENV["COV"]
 
 Hoe.spec "minitest" do
   developer "Ryan Davis", "ryand-ruby@zenspider.com"
@@ -20,7 +20,7 @@ Hoe.spec "minitest" do
 
   self.rdoc_locations << "l:/home/www/minite.st/rdoc/minitest/"
 
-  self.cov_filter = %w[ tmp ]
+  self.cov_filter = %w[ tmp ] if Hoe.plugins.include? :cov
 end
 
 desc "Find missing expectations"
