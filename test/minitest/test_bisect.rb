@@ -44,7 +44,7 @@ class TestMinitest::TestBisect < Minitest::Test
     cul = []
     bad = %w[A#test_1 B#test_2]
 
-    exp = "cmd -n \"/^(?:A#(?:test_1)|B#(?:test_2))$/\""
+    exp = "cmd -n #{"/^(?:A#(?:test_1)|B#(?:test_2))$/".shellescape}"
 
     assert_equal exp, bisect.build_methods_cmd(cmd, cul, bad)
   end
@@ -54,7 +54,7 @@ class TestMinitest::TestBisect < Minitest::Test
     cul = []
     bad = %w[C#test_5 C#test_6]
 
-    exp = "cmd -n \"/^(?:C#(?:test_5|test_6))$/\""
+    exp = "cmd -n #{"/^(?:C#(?:test_5|test_6))$/".shellescape}"
 
     assert_equal exp, bisect.build_methods_cmd(cmd, cul, bad)
   end
@@ -67,7 +67,7 @@ class TestMinitest::TestBisect < Minitest::Test
     a = "A#(?:test_1|test_2)"
     b = "B#(?:test_3|test_4)"
     c = "C#(?:test_5|test_6)"
-    exp = "cmd -n \"/^(?:#{a}|#{b}|#{c})$/\""
+    exp = "cmd -n #{"/^(?:#{a}|#{b}|#{c})$/".shellescape}"
 
     assert_equal exp, bisect.build_methods_cmd(cmd, cul, bad)
   end
@@ -99,7 +99,19 @@ class TestMinitest::TestBisect < Minitest::Test
   def test_build_re_method_escaping
     bad = ["Some Class#It shouldn't care what the name is"]
 
-    exp = "/^(?:Some Class#(?:It shouldn\\'t care what the name is))$/"
+    exp = "/^(?:Some\\ Class#(?:It\\ shouldn't\\ care\\ what\\ the\\ name\\ is))$/"
+
+    assert_equal exp, bisect.build_re(bad)
+  end
+
+  def test_build_re_class_escaping_repeat_operator
+    # minitest/spec context/describe names are used verbatim as the
+    # class name, so a leading "*" (eg. describe "*_special_chars") must
+    # be escaped or Regexp compilation blows up with:
+    #   target of repeat operator is not specified
+    bad = ["*_special_chars#test_1"]
+
+    exp = "/^(?:\\*_special_chars#(?:test_1))$/"
 
     assert_equal exp, bisect.build_re(bad)
   end

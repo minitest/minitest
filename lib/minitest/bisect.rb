@@ -244,7 +244,7 @@ class Minitest::Bisect
     if bad then
       re = build_re culprits + bad
 
-      cmd += " -n \"#{re}\"" if bad
+      cmd += " -n #{re.shellescape}" if bad
     end
 
     if ENV["MTB_VERBOSE"].to_i >= 1 then
@@ -264,20 +264,16 @@ class Minitest::Bisect
 
     bbc.each do |klass, methods|
       methods = methods.map(&:last).flatten.uniq.map { |method|
-        re_escape method
+        Regexp.escape method
       }
 
       methods = methods.join "|"
-      re << /#{re_escape klass}#(?:#{methods})/.to_s[7..-2] # (?-mix:...)
+      re << /#{Regexp.escape klass}#(?:#{methods})/.to_s[7..-2] # (?-mix:...)
     end
 
     re = re.join("|").to_s.gsub(/-mix/, "")
 
     "/^(?:#{re})$/"
-  end
-
-  def re_escape str # :nodoc:
-    str.gsub(/([`'"!?&\[\]\(\)\{\}\|\+])/, '\\\\\1')
   end
 
   ############################################################
