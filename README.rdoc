@@ -365,9 +365,11 @@ Current versions of ruby: (https://endoflife.date/ruby)
 
   | ruby | Status  |   EOL Date |
   |------+---------+------------|
-  |  3.4 | Current | 2028-03-31 |
-  |  3.3 | Maint   | 2027-03-31 |
-  |  3.2 | Security| 2026-03-31 |
+  |  4.1 | (Next)  | 2030-03-31 |
+  |  4.0 | Current | 2029-03-31 |
+  |  3.4 | Maint   | 2028-03-31 |
+  |  3.3 | Security| 2027-03-31 |
+  |  3.2 | EOL     | 2026-03-31 |
   |  3.1 | EOL     | 2025-03-31 |
   |  3.0 | EOL     | 2024-03-31 |
   |  2.7 | EOL     | 2023-03-31 |
