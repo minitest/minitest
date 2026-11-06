@@ -1,3 +1,21 @@
+=== 6.1.0 / 2026-11-06
+
+* 1 minor enhancement:
+
+  * Added Minitest::Test.abstract_test_case! from sexp_processor tests.
+
+* 9 bug fixes:
+
+  * Added AI policy (=NO!) to README.rdoc.
+  * Added Minitest.installed_at_exit? to make it easier for plugins to tell if autorun has been invoked. (sferik)
+  * Added validation to -W category arg processing. (teoljungberg)
+  * Allow prism 2.0 (earlopain)
+  * Clarified in doco that runnable_methods & methods_matching are for public methods only. (koi1)
+  * FINALLY got 100% doco coverage after fighting rdoc for YEARS!
+  * Fixed RegexpError for class/method names with regex metacharacters (splattael)
+  * PathExpander / Sprint: fix loading of absolute paths. (teoljungberg)
+  * Removed ruby2_keywords delegation workaround from Spec. (teoljungberg)
+
 === 6.0.6 / 2026-04-30
 
 * 2 bug fixes:

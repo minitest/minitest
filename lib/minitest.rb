@@ -10,7 +10,7 @@ require_relative "minitest/compress"
 # runtime. See +Minitest.run+ for more information.
 
 module Minitest
-  VERSION = "6.0.6" # :nodoc:
+  VERSION = "6.1.0" # :nodoc:
 
   @@installed_at_exit ||= false
   @@after_run = []
