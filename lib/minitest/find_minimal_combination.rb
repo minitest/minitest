@@ -1,5 +1,3 @@
-#!/usr/bin/ruby -w
-
 ##
 # Finds the minimal combination of a collection of items that satisfy
 # +test+.
