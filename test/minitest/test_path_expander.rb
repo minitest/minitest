@@ -7,6 +7,8 @@ class TestPathExpander < Minitest::Test
 
   MT_VPE = Minitest::VendoredPathExpander
 
+  Named = Struct.new :name
+
   def setup
     super
 
@@ -208,6 +210,42 @@ class TestPathExpander < Minitest::Test
     assert_equal %w[test/test_path_expander.rb], files
     assert_equal [], flags
     assert_equal({ "test/test_path_expander.rb" => [10] }, test_expander.by_line)
+  end
+
+  def test_process_args_same_file_with_multiple_lines
+    path = "test/test_path_expander.rb"
+    test_expander = Minitest::PathExpander.new ["#{path}:10", "#{path}:20-30,40"]
+
+    assert_equal [[path], []], test_expander.process_args
+    assert_equal({ path => [10, 20..30, 40] }, test_expander.by_line)
+  end
+
+  def assert_tests_to_regexp exp, tests
+    tests = tests.to_h { |k, ns| [Named.new(k), ns.map { |n| Named.new n }] }
+
+    assert_equal exp, Minitest::PathExpander.new([]).tests_to_regexp(tests)
+  end
+
+  def test_tests_to_regexp
+    assert_tests_to_regexp ["A#test_a", "B#(?:test_b|test_c)"],
+                           "A" => %w[test_a], "B" => %w[test_b test_c]
+  end
+
+  def test_tests_to_regexp__escapes
+    assert_tests_to_regexp ['A#test_a\+b', 'B#(?:test_b\?|test_c\.d)'],
+                           "A" => %w[test_a+b], "B" => %w[test_b? test_c.d]
+  end
+
+  def test_post_process
+    tests = { Named.new("A") => [Named.new("test_a")] }
+    test_expander = Minitest::PathExpander.new []
+    test_expander.by_line["test/test_a.rb"] = [3]
+    test_expander.define_singleton_method(:tests_by_class) { tests }
+    test_expander.define_singleton_method(:handle_missing_tests?) { |_| false }
+
+    test_expander.post_process
+
+    assert_equal ["-n", "/^(?:A#test_a)$/"], test_expander.args
   end
 
   def test_process_args_root
