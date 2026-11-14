@@ -262,8 +262,8 @@ class Minitest::PathExpander < Minitest::VendoredPathExpander
           }
         next unless File.exist? f
         f = _normalize f
-        args << f                       # push path on lest it run whole dir
-        by_line[f] = ls                 # implies rejection
+        args << f unless by_line.key? f # push path on lest it run whole dir
+        (by_line[f] ||= []).concat ls   # implies rejection
       end
     }
 
@@ -301,7 +301,7 @@ class Minitest::PathExpander < Minitest::VendoredPathExpander
     exit! 1 if handle_missing_tests? tests
 
     test_res = tests_to_regexp tests
-    self.args << "-n" << "/#{test_res.join "|"}/"
+    self.args << "-n" << "/^(?:#{test_res.join "|"})$/"
   end
 
   ##
@@ -341,10 +341,11 @@ class Minitest::PathExpander < Minitest::VendoredPathExpander
 
   def tests_to_regexp tests
     tests                                         # { k1 => [Test(a), ...}
-      .transform_values { |tms| tms.map(&:name) } # { k1 => %w[a, b], ...}
+      .transform_values { |tms|                   # { k1 => %w[a, b], ...}
+        tms.map { |tm| Regexp.escape tm.name }
+      }
       .map { |k, ns|                              # [ "k1#(?:a|b)", "k2#c", ...]
         if ns.size > 1 then
-          ns.map! { |n| Regexp.escape n }
           "%s#\(?:%s\)" % [Regexp.escape(k.name), ns.join("|")]
         else
           "%s#%s" % [Regexp.escape(k.name), ns.first]
