@@ -4,15 +4,14 @@ require "minitest/path_expander"
 class TestPathExpander < Minitest::Test
   attr_accessor :args
   attr_accessor :expander
-
-  MT_VPE = Minitest::VendoredPathExpander
+  attr_accessor :exp_paths
 
   def setup
     super
 
     self.args = []
 
-    self.expander = MT_VPE.new args, "*.rb"
+    self.expander = Minitest::PathExpander.new args
 
     @pe_tmp_path = "test/pe_tmp"
     @pe_tst_path = "test/pe_tmp/test"
@@ -21,6 +20,8 @@ class TestPathExpander < Minitest::Test
     FileUtils.mkdir_p @pe_tst_path
     FileUtils.touch ["#{@pe_tst_path}/test_path_expander.rb", "#{@pe_tst_path}/test_bad.rb"]
     Dir.chdir @pe_tmp_path
+
+    @exp_paths =  %w[test/test_bad.rb test/test_path_expander.rb]
   end
 
   def teardown
@@ -48,24 +49,17 @@ class TestPathExpander < Minitest::Test
   end
 
   def test_expand_dirs_to_files
-    exp = %w[test/test_bad.rb test/test_path_expander.rb]
-
-    assert_equal exp, expander.expand_dirs_to_files("test")
+    assert_equal exp_paths, expander.expand_dirs_to_files("test")
     assert_equal %w[Rakefile], expander.expand_dirs_to_files("Rakefile")
   end
 
   def test_expand_dirs_to_files__sorting
-    exp = %w[test/test_bad.rb test/test_path_expander.rb]
-    input = %w[test/test_path_expander.rb test/test_bad.rb]
-
-    assert_equal exp, expander.expand_dirs_to_files(*input)
+    assert_equal exp_paths, expander.expand_dirs_to_files(*exp_paths.reverse)
     assert_equal %w[Rakefile], expander.expand_dirs_to_files("Rakefile")
   end
 
   def test_expand_dirs_to_files__leading_dot
-    exp = %w[test/test_bad.rb test/test_path_expander.rb]
-
-    assert_equal exp, expander.expand_dirs_to_files("./test")
+    assert_equal exp_paths, expander.expand_dirs_to_files("./test")
   end
 
   def test_filter_files_dir
@@ -176,13 +170,13 @@ class TestPathExpander < Minitest::Test
   end
 
   def test_process_args_dash_other
-    assert_process_args(%w[],
+    assert_process_args(exp_paths,
                         %w[--verbose],
                         "--verbose")
   end
 
   def test_process_args_dir
-    assert_process_args(%w[test/test_bad.rb test/test_path_expander.rb],
+    assert_process_args(exp_paths,
                         %w[],
                         "test")
   end
@@ -194,31 +188,70 @@ class TestPathExpander < Minitest::Test
   end
 
   def test_process_args_other
-    assert_process_args(%w[],
+    assert_process_args(exp_paths,
                         %w[42],
                         "42")
   end
 
-  def test_process_args_absolute_path_with_line
-    test_args = ["#{Dir.pwd}/test/test_path_expander.rb:10"]
-    test_expander = Minitest::PathExpander.new test_args
+  def test_process_args__absolute_path_with_line
+    path = "test/test_path_expander.rb"
+    assert_process_args([path],
+                        %w[],
+                        "#{Dir.pwd}/#{path}:10")
 
-    files, flags = test_expander.process_args
+    assert_equal({ path => [10] }, expander.by_line)
+  end
 
-    assert_equal %w[test/test_path_expander.rb], files
-    assert_equal [], flags
-    assert_equal({ "test/test_path_expander.rb" => [10] }, test_expander.by_line)
+  def test_process_args__path_with_line
+    path = "test/test_path_expander.rb"
+    assert_process_args([path],
+                        %w[],
+                        "#{path}:10")
+
+    assert_equal({ path => [10] }, expander.by_line)
+  end
+
+  def test_process_args__path_with_multiple_lines
+    path = "test/test_path_expander.rb"
+    assert_process_args([path],
+                        %w[],
+                        "#{path}:10,20-30,40")
+
+    assert_equal({ path => [10, 20..30, 40] }, expander.by_line)
+  end
+
+  def test_process_args__path_duped_with_multiple_lines
+    skip "not yet"
+    path = "test/test_path_expander.rb"
+    assert_process_args([path],
+                        %w[],
+                        "#{path}:10",
+                        "#{path}:20-30,40")
+
+    assert_equal({ path => [10, 20..30, 40] }, expander.by_line)
+  end
+
+  def test_process_args__path_whole_file_and_lines
+    skip "not yet"
+
+    path = "test/test_path_expander.rb"
+    assert_process_args([path],
+                        %w[],
+                        "#{path}",
+                        "#{path}:20-30,40")
+
+    assert_equal({ path => [] }, expander.by_line)
   end
 
   def test_process_args_root
-    assert_process_args(%w[],
+    assert_process_args(exp_paths,
                         %w[-n /./],
                         "-n",
                         "/./")
   end
 
   def test_process_args_no_files
-    self.expander = MT_VPE.new args, "*.rb", "test" # extra test default
+    self.expander = expander.class.new %w[test] # extra test default
 
     assert_process_args(%w[test/test_bad.rb test/test_path_expander.rb],
                         %w[-v],
