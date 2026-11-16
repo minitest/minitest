@@ -196,10 +196,12 @@ module Minitest
     #
     # If there is no visible difference but the assertion fails, you
     # should suspect that your #== is buggy, or your inspect output is
-    # missing crucial details.  For nicer structural diffing, set
-    # Minitest::Test.make_my_diffs_pretty!
+    # missing crucial details. For nicer structural diffing, set
+    # Minitest::Test.make_my_diffs_pretty! but know that it is slower
+    # (only on failure).
     #
-    # For floats use assert_in_delta.
+    # For nil, use assert_nil.
+    # For floats, use assert_in_delta or assert_in_epsilon.
     #
     # See also: Minitest::Assertions.diff
 
@@ -637,7 +639,8 @@ module Minitest
     ##
     # Fails if <tt>exp == act</tt>.
     #
-    # For floats use refute_in_delta.
+    # For nil, use refute_nil.
+    # For floats, use refute_in_delta or refute_in_epsilon.
 
     def refute_equal exp, act, msg = nil
       msg = message(msg) {
