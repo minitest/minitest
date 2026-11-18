@@ -275,6 +275,19 @@ describe Minitest::Spec do
     end
   end
 
+  it "needs to verify equality with a braceless hash" do
+    @assertion_count -= 1
+
+    assert_success _({ a: 1 }).must_equal(a: 1)
+
+    expected = { a: 2 }.inspect
+    actual = { a: 1 }.inspect
+
+    assert_triggered "Expected: #{expected}\n  Actual: #{actual}" do
+      _({ a: 1 }).must_equal a: 2
+    end
+  end
+
   it "needs to fail on equality with nil" do
     @assertion_count -= 2
     expect { _(nil).must_equal(nil) }.must_raise Minitest::Assertion
@@ -364,6 +377,16 @@ describe Minitest::Spec do
     end
   end
 
+  it "needs to verify identity with a braceless hash" do
+    @assertion_count -= 3
+
+    h = { a: 1 }.inspect
+
+    assert_triggered "Expected #{h} (oid=N) to be the same as #{h} (oid=N)." do
+      _({ a: 1 }).must_be_same_as a: 1
+    end
+  end
+
   it "needs to verify inequality" do
     @assertion_count += 2
     assert_success _(42).wont_equal(6 * 9)
@@ -375,6 +398,18 @@ describe Minitest::Spec do
 
     assert_triggered "msg.\nExpected 1 to not be equal to 1." do
       _(1).wont_equal 1, "msg"
+    end
+  end
+
+  it "needs to verify inequality with a braceless hash" do
+    @assertion_count -= 1
+
+    assert_success _({ a: 1 }).wont_equal(a: 2)
+
+    h = { a: 1 }.inspect
+
+    assert_triggered "Expected #{h} to not be equal to #{h}." do
+      _({ a: 1 }).wont_equal a: 1
     end
   end
 

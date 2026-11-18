@@ -14,6 +14,7 @@ class Module # :nodoc:
         when #{block} && Proc === target then
           ctx.#{meth}(*args, **kws, &target)
         else
+          args, kws = [kws], {} if args.empty? && !kws.empty?
           ctx.#{meth}(args.first, target, *args[1..-1], **kws)
         end
       end
